@@ -1,0 +1,16 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/kuba/graph_analyzer/src/modules/AbstractModule.cpp
+AbstractModule.h
+/home/kuba/graph_analyzer/src/modules/AbstractModule.h
+
+/home/kuba/graph_analyzer/src/modules/AbstractModule.h
+string
+-
+

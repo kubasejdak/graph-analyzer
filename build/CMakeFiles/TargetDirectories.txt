@@ -1,0 +1,3 @@
+/home/kuba/graph_analyzer/build/bin/modules/CMakeFiles/binary_input_lib.dir
+/home/kuba/graph_analyzer/build/bin/core/CMakeFiles/graph_analyzer.dir
+/home/kuba/graph_analyzer/build/bin/modules/CMakeFiles/module_manager_lib.dir

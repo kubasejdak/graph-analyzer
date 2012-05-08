@@ -1,0 +1,2 @@
+/usr/bin/ar cr libbinary_input_lib.a  CMakeFiles/binary_input_lib.dir/AbstractModule.cpp.o CMakeFiles/binary_input_lib.dir/AbstractInput.cpp.o CMakeFiles/binary_input_lib.dir/BinaryInput.cpp.o
+/usr/bin/ranlib libbinary_input_lib.a

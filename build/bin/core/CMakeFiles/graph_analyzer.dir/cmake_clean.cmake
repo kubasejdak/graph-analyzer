@@ -3,6 +3,7 @@ FILE(REMOVE_RECURSE
   "CMakeFiles/graph_analyzer.dir/AnalysisSystem.cpp.o"
   "CMakeFiles/graph_analyzer.dir/EmulationSystem.cpp.o"
   "CMakeFiles/graph_analyzer.dir/ShellcodeSample.cpp.o"
+  "CMakeFiles/graph_analyzer.dir/ShellcodeInfo.cpp.o"
   "graph_analyzer.pdb"
   "graph_analyzer"
 )

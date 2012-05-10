@@ -15,13 +15,13 @@ using namespace std;
 #define PLACE_IN_CODE			"FILE: " << __FILE__ << ", LINE: " << __LINE__ << ", "
 
 #ifdef DEBUG
-	#define	SHOWMSG(x)			cerr << "DEBUG: " << x << endl
-	#define SHOWVAR(x)			cerr << "DEBUG: " << #x << " = " << x << endl
-	#define SHOWVAR_HEX(x)		cerr << "DEBUG: " << #x << " = 0x" << hex << x << endl
+	#define	SHOWMSG(x)			clog << "DEBUG: " << x << endl
+	#define SHOWVAR(x)			clog << "DEBUG: " << #x << " = " << x << endl
+	#define SHOWVAR_HEX(x)		clog << "DEBUG: " << #x << " = 0x" << hex << x << endl
 
-	#define	SHOWMSG_L(x)		cerr << PLACE_IN_CODE << "DEBUG: " << x << endl
-	#define SHOWVAR_L(x)		cerr << PLACE_IN_CODE << "DEBUG: " << #x << " = " << x << endl
-	#define SHOWVAR_HEX_L(x)	cerr << PLACE_IN_CODE << "DEBUG: " << #x << " = 0x" << hex << x << endl
+	#define	SHOWMSG_L(x)		clog << PLACE_IN_CODE << "DEBUG: " << x << endl
+	#define SHOWVAR_L(x)		clog << PLACE_IN_CODE << "DEBUG: " << #x << " = " << x << endl
+	#define SHOWVAR_HEX_L(x)	clog << PLACE_IN_CODE << "DEBUG: " << #x << " = 0x" << hex << x << endl
 #else
 	#define	SHOWMSG(x)			//
 	#define SHOWVAR(x)			//

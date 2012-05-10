@@ -160,6 +160,30 @@ EmulationSystem.cpp.s:
 	cd /home/kuba/graph_analyzer/build && $(MAKE) -f bin/core/CMakeFiles/graph_analyzer.dir/build.make bin/core/CMakeFiles/graph_analyzer.dir/EmulationSystem.cpp.s
 .PHONY : EmulationSystem.cpp.s
 
+ShellcodeInfo.o: ShellcodeInfo.cpp.o
+.PHONY : ShellcodeInfo.o
+
+# target to build an object file
+ShellcodeInfo.cpp.o:
+	cd /home/kuba/graph_analyzer/build && $(MAKE) -f bin/core/CMakeFiles/graph_analyzer.dir/build.make bin/core/CMakeFiles/graph_analyzer.dir/ShellcodeInfo.cpp.o
+.PHONY : ShellcodeInfo.cpp.o
+
+ShellcodeInfo.i: ShellcodeInfo.cpp.i
+.PHONY : ShellcodeInfo.i
+
+# target to preprocess a source file
+ShellcodeInfo.cpp.i:
+	cd /home/kuba/graph_analyzer/build && $(MAKE) -f bin/core/CMakeFiles/graph_analyzer.dir/build.make bin/core/CMakeFiles/graph_analyzer.dir/ShellcodeInfo.cpp.i
+.PHONY : ShellcodeInfo.cpp.i
+
+ShellcodeInfo.s: ShellcodeInfo.cpp.s
+.PHONY : ShellcodeInfo.s
+
+# target to generate assembly for a file
+ShellcodeInfo.cpp.s:
+	cd /home/kuba/graph_analyzer/build && $(MAKE) -f bin/core/CMakeFiles/graph_analyzer.dir/build.make bin/core/CMakeFiles/graph_analyzer.dir/ShellcodeInfo.cpp.s
+.PHONY : ShellcodeInfo.cpp.s
+
 ShellcodeSample.o: ShellcodeSample.cpp.o
 .PHONY : ShellcodeSample.o
 
@@ -223,6 +247,9 @@ help:
 	@echo "... EmulationSystem.o"
 	@echo "... EmulationSystem.i"
 	@echo "... EmulationSystem.s"
+	@echo "... ShellcodeInfo.o"
+	@echo "... ShellcodeInfo.i"
+	@echo "... ShellcodeInfo.s"
 	@echo "... ShellcodeSample.o"
 	@echo "... ShellcodeSample.i"
 	@echo "... ShellcodeSample.s"

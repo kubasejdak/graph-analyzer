@@ -7,6 +7,7 @@
 #include "EmulationSystem.h"
 
 EmulationSystem::EmulationSystem() {
+	loadModules();
 }
 
 EmulationSystem::~EmulationSystem() {
@@ -20,4 +21,5 @@ bool EmulationSystem::emulate() {
 }
 
 void EmulationSystem::loadModules() {
+	analyzeModules = ModuleManager::getInstance()->getAnalyze();
 }

@@ -8,11 +8,12 @@
 #define EMULATIONSYSTEM_H_
 
 /* standard headers */
-#include <list>
+#include <map>
 
 /* project headers */
 #include <core/ShellcodeSample.h>
 #include <modules/AbstractAnalyze.h>
+#include <modules/ModuleManager.h>
 
 class EmulationSystem {
 public:
@@ -24,7 +25,7 @@ public:
 
 private:
 	ShellcodeSample *sample;
-	list<AbstractAnalyze *> *analyzeModules;
+	map<int, AbstractAnalyze *> *analyzeModules;
 
 	void loadModules();
 };

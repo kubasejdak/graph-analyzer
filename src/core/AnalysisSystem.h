@@ -10,7 +10,9 @@
 /* standard headers */
 #include <map>
 #include <string>
+#include <boost/algorithm/string.hpp>
 using namespace std;
+using namespace boost;
 
 /* project headers */
 #include <core/EmulationSystem.h>

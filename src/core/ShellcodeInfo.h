@@ -22,11 +22,16 @@ enum ConnType {
 #include <string>
 using namespace std;
 
-struct ShellcodeInfo {
+class ShellcodeInfo {
+public:
+	ShellcodeInfo();
+	~ShellcodeInfo();
+
+	string name;
 	int size;
 	int codeOffset;
 	bool shellcodePresent;
-	GeneralType getType;
+	GeneralType genType;
 	ConnType connType;
 	list<string> usedSysAPI;
 };

@@ -141,12 +141,36 @@ bin/core/CMakeFiles/graph_analyzer.dir/ShellcodeSample.cpp.o.provides: bin/core/
 
 bin/core/CMakeFiles/graph_analyzer.dir/ShellcodeSample.cpp.o.provides.build: bin/core/CMakeFiles/graph_analyzer.dir/ShellcodeSample.cpp.o
 
+bin/core/CMakeFiles/graph_analyzer.dir/ShellcodeInfo.cpp.o: bin/core/CMakeFiles/graph_analyzer.dir/flags.make
+bin/core/CMakeFiles/graph_analyzer.dir/ShellcodeInfo.cpp.o: ../src/core/ShellcodeInfo.cpp
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/kuba/graph_analyzer/build/CMakeFiles $(CMAKE_PROGRESS_5)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Building CXX object bin/core/CMakeFiles/graph_analyzer.dir/ShellcodeInfo.cpp.o"
+	cd /home/kuba/graph_analyzer/build/bin/core && /usr/bin/c++   $(CXX_DEFINES) $(CXX_FLAGS) -o CMakeFiles/graph_analyzer.dir/ShellcodeInfo.cpp.o -c /home/kuba/graph_analyzer/src/core/ShellcodeInfo.cpp
+
+bin/core/CMakeFiles/graph_analyzer.dir/ShellcodeInfo.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/graph_analyzer.dir/ShellcodeInfo.cpp.i"
+	cd /home/kuba/graph_analyzer/build/bin/core && /usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -E /home/kuba/graph_analyzer/src/core/ShellcodeInfo.cpp > CMakeFiles/graph_analyzer.dir/ShellcodeInfo.cpp.i
+
+bin/core/CMakeFiles/graph_analyzer.dir/ShellcodeInfo.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/graph_analyzer.dir/ShellcodeInfo.cpp.s"
+	cd /home/kuba/graph_analyzer/build/bin/core && /usr/bin/c++  $(CXX_DEFINES) $(CXX_FLAGS) -S /home/kuba/graph_analyzer/src/core/ShellcodeInfo.cpp -o CMakeFiles/graph_analyzer.dir/ShellcodeInfo.cpp.s
+
+bin/core/CMakeFiles/graph_analyzer.dir/ShellcodeInfo.cpp.o.requires:
+.PHONY : bin/core/CMakeFiles/graph_analyzer.dir/ShellcodeInfo.cpp.o.requires
+
+bin/core/CMakeFiles/graph_analyzer.dir/ShellcodeInfo.cpp.o.provides: bin/core/CMakeFiles/graph_analyzer.dir/ShellcodeInfo.cpp.o.requires
+	$(MAKE) -f bin/core/CMakeFiles/graph_analyzer.dir/build.make bin/core/CMakeFiles/graph_analyzer.dir/ShellcodeInfo.cpp.o.provides.build
+.PHONY : bin/core/CMakeFiles/graph_analyzer.dir/ShellcodeInfo.cpp.o.provides
+
+bin/core/CMakeFiles/graph_analyzer.dir/ShellcodeInfo.cpp.o.provides.build: bin/core/CMakeFiles/graph_analyzer.dir/ShellcodeInfo.cpp.o
+
 # Object files for target graph_analyzer
 graph_analyzer_OBJECTS = \
 "CMakeFiles/graph_analyzer.dir/main.cpp.o" \
 "CMakeFiles/graph_analyzer.dir/AnalysisSystem.cpp.o" \
 "CMakeFiles/graph_analyzer.dir/EmulationSystem.cpp.o" \
-"CMakeFiles/graph_analyzer.dir/ShellcodeSample.cpp.o"
+"CMakeFiles/graph_analyzer.dir/ShellcodeSample.cpp.o" \
+"CMakeFiles/graph_analyzer.dir/ShellcodeInfo.cpp.o"
 
 # External object files for target graph_analyzer
 graph_analyzer_EXTERNAL_OBJECTS =
@@ -155,6 +179,7 @@ bin/core/graph_analyzer: bin/core/CMakeFiles/graph_analyzer.dir/main.cpp.o
 bin/core/graph_analyzer: bin/core/CMakeFiles/graph_analyzer.dir/AnalysisSystem.cpp.o
 bin/core/graph_analyzer: bin/core/CMakeFiles/graph_analyzer.dir/EmulationSystem.cpp.o
 bin/core/graph_analyzer: bin/core/CMakeFiles/graph_analyzer.dir/ShellcodeSample.cpp.o
+bin/core/graph_analyzer: bin/core/CMakeFiles/graph_analyzer.dir/ShellcodeInfo.cpp.o
 bin/core/graph_analyzer: bin/core/CMakeFiles/graph_analyzer.dir/build.make
 bin/core/graph_analyzer: bin/modules/libmodule_manager_lib.a
 bin/core/graph_analyzer: bin/modules/libbinary_input_lib.a
@@ -170,6 +195,7 @@ bin/core/CMakeFiles/graph_analyzer.dir/requires: bin/core/CMakeFiles/graph_analy
 bin/core/CMakeFiles/graph_analyzer.dir/requires: bin/core/CMakeFiles/graph_analyzer.dir/AnalysisSystem.cpp.o.requires
 bin/core/CMakeFiles/graph_analyzer.dir/requires: bin/core/CMakeFiles/graph_analyzer.dir/EmulationSystem.cpp.o.requires
 bin/core/CMakeFiles/graph_analyzer.dir/requires: bin/core/CMakeFiles/graph_analyzer.dir/ShellcodeSample.cpp.o.requires
+bin/core/CMakeFiles/graph_analyzer.dir/requires: bin/core/CMakeFiles/graph_analyzer.dir/ShellcodeInfo.cpp.o.requires
 .PHONY : bin/core/CMakeFiles/graph_analyzer.dir/requires
 
 bin/core/CMakeFiles/graph_analyzer.dir/clean:

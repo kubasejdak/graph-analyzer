@@ -7,10 +7,22 @@
 #include "ShellcodeSample.h"
 
 ShellcodeSample::ShellcodeSample() {
+	code = NULL;
 }
 
 ShellcodeSample::~ShellcodeSample() {
+	if(code)
+		delete code;
 }
 
-void ShellcodeSample::extractCode() {
+byte_t * ShellcodeSample::getCode() {
+	return code;
+}
+
+ShellcodeInfo ShellcodeSample::getInfo() {
+	return info;
+}
+
+void ShellcodeSample::setCode(byte_t *code) {
+	this->code = code;
 }

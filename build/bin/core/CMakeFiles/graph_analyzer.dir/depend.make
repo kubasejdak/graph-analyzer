@@ -19,9 +19,17 @@ bin/core/CMakeFiles/graph_analyzer.dir/EmulationSystem.cpp.o: ../src/core/Shellc
 bin/core/CMakeFiles/graph_analyzer.dir/EmulationSystem.cpp.o: ../src/core/ShellcodeSample.h
 bin/core/CMakeFiles/graph_analyzer.dir/EmulationSystem.cpp.o: ../src/core/toolbox.h
 bin/core/CMakeFiles/graph_analyzer.dir/EmulationSystem.cpp.o: ../src/modules/AbstractAnalyze.h
+bin/core/CMakeFiles/graph_analyzer.dir/EmulationSystem.cpp.o: ../src/modules/AbstractInput.h
 bin/core/CMakeFiles/graph_analyzer.dir/EmulationSystem.cpp.o: ../src/modules/AbstractModule.h
+bin/core/CMakeFiles/graph_analyzer.dir/EmulationSystem.cpp.o: ../src/modules/AbstractOutput.h
+bin/core/CMakeFiles/graph_analyzer.dir/EmulationSystem.cpp.o: ../src/modules/BinaryInput.h
+bin/core/CMakeFiles/graph_analyzer.dir/EmulationSystem.cpp.o: ../src/modules/ModuleInfo.h
+bin/core/CMakeFiles/graph_analyzer.dir/EmulationSystem.cpp.o: ../src/modules/ModuleManager.h
 bin/core/CMakeFiles/graph_analyzer.dir/EmulationSystem.cpp.o: ../src/core/EmulationSystem.cpp
 bin/core/CMakeFiles/graph_analyzer.dir/EmulationSystem.cpp.o: ../src/core/EmulationSystem.h
+
+bin/core/CMakeFiles/graph_analyzer.dir/ShellcodeInfo.cpp.o: ../src/core/ShellcodeInfo.cpp
+bin/core/CMakeFiles/graph_analyzer.dir/ShellcodeInfo.cpp.o: ../src/core/ShellcodeInfo.h
 
 bin/core/CMakeFiles/graph_analyzer.dir/ShellcodeSample.cpp.o: ../src/core/ShellcodeInfo.h
 bin/core/CMakeFiles/graph_analyzer.dir/ShellcodeSample.cpp.o: ../src/core/toolbox.h

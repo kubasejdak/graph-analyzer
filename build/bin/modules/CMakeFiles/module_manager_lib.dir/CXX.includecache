@@ -6,6 +6,18 @@
 
 #IncludeRegexTransform: 
 
+../src/core/ShellcodeInfo.h
+list
+-
+string
+-
+
+../src/core/ShellcodeSample.h
+core/ShellcodeInfo.h
+-
+core/toolbox.h
+-
+
 ../src/core/toolbox.h
 iostream
 -
@@ -21,8 +33,12 @@ core/toolbox.h
 ../src/modules/AbstractInput.h
 string
 -
+fstream
+-
 AbstractModule.h
 ../src/modules/AbstractModule.h
+core/ShellcodeSample.h
+-
 
 ../src/modules/AbstractModule.h
 string

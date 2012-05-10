@@ -16,7 +16,7 @@ public:
 	BinaryInput();
 	virtual ~BinaryInput();
 
-	virtual bool loadInput(string filename);
+	virtual bool loadInput(string filename, ShellcodeSample *sample);
 };
 
 #endif /* BINARYINPUT_H_ */

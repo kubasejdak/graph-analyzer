@@ -93,7 +93,7 @@ bin/core/CMakeFiles/graph_analyzer.dir/all: bin/modules/CMakeFiles/module_manage
 bin/core/CMakeFiles/graph_analyzer.dir/all: bin/modules/CMakeFiles/binary_input_lib.dir/all
 	$(MAKE) -f bin/core/CMakeFiles/graph_analyzer.dir/build.make bin/core/CMakeFiles/graph_analyzer.dir/depend
 	$(MAKE) -f bin/core/CMakeFiles/graph_analyzer.dir/build.make bin/core/CMakeFiles/graph_analyzer.dir/build
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/kuba/graph_analyzer/build/CMakeFiles  4 5 6 7
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/kuba/graph_analyzer/build/CMakeFiles  4 5 6 7 8
 	@echo "Built target graph_analyzer"
 .PHONY : bin/core/CMakeFiles/graph_analyzer.dir/all
 
@@ -103,7 +103,7 @@ all: bin/core/CMakeFiles/graph_analyzer.dir/all
 
 # Build rule for subdir invocation for target.
 bin/core/CMakeFiles/graph_analyzer.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/kuba/graph_analyzer/build/CMakeFiles 8
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/kuba/graph_analyzer/build/CMakeFiles 9
 	$(MAKE) -f CMakeFiles/Makefile2 bin/core/CMakeFiles/graph_analyzer.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/kuba/graph_analyzer/build/CMakeFiles 0
 .PHONY : bin/core/CMakeFiles/graph_analyzer.dir/rule
@@ -180,7 +180,7 @@ clean: bin/modules/CMakeFiles/binary_input_lib.dir/clean
 bin/modules/CMakeFiles/module_manager_lib.dir/all:
 	$(MAKE) -f bin/modules/CMakeFiles/module_manager_lib.dir/build.make bin/modules/CMakeFiles/module_manager_lib.dir/depend
 	$(MAKE) -f bin/modules/CMakeFiles/module_manager_lib.dir/build.make bin/modules/CMakeFiles/module_manager_lib.dir/build
-	$(CMAKE_COMMAND) -E cmake_progress_report /home/kuba/graph_analyzer/build/CMakeFiles  8
+	$(CMAKE_COMMAND) -E cmake_progress_report /home/kuba/graph_analyzer/build/CMakeFiles  9
 	@echo "Built target module_manager_lib"
 .PHONY : bin/modules/CMakeFiles/module_manager_lib.dir/all
 

@@ -7,15 +7,32 @@
 #include "AnalysisSystem.h"
 
 AnalysisSystem::AnalysisSystem() {
-	inputModules = ModuleManager::getInstance()->getInput();
-	outputModules = ModuleManager::getInstance()->getOutput();
+	loadModules();
+
+	changeStatus(IDLE);
 }
 
 AnalysisSystem::~AnalysisSystem() {
+	clearCache();
 }
 
 bool AnalysisSystem::loadShellcode(string filename) {
-	return true;
+	ShellcodeSample *s = new ShellcodeSample();
+	if(!s)
+		return false;
+
+	map<int, AbstractInput *>::iterator it;
+	for(it = inputModules->begin(); it!= inputModules->end(); ++it) {
+		if(iends_with(filename, (*it).second->getExtension())) {
+			bool ret = (*it).second->loadInput(filename, s);
+			if(ret)
+				samples.insert(pair<string, ShellcodeSample *>(filename, s));
+
+			return ret;
+		}
+	}
+
+	return false;
 }
 
 bool AnalysisSystem::analyze(string filename) {
@@ -23,7 +40,9 @@ bool AnalysisSystem::analyze(string filename) {
 }
 
 ShellcodeInfo AnalysisSystem::getResults(string filename) {
-	return ShellcodeInfo();
+	if(samples.find(filename) == samples.end())
+		return ShellcodeInfo();
+	return samples[filename]->getInfo();
 }
 
 bool AnalysisSystem::generateOutput(string filename, int method, string *output) {
@@ -35,9 +54,16 @@ SystemStatus AnalysisSystem::getStatus() {
 }
 
 void AnalysisSystem::clearCache() {
+	map<string, ShellcodeSample *>::iterator it;
+	for(it = samples.begin(); it != samples.end(); ++it) {
+		delete (*it).second;
+		samples.erase(it);
+	}
 }
 
 void AnalysisSystem::loadModules() {
+	inputModules = ModuleManager::getInstance()->getInput();
+	outputModules = ModuleManager::getInstance()->getOutput();
 }
 
 void AnalysisSystem::changeStatus(SystemStatus status) {

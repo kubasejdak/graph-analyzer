@@ -9,9 +9,12 @@
 
 /* standard headers*/
 #include <string>
+#include <fstream>
+using namespace std;
 
 /* project headers */
 #include "AbstractModule.h"
+#include <core/ShellcodeSample.h>
 
 class AbstractInput: public AbstractModule {
 public:
@@ -23,7 +26,7 @@ public:
 	}
 
 	string getExtension();
-	virtual bool loadInput(string filename) = 0;
+	virtual bool loadInput(string filename, ShellcodeSample *sample) = 0;
 
 protected:
 	static int nextID;

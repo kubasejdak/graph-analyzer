@@ -11,6 +11,8 @@ map
 -
 string
 -
+boost/algorithm/string.hpp
+-
 core/EmulationSystem.h
 -
 core/ShellcodeSample.h
@@ -25,11 +27,13 @@ modules/ModuleManager.h
 -
 
 ../src/core/EmulationSystem.h
-list
+map
 -
 core/ShellcodeSample.h
 -
 modules/AbstractAnalyze.h
+-
+modules/ModuleManager.h
 -
 
 ../src/core/ShellcodeInfo.h
@@ -39,8 +43,6 @@ string
 -
 
 ../src/core/ShellcodeSample.h
-fstream
--
 core/ShellcodeInfo.h
 -
 core/toolbox.h
@@ -63,8 +65,12 @@ core/toolbox.h
 ../src/modules/AbstractInput.h
 string
 -
+fstream
+-
 AbstractModule.h
 ../src/modules/AbstractModule.h
+core/ShellcodeSample.h
+-
 
 ../src/modules/AbstractModule.h
 string
@@ -109,6 +115,8 @@ map
 -
 string
 -
+boost/algorithm/string.hpp
+-
 core/EmulationSystem.h
 -
 core/ShellcodeSample.h
@@ -127,11 +135,23 @@ EmulationSystem.h
 /home/kuba/graph_analyzer/src/core/EmulationSystem.h
 
 /home/kuba/graph_analyzer/src/core/EmulationSystem.h
-list
+map
 -
 core/ShellcodeSample.h
 -
 modules/AbstractAnalyze.h
+-
+modules/ModuleManager.h
+-
+
+/home/kuba/graph_analyzer/src/core/ShellcodeSample.cpp
+ShellcodeSample.h
+/home/kuba/graph_analyzer/src/core/ShellcodeSample.h
+
+/home/kuba/graph_analyzer/src/core/ShellcodeSample.h
+core/ShellcodeInfo.h
+-
+core/toolbox.h
 -
 
 /home/kuba/graph_analyzer/src/core/main.cpp
@@ -140,6 +160,8 @@ iostream
 list
 -
 core/AnalysisSystem.h
+-
+core/ShellcodeInfo.h
 -
 core/version.h
 -

@@ -6,6 +6,7 @@ SET(core_src
 	AnalysisSystem.cpp
 	EmulationSystem.cpp
 	ShellcodeSample.cpp
+	ShellcodeInfo.cpp
    )
 
 #-------------------------------------

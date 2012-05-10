@@ -7,10 +7,6 @@
 #ifndef SHELLCODESAMPLE_H_
 #define SHELLCODESAMPLE_H_
 
-/* standard headers */
-#include <fstream>
-using namespace std;
-
 /* project headers */
 #include <core/ShellcodeInfo.h>
 #include <core/toolbox.h>
@@ -20,10 +16,12 @@ public:
 	ShellcodeSample();
 	virtual ~ShellcodeSample();
 
-	void extractCode();
+	byte_t * getCode();
+	ShellcodeInfo getInfo();
+
+	void setCode(byte_t *code);
 
 private:
-	fstream file;
 	byte_t *code;
 	ShellcodeInfo info;
 };

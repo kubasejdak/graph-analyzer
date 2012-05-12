@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include <iomanip>
+#include <stdint.h>
 using namespace std;
 
 #define DEBUG
@@ -36,6 +37,6 @@ using namespace std;
 	#define SHOWVAR_HEX_L(x)	;
 #endif
 
-typedef	unsigned char byte_t;
+typedef	uint8_t byte_t;
 
 #endif /* TOOLBOX_H_ */

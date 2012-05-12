@@ -11,6 +11,7 @@
 #include <map>
 
 /* project headers */
+#include <core/EmulationUnit.h>
 #include <core/ShellcodeSample.h>
 #include <modules/AbstractAnalyze.h>
 #include <modules/ModuleManager.h>
@@ -26,6 +27,7 @@ public:
 private:
 	void loadModules();
 
+	EmulationUnit *emuUnit;
 	ShellcodeSample *sample;
 	map<int, AbstractAnalyze *> *analyzeModules;
 };

@@ -1,21 +1,17 @@
+# === ROOT ===
+
 # required cmake version
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+cmake_minimum_required(VERSION 2.6)
 
 # project name
-PROJECT(GRAPH_ANALYZER)
+project(graph_analyzer)
 
 # options passed to the compiler
-ADD_DEFINITIONS(-g -O2 -Wall -Werror)
+add_definitions(-g -O2 -Wall -Werror)
 
-#-------------------------------------
 # include
-#-------------------------------------
-
-INCLUDE_DIRECTORIES(src)
-
-#-------------------------------------
-# source
-#-------------------------------------
+include_directories(src)
+include_directories(/opt/libemu/include)
 
 # source path
-ADD_SUBDIRECTORY(src bin)
+add_subdirectory(src)

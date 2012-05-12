@@ -9,14 +9,14 @@
 
 /* project headers */
 #include "modules/AbstractModule.h"
-#include <core/toolbox.h>
+#include <core/EmulationUnit.h>
 
 class AbstractAnalyze : public AbstractModule {
 public:
 	AbstractAnalyze();
 	virtual ~AbstractAnalyze();
 
-	virtual bool perform(byte_t *code) = 0;
+	virtual bool perform(EmulationUnit *emuUnit) = 0;
 };
 
 #endif /* ABSTRACTANALYZE_H_ */

@@ -21,14 +21,14 @@
 class ModuleManager {
 public:
 	virtual ~ModuleManager();
-	static ModuleManager * getInstance() {
+	static ModuleManager *getInstance() {
 		static ModuleManager instance;
 	    return &instance;
 	}
 
-	map<int, AbstractInput *> * getInput();
-	map<int, AbstractOutput *> * getOutput();
-	map<int, AbstractAnalyze *> * getAnalyze();
+	map<int, AbstractInput *> *getInput();
+	map<int, AbstractOutput *> *getOutput();
+	map<int, AbstractAnalyze *> *getAnalyze();
 
 	list<ModuleInfo> listInput();
 	list<ModuleInfo> listOutput();

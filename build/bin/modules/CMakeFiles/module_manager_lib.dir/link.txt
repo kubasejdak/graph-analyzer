@@ -1,2 +1,0 @@
-/usr/bin/ar cr libmodule_manager_lib.a  CMakeFiles/module_manager_lib.dir/ModuleManager.cpp.o
-/usr/bin/ranlib libmodule_manager_lib.a

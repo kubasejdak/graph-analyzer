@@ -19,7 +19,7 @@ byte_t * ShellcodeSample::getCode() {
 	return code;
 }
 
-ShellcodeInfo ShellcodeSample::getInfo() {
+ShellcodeInfo &ShellcodeSample::getInfo() {
 	return info;
 }
 

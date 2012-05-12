@@ -37,10 +37,15 @@ int main(int argc, char *argv[]) {
 	}
 	cout << endl;
 
-	system.loadShellcode("test_file.bin");
-	ShellcodeInfo info = system.getResults("test_file.bin");
-	cout << "Results for test_file.bin:" << endl;
-	printShellcodeInfo(info);
+	bool success = system.loadShellcode("test_file.bin");
+	if(success) {
+		ShellcodeInfo info = system.getResults("test_file.bin");
+		cout << "Results for test_file.bin:" << endl;
+		printShellcodeInfo(info);
+	}
+	else
+		SHOWERR("opening test_file.bin");
+
 	return 0;
 }
 

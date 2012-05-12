@@ -24,10 +24,10 @@ public:
 	bool emulate();
 
 private:
+	void loadModules();
+
 	ShellcodeSample *sample;
 	map<int, AbstractAnalyze *> *analyzeModules;
-
-	void loadModules();
 };
 
 #endif /* EMULATIONSYSTEM_H_ */

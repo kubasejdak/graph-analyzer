@@ -16,8 +16,8 @@ public:
 	ShellcodeSample();
 	virtual ~ShellcodeSample();
 
-	byte_t * getCode();
-	ShellcodeInfo getInfo();
+	byte_t *getCode();
+	ShellcodeInfo &getInfo();
 
 	void setCode(byte_t *code);
 

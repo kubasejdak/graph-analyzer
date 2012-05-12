@@ -17,8 +17,7 @@ BinaryInput::~BinaryInput() {
 }
 
 bool BinaryInput::loadInput(string filename, ShellcodeSample *sample) {
-	fstream file;
-	file.open(filename.c_str(), ios::in | ios::binary);
+	fstream file(filename.c_str(), fstream::in | fstream::binary);
 	if(!file.is_open())
 		return false;
 

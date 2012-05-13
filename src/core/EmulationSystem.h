@@ -7,10 +7,13 @@
 #ifndef EMULATIONSYSTEM_H_
 #define EMULATIONSYSTEM_H_
 
+#define	EMULATION_STEPS		1000000
+
 /* standard headers */
 #include <map>
 
 /* project headers */
+#include <core/toolbox.h>
 #include <core/EmulationUnit.h>
 #include <core/ShellcodeSample.h>
 #include <modules/AbstractAnalyze.h>

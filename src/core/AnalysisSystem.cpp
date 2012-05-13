@@ -36,16 +36,23 @@ bool AnalysisSystem::loadShellcode(string filename) {
 }
 
 bool AnalysisSystem::analyze(string filename) {
-	return true;
+	changeStatus(WORKING);
+	emuSystem.loadSample(samples[filename]);
+	bool ret = emuSystem.emulate();
+	changeStatus(IDLE);
+
+	return ret;
 }
 
 ShellcodeInfo AnalysisSystem::getResults(string filename) {
 	if(samples.find(filename) == samples.end())
 		return ShellcodeInfo();
+
 	return samples[filename]->getInfo();
 }
 
 bool AnalysisSystem::generateOutput(string filename, int method, string *output) {
+	/* FIXME: implement */
 	return true;
 }
 

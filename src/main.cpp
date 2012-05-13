@@ -5,6 +5,7 @@
  */
 
 #define AUTHOR		"Kuba Sejdak"
+#define TEST_FILE	"shell_1.bin"
 
 /* standard headers */
 #include <iostream>
@@ -37,14 +38,21 @@ int main(int argc, char *argv[]) {
 	}
 	cout << endl;
 
-	bool success = system.loadShellcode("test_file.bin");
-	if(success) {
-		ShellcodeInfo info = system.getResults("test_file.bin");
-		cout << "Results for test_file.bin:" << endl;
-		printShellcodeInfo(info);
+	bool ret;
+	ret = system.loadShellcode(TEST_FILE);
+	if(!ret) {
+		SHOWERR("opening file");
+		return 0;
+	}
+
+	ret = system.analyze(TEST_FILE);
+	if(ret) {
+		ShellcodeInfo info = system.getResults(TEST_FILE);
+		cout << "Results for " << TEST_FILE << ":" << endl;
+		info.printInfo();
 	}
 	else
-		SHOWERR("opening test_file.bin");
+		SHOWERR("analyzing file");
 
 	return 0;
 }
@@ -53,17 +61,4 @@ void printModuleInfo(ModuleInfo info) {
 	cout << "name: " << info.name << endl;
 	cout << "id: " << info.id << endl;
 	cout << "description: " << info.description << endl;
-}
-void printShellcodeInfo(ShellcodeInfo info) {
-	cout << "name: " << info.name << endl;
-	cout << "size: " << info.size << endl;
-	cout << "code offset: " << info.codeOffset << endl;
-	cout << "shellcode present: " << (info.shellcodePresent ? "yes" : "no") << endl;
-	cout << "general type: " << info.genType << endl;
-	cout << "connection type: " << info.connType << endl;
-	cout << "used system API: ";
-	list<string>::iterator it;
-	for(it = info.usedSysAPI.begin(); it != info.usedSysAPI.end(); ++it)
-		cout << (*it) << "() ";
-	cout << endl;
 }

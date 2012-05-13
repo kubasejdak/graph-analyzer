@@ -9,8 +9,8 @@
 BinaryInput::BinaryInput() {
 	id = getNextID();
 	name = "BinaryInput";
-	description = "Loads shellcode from binary files. Supports *.bin files.";
 	extension = ".bin";
+	description = "Loads shellcode from binary files. Supports " + extension + " files.";
 }
 
 BinaryInput::~BinaryInput() {
@@ -30,8 +30,8 @@ bool BinaryInput::loadInput(string filename, ShellcodeSample *sample) {
 	file.close();
 
 	sample->setCode((byte_t *) buffer);
-	sample->getInfo().name = filename;
-	sample->getInfo().size = size;
+	sample->getInfo().setName(filename);
+	sample->getInfo().setSize(size);
 
 	return true;
 }

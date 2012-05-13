@@ -25,9 +25,27 @@ bool EmulationSystem::emulate() {
 	if(!sample)
 		return false;
 
-	// emulate here
+	/* load code to emu unit */
+	int32_t codeOffset;
+	codeOffset = emuUnit->loadCode(sample->getCode(), sample->getInfo().getSize());
+	sample->getInfo().setCodeOffset(codeOffset);
+	sample->getInfo().setShellcodePresent(codeOffset >= 0 ? true : false);
 
-	sample = NULL;
+	/* start emulating CPU steps */
+	bool status;
+	map<int, AbstractAnalyze *>::iterator it;
+	for(int i = 0; i < EMULATION_STEPS; ++i) {
+		for(it = analyzeModules->begin(); it != analyzeModules->end(); ++it) {
+			status = (*it).second->perform(emuUnit);
+			if(!status)
+				return false;
+		}
+
+		status = emuUnit->step();
+		if(!status)
+			break;
+	}
+
 	return true;
 }
 

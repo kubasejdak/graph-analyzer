@@ -17,12 +17,12 @@ using namespace std;
 
 #ifdef DEBUG
 	#define	SHOWMSG(x)			clog << "DEBUG: " << x << endl
-	#define SHOWERR(x)			clog << "ERROR: " << x << endl
+	#define SHOWERR(x)			cerr << "ERROR: " << x << endl
 	#define SHOWVAR(x)			clog << "DEBUG: " << #x << " = " << x << endl
 	#define SHOWVAR_HEX(x)		clog << "DEBUG: " << #x << " = 0x" << hex << x << endl
 
 	#define	SHOWMSG_L(x)		clog << PLACE_IN_CODE << "DEBUG: " << x << endl
-	#define	SHOWERR_L(x)		clog << PLACE_IN_CODE << "ERROR: " << x << endl
+	#define	SHOWERR_L(x)		cerr << PLACE_IN_CODE << "ERROR: " << x << endl
 	#define SHOWVAR_L(x)		clog << PLACE_IN_CODE << "DEBUG: " << #x << " = " << x << endl
 	#define SHOWVAR_HEX_L(x)	clog << PLACE_IN_CODE << "DEBUG: " << #x << " = 0x" << hex << x << endl
 #else

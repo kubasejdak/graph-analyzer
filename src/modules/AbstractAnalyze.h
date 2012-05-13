@@ -7,6 +7,13 @@
 #ifndef ABSTRACTANALYZE_H_
 #define ABSTRACTANALYZE_H_
 
+/* libemu headers */
+extern "C" {
+	#include <emu/emu.h>
+	#include <emu/emu_cpu.h>
+	#include <emu/emu_memory.h>
+}
+
 /* project headers */
 #include "modules/AbstractModule.h"
 #include <core/EmulationUnit.h>

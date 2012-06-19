@@ -5,7 +5,6 @@
  */
 
 #define AUTHOR		"Kuba Sejdak"
-#define TEST_FILE	"shell_1.bin"
 
 /* standard headers */
 #include <iostream>
@@ -28,7 +27,13 @@ int main(int argc, char *argv[]) {
 	cout << "Build date: " << __DATE__ << endl;
 	cout << endl;
 
+	if(argc < 2) {
+		SHOWERR("no input file");
+		return 0;
+	}
+
 	AnalysisSystem system;
+	string input_file = argv[1];
 
 	list<ModuleInfo> mods = ModuleManager::getInstance()->listInput();
 	list<ModuleInfo>::iterator it;
@@ -40,16 +45,16 @@ int main(int argc, char *argv[]) {
 	cout << endl;
 
 	bool ret;
-	ret = system.loadShellcode(TEST_FILE);
+	ret = system.loadShellcode(input_file);
 	if(!ret) {
 		SHOWERR("opening file");
 		return 0;
 	}
 
-	ret = system.analyze(TEST_FILE);
+	ret = system.analyze(input_file);
 	if(ret) {
-		ShellcodeInfo info = system.getResults(TEST_FILE);
-		cout << "Results for " << TEST_FILE << ":" << endl;
+		ShellcodeInfo info = system.getResults(input_file);
+		cout << "Results for " << input_file << ":" << endl;
 		info.printInfo();
 	}
 	else

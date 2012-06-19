@@ -1,6 +1,6 @@
 /*
  *  Filename	: AbstractAnalyze.cpp
- *  Author		: Kuba Sejdak
+ *  Author	: Kuba Sejdak
  *  Created on	: 07-05-2012
  */
 

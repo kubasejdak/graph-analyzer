@@ -1,6 +1,6 @@
 /*
  *  Filename	: ModuleManager.h
- *  Author		: Kuba Sejdak
+ *  Author	: Kuba Sejdak
  *  Created on	: 08-05-2012
  */
 

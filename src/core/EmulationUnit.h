@@ -1,6 +1,6 @@
 /*
  *  Filename	: EmulationUnit.h
- *  Author		: Kuba Sejdak
+ *  Author	: Kuba Sejdak
  *  Created on	: 12-05-2012
  */
 
@@ -38,7 +38,7 @@ public:
 	void resetUnit();
 
 	bool step();
-	int32_t loadCode(byte_t *code, int size);
+	int32_t loadCode(byte_t *code, int32_t size);
 
 	struct emu *getEmu();
 	struct emu_cpu *getCpu();
@@ -47,7 +47,7 @@ public:
 	int32_t getCodeOffset();
 
 private:
-	int32_t getPcTest(byte_t *code, int size);
+	int32_t getPcTest(byte_t *code, int32_t size);
 	void prepareIATForSQLSlammer();
 	void exportWin32Hooks();
 	void exportLinuxHooks();

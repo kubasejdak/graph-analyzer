@@ -1,6 +1,6 @@
 /*
  *  Filename	: EmulationUnit.cpp
- *  Author		: Kuba Sejdak
+ *  Author	: Kuba Sejdak
  *  Created on	: 12-05-2012
  */
 
@@ -46,7 +46,7 @@ bool EmulationUnit::step() {
 	return true;
 }
 
-int32_t EmulationUnit::loadCode(byte_t *code, int size) {
+int32_t EmulationUnit::loadCode(byte_t *code, int32_t size) {
 	/* perform getPC test */
 		codeOffset = getPcTest(code, size);
 
@@ -97,7 +97,7 @@ struct emu_env *EmulationUnit::getEnv() {
 	return env;
 }
 
-int32_t EmulationUnit::getPcTest(byte_t *code, int size) {
+int32_t EmulationUnit::getPcTest(byte_t *code, int32_t size) {
 	int32_t off = emu_shellcode_test(emu, code, size);
 	resetUnit();
 

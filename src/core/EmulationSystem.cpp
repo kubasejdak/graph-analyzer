@@ -1,6 +1,6 @@
 /*
  *  Filename	: EmulationSystem.cpp
- *  Author		: Kuba Sejdak
+ *  Author	: Kuba Sejdak
  *  Created on	: 03-05-2012
  */
 

@@ -1,6 +1,6 @@
 /*
  *  Filename	: main.cpp
- *  Author		: Kuba Sejdak
+ *  Author	: Kuba Sejdak
  *  Created on	: 01-05-2012
  */
 
@@ -25,6 +25,7 @@ void printShellcodeInfo(ShellcodeInfo info);
 int main(int argc, char *argv[]) {
 	cout << "Welcome to graph_analyzer " << VERSION << endl;
 	cout << "Author: " << AUTHOR << endl;
+	cout << "Build date: " << __DATE__ << endl;
 	cout << endl;
 
 	AnalysisSystem system;

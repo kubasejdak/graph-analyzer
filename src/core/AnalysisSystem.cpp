@@ -1,6 +1,6 @@
 /*
  *  Filename	: AnalysisSystem.cpp
- *  Author		: Kuba Sejdak
+ *  Author	: Kuba Sejdak
  *  Created on	: 01-05-2012
  */
 
@@ -52,7 +52,7 @@ ShellcodeInfo AnalysisSystem::getResults(string filename) {
 }
 
 bool AnalysisSystem::generateOutput(string filename, int method, string *output) {
-	/* FIXME: implement */
+	/* TODO: implement */
 	return true;
 }
 

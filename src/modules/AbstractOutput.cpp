@@ -1,6 +1,6 @@
 /*
  *  Filename	: AbstractOutput.cpp
- *  Author		: Kuba Sejdak
+ *  Author	: Kuba Sejdak
  *  Created on	: 06-05-2012
  */
 

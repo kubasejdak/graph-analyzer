@@ -19,7 +19,7 @@ public:
 
 	byte_t *getCode();
 	ShellcodeInfo &getInfo();
-	Graph getGraph();
+	Graph *getGraph();
 
 	void setCode(byte_t *code);
 

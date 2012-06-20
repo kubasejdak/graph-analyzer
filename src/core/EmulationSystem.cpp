@@ -9,8 +9,6 @@
 EmulationSystem::EmulationSystem() {
 	emuUnit = new EmulationUnit();
 	sample = NULL;
-
-	loadModules();
 }
 
 EmulationSystem::~EmulationSystem() {
@@ -31,25 +29,8 @@ bool EmulationSystem::emulate() {
 	sample->getInfo().setCodeOffset(codeOffset);
 	sample->getInfo().setShellcodePresent(codeOffset >= 0 ? true : false);
 
-	/* start emulating CPU steps */
+	/* start emulation */
+
 
 	return true;
-}
-
-bool EmulationSystem::analyze() {
-	bool status;
-	map<int, AbstractAnalyze *>::iterator it;
-	for(int i = 0; i < EMULATION_STEPS; ++i) {
-		for(it = analyzeModules->begin(); it != analyzeModules->end(); ++it) {
-			status = (*it).second->perform(emuUnit);
-			if(!status)
-				return false;
-		}
-	}
-
-	return true;
-}
-
-void EmulationSystem::loadModules() {
-	analyzeModules = ModuleManager::getInstance()->getAnalyze();
 }

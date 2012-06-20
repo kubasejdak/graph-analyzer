@@ -25,8 +25,8 @@ ShellcodeInfo &ShellcodeSample::getInfo() {
 	return info;
 }
 
-Graph ShellcodeSample::getGraph() {
-	return *graph;
+Graph *ShellcodeSample::getGraph() {
+	return graph;
 }
 
 void ShellcodeSample::setCode(byte_t *code) {

@@ -9,14 +9,14 @@
 /* standard headers */
 #include <iostream>
 #include <list>
+using namespace std;
 
 /* project headers */
 #include <core/CoreSystem.h>
 #include <core/ShellcodeInfo.h>
-#include <core/version.h>
 #include <modules/ModuleInfo.h>
 #include <modules/ModuleManager.h>
-using namespace std;
+#include <version.h>
 
 void printIntro();
 void printModuleInfo(ModuleInfo *info);

@@ -22,7 +22,7 @@ void ShellcodeInfo::printInfo() {
 	cout << "size = " << size << endl;
 	cout << "code offset = 0x" << hex << codeOffset << endl;
 	cout << "shellcode present = " << (shellcodePresent ? "yes" : "no") << endl;
-	list<pair<string, string> >::iterator it;
+	map<string, string>::iterator it;
 	for(it = modParams.begin(); it != modParams.end(); ++it)
 		cout << (*it).first << " = " << (*it).second << endl;
 }
@@ -60,6 +60,5 @@ void ShellcodeInfo::setShellcodePresent(bool shellcodePresent) {
 }
 
 void ShellcodeInfo::setModParam(string name, string value) {
-	pair<string, string> p(name, value);
-	modParams.push_back(p);
+	modParams[name] = value;
 }

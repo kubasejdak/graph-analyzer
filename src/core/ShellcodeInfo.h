@@ -8,7 +8,7 @@
 #define SHELLCODEINFO_H_
 
 /* standard headers */
-#include <list>
+#include <map>
 #include <string>
 #include <stdint.h>
 #include <iostream>
@@ -38,7 +38,7 @@ private:
 	int32_t size;
 	int32_t codeOffset;
 	bool shellcodePresent;
-	list<pair<string, string> > modParams;
+	map<string, string> modParams;
 };
 
 #endif /* SHELLCODEINFO_H_ */

@@ -19,6 +19,9 @@ void AnalysisSystem::loadSample(ShellcodeSample *sample) {
 }
 
 bool AnalysisSystem::analyze() {
+	if(!sample)
+		return false;
+
 	bool status;
 	map<int, AbstractAnalyze *>::iterator it;
 	for(it = analyzeModules->begin(); it != analyzeModules->end(); ++it) {
@@ -27,6 +30,7 @@ bool AnalysisSystem::analyze() {
 			return false;
 	}
 
+	sample = NULL;
 	return true;
 }
 

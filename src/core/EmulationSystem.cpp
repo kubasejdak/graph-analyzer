@@ -34,6 +34,6 @@ bool EmulationSystem::emulate() {
 		// TODO: implement
 	}
 
-
+	sample = NULL;
 	return true;
 }

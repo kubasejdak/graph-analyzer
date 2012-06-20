@@ -21,7 +21,7 @@ ModuleManager::~ModuleManager() {
 void ModuleManager::loadInput() {
 	/* BinaryInput */
 	BinaryInput *binaryInput = new BinaryInput();
-	inputModules.insert(pair<int, AbstractInput *>(binaryInput->getId(), binaryInput));
+	inputModules[binaryInput->getId()] = binaryInput;
 }
 
 void ModuleManager::loadOutput() {

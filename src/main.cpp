@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
 	/* check cmd arguments */
 	if(argc < 2) {
 		SHOWERR("no input file");
-		return 0;
+		return 1;
 	}
 	string input_file = argv[1];
 

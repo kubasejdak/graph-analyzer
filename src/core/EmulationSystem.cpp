@@ -30,6 +30,9 @@ bool EmulationSystem::emulate() {
 	sample->getInfo().setShellcodePresent(codeOffset >= 0 ? true : false);
 
 	/* start emulation */
+	for(int i = 0; i < EMULATION_STEPS; ++i) {
+		// TODO: implement
+	}
 
 
 	return true;

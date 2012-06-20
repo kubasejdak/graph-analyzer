@@ -21,12 +21,10 @@ void AnalysisSystem::loadSample(ShellcodeSample *sample) {
 bool AnalysisSystem::analyze() {
 	bool status;
 	map<int, AbstractAnalyze *>::iterator it;
-	for(int i = 0; i < EMULATION_STEPS; ++i) {
-		for(it = analyzeModules->begin(); it != analyzeModules->end(); ++it) {
-			status = (*it).second->perform(sample);
-			if(!status)
-				return false;
-		}
+	for(it = analyzeModules->begin(); it != analyzeModules->end(); ++it) {
+		status = (*it).second->perform(sample);
+		if(!status)
+			return false;
 	}
 
 	return true;

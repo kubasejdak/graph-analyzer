@@ -7,8 +7,6 @@
 #ifndef ANALYSISSYSTEM_H_
 #define ANALYSISSYSTEM_H_
 
-#define	EMULATION_STEPS	1000000
-
 /* standard headers */
 #include <map>
 

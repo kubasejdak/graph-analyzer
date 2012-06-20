@@ -42,44 +42,29 @@ map<int, AbstractAnalyze *> * ModuleManager::getAnalyze() {
 	return &analyzeModules;
 }
 
-list<ModuleInfo> ModuleManager::listInput() {
-	list<ModuleInfo> modList;
+list<ModuleInfo *> ModuleManager::listInput() {
+	list<ModuleInfo *> modList;
 	map<int, AbstractInput *>::iterator it;
-	for(it = inputModules.begin(); it != inputModules.end(); ++it) {
-		ModuleInfo info;
-		info.id = (*it).second->getId();
-		info.name = (*it).second->getName();
-		info.description = (*it).second->getDescription();
-		modList.push_back(info);
-	}
+	for(it = inputModules.begin(); it != inputModules.end(); ++it)
+		modList.push_back((*it).second->getModuleInfo());
 
 	return modList;
 }
 
-list<ModuleInfo> ModuleManager::listOutput() {
-	list<ModuleInfo> modList;
+list<ModuleInfo *> ModuleManager::listOutput() {
+	list<ModuleInfo *> modList;
 	map<int, AbstractOutput *>::iterator it;
-	for(it = outputModules.begin(); it != outputModules.end(); ++it) {
-		ModuleInfo info;
-		info.id = (*it).second->getId();
-		info.name = (*it).second->getName();
-		info.description = (*it).second->getDescription();
-		modList.push_back(info);
-	}
+	for(it = outputModules.begin(); it != outputModules.end(); ++it)
+		modList.push_back((*it).second->getModuleInfo());
 
 	return modList;
 }
 
-list<ModuleInfo> ModuleManager::listAnalyze() {
-	list<ModuleInfo> modList;
+list<ModuleInfo *> ModuleManager::listAnalyze() {
+	list<ModuleInfo *> modList;
 	map<int, AbstractAnalyze *>::iterator it;
-	for(it = analyzeModules.begin(); it != analyzeModules.end(); ++it) {
-		ModuleInfo info;
-		info.id = (*it).second->getId();
-		info.name = (*it).second->getName();
-		info.description = (*it).second->getDescription();
-		modList.push_back(info);
-	}
+	for(it = analyzeModules.begin(); it != analyzeModules.end(); ++it)
+		modList.push_back((*it).second->getModuleInfo());
 
 	return modList;
 }

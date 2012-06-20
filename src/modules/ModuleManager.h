@@ -30,9 +30,9 @@ public:
 	map<int, AbstractOutput *> *getOutput();
 	map<int, AbstractAnalyze *> *getAnalyze();
 
-	list<ModuleInfo> listInput();
-	list<ModuleInfo> listOutput();
-	list<ModuleInfo> listAnalyze();
+	list<ModuleInfo *> listInput();
+	list<ModuleInfo *> listOutput();
+	list<ModuleInfo *> listAnalyze();
 
 private:
 	ModuleManager();

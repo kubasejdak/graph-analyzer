@@ -23,3 +23,11 @@ string AbstractModule::getName() {
 string AbstractModule::getDescription() {
 	return description;
 }
+
+ModuleInfo *AbstractModule::getModuleInfo() {
+	info.id = id;
+	info.name = name;
+	info.description = description;
+
+	return &info;
+}

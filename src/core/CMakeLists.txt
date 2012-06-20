@@ -2,10 +2,11 @@
 
 # core library
 set(CORE_SRC
-	AnalysisSystem.cpp 
+	CoreSystem.cpp 
 	EmulationSystem.cpp
 	EmulationUnit.cpp
 	ShellcodeSample.cpp
-	ShellcodeInfo.cpp)
+	ShellcodeInfo.cpp
+	Graph.cpp)
 
 add_library(core ${CORE_SRC})

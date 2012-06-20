@@ -9,6 +9,7 @@
 
 /* project headers */
 #include <core/ShellcodeInfo.h>
+#include <core/Graph.h>
 #include <core/toolbox.h>
 
 class ShellcodeSample {
@@ -18,12 +19,14 @@ public:
 
 	byte_t *getCode();
 	ShellcodeInfo &getInfo();
+	Graph getGraph();
 
 	void setCode(byte_t *code);
 
 private:
 	byte_t *code;
 	ShellcodeInfo info;
+	Graph *graph;
 };
 
 #endif /* SHELLCODESAMPLE_H_ */

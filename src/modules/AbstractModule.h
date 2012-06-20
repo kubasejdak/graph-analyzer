@@ -15,6 +15,9 @@
 #include <string>
 using namespace std;
 
+/* project headers */
+#include <modules/ModuleInfo.h>
+
 class AbstractModule {
 public:
 	AbstractModule();
@@ -23,11 +26,13 @@ public:
 	int getId();
 	string getName();
 	string getDescription();
+	ModuleInfo *getModuleInfo();
 
 protected:
 	int id;
 	string name;
 	string description;
+	ModuleInfo info;
 };
 
 #endif /* ABSTRACTMODULE_H_ */

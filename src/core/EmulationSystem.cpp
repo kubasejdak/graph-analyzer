@@ -32,6 +32,11 @@ bool EmulationSystem::emulate() {
 	sample->getInfo().setShellcodePresent(codeOffset >= 0 ? true : false);
 
 	/* start emulating CPU steps */
+
+	return true;
+}
+
+bool EmulationSystem::analyze() {
 	bool status;
 	map<int, AbstractAnalyze *>::iterator it;
 	for(int i = 0; i < EMULATION_STEPS; ++i) {
@@ -40,10 +45,6 @@ bool EmulationSystem::emulate() {
 			if(!status)
 				return false;
 		}
-
-		status = emuUnit->step();
-		if(!status)
-			break;
 	}
 
 	return true;

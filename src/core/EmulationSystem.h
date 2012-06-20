@@ -26,6 +26,7 @@ public:
 
 	void loadSample(ShellcodeSample *sample);
 	bool emulate();
+	bool analyze();
 
 private:
 	void loadModules();

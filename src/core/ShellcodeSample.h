@@ -10,7 +10,7 @@
 /* project headers */
 #include <core/ShellcodeInfo.h>
 #include <core/Graph.h>
-#include <core/toolbox.h>
+#include <toolbox.h>
 
 class ShellcodeSample {
 public:

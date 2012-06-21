@@ -23,7 +23,7 @@ extern "C" {
 #include <stdint.h>
 
 /* project headers */
-#include <core/toolbox.h>
+#include <toolbox.h>
 #if 0
 #include <core/UserHooks.h>
 #endif

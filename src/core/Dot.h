@@ -23,12 +23,11 @@ extern "C" {
 	#include <emu/environment/win32/emu_env_w32_dll.h>
 	#include <emu/environment/win32/emu_env_w32_dll_export.h>
 	#include <emu/environment/win32/env_w32_dll_export_kernel32_hooks.h>
-	//#include <emu/environment/linux/env_linux_syscalls.h>
 	#include <emu/environment/linux/env_linux_syscall_hooks.h>
 }
 
 /* project headers */
-#include <core/toolbox.h>
+#include <toolbox.h>
 
 struct instr_vertex {
 	uint32_t eip;

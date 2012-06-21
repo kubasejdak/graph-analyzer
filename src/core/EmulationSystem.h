@@ -24,11 +24,10 @@ extern "C" {
 	#include <emu/environment/win32/emu_env_w32_dll_export.h>
 	#include <emu/environment/linux/emu_env_linux.h>
 	#include <emu/environment/linux/env_linux_syscall_hooks.h>
-	//#include <emu/environment/linux/env_linux_syscalls.h>
 }
 
 /* project headers */
-#include <core/toolbox.h>
+#include <toolbox.h>
 #include <core/EmulationUnit.h>
 #include <core/ShellcodeSample.h>
 #include <core/Dot.h>

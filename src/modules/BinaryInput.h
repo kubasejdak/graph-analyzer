@@ -9,7 +9,7 @@
 
 /* project headers */
 #include "AbstractInput.h"
-#include <core/toolbox.h>
+#include <toolbox.h>
 
 class BinaryInput: public AbstractInput {
 public:

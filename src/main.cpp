@@ -17,6 +17,7 @@ using namespace std;
 #include <modules/ModuleInfo.h>
 #include <modules/ModuleManager.h>
 #include <version.h>
+#include <toolbox.h>
 
 void printIntro();
 void printModuleInfo(ModuleInfo *info);

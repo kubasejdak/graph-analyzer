@@ -8,6 +8,7 @@ set(CORE_SRC
 	EmulationUnit.cpp
 	ShellcodeSample.cpp
 	ShellcodeInfo.cpp
-	Graph.cpp)
+	Graph.cpp
+	Dot.cpp)
 
 add_library(core ${CORE_SRC})

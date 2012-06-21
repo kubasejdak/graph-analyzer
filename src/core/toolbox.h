@@ -17,6 +17,7 @@ using namespace std;
 
 #ifdef DEBUG
 	#define	SHOWMSG(x)		clog << "DEBUG: " << x << endl
+	#define PRINTMSG(fmt, ...)	fprintf(stderr, "DEBUG: " fmt "\n", __VA_ARGS__)
 	#define SHOWERR(x)		cerr << "ERROR: " << x << endl
 	#define SHOWVAR(x)		clog << "DEBUG: " << #x << " = " << x << endl
 	#define SHOWVAR_HEX(x)		clog << "DEBUG: " << #x << " = 0x" << hex << x << endl
@@ -27,6 +28,7 @@ using namespace std;
 	#define SHOWVAR_HEX_L(x)	clog << PLACE_IN_CODE << "DEBUG: " << #x << " = 0x" << hex << x << endl
 #else
 	#define	SHOWMSG(x)		;
+	#define PRINTMSG(fmt, ...)	;
 	#define	SHOWERR(x)		;
 	#define SHOWVAR(x)		;
 	#define SHOWVAR_HEX(x)		;

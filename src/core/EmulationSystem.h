@@ -9,10 +9,29 @@
 
 #define	EMULATION_STEPS	1000000
 
+/* libemu headers */
+extern "C" {
+	#include <emu/emu.h>
+	#include <emu/emu_cpu_data.h>
+	#include <emu/emu_cpu.h>
+	#include <emu/emu_memory.h>
+	#include <emu/emu_shellcode.h>
+	#include <emu/emu_graph.h>
+	#include <emu/environment/emu_env.h>
+	#include <emu/environment/emu_profile.h>
+	#include <emu/environment/win32/emu_env_w32.h>
+	#include <emu/environment/win32/emu_env_w32_dll.h>
+	#include <emu/environment/win32/emu_env_w32_dll_export.h>
+	#include <emu/environment/linux/emu_env_linux.h>
+	#include <emu/environment/linux/env_linux_syscall_hooks.h>
+	//#include <emu/environment/linux/env_linux_syscalls.h>
+}
+
 /* project headers */
 #include <core/toolbox.h>
 #include <core/EmulationUnit.h>
 #include <core/ShellcodeSample.h>
+#include <core/Dot.h>
 
 class EmulationSystem {
 public:

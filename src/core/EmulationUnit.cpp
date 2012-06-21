@@ -86,11 +86,11 @@ struct emu *EmulationUnit::getEmu() {
 }
 
 struct emu_cpu *EmulationUnit::getCpu() {
-	return emu_cpu_get(emu);
+	return cpu;
 }
 
 struct emu_memory *EmulationUnit::getMemory() {
-	return emu_memory_get(emu);
+	return mem;
 }
 
 struct emu_env *EmulationUnit::getEnv() {

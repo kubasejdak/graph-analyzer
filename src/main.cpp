@@ -28,10 +28,9 @@ int main(int argc, char *argv[]) {
 
 	/* check cmd arguments */
 	if(argc < 2) {
-		SHOWERR("no input file");
+		SHOWERR("no input files");
 		return 1;
 	}
-	string input_file = argv[1];
 
 	/* create main system */
 	CoreSystem system;
@@ -41,30 +40,34 @@ int main(int argc, char *argv[]) {
 
 	bool ret;
 
-	/* load shellcode */
-	ret = system.loadShellcode(input_file);
-	if(!ret) {
-		SHOWERR("opening file");
-		return 1;
-	}
+	for(int i = 1; i < argc; ++i) {
+		string input_file = argv[i];
 
-	/* emulate shellcode */
-	ret = system.emulate(input_file);
-	if(!ret) {
-		SHOWERR("emulating");
-		return 1;
-	}
+		/* load shellcode */
+		ret = system.loadShellcode(input_file);
+		if(!ret) {
+			PRINTERR("opening file %s", input_file.c_str());
+			continue;
+		}
 
-	/* analyze graph */
-	ret = system.analyze(input_file);
-	if(!ret) {
-		SHOWERR("analyzing");
-		return 1;
-	}
+		/* emulate shellcode */
+		ret = system.emulate(input_file);
+		if(!ret) {
+			PRINTERR("emulating %s", input_file.c_str());
+			continue;
+		}
 
-	ShellcodeInfo info = system.getResults(input_file);
-	cout << "Results for " << input_file << ":" << endl;
-	info.printInfo();
+		/* analyze graph */
+		ret = system.analyze(input_file);
+		if(!ret) {
+			PRINTERR("analyzing %s", input_file.c_str());
+			continue;
+		}
+
+		ShellcodeInfo info = system.getResults(input_file);
+		cout << "Results for " << input_file << ":" << endl;
+		info.printInfo();
+	}
 
 	return 0;
 }

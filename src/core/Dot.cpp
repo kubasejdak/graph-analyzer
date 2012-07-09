@@ -4,6 +4,10 @@
  * Created on	: 21-06-2012
  */
 
+/* debug */
+//#define LOCAL_DEBUG
+#include <debug.h>
+
 #include "Dot.h"
 
 struct instr_vertex *instr_vertex_new(uint32_t theeip, const char *instr_string) {

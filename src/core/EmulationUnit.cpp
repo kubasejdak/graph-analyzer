@@ -4,6 +4,10 @@
  *  Created on	: 12-05-2012
  */
 
+/* debug */
+#define LOCAL_DEBUG
+#include <debug.h>
+
 #include "EmulationUnit.h"
 
 EmulationUnit::EmulationUnit() {

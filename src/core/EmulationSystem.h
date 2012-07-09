@@ -27,7 +27,6 @@ extern "C" {
 }
 
 /* project headers */
-#include <toolbox.h>
 #include <core/EmulationUnit.h>
 #include <core/ShellcodeSample.h>
 #include <core/Dot.h>

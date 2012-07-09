@@ -6,6 +6,10 @@
 
 #define AUTHOR	"Kuba Sejdak"
 
+/* debug */
+#define LOCAL_DEBUG
+#include <debug.h>
+
 /* standard headers */
 #include <iostream>
 #include <list>
@@ -17,9 +21,11 @@ using namespace std;
 #include <modules/ModuleInfo.h>
 #include <modules/ModuleManager.h>
 #include <version.h>
-#include <toolbox.h>
+
+
 
 void printIntro();
+void printUsage();
 void printModuleInfo(ModuleInfo *info);
 void listInputMods();
 
@@ -29,6 +35,8 @@ int main(int argc, char *argv[]) {
 	/* check cmd arguments */
 	if(argc < 2) {
 		SHOWERR("no input files");
+		cout << endl;
+		printUsage();
 		return 1;
 	}
 
@@ -77,6 +85,12 @@ void printIntro() {
 	cout << "Author: " << AUTHOR << endl;
 	cout << "Build date: " << __DATE__ << endl;
 	cout << endl;
+}
+
+void printUsage() {
+	cout << "GraphAnalyzer " << VERSION << endl;
+	cout << "Usage: graph_analyzer [files]" << endl << endl;
+	cout << "Report bugs to kuba.sejdak@gmail.com" << endl;
 }
 
 void printModuleInfo(ModuleInfo *info) {

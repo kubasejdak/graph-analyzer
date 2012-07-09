@@ -4,6 +4,10 @@
  *  Created on	: 03-05-2012
  */
 
+/* debug */
+#define LOCAL_DEBUG
+#include <debug.h>
+
 #include "EmulationSystem.h"
 
 EmulationSystem::EmulationSystem() {
@@ -166,13 +170,13 @@ bool EmulationSystem::emulate() {
 	name += "png";
 	string cmd = "dot graph.dot -Tpng -o " + name;
 	ret = system(cmd.c_str());
-	if(ret)
-		SHOWERR("drawing graph");
-	else {
+	if(!ret) {
 		ret = unlink("graph.dot");
 		if(ret)
 			SHOWERR("deleting .dot file");
 	}
+	else
+		SHOWERR("drawing graph");
 
 	sample = NULL;
 	return true;

@@ -11,7 +11,6 @@
 #include <map>
 
 /* project headers */
-#include <toolbox.h>
 #include <core/ShellcodeSample.h>
 #include <modules/AbstractAnalyze.h>
 #include <modules/ModuleManager.h>

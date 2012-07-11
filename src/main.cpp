@@ -75,6 +75,7 @@ int main(int argc, char *argv[]) {
 		ShellcodeInfo *info = system.getResults(input_file);
 		cout << "Results for sample #" << i << " :" << endl;
 		info->printInfo();
+		cout << endl;
 	}
 
 	return 0;

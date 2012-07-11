@@ -5,7 +5,7 @@
  */
 
 /* debug */
-#define LOCAL_DEBUG
+//#define LOCAL_DEBUG
 #include <debug.h>
 
 #include "EmulationSystem.h"

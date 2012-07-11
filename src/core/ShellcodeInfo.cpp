@@ -64,5 +64,14 @@ void ShellcodeInfo::setShellcodePresent(bool shellcodePresent) {
 }
 
 void ShellcodeInfo::setTrait(string name, string value) {
+	/* ensure that key/value is unique */
+	pair<multimap<string, string>::iterator, multimap<string, string>::iterator> ret;
+	multimap<string, string>::iterator it;
+	ret = traits->equal_range(name);
+	for(it = ret.first; it != ret.second; ++it) {
+		if((*it).second == value)
+			return;
+	}
+
 	traits->insert(pair<string, string>(name, value));
 }

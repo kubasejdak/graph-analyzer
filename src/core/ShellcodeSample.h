@@ -18,14 +18,14 @@ public:
 	virtual ~ShellcodeSample();
 
 	byte_t *getCode();
-	ShellcodeInfo &getInfo();
+	ShellcodeInfo *getInfo();
 	Graph *getGraph();
 
 	void setCode(byte_t *code);
 
 private:
 	byte_t *code;
-	ShellcodeInfo info;
+	ShellcodeInfo *info;
 	Graph *graph;
 };
 

@@ -11,20 +11,20 @@ ShellcodeInfo::ShellcodeInfo() {
 	size = 0;
 	codeOffset = 0;
 	shellcodePresent = false;
-	modParams.clear();
+	traits = new multimap<string, string>();
 }
 
 ShellcodeInfo::~ShellcodeInfo() {
 }
 
 void ShellcodeInfo::printInfo() {
-	cout << "name = " << name << endl;
-	cout << "size = " << size << endl;
-	cout << "code offset = 0x" << hex << codeOffset << endl;
-	cout << "shellcode present = " << (shellcodePresent ? "yes" : "no") << endl;
-	map<string, string>::iterator it;
-	for(it = modParams.begin(); it != modParams.end(); ++it)
-		cout << (*it).first << " = " << (*it).second << endl;
+	cout << "\t name : " << name << endl;
+	cout << "\t size : " << size << endl;
+	cout << "\t code offset : 0x" << hex << codeOffset << endl;
+	cout << "\t shellcode present : " << (shellcodePresent ? "yes" : "no") << endl;
+	multimap<string, string>::iterator it;
+	for(it = traits->begin(); it != traits->end(); ++it)
+		cout <<"\t " << (*it).first << " : " << (*it).second << endl;
 }
 
 string ShellcodeInfo::getName() {
@@ -43,6 +43,10 @@ bool ShellcodeInfo::isShellcodePresent() {
 	return shellcodePresent;
 }
 
+multimap<string, string> *ShellcodeInfo::getTraits() {
+	return traits;
+}
+
 void ShellcodeInfo::setName(string name) {
 	this->name = name;
 }
@@ -59,6 +63,6 @@ void ShellcodeInfo::setShellcodePresent(bool shellcodePresent) {
 	this->shellcodePresent = shellcodePresent;
 }
 
-void ShellcodeInfo::setModParam(string name, string value) {
-	modParams[name] = value;
+void ShellcodeInfo::setTrait(string name, string value) {
+	traits->insert(pair<string, string>(name, value));
 }

@@ -16,7 +16,14 @@ public:
 	AbstractAnalyze();
 	virtual ~AbstractAnalyze();
 
-	virtual bool perform(ShellcodeSample *) = 0;
+	static int getNextID() {
+		return nextID++;
+	}
+
+	virtual bool perform(ShellcodeSample *sample) = 0;
+
+protected:
+	static int nextID;
 };
 
 #endif /* ABSTRACTANALYZE_H_ */

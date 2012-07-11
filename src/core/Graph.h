@@ -13,6 +13,9 @@ extern "C" {
 	#include <emu/emu_hashtable.h>
 }
 
+/* project headers */
+#include <core/Dot.h>
+
 class Graph {
 public:
 	Graph();

@@ -22,12 +22,11 @@ using namespace std;
 #include <modules/ModuleManager.h>
 #include <version.h>
 
-
-
 void printIntro();
 void printUsage();
 void printModuleInfo(ModuleInfo *info);
 void listInputMods();
+void listAnalyzeMods();
 
 int main(int argc, char *argv[]) {
 	printIntro();
@@ -45,6 +44,7 @@ int main(int argc, char *argv[]) {
 
 	/* list available modules */
 	listInputMods();
+	listAnalyzeMods();
 
 	bool ret;
 
@@ -72,9 +72,9 @@ int main(int argc, char *argv[]) {
 			continue;
 		}
 
-		ShellcodeInfo info = system.getResults(input_file);
-		cout << "Results for " << input_file << ":" << endl;
-		info.printInfo();
+		ShellcodeInfo *info = system.getResults(input_file);
+		cout << "Results for sample #" << i << " :" << endl;
+		info->printInfo();
 	}
 
 	return 0;
@@ -101,8 +101,25 @@ void printModuleInfo(ModuleInfo *info) {
 
 void listInputMods() {
 	list<ModuleInfo *> mods = ModuleManager::getInstance()->listInput();
+	if(mods.size() == 0)
+		return;
+
 	list<ModuleInfo *>::iterator it;
 	cout << "List of available input modules:" << endl;
+	for(it = mods.begin(); it != mods.end(); ++it) {
+		cout << "============================================" << endl;
+		printModuleInfo((*it));
+	}
+	cout << endl;
+}
+
+void listAnalyzeMods() {
+	list<ModuleInfo *> mods = ModuleManager::getInstance()->listAnalyze();
+	if(mods.size() == 0)
+		return;
+
+	list<ModuleInfo *>::iterator it;
+	cout << "List of available analyze modules:" << endl;
 	for(it = mods.begin(); it != mods.end(); ++it) {
 		cout << "============================================" << endl;
 		printModuleInfo((*it));

@@ -15,7 +15,14 @@ public:
 	AbstractOutput();
 	virtual ~AbstractOutput();
 
+	static int getNextID() {
+		return nextID++;
+	}
+
 	bool generateOutput(string filename);
+
+protected:
+	static int nextID;
 };
 
 #endif /* ABSTRACTOUTPUT_H_ */

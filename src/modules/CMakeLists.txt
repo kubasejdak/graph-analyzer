@@ -13,3 +13,11 @@ set(BINARY_INPUT_SRC
 	BinaryInput.cpp)
 
 add_library(binary_input ${BINARY_INPUT_SRC})
+
+# SyscallAnalyze
+set(SYSCALL_ANALYZE_SRC
+	AbstractModule.cpp
+	AbstractAnalyze.cpp
+	SyscallAnalyze.cpp)
+
+add_library(syscall_analyze ${SYSCALL_ANALYZE_SRC})

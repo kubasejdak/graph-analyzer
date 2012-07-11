@@ -38,7 +38,7 @@ public:
 	bool loadShellcode(string filename);
 	bool emulate(string filename);
 	bool analyze(string filename);
-	ShellcodeInfo getResults(string filename);
+	ShellcodeInfo *getResults(string filename);
 	bool generateOutput(string filename, int method, string *output);
 	SystemStatus getStatus();
 	void clearCache();

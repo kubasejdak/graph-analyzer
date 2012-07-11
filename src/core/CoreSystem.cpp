@@ -53,9 +53,9 @@ bool CoreSystem::analyze(string filename) {
 	return ret;
 }
 
-ShellcodeInfo CoreSystem::getResults(string filename) {
+ShellcodeInfo *CoreSystem::getResults(string filename) {
 	if(samples.find(filename) == samples.end())
-		return ShellcodeInfo();
+		return new ShellcodeInfo();
 
 	return samples[filename]->getInfo();
 }

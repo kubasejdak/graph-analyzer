@@ -28,6 +28,9 @@ void ModuleManager::loadOutput() {
 }
 
 void ModuleManager::loadAnalyze() {
+	/* SyscallAnalyze */
+	SyscallAnalyze *syscallAnalyze = new SyscallAnalyze();
+	analyzeModules[syscallAnalyze->getId()] = syscallAnalyze;
 }
 
 map<int, AbstractInput *> * ModuleManager::getInput() {

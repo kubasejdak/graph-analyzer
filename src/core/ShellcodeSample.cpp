@@ -9,19 +9,21 @@
 ShellcodeSample::ShellcodeSample() {
 	code = NULL;
 	graph = new Graph();
+	info = new ShellcodeInfo();
 }
 
 ShellcodeSample::~ShellcodeSample() {
 	delete graph;
+	delete info;
 	if(code)
 		delete code;
 }
 
-byte_t * ShellcodeSample::getCode() {
+byte_t *ShellcodeSample::getCode() {
 	return code;
 }
 
-ShellcodeInfo &ShellcodeSample::getInfo() {
+ShellcodeInfo *ShellcodeSample::getInfo() {
 	return info;
 }
 

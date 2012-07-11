@@ -6,6 +6,8 @@
 
 #include "AbstractAnalyze.h"
 
+int AbstractAnalyze::nextID = ANALYZE_ID_OFFSET;
+
 AbstractAnalyze::AbstractAnalyze() {
 }
 

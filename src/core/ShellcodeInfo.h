@@ -26,19 +26,20 @@ public:
 	int getSize();
 	int getCodeOffset();
 	bool isShellcodePresent();
+	multimap<string, string> *getTraits();
 
 	void setName(string name);
 	void setSize(int size);
 	void setCodeOffset(int codeOffset);
 	void setShellcodePresent(bool shellcodePresent);
-	void setModParam(string name, string value);
+	void setTrait(string name, string value);
 
 private:
 	string name;
 	int32_t size;
 	int32_t codeOffset;
 	bool shellcodePresent;
-	map<string, string> modParams;
+	multimap<string, string> *traits;
 };
 
 #endif /* SHELLCODEINFO_H_ */

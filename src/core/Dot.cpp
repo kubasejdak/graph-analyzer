@@ -40,7 +40,6 @@ void instr_vertex_destructor(void *data) {
 	instr_vertex_free((struct instr_vertex *) data);
 }
 
-#if 1
 int graph_draw(struct emu_graph *graph) {
 	struct emu_vertex *ev;
 	struct instr_vertex *iv;
@@ -184,4 +183,3 @@ int graph_draw(struct emu_graph *graph) {
 
 	return 0;
 }
-#endif

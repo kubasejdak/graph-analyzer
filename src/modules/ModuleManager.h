@@ -17,6 +17,7 @@
 #include <modules/AbstractAnalyze.h>
 #include <modules/ModuleInfo.h>
 #include <modules/BinaryInput.h>
+#include <modules/SyscallAnalyze.h>
 
 class ModuleManager {
 public:

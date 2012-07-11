@@ -29,9 +29,9 @@ bool EmulationSystem::emulate() {
 
 	/* load code to emu unit */
 	int32_t codeOffset;
-	codeOffset = emuUnit->loadCode(sample->getCode(), sample->getInfo().getSize());
-	sample->getInfo().setCodeOffset(codeOffset);
-	sample->getInfo().setShellcodePresent(codeOffset >= 0 ? true : false);
+	codeOffset = emuUnit->loadCode(sample->getCode(), sample->getInfo()->getSize());
+	sample->getInfo()->setCodeOffset(codeOffset);
+	sample->getInfo()->setShellcodePresent(codeOffset >= 0 ? true : false);
 
 	/* prepare environment */
 	uint32_t eipsave = 0;
@@ -62,10 +62,12 @@ bool EmulationSystem::emulate() {
 		iv = NULL;
 		ret = 0;
 
+		/* check if there is any vertex with actual eip */
 		ehi = emu_hashtable_search(eh, (void *)(uintptr_t) eipsave);
 		if(ehi != NULL)
 			ev = (struct emu_vertex *) ehi->value;
 
+		/* create new vertex if eip is unique */
 		if(ev == NULL) {
 			ev = emu_vertex_new();
 			emu_graph_vertex_add(eg, ev);
@@ -82,6 +84,7 @@ bool EmulationSystem::emulate() {
 				emu_graph_vertex_add(eg, ev);
 			}
 
+			/* save syscall from dll in vertex */
 			iv = instr_vertex_new(eipsave, hook->hook.win->fnname);
 			emu_vertex_data_set(ev, iv);
 
@@ -117,6 +120,7 @@ bool EmulationSystem::emulate() {
 				}
 				else {
 					if(ev->data == NULL) {
+						/* save instr string in vertex */
 						iv = instr_vertex_new(eipsave, cpu->instr_string);
 						emu_vertex_data_set(ev, iv);
 					}
@@ -152,6 +156,7 @@ bool EmulationSystem::emulate() {
 				env->env.win->last_good_eip = emu_cpu_eip_get(cpu);
 		} /* else dla if(hook != NULL) */
 
+		/* link last two vertexes with an edge */
 		if(last_vertex != NULL) {
 			struct emu_edge *ee = emu_vertex_edge_add(last_vertex, ev);
 			if(cpu->instr.is_fpu == 0 && cpu->instr.source.cond_pos == eipsave && cpu->instr.source.has_cond_pos == 1)
@@ -164,7 +169,7 @@ bool EmulationSystem::emulate() {
 	graph_draw(graph->getEmuGraph());
 
 	/* draw graph using dot package and sample name */
-	string name = sample->getInfo().getName();
+	string name = sample->getInfo()->getName();
 	int n = name.find_last_of('.');
 	name.erase(n + 1);
 	name += "png";

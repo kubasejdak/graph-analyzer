@@ -34,8 +34,8 @@ bool BinaryInput::loadInput(string filename, ShellcodeSample *sample) {
 	file.close();
 
 	sample->setCode((byte_t *) buffer);
-	sample->getInfo().setName(filename);
-	sample->getInfo().setSize(size);
+	sample->getInfo()->setName(filename);
+	sample->getInfo()->setSize(size);
 
 	return true;
 }

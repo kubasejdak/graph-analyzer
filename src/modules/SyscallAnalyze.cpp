@@ -16,12 +16,11 @@ SyscallAnalyze::~SyscallAnalyze() {
 }
 
 bool SyscallAnalyze::perform(ShellcodeSample *sample) {
-	struct emu_vertex_root *root = sample->getGraph()->getEmuGraph()->vertexes;
-	struct emu_vertex *it = emu_vertexes_first(root);
+	Graph *g = sample->getGraph();
 	struct instr_vertex *instr_vert;
-	string syscall;
-	string dll;
-	for(; !emu_vertexes_attail(it); it = emu_vertexes_next(it)) {
+	string syscall, dll;
+	Graph::graph_iterator it;
+	for(it = g->begin(); it != g->end(); ++it) {
 		instr_vert = (struct instr_vertex *) it->data;
 		if(instr_vert->dll) {
 			syscall = emu_string_char(instr_vert->instr_string);

@@ -18,6 +18,23 @@ add_library(binary_input ${BINARY_INPUT_SRC})
 set(SYSCALL_ANALYZE_SRC
 	AbstractModule.cpp
 	AbstractAnalyze.cpp
-	SyscallAnalyze.cpp)
+	SyscallAnalyze.cpp
+	../core/InstructionSplitter.cpp)
 
 add_library(syscall_analyze ${SYSCALL_ANALYZE_SRC})
+
+# DecoderKey
+set(DECODER_KEY_SRC
+	AbstractModule.cpp
+	AbstractAnalyze.cpp
+	DecoderKey.cpp)
+
+add_library(decoder_key ${DECODER_KEY_SRC})
+
+# LoopDetector
+set(LOOP_DETECTOR_SRC
+	AbstractModule.cpp
+	AbstractAnalyze.cpp
+	LoopDetector.cpp)
+
+add_library(loop_detector ${LOOP_DETECTOR_SRC})

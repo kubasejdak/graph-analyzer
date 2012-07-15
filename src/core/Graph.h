@@ -19,10 +19,12 @@ extern "C" {
 
 /* project headers */
 #include <core/Dot.h>
+#include <core/InstructionSplitter.h>
 
 class Graph {
 public:
 	Graph();
+	Graph(struct emu_graph *g, struct emu_hashtable *h);
 	virtual ~Graph();
 
 	emu_graph *getEmuGraph();
@@ -51,7 +53,11 @@ public:
 	graph_iterator begin();
 	graph_iterator end();
 
+	int detectLoop(graph_iterator it);
+
 private:
+	bool hasLoopEnd(graph_iterator it);
+
 	struct emu_graph *graph;
 	struct emu_hashtable *hashtable;
 };

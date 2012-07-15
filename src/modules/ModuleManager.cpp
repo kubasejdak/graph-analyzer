@@ -31,6 +31,14 @@ void ModuleManager::loadAnalyze() {
 	/* SyscallAnalyze */
 	SyscallAnalyze *syscallAnalyze = new SyscallAnalyze();
 	analyzeModules[syscallAnalyze->getId()] = syscallAnalyze;
+
+	/* DecoderKey */
+	DecoderKey *decoderKey = new DecoderKey();
+	analyzeModules[decoderKey->getId()] = decoderKey;
+
+	/* LoopDetector */
+	LoopDetector *loopDetector = new LoopDetector();
+	analyzeModules[loopDetector->getId()] = loopDetector;
 }
 
 map<int, AbstractInput *> * ModuleManager::getInput() {

@@ -13,6 +13,7 @@
 /* standard headers */
 #include <iostream>
 #include <list>
+#include <iomanip>
 using namespace std;
 
 /* project headers */
@@ -43,8 +44,10 @@ int main(int argc, char *argv[]) {
 	CoreSystem system;
 
 	/* list available modules */
+	cout << "============================================" << endl;
 	listInputMods();
 	listAnalyzeMods();
+	cout << "============================================" << endl;
 
 	bool ret;
 
@@ -95,8 +98,8 @@ void printUsage() {
 }
 
 void printModuleInfo(ModuleInfo *info) {
-	cout << "name: " << info->name << endl;
-	cout << "id: " << info->id << endl;
+	cout << "id: " << setw(6) << left << info->id << " ";
+	cout << "name: " << setw(17) << left << info->name << " ";
 	cout << "description: " << info->description << endl;
 }
 
@@ -106,11 +109,11 @@ void listInputMods() {
 		return;
 
 	list<ModuleInfo *>::iterator it;
-	cout << "List of available input modules:" << endl;
-	for(it = mods.begin(); it != mods.end(); ++it) {
-		cout << "============================================" << endl;
+
+	cout << "* List of available input modules:" << endl;
+	for(it = mods.begin(); it != mods.end(); ++it)
 		printModuleInfo((*it));
-	}
+
 	cout << endl;
 }
 
@@ -120,10 +123,9 @@ void listAnalyzeMods() {
 		return;
 
 	list<ModuleInfo *>::iterator it;
-	cout << "List of available analyze modules:" << endl;
-	for(it = mods.begin(); it != mods.end(); ++it) {
-		cout << "============================================" << endl;
+	cout << "* List of available analyze modules:" << endl;
+	for(it = mods.begin(); it != mods.end(); ++it)
 		printModuleInfo((*it));
-	}
+
 	cout << endl;
 }

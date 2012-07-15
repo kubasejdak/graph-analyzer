@@ -35,6 +35,7 @@ bool BinaryInput::loadInput(string filename, ShellcodeSample *sample) {
 
 	sample->setCode((byte_t *) buffer);
 	sample->getInfo()->setName(filename);
+	sample->getInfo()->setFileType("BIN (plain x86 mashine code)");
 	sample->getInfo()->setSize(size);
 
 	return true;

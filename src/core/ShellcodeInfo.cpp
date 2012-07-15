@@ -8,6 +8,7 @@
 
 ShellcodeInfo::ShellcodeInfo() {
 	name = "";
+	fileType = "unknown";
 	size = 0;
 	codeOffset = 0;
 	shellcodePresent = false;
@@ -19,9 +20,10 @@ ShellcodeInfo::~ShellcodeInfo() {
 
 void ShellcodeInfo::printInfo() {
 	cout << "\t name : " << name << endl;
-	cout << "\t size : " << size << endl;
-	cout << "\t code offset : 0x" << hex << codeOffset << endl;
+	cout << "\t file type : " << fileType << endl;
+	cout << "\t size : " << dec <<size << endl;
 	cout << "\t shellcode present : " << (shellcodePresent ? "yes" : "no") << endl;
+	cout << "\t shellcode offset : 0x" << hex << codeOffset << endl;
 	multimap<string, string>::iterator it;
 	for(it = traits->begin(); it != traits->end(); ++it)
 		cout <<"\t " << (*it).first << " : " << (*it).second << endl;
@@ -29,6 +31,10 @@ void ShellcodeInfo::printInfo() {
 
 string ShellcodeInfo::getName() {
 	return name;
+}
+
+string ShellcodeInfo::getFileType() {
+	return fileType;
 }
 
 int32_t ShellcodeInfo::getSize() {
@@ -49,6 +55,10 @@ multimap<string, string> *ShellcodeInfo::getTraits() {
 
 void ShellcodeInfo::setName(string name) {
 	this->name = name;
+}
+
+void ShellcodeInfo::setFileType(string fileType) {
+	this->fileType = fileType;
 }
 
 void ShellcodeInfo::setSize(int size) {

@@ -184,5 +184,7 @@ bool EmulationSystem::emulate() {
 		SHOWERR("drawing graph");
 
 	sample = NULL;
+	SHOWMSG("analyzing finished");
+
 	return true;
 }

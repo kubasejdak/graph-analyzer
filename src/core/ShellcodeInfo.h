@@ -23,12 +23,14 @@ public:
 	void printInfo();
 
 	string getName();
+	string getFileType();
 	int getSize();
 	int getCodeOffset();
 	bool isShellcodePresent();
 	multimap<string, string> *getTraits();
 
 	void setName(string name);
+	void setFileType(string fileType);
 	void setSize(int size);
 	void setCodeOffset(int codeOffset);
 	void setShellcodePresent(bool shellcodePresent);
@@ -36,6 +38,7 @@ public:
 
 private:
 	string name;
+	string fileType;
 	int32_t size;
 	int32_t codeOffset;
 	bool shellcodePresent;

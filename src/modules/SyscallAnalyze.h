@@ -10,6 +10,7 @@
 /* project headers */
 #include "AbstractAnalyze.h"
 #include <core/Graph.h>
+#include <core/InstructionSplitter.h>
 
 class SyscallAnalyze: public AbstractAnalyze {
 public:
@@ -17,9 +18,6 @@ public:
 	virtual ~SyscallAnalyze();
 
 	virtual bool perform(ShellcodeSample *sample);
-
-private:
-	string cutSyscallName(string instr, string dll);
 };
 
 #endif /* SYSCALLANALYZE_H_ */

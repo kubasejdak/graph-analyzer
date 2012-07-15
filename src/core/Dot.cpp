@@ -48,6 +48,7 @@ int graph_draw(struct emu_graph *graph) {
 
 	struct emu_graph *sgraph = emu_graph_new();
 	struct emu_hashtable *ht = emu_hashtable_new(2047, emu_hashtable_ptr_hash, emu_hashtable_ptr_cmp);
+	//opt_graph = new Graph(sgraph, ht);
 
 	struct emu_vertex *nev;
 	struct instr_vertex *niv=NULL;

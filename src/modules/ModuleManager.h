@@ -18,6 +18,8 @@
 #include <modules/ModuleInfo.h>
 #include <modules/BinaryInput.h>
 #include <modules/SyscallAnalyze.h>
+#include <modules/DecoderKey.h>
+#include <modules/LoopDetector.h>
 
 class ModuleManager {
 public:

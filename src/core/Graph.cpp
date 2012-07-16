@@ -106,16 +106,30 @@ int Graph::detectLoop(Graph::graph_iterator it) {
 }
 
 bool Graph::hasLoopEnd(Graph::graph_iterator it) {
-	instr_vertex *v = (instr_vertex *) it->data;
-	uint32_t addr = v->eip;
+	instr_vertex *v;;
 	emu_edge_root *r = it->backedges;
 	emu_edge *e;
 	InstructionSplitter splitter;
+	string instr;
+
+	string loopInstr[9];
+	loopInstr[0] = "loop";
+	loopInstr[1] = "ret";
+	loopInstr[2] = "rep";
+	loopInstr[3] = "jmp";
+	loopInstr[4] = "jnz";
+	loopInstr[5] = "jne";
+	loopInstr[6] = "jz";
+	loopInstr[7] = "je";
+	loopInstr[8] = "call";
+
 	for(e = emu_edges_first(r); !emu_edges_istail(e); e = emu_edges_next(e)) {
-		instr_vertex *v = (instr_vertex *) e->destination->data;
+		v = (instr_vertex *) e->destination->data;
 		splitter = emu_string_char(v->instr_string);
-		if(v->eip >= addr && splitter.getSyscall() == "")
-			return true;
+		instr = splitter.getInstr();
+		for(unsigned int i = 0; i < sizeof(loopInstr); ++i)
+			if(instr == loopInstr[i])
+				return true;
 	}
 
 	return false;

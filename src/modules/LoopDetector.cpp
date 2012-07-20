@@ -17,30 +17,28 @@ LoopDetector::~LoopDetector() {
 
 bool LoopDetector::perform(ShellcodeSample *sample) {
 	Graph *g = sample->getGraph();
-	Graph::graph_iterator it, it2;
-	int n;
-	string loop;
+	Graph::graph_iterator it;
+	map<string, string> *m;
+	emu_edge *e;
+	int n = 0, iter = 0;
 	for(it = g->begin(); it != g->end(); ++it) {
 		n = g->detectLoop(it);
-		if(n > 1) {
+		if(n) {
+			for(e = emu_edges_first(it->edges); !emu_edges_attail(e); e = emu_edges_next(e)) {
+				if(e->count > 1) {
+					iter = e->count;
+					break;
+				}
+			}
+
 			instr_vertex *iv = (instr_vertex *) it->data;
-			loop = mergeLoopDesc(iv->eip, n);
-			sample->getInfo()->setTrait("loop", loop);
+			m = new map<string, string>();
+			(*m)["start"] = itos(iv->eip, true);
+			(*m)["iterations"] = itos(iter);
+			(*m)["vertexes"] = itos(n);
+			sample->getInfo()->setTrait("loop", m);
 		}
 	}
 
 	return true;
-}
-
-string LoopDetector::mergeLoopDesc(int address, int iter) {
-	stringstream s1, s2;
-	s1 << hex << address;
-	string ret = "0x";
-	ret += s1.str();
-	ret += " (";
-	s2 << iter;
-	ret += s2.str();
-	ret += ")";
-
-	return ret;
 }

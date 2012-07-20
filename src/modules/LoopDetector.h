@@ -9,10 +9,12 @@
 
 /* standard headers */
 #include <sstream>
+#include <map>
 
 /* project headers */
 #include "AbstractAnalyze.h"
 #include <core/Graph.h>
+#include <toolbox.h>
 
 class LoopDetector: public AbstractAnalyze {
 public:
@@ -20,9 +22,6 @@ public:
 	virtual ~LoopDetector();
 
 	bool perform(ShellcodeSample *sample);
-
-private:
-	string mergeLoopDesc(int address, int iter);
 };
 
 #endif /* LOOPDETECTOR_H_ */

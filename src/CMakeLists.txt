@@ -11,7 +11,7 @@ set(EXECUTABLE_OUTPUT_PATH "${CMAKE_HOME_DIRECTORY}/bin")
 link_directories(/opt/libemu/lib)
 
 # compile project
-add_executable(graph_analyzer "main.cpp")
+add_executable(graph_analyzer main.cpp toolbox.cpp)
 
 # link with modules 
 target_link_libraries(graph_analyzer emu)

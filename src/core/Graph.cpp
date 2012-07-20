@@ -95,42 +95,43 @@ Graph::graph_iterator Graph::end() {
 }
 
 int Graph::detectLoop(Graph::graph_iterator it) {
-	emu_edge_root *r = it->edges;
-	emu_edge *e;
-	for(e = emu_edges_first(r); !emu_edges_istail(e); e = emu_edges_next(e)) {
-		if(e->count > 1 && it->backlinks > 1 && hasLoopEnd(it))
-			return e->count;
+	/* eliminate impossible loop starts */
+	uint32_t n = (emu_vertexes_ishead(&(*it))) ? 1 : 2;
+	if(it->backlinks < n)
+		return 0;
+
+	/* reset color and distance */
+	graph_iterator i;
+	for(i = it; i != end(); ++i) {
+		i->color = white;
+		i->distance = 0;
 	}
 
-	return 1;
-}
-
-bool Graph::hasLoopEnd(Graph::graph_iterator it) {
-	instr_vertex *v;;
-	emu_edge_root *r = it->backedges;
+	/* look for loops */
+	emu_vertex *v;
 	emu_edge *e;
-	InstructionSplitter splitter;
-	string instr;
+	emu_queue *queue = emu_queue_new();
+	emu_queue_enqueue(queue, &(*it));
 
-	string loopInstr[9];
-	loopInstr[0] = "loop";
-	loopInstr[1] = "ret";
-	loopInstr[2] = "rep";
-	loopInstr[3] = "jmp";
-	loopInstr[4] = "jnz";
-	loopInstr[5] = "jne";
-	loopInstr[6] = "jz";
-	loopInstr[7] = "je";
-	loopInstr[8] = "call";
+	while(!emu_queue_empty(queue)) {
+		v = (emu_vertex *) emu_queue_dequeue(queue);
+		for(e = emu_edges_first(v->edges); !emu_edges_attail(e); e = emu_edges_next(e)) {
+			if(e->destination == &(*it)) {
+				emu_queue_free(queue);
+				return v->distance + 1;
+			}
 
-	for(e = emu_edges_first(r); !emu_edges_istail(e); e = emu_edges_next(e)) {
-		v = (instr_vertex *) e->destination->data;
-		splitter = emu_string_char(v->instr_string);
-		instr = splitter.getInstr();
-		for(unsigned int i = 0; i < sizeof(loopInstr); ++i)
-			if(instr == loopInstr[i])
-				return true;
+			if(e->destination->color != white)
+				continue;
+
+			e->destination->distance = v->distance + 1;
+			e->destination->color = grey;
+			emu_queue_enqueue(queue, e->destination);
+		}
+
+		v->color = black;
 	}
 
-	return false;
+	emu_queue_free(queue);
+	return 0;
 }

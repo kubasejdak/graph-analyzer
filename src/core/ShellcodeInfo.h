@@ -9,6 +9,7 @@
 
 /* standard headers */
 #include <map>
+#include <list>
 #include <string>
 #include <stdint.h>
 #include <iostream>
@@ -27,22 +28,23 @@ public:
 	int getSize();
 	int getCodeOffset();
 	bool isShellcodePresent();
-	multimap<string, string> *getTraits();
+	multimap<string, map<string, string> *> *getTraits();
 
 	void setName(string name);
 	void setFileType(string fileType);
 	void setSize(int size);
 	void setCodeOffset(int codeOffset);
 	void setShellcodePresent(bool shellcodePresent);
-	void setTrait(string name, string value);
+	void setTrait(string name, map<string, string> *value);
 
 private:
+	bool equalMaps(map<string, string> *a, map<string, string> *b);
 	string name;
 	string fileType;
 	int32_t size;
 	int32_t codeOffset;
 	bool shellcodePresent;
-	multimap<string, string> *traits;
+	multimap<string, map<string, string> *> *traits;
 };
 
 #endif /* SHELLCODEINFO_H_ */

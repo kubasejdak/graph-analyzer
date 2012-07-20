@@ -21,6 +21,8 @@ bool SyscallAnalyze::perform(ShellcodeSample *sample) {
 	string syscall, dll;
 	Graph::graph_iterator it;
 	InstructionSplitter splitter;
+	map<string, string> *m;
+
 	for(it = g->begin(); it != g->end(); ++it) {
 		instr_vert = (struct instr_vertex *) it->data;
 		if(instr_vert->dll) {
@@ -28,8 +30,10 @@ bool SyscallAnalyze::perform(ShellcodeSample *sample) {
 			dll = instr_vert->dll->dllname;
 			dll += ".dll";
 			syscall = splitter.getSyscall();
-			sample->getInfo()->setTrait("API", syscall);
-			sample->getInfo()->setTrait("DLL", dll);
+			m = new map<string, string>();
+			(*m)["syscall"] = syscall;
+			(*m)["DLL"] = dll;
+			sample->getInfo()->setTrait("API", m);
 		}
 	}
 

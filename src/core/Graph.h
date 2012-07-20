@@ -15,6 +15,7 @@ using namespace std;
 extern "C" {
 	#include <emu/emu_graph.h>
 	#include <emu/emu_hashtable.h>
+	#include <emu/emu_queue.h>
 }
 
 /* project headers */
@@ -56,8 +57,6 @@ public:
 	int detectLoop(graph_iterator it);
 
 private:
-	bool hasLoopEnd(graph_iterator it);
-
 	struct emu_graph *graph;
 	struct emu_hashtable *hashtable;
 };

@@ -9,7 +9,7 @@
 LoopDetector::LoopDetector() {
 	id = getNextID();
 	name = "LoopDetector";
-	description = "Detects loops and returns beginning address and number of iterations.";
+	description = "Detects loops and returns detailed information.";
 }
 
 LoopDetector::~LoopDetector() {
@@ -23,21 +23,22 @@ bool LoopDetector::perform(ShellcodeSample *sample) {
 	int n = 0, iter = 0;
 	for(it = g->begin(); it != g->end(); ++it) {
 		n = g->detectLoop(it);
-		if(n) {
-			for(e = emu_edges_first(it->edges); !emu_edges_attail(e); e = emu_edges_next(e)) {
-				if(e->count > 1) {
-					iter = e->count;
-					break;
-				}
-			}
+		if(n == 0)
+			continue;
 
-			instr_vertex *iv = (instr_vertex *) it->data;
-			m = new map<string, string>();
-			(*m)["start"] = itos(iv->eip, true);
-			(*m)["iterations"] = itos(iter);
-			(*m)["vertexes"] = itos(n);
-			sample->getInfo()->setTrait("loop", m);
+		for(e = emu_edges_first(it->edges); !emu_edges_attail(e); e = emu_edges_next(e)) {
+			if(e->count > 1) {
+				iter = e->count;
+				break;
+			}
 		}
+
+		instr_vertex *iv = (instr_vertex *) it->data;
+		m = new map<string, string>();
+		(*m)["start"] = itos(iv->eip, true);
+		(*m)["iterations"] = itos(iter);
+		(*m)["vertexes"] = itos(n);
+		sample->getInfo()->setTrait("loop", m);
 	}
 
 	return true;

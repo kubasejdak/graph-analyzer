@@ -12,14 +12,14 @@
 #include <list>
 
 /* project headers */
-#include <modules/AbstractInput.h>
-#include <modules/AbstractOutput.h>
-#include <modules/AbstractAnalyze.h>
+#include <modules/input/AbstractInput.h>
+#include <modules/output/AbstractOutput.h>
+#include <modules/analyze/AbstractAnalyze.h>
 #include <modules/ModuleInfo.h>
-#include <modules/BinaryInput.h>
-#include <modules/SyscallAnalyze.h>
-#include <modules/DecoderKey.h>
-#include <modules/LoopDetector.h>
+#include <modules/input/BinaryInput.h>
+#include <modules/analyze/SyscallAnalyze.h>
+#include <modules/analyze/DecoderKey.h>
+#include <modules/analyze/LoopDetector.h>
 
 class ModuleManager {
 public:

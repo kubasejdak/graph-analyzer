@@ -13,7 +13,7 @@
 using namespace std;
 
 /* project headers */
-#include "AbstractModule.h"
+#include <modules/AbstractModule.h>
 #include <core/ShellcodeSample.h>
 
 class AbstractInput: public AbstractModule {

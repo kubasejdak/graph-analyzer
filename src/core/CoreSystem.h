@@ -19,8 +19,8 @@ using namespace boost;
 #include <core/AnalysisSystem.h>
 #include <core/ShellcodeSample.h>
 #include <core/ShellcodeInfo.h>
-#include <modules/AbstractInput.h>
-#include <modules/AbstractOutput.h>
+#include <modules/input/AbstractInput.h>
+#include <modules/output/AbstractOutput.h>
 #include <modules/ModuleManager.h>
 
 enum SystemStatus {

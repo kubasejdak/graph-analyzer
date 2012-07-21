@@ -8,7 +8,7 @@
 #define ABSTRACTOUTPUT_H_
 
 /* project headers */
-#include "AbstractModule.h"
+#include <modules/AbstractModule.h>
 
 class AbstractOutput: public AbstractModule {
 public:

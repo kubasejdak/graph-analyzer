@@ -12,7 +12,7 @@
 
 /* project headers */
 #include <core/ShellcodeSample.h>
-#include <modules/AbstractAnalyze.h>
+#include <modules/analyze/AbstractAnalyze.h>
 #include <modules/ModuleManager.h>
 
 class AnalysisSystem {

@@ -35,7 +35,7 @@ void ShellcodeInfo::printInfo() {
 		cout <<"\t * " << (*it).first << " *" << "\t";
 		for(it2 = (*it).second->begin(); it2 != (*it).second->end(); ++it2)
 			cout << (*it2).first << " : " << (*it2).second << ", ";
-		cout << endl;
+		cout << endl << endl;
 	}
 }
 

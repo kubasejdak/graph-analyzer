@@ -21,3 +21,14 @@ string itos(int value, bool hexadecimal) {
 
 	return s;
 }
+
+string hash(string data) {
+	/* Fowler–Noll–Vo (FNV-1) hash function */
+	int h = 2166136261U;
+	for(unsigned i = 0; i < data.size(); ++i)
+		h = (16777619U * h) ^ (uint8_t) data[i];
+
+	if(h < 0)
+		h = -h;
+	return itos(h);
+}

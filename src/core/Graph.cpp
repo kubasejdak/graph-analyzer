@@ -5,7 +5,7 @@
  */
 
 /* debug */
-#define LOCAL_DEBUG
+//#define LOCAL_DEBUG
 #include <debug.h>
 
 #include "Graph.h"
@@ -94,44 +94,118 @@ Graph::graph_iterator Graph::end() {
 	return graph_iterator(this, emu_vertexes_last(graph->vertexes));
 }
 
-int Graph::detectLoop(Graph::graph_iterator it) {
+loop_container *Graph::detectLoop(Graph::graph_iterator from_it) {
+	emu_vertex *from = &(*from_it);
+
 	/* eliminate impossible loop starts */
-	uint32_t n = (emu_vertexes_ishead(&(*it))) ? 1 : 2;
-	if(it->backlinks < n)
-		return 0;
+	uint32_t n = (emu_vertexes_ishead(from)) ? 1 : 2;
+	if(from->backlinks < n)
+		return NULL;
 
-	/* reset color and distance */
-	graph_iterator i;
-	for(i = it; i != end(); ++i) {
-		i->color = white;
-		i->distance = 0;
-	}
+	loop_container *loops = new loop_container();
+	loop_vec *vec = new loop_vec();
+	loop_vec *tmp = new loop_vec();
 
-	/* look for loops */
-	emu_vertex *v;
+	vec->push_back(from);
+	loops->push_back(vec);
+
 	emu_edge *e;
-	emu_queue *queue = emu_queue_new();
-	emu_queue_enqueue(queue, &(*it));
+	emu_edge *tmp_e = emu_edge_new();
+	emu_vertex *v;
+	instr_vertex *iv;
 
-	while(!emu_queue_empty(queue)) {
-		v = (emu_vertex *) emu_queue_dequeue(queue);
-		for(e = emu_edges_first(v->edges); !emu_edges_attail(e); e = emu_edges_next(e)) {
-			if(e->destination == &(*it)) {
-				emu_queue_free(queue);
-				return v->distance + 1;
+	/* possible loop paths for vertex "from" */
+	for(unsigned i = 0; i < loops->size(); ++i) {
+		/* last vertex in actual path */
+		v = (*loops)[i]->back();
+
+		/* clear colors starting from this vertex */
+		clearVertColor(v);
+
+		/* all vertexes in possible loop path */
+		while(v != NULL) {
+			/* debug */
+			iv = (instr_vertex *) v->data;
+			PRINTMSG("v eip = %#x", iv->eip);
+
+			/* save actual path */
+			*tmp = *((*loops)[i]);
+
+			/* this vertex is visited */
+			v->color = black;
+
+			/* all edges from v */
+			bool actual = 1;
+			bool continuation = true;
+			bool has_edges = false;
+			for(e = emu_edges_first(v->edges); !emu_edges_attail(e); e = emu_edges_next(e), actual = 0) {
+				/* debug */
+				iv = (instr_vertex *) e->destination->data;
+				PRINTMSG("dest->eip = %#x", iv->eip);
+				PRINTMSG("dest->color = %s", (e->destination->color == black) ? "b" : "w");
+
+				/* at least one edge */
+				has_edges = true;
+
+				if(actual) {
+					if(e->destination == from) {
+						continuation = false;
+						continue;
+					}
+					else if(e->destination->color == black) {
+						continuation = false;
+						continue;
+					}
+					else {
+						*tmp_e = *e;
+						(*loops)[i]->push_back(e->destination);
+					}
+				}
+				else {
+					if(e->destination->color == black)
+						continue;
+					else {
+						vec = new loop_vec();
+						*vec = *tmp;
+						vec->push_back(e->destination);
+						loops->push_back(vec);
+					}
+				}
 			}
 
-			if(e->destination->color != white)
-				continue;
+			if(!continuation || !has_edges)
+				v = NULL;
 
-			e->destination->distance = v->distance + 1;
-			e->destination->color = grey;
-			emu_queue_enqueue(queue, e->destination);
+			if(v == NULL || emu_vertexes_istail(v))
+				break;
+
+			v = tmp_e->destination;
+		} /* while */
+
+		/* remove paths that are not loops */
+		v = (*loops)[i]->back();
+		iv = (instr_vertex *) v->data;
+		PRINTMSG("remove: last eip = %#x", iv->eip);
+		bool loop_found = false;
+		for(e = emu_edges_first(v->edges); !emu_edges_attail(e); e = emu_edges_next(e)) {
+			if(e->destination == from) {
+				loop_found = true;
+				break;
+			}
 		}
 
-		v->color = black;
-	}
+		if(!loop_found) {
+			delete (*loops)[i];
+			loops->erase(loops->begin() + i);
+			--i;
+			SHOWMSG("path removed");
+		}
+	} /* for */
 
-	emu_queue_free(queue);
-	return 0;
+	return loops;
+}
+
+void Graph::clearVertColor(emu_vertex *from) {
+	for(graph_iterator it(this, from); it != end(); ++it)
+		it->color = white;
 }

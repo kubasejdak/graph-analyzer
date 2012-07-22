@@ -9,6 +9,7 @@
 
 /* standard headers */
 #include <iterator>
+#include <vector>
 using namespace std;
 
 /* libemu headers */
@@ -21,6 +22,9 @@ extern "C" {
 /* project headers */
 #include <core/Dot.h>
 #include <core/InstructionSplitter.h>
+
+typedef vector<emu_vertex *> loop_vec;
+typedef vector<loop_vec *> loop_container;
 
 class Graph {
 public:
@@ -54,9 +58,11 @@ public:
 	graph_iterator begin();
 	graph_iterator end();
 
-	int detectLoop(graph_iterator it);
+	loop_container *detectLoop(graph_iterator from_it);
 
 private:
+	void clearVertColor(emu_vertex *from);
+
 	struct emu_graph *graph;
 	struct emu_hashtable *hashtable;
 };

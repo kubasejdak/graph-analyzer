@@ -11,10 +11,13 @@
 #include <stdint.h>
 #include <sstream>
 #include <string>
+#include <iostream>
+#include <cstdlib>
 using namespace std;
 
 typedef	uint8_t byte_t;
 
 string itos(int value, bool hexadecimal = false);
+string hash(string data);
 
 #endif /* TOOLBOX_H_ */

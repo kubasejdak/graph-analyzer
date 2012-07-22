@@ -4,10 +4,6 @@
  * Created on	: 20-06-2012
  */
 
-/* debug */
-//#define LOCAL_DEBUG
-#include <debug.h>
-
 #include "Graph.h"
 
 Graph::Graph() {
@@ -112,7 +108,6 @@ loop_container *Graph::detectLoop(Graph::graph_iterator from_it) {
 	emu_edge *e;
 	emu_edge *tmp_e = emu_edge_new();
 	emu_vertex *v;
-	instr_vertex *iv;
 
 	/* possible loop paths for vertex "from" */
 	for(unsigned i = 0; i < loops->size(); ++i) {
@@ -124,10 +119,6 @@ loop_container *Graph::detectLoop(Graph::graph_iterator from_it) {
 
 		/* all vertexes in possible loop path */
 		while(v != NULL) {
-			/* debug */
-			iv = (instr_vertex *) v->data;
-			PRINTMSG("v eip = %#x", iv->eip);
-
 			/* save actual path */
 			*tmp = *((*loops)[i]);
 
@@ -139,11 +130,6 @@ loop_container *Graph::detectLoop(Graph::graph_iterator from_it) {
 			bool continuation = true;
 			bool has_edges = false;
 			for(e = emu_edges_first(v->edges); !emu_edges_attail(e); e = emu_edges_next(e), actual = 0) {
-				/* debug */
-				iv = (instr_vertex *) e->destination->data;
-				PRINTMSG("dest->eip = %#x", iv->eip);
-				PRINTMSG("dest->color = %s", (e->destination->color == black) ? "b" : "w");
-
 				/* at least one edge */
 				has_edges = true;
 
@@ -184,8 +170,6 @@ loop_container *Graph::detectLoop(Graph::graph_iterator from_it) {
 
 		/* remove paths that are not loops */
 		v = (*loops)[i]->back();
-		iv = (instr_vertex *) v->data;
-		PRINTMSG("remove: last eip = %#x", iv->eip);
 		bool loop_found = false;
 		for(e = emu_edges_first(v->edges); !emu_edges_attail(e); e = emu_edges_next(e)) {
 			if(e->destination == from) {
@@ -198,7 +182,6 @@ loop_container *Graph::detectLoop(Graph::graph_iterator from_it) {
 			delete (*loops)[i];
 			loops->erase(loops->begin() + i);
 			--i;
-			SHOWMSG("path removed");
 		}
 	} /* for */
 

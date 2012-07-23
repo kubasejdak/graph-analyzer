@@ -24,6 +24,7 @@ public:
 	string getInstr();
 	string getFirstArg();
 	string getSecondArg();
+	void clear();
 
 	InstructionSplitter &operator=(string s);
 

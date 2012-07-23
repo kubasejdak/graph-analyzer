@@ -8,12 +8,13 @@ set(SYSCALL_ANALYZE_SRC
 
 add_library(syscall_analyze ${SYSCALL_ANALYZE_SRC})
 
-# DecoderKey
-set(DECODER_KEY_SRC
+# GraphHash
+set(GRAPH_HASH_SRC
 	AbstractAnalyze.cpp
-	DecoderKey.cpp)
+	GraphHash.cpp
+	../../core/InstructionSplitter.cpp)
 
-add_library(decoder_key ${DECODER_KEY_SRC})
+add_library(graph_hash ${GRAPH_HASH_SRC})
 
 # LoopDetector
 set(LOOP_DETECTOR_SRC

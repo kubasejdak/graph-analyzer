@@ -18,8 +18,8 @@
 #include <modules/ModuleInfo.h>
 #include <modules/input/BinaryInput.h>
 #include <modules/analyze/SyscallAnalyze.h>
-#include <modules/analyze/DecoderKey.h>
 #include <modules/analyze/LoopDetector.h>
+#include <modules/analyze/GraphHash.h>
 
 class ModuleManager {
 public:

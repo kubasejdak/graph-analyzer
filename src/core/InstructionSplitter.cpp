@@ -61,3 +61,7 @@ InstructionSplitter &InstructionSplitter::operator=(string s) {
 
 	return *this;
 }
+
+void InstructionSplitter::clear() {
+	holder.clear();
+}

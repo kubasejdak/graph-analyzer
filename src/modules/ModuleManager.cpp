@@ -32,9 +32,9 @@ void ModuleManager::loadAnalyze() {
 	SyscallAnalyze *syscallAnalyze = new SyscallAnalyze();
 	analyzeModules[syscallAnalyze->getId()] = syscallAnalyze;
 
-	/* DecoderKey */
-	DecoderKey *decoderKey = new DecoderKey();
-	analyzeModules[decoderKey->getId()] = decoderKey;
+	/* GraphHash */
+	GraphHash *graphHash = new GraphHash();
+	analyzeModules[graphHash->getId()] = graphHash;
 
 	/* LoopDetector */
 	LoopDetector *loopDetector = new LoopDetector();

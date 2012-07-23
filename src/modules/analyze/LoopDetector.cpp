@@ -76,6 +76,7 @@ bool LoopDetector::perform(ShellcodeSample *sample) {
 				loop_string += splitter.getFirstArg();
 				loop_string += splitter.getSecondArg();
 				loop_string += splitter.getSyscall();
+				splitter.clear();
 			}
 
 			string h = hash(loop_string);

@@ -47,7 +47,7 @@ bool LoopDetector::perform(ShellcodeSample *sample) {
 			/* list of vertexes */
 			vertexes = "\n\t";
 			for(unsigned j = 0; j < vec->size(); ++j) {
-				if(j % 12 == 0 && j != 0)
+				if(j % 10 == 0 && j != 0)
 					vertexes += "\n\t";
 
 				iv = (instr_vertex *) vec->at(j)->data;

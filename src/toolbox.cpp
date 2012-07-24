@@ -30,5 +30,5 @@ string hash(string data) {
 
 	if(h < 0)
 		h = -h;
-	return itos(h);
+	return itos(h, true);
 }

@@ -1,0 +1,4 @@
+What should be installed to run Graph Analyzer:
+- gcc
+- cmake
+- graphiviz

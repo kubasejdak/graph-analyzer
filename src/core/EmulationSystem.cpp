@@ -33,6 +33,12 @@ bool EmulationSystem::emulate() {
 	sample->getInfo()->setCodeOffset(codeOffset);
 	sample->getInfo()->setShellcodePresent(codeOffset >= 0 ? true : false);
 
+	/* if exploit not detected return */
+	if(!sample->getInfo()->isShellcodePresent()) {
+		sample = NULL;
+		return true;
+	}
+
 	/* prepare environment */
 	uint32_t eipsave = 0;
 	int ret = 0;

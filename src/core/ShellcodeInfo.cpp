@@ -26,7 +26,7 @@ ShellcodeInfo::~ShellcodeInfo() {
 void ShellcodeInfo::printInfo() {
 	cout << "\t name : " << name << endl;
 	cout << "\t file type : " << fileType << endl;
-	cout << "\t size : " << dec <<size << endl;
+	cout << "\t file size : " << dec <<size << endl;
 	cout << "\t shellcode present : " << (shellcodePresent ? "yes" : "no") << endl;
 	cout << "\t shellcode offset : 0x" << hex << codeOffset << endl;
 	multimap<string, map<string, string> *>::iterator it;

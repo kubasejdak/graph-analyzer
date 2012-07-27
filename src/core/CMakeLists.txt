@@ -10,6 +10,7 @@ set(CORE_SRC
 	ShellcodeInfo.cpp
 	Graph.cpp
 	Dot.cpp
-	InstructionSplitter.cpp)
+	InstructionSplitter.cpp
+	FileAnalyser.cpp)
 
 add_library(core ${CORE_SRC})

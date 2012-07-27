@@ -10,15 +10,15 @@
 /* standard headers */
 #include <map>
 #include <string>
-#include <boost/algorithm/string.hpp>
+#include <queue>
 using namespace std;
-using namespace boost;
 
 /* project headers */
 #include <core/EmulationSystem.h>
 #include <core/AnalysisSystem.h>
 #include <core/ShellcodeSample.h>
 #include <core/ShellcodeInfo.h>
+#include <core/FileAnalyser.h>
 #include <modules/input/AbstractInput.h>
 #include <modules/output/AbstractOutput.h>
 #include <modules/ModuleManager.h>
@@ -35,7 +35,7 @@ public:
 	CoreSystem();
 	virtual ~CoreSystem();
 
-	bool loadShellcode(string filename);
+	list<string> load(string filename);
 	bool emulate(string filename);
 	bool analyze(string filename);
 	ShellcodeInfo *getResults(string filename);

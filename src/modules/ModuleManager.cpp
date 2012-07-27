@@ -22,6 +22,10 @@ void ModuleManager::loadInput() {
 	/* BinaryInput */
 	BinaryInput *binaryInput = new BinaryInput();
 	inputModules[binaryInput->getId()] = binaryInput;
+
+	/* BinaryInput */
+	PcapInput *pcapInput = new PcapInput();
+	inputModules[pcapInput->getId()] = pcapInput;
 }
 
 void ModuleManager::loadOutput() {

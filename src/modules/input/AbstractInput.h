@@ -10,6 +10,7 @@
 /* standard headers*/
 #include <string>
 #include <fstream>
+#include <queue>
 using namespace std;
 
 /* project headers */
@@ -25,12 +26,12 @@ public:
 		return nextID++;
 	}
 
-	string getExtension();
-	virtual bool loadInput(string filename, ShellcodeSample *sample) = 0;
+	string getType();
+	virtual void loadInput(string filename, queue<ShellcodeSample *> *samples) = 0;
 
 protected:
 	static int nextID;
-	string extension;
+	string type;
 };
 
 #endif /* ABSTRACTINPUT_H_ */

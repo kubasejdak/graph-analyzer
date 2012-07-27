@@ -50,35 +50,39 @@ int main(int argc, char *argv[]) {
 	cout << "============================================" << endl;
 
 	bool ret;
-
 	for(int i = 1; i < argc; ++i) {
 		string input_file = argv[i];
 
 		/* load shellcode */
-		ret = system.loadShellcode(input_file);
-		if(!ret) {
+		list<string> files = system.load(input_file);
+		if(files.empty()) {
 			PRINTERR("opening file %s", input_file.c_str());
 			continue;
 		}
 
-		/* emulate shellcode */
-		ret = system.emulate(input_file);
-		if(!ret) {
-			PRINTERR("emulating %s", input_file.c_str());
-			continue;
-		}
+		/* process all returned files */
+		while(!files.empty()) {
+			string f = files.front();
+			files.pop_front();
 
-		/* analyze graph */
-		ret = system.analyze(input_file);
-		if(!ret) {
-			PRINTERR("analyzing %s", input_file.c_str());
-			continue;
-		}
+			ret = system.emulate(f);
+			if(!ret) {
+				PRINTERR("emulating %s", f.c_str());
+				continue;
+			}
 
-		ShellcodeInfo *info = system.getResults(input_file);
-		cout << "Results for sample #" << i << " :" << endl;
-		info->printInfo();
-		cout << endl;
+			/* analyze graph */
+			ret = system.analyze(f);
+			if(!ret) {
+				PRINTERR("analyzing %s", f.c_str());
+				continue;
+			}
+
+			ShellcodeInfo *info = system.getResults(f);
+			cout << "Results for sample #" << i << " :" << endl;
+			info->printInfo();
+			cout << endl;
+		}
 	}
 
 	return 0;

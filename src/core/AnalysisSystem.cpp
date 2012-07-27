@@ -22,6 +22,11 @@ bool AnalysisSystem::analyze() {
 	if(!sample)
 		return false;
 
+	if(!sample->getInfo()->isShellcodePresent()) {
+		sample = NULL;
+		return true;
+	}
+
 	bool status;
 	map<int, AbstractAnalyze *>::iterator it;
 	for(it = analyzeModules->begin(); it != analyzeModules->end(); ++it) {

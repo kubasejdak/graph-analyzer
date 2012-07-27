@@ -16,23 +16,31 @@ CoreSystem::~CoreSystem() {
 	clearCache();
 }
 
-bool CoreSystem::loadShellcode(string filename) {
-	ShellcodeSample *s = new ShellcodeSample();
-	if(!s)
-		return false;
+list<string> CoreSystem::load(string filename) {
+	list<string> files;
+	queue<ShellcodeSample *> q;
+	ShellcodeSample *s;
+	FileAnalyser fileAnalyser;
+	string fileType = fileAnalyser.analyze(filename);
 
 	map<int, AbstractInput *>::iterator it;
 	for(it = inputModules->begin(); it!= inputModules->end(); ++it) {
-		if(iends_with(filename, (*it).second->getExtension())) {
-			bool ret = (*it).second->loadInput(filename, s);
-			if(ret)
-				samples[filename] = s;
+		if(fileType == (*it).second->getType()) {
+			(*it).second->loadInput(filename, &q);
 
-			return ret;
+			/* process all returned files */
+			while(!q.empty()) {
+				s = q.front();
+				q.pop();
+				samples[s->getInfo()->getName()] = s;
+				files.push_back(s->getInfo()->getName());
+			}
+
+			break;
 		}
 	}
 
-	return false;
+	return files;
 }
 
 bool CoreSystem::emulate(string filename) {

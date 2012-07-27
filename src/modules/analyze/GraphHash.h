@@ -18,7 +18,7 @@ public:
 	GraphHash();
 	virtual ~GraphHash();
 
-	bool perform(ShellcodeSample *sample);
+	virtual bool perform(ShellcodeSample *sample);
 };
 
 #endif /* GRAPHHASH_H_ */

@@ -9,14 +9,13 @@
 
 /* project headers */
 #include "AbstractInput.h"
-#include <debug.h>
 
 class BinaryInput: public AbstractInput {
 public:
 	BinaryInput();
 	virtual ~BinaryInput();
 
-	virtual bool loadInput(string filename, ShellcodeSample *sample);
+	virtual void loadInput(string filename, queue<ShellcodeSample *> *samples);
 };
 
 #endif /* BINARYINPUT_H_ */

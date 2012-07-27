@@ -13,17 +13,17 @@
 BinaryInput::BinaryInput() {
 	id = getNextID();
 	name = "BinaryInput";
-	extension = ".bin";
-	description = "Loads shellcode from binary files. Supports " + extension + " files.";
+	type = "binary";
+	description = "Loads shellcode from binary files.";
 }
 
 BinaryInput::~BinaryInput() {
 }
 
-bool BinaryInput::loadInput(string filename, ShellcodeSample *sample) {
+void BinaryInput::loadInput(string filename, queue<ShellcodeSample *> *samples) {
 	fstream file(filename.c_str(), fstream::in | fstream::binary);
 	if(!file.is_open())
-		return false;
+		return;
 
 	file.seekg(0, ios::end);
 	int size = file.tellg();
@@ -33,10 +33,10 @@ bool BinaryInput::loadInput(string filename, ShellcodeSample *sample) {
 	file.read(buffer, size);
 	file.close();
 
-	sample->setCode((byte_t *) buffer);
-	sample->getInfo()->setName(filename);
-	sample->getInfo()->setFileType("BIN (plain x86 mashine code)");
-	sample->getInfo()->setSize(size);
-
-	return true;
+	ShellcodeSample *s = new ShellcodeSample();
+	s->getInfo()->setName(filename);
+	s->getInfo()->setFileType(type);
+	s->getInfo()->setSize(size);
+	s->setCode((byte_t *) buffer);
+	samples->push(s);
 }

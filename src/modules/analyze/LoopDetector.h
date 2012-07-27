@@ -21,7 +21,7 @@ public:
 	LoopDetector();
 	virtual ~LoopDetector();
 
-	bool perform(ShellcodeSample *sample);
+	virtual bool perform(ShellcodeSample *sample);
 };
 
 #endif /* LOOPDETECTOR_H_ */

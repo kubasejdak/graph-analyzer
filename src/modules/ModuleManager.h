@@ -17,6 +17,7 @@
 #include <modules/analyze/AbstractAnalyze.h>
 #include <modules/ModuleInfo.h>
 #include <modules/input/BinaryInput.h>
+#include <modules/input/PcapInput.h>
 #include <modules/analyze/SyscallAnalyze.h>
 #include <modules/analyze/LoopDetector.h>
 #include <modules/analyze/GraphHash.h>

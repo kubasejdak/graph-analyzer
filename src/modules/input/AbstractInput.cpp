@@ -14,6 +14,6 @@ AbstractInput::AbstractInput() {
 AbstractInput::~AbstractInput() {
 }
 
-string AbstractInput::getExtension() {
-	return extension;
+string AbstractInput::getType() {
+	return type;
 }

@@ -7,8 +7,8 @@ cmake_minimum_required(VERSION 2.6)
 project(graph_analyzer)
 
 # options passed to the compiler
-#add_definitions(-g -O2 -Wall) #-Werror
-add_definitions(-g -Wall) #-Werror
+add_definitions(-g -O2 -Wall) #-Werror
+#add_definitions(-g -Wall) #-Werror
 
 # include
 include_directories(src)

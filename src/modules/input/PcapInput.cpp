@@ -19,12 +19,14 @@ PcapInput::~PcapInput() {
 void PcapInput::loadInput(string filename, queue<ShellcodeSample *> *samples) {
 	int stat;
 	mkdir("pcap_tmp", S_IRWXU | S_IRWXG | S_IRWXO);
-	string cmd = "tcpflow -o pcap_tmp -r ";
-	cmd += filename;
-	stat = system(cmd.c_str());
+	string tcpflow_cmd = "tcpflow -r ";
+	tcpflow_cmd += filename;
+	chdir("pcap_tmp");
+	stat = system(tcpflow_cmd.c_str());
 	if(stat)
 		return;
 
+	chdir("..");
 	unlink("pcap_tmp/report.xml");
 
 	/* get all files stored in pcap_tmp */

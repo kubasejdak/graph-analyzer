@@ -24,6 +24,7 @@ public:
 	void printInfo();
 
 	string getName();
+	string getBaseName();
 	string getFileType();
 	int getSize();
 	int getCodeOffset();
@@ -31,6 +32,7 @@ public:
 	multimap<string, map<string, string> *> *getTraits();
 
 	void setName(string name);
+	void setBaseName(string baseName);
 	void setFileType(string fileType);
 	void setSize(int size);
 	void setCodeOffset(int codeOffset);
@@ -40,6 +42,7 @@ public:
 private:
 	bool equalMaps(map<string, string> *a, map<string, string> *b);
 	string name;
+	string baseName;
 	string fileType;
 	int32_t size;
 	int32_t codeOffset;

@@ -17,10 +17,14 @@ PcapInput::~PcapInput() {
 }
 
 void PcapInput::loadInput(string filename, queue<ShellcodeSample *> *samples) {
+	int stat;
 	mkdir("pcap_tmp", S_IRWXU | S_IRWXG | S_IRWXO);
 	string cmd = "tcpflow -o pcap_tmp -r ";
 	cmd += filename;
-	system(cmd.c_str());
+	stat = system(cmd.c_str());
+	if(stat)
+		return;
+
 	unlink("pcap_tmp/report.xml");
 
 	/* get all files stored in pcap_tmp */
@@ -44,18 +48,21 @@ void PcapInput::loadInput(string filename, queue<ShellcodeSample *> *samples) {
 		flow_name = filename;
 		string postfix = "_flow_";
 		postfix += itos(i);
+		postfix += ".bin";
 		size_t pos = flow_name.find(".pcap");
-		if(pos == string::npos)
-			flow_name += postfix;
-		else
-			flow_name.insert(pos, postfix);
+		if(pos != string::npos)
+			flow_name.erase(pos);
+
+		flow_name += postfix;
 
 		/* move file and change name */
 		string mv_cmd = "mv pcap_tmp/";
 		mv_cmd += de->d_name;
 		mv_cmd += " ";
 		mv_cmd += flow_name;
-		system(mv_cmd.c_str());
+		stat = system(mv_cmd.c_str());
+		if(stat)
+			continue;
 
 		/* read code */
 		chmod(flow_name.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
@@ -74,10 +81,15 @@ void PcapInput::loadInput(string filename, queue<ShellcodeSample *> *samples) {
 		/* create new sample */
 		s = new ShellcodeSample();
 		s->getInfo()->setName(flow_name);
+		s->getInfo()->setBaseName(filename);
 		s->getInfo()->setFileType(type);
 		s->getInfo()->setSize(size);
 		s->setCode((byte_t *) buffer);
 		samples->push(s);
+
+		/* delete file */
+		if(DELETE_FLOW_FILES)
+			unlink(flow_name.c_str());
 
 		++i;
 	}

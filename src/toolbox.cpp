@@ -32,3 +32,17 @@ string hash(string data) {
 		h = -h;
 	return itos(h, true);
 }
+
+bool isDirectory(string path) {
+	struct stat sb;
+	stat(path.c_str(), &sb);
+
+	return S_ISDIR(sb.st_mode);
+}
+
+bool directoryExists(string path) {
+	struct stat sb;
+	int ret = stat(path.c_str(), &sb);
+
+	return (ret == 0) ? true : false;
+}

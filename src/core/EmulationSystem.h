@@ -7,8 +7,6 @@
 #ifndef EMULATIONSYSTEM_H_
 #define EMULATIONSYSTEM_H_
 
-#define	EMULATION_STEPS	1000000
-
 /* libemu headers */
 extern "C" {
 	#include <emu/emu.h>
@@ -30,6 +28,7 @@ extern "C" {
 #include <core/EmulationUnit.h>
 #include <core/ShellcodeSample.h>
 #include <core/Dot.h>
+#include <options.h>
 
 class EmulationSystem {
 public:

@@ -17,6 +17,7 @@ CoreSystem::~CoreSystem() {
 }
 
 list<string> CoreSystem::load(string filename) {
+	changeStatus(EMULATING);
 	list<string> files;
 	queue<ShellcodeSample *> q;
 	ShellcodeSample *s;
@@ -39,6 +40,7 @@ list<string> CoreSystem::load(string filename) {
 			break;
 		}
 	}
+	changeStatus(IDLE);
 
 	return files;
 }

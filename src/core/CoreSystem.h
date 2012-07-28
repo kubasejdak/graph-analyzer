@@ -26,6 +26,7 @@ using namespace std;
 enum SystemStatus {
 	IDLE,
 	ERROR,
+	LOADING,
 	EMULATING,
 	ANALYZING
 };

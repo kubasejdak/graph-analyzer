@@ -14,6 +14,9 @@
 #include <iostream>
 #include <list>
 #include <iomanip>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <dirent.h>
 using namespace std;
 
 /* project headers */
@@ -22,6 +25,7 @@ using namespace std;
 #include <modules/ModuleInfo.h>
 #include <modules/ModuleManager.h>
 #include <version.h>
+#include <toolbox.h>
 
 void printIntro();
 void printUsage();
@@ -40,6 +44,11 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 
+	/* collect input files */
+	list<string> pendingFiles;
+	for(int i = 1; i < argc; ++i)
+		pendingFiles.push_back(argv[i]);
+
 	/* create main system */
 	CoreSystem system;
 
@@ -50,8 +59,35 @@ int main(int argc, char *argv[]) {
 	cout << "============================================" << endl;
 
 	bool ret;
-	for(int i = 1; i < argc; ++i) {
-		string input_file = argv[i];
+	int i = 1;
+	while(!pendingFiles.empty()) {
+		string input_file = pendingFiles.front();
+		pendingFiles.pop_front();
+
+		/* check if directory */
+		if(isDirectory(input_file)) {
+			DIR *dp;
+			dirent *de;
+
+			dp = opendir(input_file.c_str());
+			if(dp == NULL) {
+				PRINTERR("opening directory %s", input_file.c_str());
+				continue;
+			}
+
+			while((de = readdir(dp))) {
+				if(strcmp(de->d_name, ".") == 0 || strcmp(de->d_name, "..") == 0)
+					continue;
+
+				string next = input_file;
+				if(input_file[input_file.size() - 1] != '/')
+					next += "/";
+				next += de->d_name;
+				pendingFiles.push_front(next);
+			}
+
+			continue;
+		}
 
 		/* load shellcode */
 		list<string> files = system.load(input_file);
@@ -79,9 +115,10 @@ int main(int argc, char *argv[]) {
 			}
 
 			ShellcodeInfo *info = system.getResults(f);
-			cout << "Results for sample #" << i << " :" << endl;
+			cout << "Results for sample #" << dec << i << " :" << endl;
 			info->printInfo();
 			cout << endl;
+			++i;
 		}
 	}
 
@@ -97,7 +134,7 @@ void printIntro() {
 
 void printUsage() {
 	cout << "GraphAnalyzer " << VERSION << endl;
-	cout << "Usage: graph_analyzer [files]" << endl << endl;
+	cout << "Usage: graph_analyzer [files | folders]" << endl << endl;
 	cout << "Report bugs to kuba.sejdak@gmail.com" << endl;
 }
 

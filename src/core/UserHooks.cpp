@@ -4,19 +4,19 @@
  *  Created on	: 13-05-2012
  */
 
+/* debug */
+#define LOCAL_DEBUG
+#include <debug.h>
+
 #include "UserHooks.h"
 
-uint32_t userHook_ExitProcess(struct emu_env *env, struct emu_env_hook *hook, ...)
-{
-	printf("Hook me Captain Cook!\n");
-	printf("%s:%i %s\n",__FILE__,__LINE__,__FUNCTION__);
-
+#if EXITPROCESS_HOOK
+uint32_t userHook_ExitProcess(struct emu_env *env, struct emu_env_hook *hook, ...) {
 /*
 VOID WINAPI ExitProcess(
   UINT uExitCode
 );
 */
-
 	va_list vl;
 	va_start(vl, hook);
 	int exitcode = va_arg(vl,  int);
@@ -24,23 +24,17 @@ VOID WINAPI ExitProcess(
 
 	printf("%s(%i)\n", hook->hook.win->fnname, exitcode);
 
-
-	opts.steps = 0;
 	return 0;
 }
+#endif
 
-
-uint32_t userHook_ExitThread(struct emu_env *env, struct emu_env_hook *hook, ...)
-{
-	printf("Hook me Captain Cook!\n");
-	printf("%s:%i %s\n",__FILE__,__LINE__,__FUNCTION__);
-
+#if EXITTHREAD_HOOK
+uint32_t userHook_ExitThread(struct emu_env *env, struct emu_env_hook *hook, ...) {
 /*
 VOID ExitThread(
   DWORD dwExitCode
 );
 */
-
 	va_list vl;
 	va_start(vl, hook);
 	int exitcode = va_arg(vl,  int);
@@ -48,71 +42,13 @@ VOID ExitThread(
 
 	printf("%s(%i)\n", hook->hook.win->fnname, exitcode);
 
-	opts.steps = 0;
 	return 0;
 
 }
+#endif
 
-
-
-void append(struct emu_string *to, const char *dir, char *data, int size)
-{
-	char *saveptr = data;
-
-	struct emu_string *sanestr = emu_string_new();
-
-
-	int i;
-	for (i=0;i<size;i++)
-	{
-		if (data[i] == '\r')
-		{
-
-		}else
-		if ( isprint(data[i]))// || isblank(data[i]))
-		{
-			emu_string_append_format(sanestr, "%c", data[i]);
-		}
-		else
-		if (data[i] == '\n')
-		{
-			emu_string_append_char(sanestr, "\n");
-		}
-		else
-		if (data[i] == '\t')
-		{
-			emu_string_append_char(sanestr, "\t");
-		}
-		else
-		{
-			emu_string_append_format(sanestr, "\\x%02x", (unsigned char)data[i]);
-		}
-	}
-
-	saveptr = NULL;
-
-
-	char *tok;
-	tok  = strtok_r(sanestr->data, "\n", &saveptr);
-//	printf("line %s:%s\n",dir, tok);
-	if (tok != NULL)
-	{
-		emu_string_append_format(to, "%s %s\n", dir, tok);
-		while ( (tok = strtok_r(NULL,"\n",&saveptr)) != NULL )
-		{
-			emu_string_append_format(to, "%s %s\n", dir, tok);
-//		printf("line %s:%s\n",dir, tok);
-		}
-
-	}
-	emu_string_free(sanestr);
-}
-
-uint32_t userHook_CreateProcess(struct emu_env *env, struct emu_env_hook *hook, ...)
-{
-	printf("Hook me Captain Cook!\n");
-	printf("%s:%i %s\n",__FILE__,__LINE__,__FUNCTION__);
-
+#if CREATEPROCESS_HOOK
+uint32_t userHook_CreateProcess(struct emu_env *env, struct emu_env_hook *hook, ...) {
 	va_list vl;
 	va_start(vl, hook);
 
@@ -199,7 +135,6 @@ uint32_t userHook_CreateProcess(struct emu_env *env, struct emu_env_hook *hook, 
 					struct timeval timeout = { 10, 0};
 
 					int action = select(highsock+1, &socks, NULL, NULL, &timeout);
-//					printf("select %i\n",action);
 					int written = -1;
 					if ( action > 0 )
 					{
@@ -207,7 +142,6 @@ uint32_t userHook_CreateProcess(struct emu_env *env, struct emu_env_hook *hook, 
 						{
 							int size = read(psiStartInfo->hStdInput, buf, 1024);
 
-//							printf("read %i in '%.*s'\n",size,size,buf);
 							if ( size > 0 )
 								written = write(in[0], buf, size);
 							else
@@ -217,7 +151,6 @@ uint32_t userHook_CreateProcess(struct emu_env *env, struct emu_env_hook *hook, 
 						if ( FD_ISSET(out[1], &socks) )
 						{
 							int size = read(out[1], buf, 1024);
-//							printf("read %i out '%.*s'\n",size,size,buf);
 							if ( size > 0 )
 								written = write(psiStartInfo->hStdOutput, buf, size);
 							else
@@ -266,13 +199,10 @@ exit_now:
 
 	return 1;
 }
+#endif
 
-uint32_t userHook_WaitForSingleObject(struct emu_env *env, struct emu_env_hook *hook, ...)
-{
-	printf("Hook me Captain Cook!\n");
-	printf("%s:%i %s\n",__FILE__,__LINE__,__FUNCTION__);
-
-
+#if WAITFOR_SIGNLEOBJECT_HOOK
+uint32_t userHook_WaitForSingleObject(struct emu_env *env, struct emu_env_hook *hook, ...) {
 	/*
 	DWORD WINAPI WaitForSingleObject(
 	  HANDLE hHandle,
@@ -298,28 +228,22 @@ uint32_t userHook_WaitForSingleObject(struct emu_env *env, struct emu_env_hook *
 	printf("process exited with status %i\n",status);
 	return 0;
 }
+#endif
 
-
-uint32_t userHook_exit(struct emu_env *env, struct emu_env_hook *hook, ...)
-{
-	printf("Hook me Captain Cook!\n");
-	printf("%s:%i %s\n",__FILE__,__LINE__,__FUNCTION__);
-
+#if EXIT_HOOK
+uint32_t userHook_exit(struct emu_env *env, struct emu_env_hook *hook, ...) {
 	va_list vl;
 	va_start(vl, hook);
 	int code = va_arg(vl,  int);
 	va_end(vl);
 
 	printf("exit(%i)\n",code);
-	opts.steps = 0;
 	return 0;
 }
+#endif
 
-uint32_t userHook_accept(struct emu_env *env, struct emu_env_hook *hook, ...)
-{
-	printf("Hook me Captain Cook!\n");
-	printf("%s:%i %s\n",__FILE__,__LINE__,__FUNCTION__);
-
+#if ACCEPT_HOOK
+uint32_t userHook_accept(struct emu_env *env, struct emu_env_hook *hook, ...) {
 	va_list vl;
 	va_start(vl, hook);
 
@@ -331,14 +255,12 @@ uint32_t userHook_accept(struct emu_env *env, struct emu_env_hook *hook, ...)
 	struct sockaddr sa;
 	socklen_t st = sizeof(struct sockaddr);
 
-    return accept(s, &sa, &st);
+	return accept(s, &sa, &st);
 }
+#endif
 
-uint32_t userHook_bind(struct emu_env *env, struct emu_env_hook *hook, ...)
-{
-	printf("Hook me Captain Cook!\n");
-	printf("%s:%i %s\n",__FILE__,__LINE__,__FUNCTION__);
-
+#if BIND_HOOK
+uint32_t userHook_bind(struct emu_env *env, struct emu_env_hook *hook, ...) {
 	va_list vl;
 	va_start(vl, hook);
 
@@ -362,12 +284,10 @@ uint32_t userHook_bind(struct emu_env *env, struct emu_env_hook *hook, ...)
 
     return bind(s, addr, addrlen);
 }
+#endif
 
-uint32_t userHook_closesocket(struct emu_env *env, struct emu_env_hook *hook, ...)
-{
-	printf("Hook me Captain Cook!\n");
-	printf("%s:%i %s\n",__FILE__,__LINE__,__FUNCTION__);
-
+#if CLOSESOCKET_HOOK
+uint32_t userHook_closesocket(struct emu_env *env, struct emu_env_hook *hook, ...) {
 	va_list vl;
 	va_start(vl, hook);
 	int s 					= va_arg(vl,  int);
@@ -375,12 +295,10 @@ uint32_t userHook_closesocket(struct emu_env *env, struct emu_env_hook *hook, ..
 
     return close(s);
 }
+#endif
 
-uint32_t userHook_connect(struct emu_env *env, struct emu_env_hook *hook, ...)
-{
-	printf("Hook me Captain Cook!\n");
-	printf("%s:%i %s\n",__FILE__,__LINE__,__FUNCTION__);
-
+#if CONNECT_HOOK
+uint32_t userHook_connect(struct emu_env *env, struct emu_env_hook *hook, ...) {
 	va_list vl;
 	va_start(vl, hook);
 
@@ -411,13 +329,10 @@ uint32_t userHook_connect(struct emu_env *env, struct emu_env_hook *hook, ...)
 
     return connect(s, addr, addrlen);
 }
+#endif
 
-uint32_t userHook_fclose(struct emu_env *env, struct emu_env_hook *hook, ...)
-{
-	printf("Hook me Captain Cook!\n");
-	printf("%s:%i %s\n",__FILE__,__LINE__,__FUNCTION__);
-//int fclose(FILE *fp);
-
+#if FCLOSE_HOOK
+uint32_t userHook_fclose(struct emu_env *env, struct emu_env_hook *hook, ...) {
 	va_list vl;
 	va_start(vl, hook);
 	FILE *f = va_arg(vl, FILE *);
@@ -435,13 +350,10 @@ uint32_t userHook_fclose(struct emu_env *env, struct emu_env_hook *hook, ...)
 		return 0;
 
 }
+#endif
 
-
-uint32_t userHook_fopen(struct emu_env *env, struct emu_env_hook *hook, ...)
-{
-	printf("Hook me Captain Cook!\n");
-	printf("%s:%i %s\n",__FILE__,__LINE__,__FUNCTION__);
-
+#if FOPEN_HOOK
+uint32_t userHook_fopen(struct emu_env *env, struct emu_env_hook *hook, ...) {
 	va_list vl;
 	va_start(vl, hook);
 
@@ -465,15 +377,12 @@ uint32_t userHook_fopen(struct emu_env *env, struct emu_env_hook *hook, ...)
 
 	return file;
 }
+#endif
 
+#if FWRITE_HOOK
+/* size_t fwrite(const void *ptr, size_t size, size_t nmemb, FILE *stream); */
 uint32_t userHook_fwrite(struct emu_env *env, struct emu_env_hook *hook, ...)
 {
-	printf("Hook me Captain Cook!\n");
-	printf("%s:%i %s\n",__FILE__,__LINE__,__FUNCTION__);
-
-/*       size_t fwrite(const void *ptr, size_t size, size_t nmemb,
-                     FILE *stream);
-*/
 	va_list vl;
 	va_start(vl, hook);
 	void *data = va_arg(vl, void *);
@@ -490,14 +399,10 @@ uint32_t userHook_fwrite(struct emu_env *env, struct emu_env_hook *hook, ...)
 		return size*nmemb;
 
 }
+#endif
 
-
-
-uint32_t userHook_listen(struct emu_env *env, struct emu_env_hook *hook, ...)
-{
-	printf("Hook me Captain Cook!\n");
-	printf("%s:%i %s\n",__FILE__,__LINE__,__FUNCTION__);
-
+#if LISTEN_HOOK
+uint32_t userHook_listen(struct emu_env *env, struct emu_env_hook *hook, ...) {
 	va_list vl;
 	va_start(vl, hook);
 
@@ -505,14 +410,12 @@ uint32_t userHook_listen(struct emu_env *env, struct emu_env_hook *hook, ...)
 	int backlog			 	= va_arg(vl,  int);
 	va_end(vl);
 
-    return listen(s, backlog);
+	return listen(s, backlog);
 }
+#endif
 
-uint32_t userHook_recv(struct emu_env *env, struct emu_env_hook *hook, ...)
-{
-	printf("Hook me Captain Cook!\n");
-	printf("%s:%i %s\n",__FILE__,__LINE__,__FUNCTION__);
-
+#if RECV_HOOK
+uint32_t userHook_recv(struct emu_env *env, struct emu_env_hook *hook, ...) {
 	va_list vl;
 	va_start(vl, hook);
 
@@ -524,12 +427,10 @@ uint32_t userHook_recv(struct emu_env *env, struct emu_env_hook *hook, ...)
 
 	return recv(s, buf, len,  flags);
 }
+#endif
 
-uint32_t userHook_send(struct emu_env *env, struct emu_env_hook *hook, ...)
-{
-	printf("Hook me Captain Cook!\n");
-	printf("%s:%i %s\n",__FILE__,__LINE__,__FUNCTION__);
-
+#if SEND_HOOK
+uint32_t userHook_send(struct emu_env *env, struct emu_env_hook *hook, ...) {
 	va_list vl;
 	va_start(vl, hook);
 
@@ -541,16 +442,14 @@ uint32_t userHook_send(struct emu_env *env, struct emu_env_hook *hook, ...)
 
 	return send(s, buf, len,  flags);
 }
+#endif
 
-
-uint32_t userHook_socket(struct emu_env *env, struct emu_env_hook *hook, ...)
-{
-	printf("Hook me Captain Cook!\n");
-	printf("%s:%i %s\n",__FILE__,__LINE__,__FUNCTION__);
-
+#if SOCKET_HOOK
+/* int socket(int domain, int type, int protocol); */
+uint32_t userHook_socket(struct emu_env *env, struct emu_env_hook *hook, ...) {
 	va_list vl;
 	va_start(vl, hook);
-	/* int socket(int domain, int type, int protocol); */
+
 	int domain = va_arg(vl,  int);
 	int type = va_arg(vl,  int);
 	int protocol = va_arg(vl, int);
@@ -560,15 +459,14 @@ uint32_t userHook_socket(struct emu_env *env, struct emu_env_hook *hook, ...)
 
 	return socket(domain, type, protocol);
 }
+#endif
 
-uint32_t userHook_WSASocket(struct emu_env *env, struct emu_env_hook *hook, ...)
-{
-	printf("Hook me Captain Cook!\n");
-	printf("%s:%i %s\n",__FILE__,__LINE__,__FUNCTION__);
-
+#if WSASOCKET_HOOK
+/* int socket(int domain, int type, int protocol); */
+uint32_t userHook_WSASocket(struct emu_env *env, struct emu_env_hook *hook, ...) {
 	va_list vl;
 	va_start(vl, hook);
-	/* int socket(int domain, int type, int protocol); */
+
 	int domain = va_arg(vl,  int);
 	int type = va_arg(vl,  int);
 	int protocol = va_arg(vl, int);
@@ -582,12 +480,10 @@ uint32_t userHook_WSASocket(struct emu_env *env, struct emu_env_hook *hook, ...)
 
 	return socket(domain, type, protocol);
 }
+#endif
 
-
-uint32_t userHook_CreateFile(struct emu_env *env, struct emu_env_hook *hook, ...)
-{
-	printf("Hook me Captain Cook!\n");
-	printf("%s:%i %s\n",__FILE__,__LINE__,__FUNCTION__);
+#if CREATEFILE_HOOK
+uint32_t userHook_CreateFile(struct emu_env *env, struct emu_env_hook *hook, ...) {
 /*
 HANDLE CreateFile(
   LPCTSTR lpFileName,
@@ -626,11 +522,10 @@ HANDLE CreateFile(
 
 	return (uint32_t)handle;
 }
+#endif
 
-uint32_t userHook_WriteFile(struct emu_env *env, struct emu_env_hook *hook, ...)
-{
-	printf("Hook me Captain Cook!\n");
-	printf("%s:%i %s\n",__FILE__,__LINE__,__FUNCTION__);
+#if WRITEFILE_HOOK
+uint32_t userHook_WriteFile(struct emu_env *env, struct emu_env_hook *hook, ...) {
 /*
 BOOL WriteFile(
   HANDLE hFile,
@@ -663,12 +558,10 @@ BOOL WriteFile(
 	return 1;
 
 }
+#endif
 
-
-uint32_t userHook_CloseHandle(struct emu_env *env, struct emu_env_hook *hook, ...)
-{
-	printf("Hook me Captain Cook!\n");
-	printf("%s:%i %s\n",__FILE__,__LINE__,__FUNCTION__);
+#if CLOSEHANDLE_HOOK
+uint32_t userHook_CloseHandle(struct emu_env *env, struct emu_env_hook *hook, ...) {
 /*
 BOOL CloseHandle(
   HANDLE hObject
@@ -696,12 +589,10 @@ BOOL CloseHandle(
 
 	return 0;
 }
+#endif
 
-uint32_t userHook_URLDownloadToFile(struct emu_env *env, struct emu_env_hook *hook, ...)
-{
-	printf("Hook me Captain Cook!\n");
-	printf("%s:%i %s\n",__FILE__,__LINE__,__FUNCTION__);
-
+#if URLDOWNLOADTOFILE_HOOK
+uint32_t userHook_URLDownloadToFile(struct emu_env *env, struct emu_env_hook *hook, ...) {
 	va_list vl;
 	va_start(vl, hook);
 
@@ -718,12 +609,10 @@ uint32_t userHook_URLDownloadToFile(struct emu_env *env, struct emu_env_hook *ho
 
 	return 0;
 }
+#endif
 
-uint32_t userHook_IEWinMain(struct emu_env *env, struct emu_env_hook *hook, ...)
-{
-	printf("Hook me Captain Cook!\n");
-	printf("%s:%i %s\n",__FILE__,__LINE__,__FUNCTION__);
-
+#if IEWINMAIN_HOOK
+uint32_t userHook_IEWinMain(struct emu_env *env, struct emu_env_hook *hook, ...) {
 	va_list vl;
 	va_start(vl, hook);
 	/*char *CommandLine =*/ (void)va_arg(vl, char *);
@@ -732,4 +621,41 @@ uint32_t userHook_IEWinMain(struct emu_env *env, struct emu_env_hook *hook, ...)
 
 	opts.steps = 0;
 	return 0;
+}
+#endif
+
+/* utility */
+void append(struct emu_string *to, const char *dir, char *data, int size)
+{
+	char *saveptr = data;
+	struct emu_string *sanestr = emu_string_new();
+
+	int i;
+	for (i=0;i<size;i++) {
+		if (data[i] == '\r') {
+		}
+
+		else if(isprint(data[i]))
+			emu_string_append_format(sanestr, "%c", data[i]);
+
+		else if (data[i] == '\n')
+			emu_string_append_char(sanestr, "\n");
+
+		else if (data[i] == '\t')
+			emu_string_append_char(sanestr, "\t");
+
+		else
+			emu_string_append_format(sanestr, "\\x%02x", (unsigned char)data[i]);
+	}
+
+	saveptr = NULL;
+
+	char *tok;
+	tok  = strtok_r(sanestr->data, "\n", &saveptr);
+	if(tok != NULL) {
+		emu_string_append_format(to, "%s %s\n", dir, tok);
+		while ( (tok = strtok_r(NULL,"\n",&saveptr)) != NULL )
+			emu_string_append_format(to, "%s %s\n", dir, tok);
+	}
+	emu_string_free(sanestr);
 }

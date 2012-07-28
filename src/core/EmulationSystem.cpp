@@ -162,7 +162,7 @@ bool EmulationSystem::emulate() {
 				env->env.win->last_good_eip = emu_cpu_eip_get(cpu);
 		} /* else dla if(hook != NULL) */
 
-		/* link last two vertexes with an edge */
+		/* link two last vertexes with an edge */
 		if(last_vertex != NULL) {
 			struct emu_edge *ee = emu_vertex_edge_add(last_vertex, ev);
 			if(cpu->instr.is_fpu == 0 && cpu->instr.source.cond_pos == eipsave && cpu->instr.source.has_cond_pos == 1)
@@ -176,9 +176,22 @@ bool EmulationSystem::emulate() {
 
 	/* draw graph using dot package and sample name */
 	string name = sample->getInfo()->getName();
-	int n = name.find_last_of('.');
-	name.erase(n + 1);
-	name += "png";
+	size_t pos = name.find('.');
+	if(pos != string::npos)
+		name.erase(pos);
+	name += ".png";
+
+	if(USE_DEFAULT_GRAPH_DIR) {
+		if(!directoryExists(DEFAULT_GRAPH_DIR))
+			mkdir(DEFAULT_GRAPH_DIR, S_IRWXU | S_IRWXG | S_IRWXO);
+
+		pos = name.find_last_of('/');
+		if(pos != string::npos)
+			name.erase(0, pos);
+
+		name.insert(0, DEFAULT_GRAPH_DIR);
+	}
+
 	string cmd = "dot graph.dot -Tpng -o " + name;
 	ret = system(cmd.c_str());
 	if(!ret) {

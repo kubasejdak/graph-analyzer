@@ -13,11 +13,14 @@
 #include <string>
 #include <iostream>
 #include <cstdlib>
+#include <sys/stat.h>
 using namespace std;
 
 typedef	uint8_t byte_t;
 
 string itos(int value, bool hexadecimal = false);
 string hash(string data);
+bool isDirectory(string path);
+bool directoryExists(string path);
 
 #endif /* TOOLBOX_H_ */

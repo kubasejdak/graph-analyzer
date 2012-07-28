@@ -35,6 +35,7 @@ void BinaryInput::loadInput(string filename, queue<ShellcodeSample *> *samples) 
 
 	ShellcodeSample *s = new ShellcodeSample();
 	s->getInfo()->setName(filename);
+	s->getInfo()->setBaseName(filename);
 	s->getInfo()->setFileType(type);
 	s->getInfo()->setSize(size);
 	s->setCode((byte_t *) buffer);

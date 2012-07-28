@@ -8,6 +8,7 @@
 
 ShellcodeInfo::ShellcodeInfo() {
 	name = "";
+	baseName = "";
 	fileType = "unknown";
 	size = 0;
 	codeOffset = 0;
@@ -25,10 +26,12 @@ ShellcodeInfo::~ShellcodeInfo() {
 
 void ShellcodeInfo::printInfo() {
 	cout << "\t name : " << name << endl;
+	cout << "\t extracted from: " << baseName << endl;
 	cout << "\t file type : " << fileType << endl;
 	cout << "\t file size : " << dec <<size << endl;
 	cout << "\t shellcode present : " << (shellcodePresent ? "yes" : "no") << endl;
-	cout << "\t shellcode offset : 0x" << hex << codeOffset << endl;
+	if(shellcodePresent)
+		cout << "\t shellcode offset : 0x" << hex << codeOffset << endl;
 	multimap<string, map<string, string> *>::iterator it;
 	map<string, string>::iterator it2;
 	for(it = traits->begin(); it != traits->end(); ++it) {
@@ -41,6 +44,10 @@ void ShellcodeInfo::printInfo() {
 
 string ShellcodeInfo::getName() {
 	return name;
+}
+
+string ShellcodeInfo::getBaseName() {
+	return baseName;
 }
 
 string ShellcodeInfo::getFileType() {
@@ -65,6 +72,10 @@ multimap<string, map<string, string> *> *ShellcodeInfo::getTraits() {
 
 void ShellcodeInfo::setName(string name) {
 	this->name = name;
+}
+
+void ShellcodeInfo::setBaseName(string baseName) {
+	this->baseName = baseName;
 }
 
 void ShellcodeInfo::setFileType(string fileType) {

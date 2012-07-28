@@ -15,6 +15,7 @@
 /* project headers */
 #include "AbstractInput.h"
 #include <toolbox.h>
+#include <options.h>
 
 class PcapInput: public AbstractInput {
 public:

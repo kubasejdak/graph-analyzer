@@ -175,24 +175,17 @@ bool EmulationSystem::emulate() {
 	graph_draw(graph->getEmuGraph());
 
 	/* draw graph using dot package and sample name */
-	string name = sample->getInfo()->getName();
-	size_t pos = name.find('.');
-	if(pos != string::npos)
-		name.erase(pos);
-	name += ".png";
+	string graphName = sample->getInfo()->getName();
+	graphName = trimExtension(graphName);
+	graphName += ".png";
 
-	if(USE_DEFAULT_GRAPH_DIR) {
-		if(!directoryExists(DEFAULT_GRAPH_DIR))
-			mkdir(DEFAULT_GRAPH_DIR, S_IRWXU | S_IRWXG | S_IRWXO);
+	if(!directoryExists(GRAPHS_DIR))
+		mkdir(GRAPHS_DIR, S_IRWXU | S_IRWXG | S_IRWXO);
 
-		pos = name.find_last_of('/');
-		if(pos != string::npos)
-			name.erase(0, pos);
+	graphName = extractBasename(graphName);
+	graphName.insert(0, GRAPHS_DIR);
 
-		name.insert(0, DEFAULT_GRAPH_DIR);
-	}
-
-	string cmd = "dot graph.dot -Tpng -o " + name;
+	string cmd = "dot graph.dot -Tpng -o " + graphName;
 	ret = system(cmd.c_str());
 	if(!ret) {
 		ret = unlink("graph.dot");

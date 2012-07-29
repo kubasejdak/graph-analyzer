@@ -46,3 +46,26 @@ bool directoryExists(string path) {
 
 	return (ret == 0) ? true : false;
 }
+
+string extractBasename(string path) {
+	size_t pos = path.find_last_of("/");
+	if(pos == string::npos)
+		return path;
+	else
+		return path.substr(pos + 1);
+}
+
+string trimExtension(string path) {
+	size_t pos = path.find_last_of(".");
+	if(pos == string::npos)
+		return path;
+	else
+		return path.erase(pos);
+}
+
+bool isRelative(string path) {
+	if(path[0] == '/')
+		return false;
+	else
+		return true;
+}

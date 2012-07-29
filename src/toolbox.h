@@ -20,7 +20,14 @@ typedef	uint8_t byte_t;
 
 string itos(int value, bool hexadecimal = false);
 string hash(string data);
+
+/* directories */
 bool isDirectory(string path);
 bool directoryExists(string path);
+
+/* paths */
+string extractBasename(string path);
+string trimExtension(string path);
+bool isRelative(string path);
 
 #endif /* TOOLBOX_H_ */

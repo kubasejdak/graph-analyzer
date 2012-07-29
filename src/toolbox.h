@@ -23,7 +23,7 @@ string hash(string data);
 
 /* directories */
 bool isDirectory(string path);
-bool directoryExists(string path);
+bool nameExists(string path);
 
 /* paths */
 string extractBasename(string path);

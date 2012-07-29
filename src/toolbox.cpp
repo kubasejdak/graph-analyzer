@@ -40,7 +40,7 @@ bool isDirectory(string path) {
 	return S_ISDIR(sb.st_mode);
 }
 
-bool directoryExists(string path) {
+bool nameExists(string path) {
 	struct stat sb;
 	int ret = stat(path.c_str(), &sb);
 

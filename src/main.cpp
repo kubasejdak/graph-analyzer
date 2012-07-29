@@ -58,8 +58,8 @@ int main(int argc, char *argv[]) {
 	listAnalyzeMods();
 	cout << "============================================" << endl;
 
-	bool ret;
 	int i = 1;
+	int exploits_counter = 0;
 	while(!pendingFiles.empty()) {
 		string input_file = pendingFiles.front();
 		pendingFiles.pop_front();
@@ -91,7 +91,7 @@ int main(int argc, char *argv[]) {
 
 		/* load shellcode */
 		list<string> files = system.load(input_file);
-		if(files.empty()) {
+		if(system.getError() == CANNOT_HANDLE_FILE) {
 			PRINTERR("opening file %s", input_file.c_str());
 			continue;
 		}
@@ -101,15 +101,15 @@ int main(int argc, char *argv[]) {
 			string f = files.front();
 			files.pop_front();
 
-			ret = system.emulate(f);
-			if(!ret) {
+			system.emulate(f);
+			if(system.getError() == EMULATION_FAILED) {
 				PRINTERR("emulating %s", f.c_str());
 				continue;
 			}
 
 			/* analyze graph */
-			ret = system.analyze(f);
-			if(!ret) {
+			system.analyze(f);
+			if(system.getError() == ANALYZING_FAILED) {
 				PRINTERR("analyzing %s", f.c_str());
 				continue;
 			}
@@ -118,9 +118,13 @@ int main(int argc, char *argv[]) {
 			cout << "Results for sample #" << dec << i << " :" << endl;
 			info->printInfo();
 			cout << endl;
+			if(info->isShellcodePresent())
+				++exploits_counter;
 			++i;
 		}
 	}
+	cout << "FINISHED: " << exploits_counter << " exploits found in ";
+	cout << i << "samples!" << endl;
 
 	return 0;
 }

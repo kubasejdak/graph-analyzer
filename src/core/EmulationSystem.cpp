@@ -108,7 +108,7 @@ bool EmulationSystem::emulate() {
 			/* no function defined fot this name */
 			if(hook->hook.win->fnhook == NULL) {
 				PRINTMSG("unhooked call to %s", hook->hook.win->fnname);
-				break;
+				return false;
 			}
 		}
 		/* if not in any dll */
@@ -146,7 +146,7 @@ bool EmulationSystem::emulate() {
 					if(hook->hook.lin->fnhook != NULL)
 						hook->hook.lin->fnhook(env, hook);
 					else
-						break;
+						return false;
 				}
 			}
 
@@ -179,14 +179,27 @@ bool EmulationSystem::emulate() {
 	graphName = trimExtension(graphName);
 	graphName += ".png";
 
-	if(!directoryExists(GRAPHS_DIR))
+	if(!nameExists(GRAPHS_DIR))
 		mkdir(GRAPHS_DIR, S_IRWXU | S_IRWXG | S_IRWXO);
 
 	graphName = extractBasename(graphName);
 	graphName.insert(0, GRAPHS_DIR);
 
-	string cmd = "dot graph.dot -Tpng -o " + graphName;
-	ret = system(cmd.c_str());
+	/* check for duplicates */
+	int k = 2;
+	while(nameExists(graphName)) {
+		graphName = trimExtension(graphName);
+		graphName += "_";
+		size_t n = graphName.find_first_of("_");
+		graphName.erase(n + 1);
+		graphName += itos(k);
+		graphName += ".png";
+		++k;
+	}
+
+	string dot_cmd = "dot graph.dot -Tpng -o \"" + graphName;
+	dot_cmd += "\"";
+	ret = system(dot_cmd.c_str());
 	if(!ret) {
 		ret = unlink("graph.dot");
 		if(ret)

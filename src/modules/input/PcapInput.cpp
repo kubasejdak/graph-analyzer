@@ -17,26 +17,28 @@ PcapInput::~PcapInput() {
 }
 
 void PcapInput::loadInput(string filename, queue<ShellcodeSample *> *samples) {
+	int stat;
 	/* move to pcap_tmp */
-	if(!directoryExists("pcap_tmp"))
+	if(!nameExists("pcap_tmp"))
 		mkdir("pcap_tmp", S_IRWXU | S_IRWXG | S_IRWXO);
-	chdir("pcap_tmp");
-
-	/* get base name */
-	//string baseName = extractBasename(filename);
+	stat = chdir("pcap_tmp");
+	if(stat)
+		return;
 
 	/* create flow files */
-	int stat;
-	string tcpflow_cmd = "tcpflow -r ";
+	string tcpflow_cmd = "tcpflow -r \"";
 	if(isRelative(filename)) {
 		tcpflow_cmd += "../";
 		tcpflow_cmd += filename;
 	}
 	else
 		tcpflow_cmd +=filename;
+	tcpflow_cmd += "\"";
 	stat = system(tcpflow_cmd.c_str());
-	if(stat)
+	if(stat) {
+		cout << "KURWA!!!" << endl;
 		return;
+	}
 
 	unlink("report.xml");
 
@@ -83,6 +85,8 @@ void PcapInput::loadInput(string filename, queue<ShellcodeSample *> *samples) {
 
 	/* clean and move to SAMPLES_DIR again */
 	closedir(dp);
-	chdir("..");
+	stat = chdir("..");
+	if(stat)
+		return;
 	rmdir("pcap_tmp");
 }

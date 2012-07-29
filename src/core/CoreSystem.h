@@ -19,17 +19,10 @@ using namespace std;
 #include <core/ShellcodeSample.h>
 #include <core/ShellcodeInfo.h>
 #include <core/FileAnalyser.h>
+#include <core/SystemLogger.h>
 #include <modules/input/AbstractInput.h>
 #include <modules/output/AbstractOutput.h>
 #include <modules/ModuleManager.h>
-
-enum SystemStatus {
-	IDLE,
-	ERROR,
-	LOADING,
-	EMULATING,
-	ANALYZING
-};
 
 class CoreSystem {
 public:
@@ -37,11 +30,12 @@ public:
 	virtual ~CoreSystem();
 
 	list<string> load(string filename);
-	bool emulate(string filename);
-	bool analyze(string filename);
+	void emulate(string filename);
+	void analyze(string filename);
 	ShellcodeInfo *getResults(string filename);
 	bool generateOutput(string filename, int method, string *output);
 	SystemStatus getStatus();
+	SystemError getError();
 	void clearCache();
 
 private:
@@ -50,10 +44,8 @@ private:
 	map<int, AbstractInput *> *inputModules;
 	map<int, AbstractOutput *> *outputModules;
 	map<string, ShellcodeSample *> samples;
-	SystemStatus status;
 
 	void loadModules();
-	void changeStatus(SystemStatus status);
 };
 
 #endif /* CORESYSTEM_H_ */

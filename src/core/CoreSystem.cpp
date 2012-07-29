@@ -9,7 +9,8 @@
 CoreSystem::CoreSystem() {
 	loadModules();
 
-	changeStatus(IDLE);
+	SystemLogger::getInstance()->setStatus(IDLE);
+	SystemLogger::getInstance()->setError(NO_ERROR);
 }
 
 CoreSystem::~CoreSystem() {
@@ -17,7 +18,8 @@ CoreSystem::~CoreSystem() {
 }
 
 list<string> CoreSystem::load(string filename) {
-	changeStatus(EMULATING);
+	SystemLogger::getInstance()->setStatus(LOADING);
+	SystemLogger::getInstance()->setError(CANNOT_HANDLE_FILE);
 	list<string> files;
 	queue<ShellcodeSample *> q;
 	ShellcodeSample *s;
@@ -37,30 +39,35 @@ list<string> CoreSystem::load(string filename) {
 				files.push_back(s->getInfo()->getName());
 			}
 
+			/* indicate that input module was found */
+			SystemLogger::getInstance()->setError(NO_ERROR);
+
 			break;
 		}
 	}
-	changeStatus(IDLE);
+	SystemLogger::getInstance()->setStatus(IDLE);
 
 	return files;
 }
 
-bool CoreSystem::emulate(string filename) {
-	changeStatus(EMULATING);
+void CoreSystem::emulate(string filename) {
+	SystemLogger::getInstance()->setStatus(EMULATING);
+	SystemLogger::getInstance()->setError(NO_ERROR);
 	emuSystem.loadSample(samples[filename]);
 	bool ret = emuSystem.emulate();
-	changeStatus(IDLE);
-
-	return ret;
+	if(!ret)
+		SystemLogger::getInstance()->setError(EMULATION_FAILED);
+	SystemLogger::getInstance()->setStatus(IDLE);
 }
 
-bool CoreSystem::analyze(string filename) {
-	changeStatus(ANALYZING);
+void CoreSystem::analyze(string filename) {
+	SystemLogger::getInstance()->setStatus(ANALYZING);
+	SystemLogger::getInstance()->setError(NO_ERROR);
 	anaSystem.loadSample(samples[filename]);
 	bool ret = anaSystem.analyze();
-	changeStatus(IDLE);
-
-	return ret;
+	if(!ret)
+		SystemLogger::getInstance()->setError(ANALYZING_FAILED);
+	SystemLogger::getInstance()->setStatus(IDLE);
 }
 
 ShellcodeInfo *CoreSystem::getResults(string filename) {
@@ -76,7 +83,11 @@ bool CoreSystem::generateOutput(string filename, int method, string *output) {
 }
 
 SystemStatus CoreSystem::getStatus() {
-	return status;
+	return SystemLogger::getInstance()->getStatus();
+}
+
+SystemError CoreSystem::getError() {
+	return SystemLogger::getInstance()->getError();
 }
 
 void CoreSystem::clearCache() {
@@ -90,8 +101,4 @@ void CoreSystem::clearCache() {
 void CoreSystem::loadModules() {
 	inputModules = ModuleManager::getInstance()->getInput();
 	outputModules = ModuleManager::getInstance()->getOutput();
-}
-
-void CoreSystem::changeStatus(SystemStatus status) {
-	this->status = status;
 }

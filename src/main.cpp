@@ -59,6 +59,7 @@ int main(int argc, char *argv[]) {
 	cout << "============================================" << endl;
 
 	int i = 1;
+	SystemError err;
 	int exploits_counter = 0;
 	while(!pendingFiles.empty()) {
 		string input_file = pendingFiles.front();
@@ -91,8 +92,8 @@ int main(int argc, char *argv[]) {
 
 		/* load shellcode */
 		list<string> files = system.load(input_file);
-		if(system.getError() == CANNOT_HANDLE_FILE) {
-			PRINTERR("opening file %s", input_file.c_str());
+		if((err = system.getError()) != NO_ERROR) {
+			PRINTERR("opening file %s (%s)", input_file.c_str(), system.mapError(err).c_str());
 			continue;
 		}
 
@@ -102,15 +103,15 @@ int main(int argc, char *argv[]) {
 			files.pop_front();
 
 			system.emulate(f);
-			if(system.getError() == EMULATION_FAILED) {
-				PRINTERR("emulating %s", f.c_str());
+			if((err = system.getError()) != NO_ERROR) {
+				PRINTERR("emulating %s (%s)", f.c_str(), system.mapError(err).c_str());
 				continue;
 			}
 
 			/* analyze graph */
 			system.analyze(f);
-			if(system.getError() == ANALYZING_FAILED) {
-				PRINTERR("analyzing %s", f.c_str());
+			if((err = system.getError()) != NO_ERROR) {
+				PRINTERR("analyzing %s (%s)", f.c_str(), system.mapError(err).c_str());
 				continue;
 			}
 
@@ -123,8 +124,7 @@ int main(int argc, char *argv[]) {
 			++i;
 		}
 	}
-	cout << "FINISHED: " << exploits_counter << " exploits found in ";
-	cout << i << "samples!" << endl;
+	cout << "FINISHED: " << exploits_counter << " exploits found in " << i << " samples!" << endl;
 
 	return 0;
 }

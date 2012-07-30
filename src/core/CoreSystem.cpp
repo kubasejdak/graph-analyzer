@@ -90,6 +90,10 @@ SystemError CoreSystem::getError() {
 	return SystemLogger::getInstance()->getError();
 }
 
+string CoreSystem::mapError(SystemError error) {
+	return SystemLogger::getInstance()->mapError(error);
+}
+
 void CoreSystem::clearCache() {
 	map<string, ShellcodeSample *>::iterator it;
 	for(it = samples.begin(); it != samples.end(); ++it) {

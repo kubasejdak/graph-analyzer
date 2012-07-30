@@ -14,6 +14,8 @@ using namespace std;
 
 #define GLOBAL_DEBUG
 
+#define PLACE_IN_CODE	"file: " << __FILE__ << ", line: " << __LINE__ << " "
+
 #if defined(GLOBAL_DEBUG) && defined(LOCAL_DEBUG)
 	#define	SHOWMSG(x)		clog << "DEBUG: " << x << endl
 	#define PRINTMSG(fmt, ...)	fprintf(stderr, "DEBUG: " fmt "\n", __VA_ARGS__)

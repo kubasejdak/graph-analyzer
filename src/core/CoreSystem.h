@@ -36,6 +36,7 @@ public:
 	bool generateOutput(string filename, int method, string *output);
 	SystemStatus getStatus();
 	SystemError getError();
+	string mapError(SystemError error);
 	void clearCache();
 
 private:

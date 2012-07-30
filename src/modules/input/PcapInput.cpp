@@ -4,6 +4,10 @@
  * Created on	: 26-07-2012
  */
 
+/* debug */
+#define LOCAL_DEBUG
+#include <debug.h>
+
 #include "PcapInput.h"
 
 PcapInput::PcapInput() {
@@ -22,8 +26,11 @@ void PcapInput::loadInput(string filename, queue<ShellcodeSample *> *samples) {
 	if(!nameExists("pcap_tmp"))
 		mkdir("pcap_tmp", S_IRWXU | S_IRWXG | S_IRWXO);
 	stat = chdir("pcap_tmp");
-	if(stat)
+	if(stat) {
+		SystemLogger::getInstance()->setError(CHANGE_DIR_FAILED);
+		SHOWERR_L("chdir failed in PcapInput");
 		return;
+	}
 
 	/* create flow files */
 	string tcpflow_cmd = "tcpflow -r \"";
@@ -36,7 +43,11 @@ void PcapInput::loadInput(string filename, queue<ShellcodeSample *> *samples) {
 	tcpflow_cmd += "\"";
 	stat = system(tcpflow_cmd.c_str());
 	if(stat) {
-		cout << "KURWA!!!" << endl;
+		SystemLogger::getInstance()->setError(TCPFLOW_FAILED);
+		SHOWERR_L("tcpflow cmd failed in PcapInput");
+		chdir("..");
+		ftw("pcap_tmp", ftw_remove_dir, 0);
+		rmdir("pcap_tmp");
 		return;
 	}
 
@@ -47,8 +58,11 @@ void PcapInput::loadInput(string filename, queue<ShellcodeSample *> *samples) {
 	dirent *de;
 
 	dp = opendir(".");
-	if(dp == NULL)
+	if(dp == NULL) {
+		SystemLogger::getInstance()->setError(TCPFLOW_FAILED);
+		SHOWERR_L("opendir failed in PcapInput");
 		return;
+	}
 
 	int i = 1;
 	ShellcodeSample *s;
@@ -86,7 +100,16 @@ void PcapInput::loadInput(string filename, queue<ShellcodeSample *> *samples) {
 	/* clean and move to SAMPLES_DIR again */
 	closedir(dp);
 	stat = chdir("..");
-	if(stat)
+	if(stat) {
+		SystemLogger::getInstance()->setError(CHANGE_DIR_FAILED);
+		SHOWERR_L("chdir failed in PcapInput");
 		return;
+	}
 	rmdir("pcap_tmp");
+}
+
+int ftw_remove_dir(const char *fpath, const struct stat *sb, int typeflag) {
+	unlink(fpath);
+
+	return 0;
 }

@@ -202,11 +202,15 @@ bool EmulationSystem::emulate() {
 	ret = system(dot_cmd.c_str());
 	if(!ret) {
 		ret = unlink("graph.dot");
-		if(ret)
-			SHOWERR("deleting .dot file");
+		if(ret) {
+			SystemLogger::getInstance()->setError(UNLINK_FAILED);
+			SHOWERR_L("deleting .dot file");
+		}
 	}
-	else
-		SHOWERR("drawing graph");
+	else {
+		SystemLogger::getInstance()->setError(GRAPH_DRAW_FAILED);
+		SHOWERR_L("drawing graph failed");
+	}
 
 	sample = NULL;
 	SHOWMSG("analyzing finished");

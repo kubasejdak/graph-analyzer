@@ -11,11 +11,15 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <dirent.h>
+#include <ftw.h>
 
 /* project headers */
 #include "AbstractInput.h"
+#include <core/SystemLogger.h>
 #include <toolbox.h>
 #include <options.h>
+
+int ftw_remove_dir(const char *fpath, const struct stat *sb, int typeflag);
 
 class PcapInput: public AbstractInput {
 public:

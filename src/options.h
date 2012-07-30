@@ -15,4 +15,7 @@
 /* where to put graphs and samples */
 #define GRAPHS_DIR 		"graphs/"
 
+/* delete sample's code after analysis (memory management issue) */
+#define DELETE_CODE_INSTANTLY	1
+
 #endif /* OPTIONS_H_ */

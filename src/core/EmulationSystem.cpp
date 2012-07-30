@@ -215,6 +215,9 @@ bool EmulationSystem::emulate() {
 			SHOWERR_L("deleting .dot file");
 	}
 
+	if(DELETE_CODE_INSTANTLY)
+		delete sample->getCode();
+
 	sample = NULL;
 	SHOWMSG("analyzing finished");
 

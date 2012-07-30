@@ -210,6 +210,9 @@ bool EmulationSystem::emulate() {
 	else {
 		SystemLogger::getInstance()->setError(GRAPH_DRAW_FAILED);
 		SHOWERR_L("drawing graph failed");
+		ret = unlink("graph.dot");
+		if(ret)
+			SHOWERR_L("deleting .dot file");
 	}
 
 	sample = NULL;

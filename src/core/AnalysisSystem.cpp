@@ -28,7 +28,7 @@ bool AnalysisSystem::analyze() {
 	}
 
 	bool status;
-	map<int, AbstractAnalyze *>::iterator it;
+	map<string, AbstractAnalyze *>::iterator it;
 	for(it = analyzeModules->begin(); it != analyzeModules->end(); ++it) {
 		status = (*it).second->perform(sample);
 		if(!status)

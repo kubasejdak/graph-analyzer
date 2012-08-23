@@ -13,7 +13,3 @@ AbstractOutput::AbstractOutput() {
 
 AbstractOutput::~AbstractOutput() {
 }
-
-bool AbstractOutput::generateOutput(string filename) {
-	return true;
-}

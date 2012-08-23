@@ -9,6 +9,7 @@
 
 /* project headers */
 #include <modules/AbstractModule.h>
+#include <core/ShellcodeSample.h>
 
 class AbstractOutput: public AbstractModule {
 public:
@@ -19,7 +20,7 @@ public:
 		return nextID++;
 	}
 
-	bool generateOutput(string filename);
+	virtual bool generateOutput(ShellcodeSample *sample) = 0;
 
 protected:
 	static int nextID;

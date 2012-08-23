@@ -10,6 +10,7 @@ GraphHash::GraphHash() {
 	id = getNextID();
 	name = "GraphHash";
 	description = "Hashes whole graph for further comparison.";
+	trait_name = "hash";
 }
 
 GraphHash::~GraphHash() {
@@ -32,10 +33,10 @@ bool GraphHash::perform(ShellcodeSample *sample) {
 		splitter.clear();
 	}
 
-	(*m)["graph hash"] = hash(graph_string);
+	(*m)["hash"] = hash(graph_string);
 
 	/* set traits */
-	sample->getInfo()->setTrait("hash", m);
+	sample->getInfo()->setTrait(trait_name, m);
 
 	return true;
 }

@@ -26,7 +26,7 @@ list<string> CoreSystem::load(string filename) {
 	FileAnalyser fileAnalyser;
 	string fileType = fileAnalyser.analyze(filename);
 
-	map<int, AbstractInput *>::iterator it;
+	map<string, AbstractInput *>::iterator it;
 	for(it = inputModules->begin(); it!= inputModules->end(); ++it) {
 		if(fileType == (*it).second->getType()) {
 			(*it).second->loadInput(filename, &q);
@@ -77,9 +77,8 @@ ShellcodeInfo *CoreSystem::getResults(string filename) {
 	return samples[filename]->getInfo();
 }
 
-bool CoreSystem::generateOutput(string filename, int method, string *output) {
-	/* TODO: implement */
-	return true;
+bool CoreSystem::generateOutput(string filename, string method, string *output) {
+	return (*outputModules)[method]->generateOutput(samples[filename]);
 }
 
 SystemStatus CoreSystem::getStatus() {

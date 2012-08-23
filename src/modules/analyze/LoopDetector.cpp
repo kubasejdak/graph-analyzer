@@ -13,6 +13,7 @@ LoopDetector::LoopDetector() {
 	id = getNextID();
 	name = "LoopDetector";
 	description = "Detects loops and returns detailed information.";
+	trait_name = "loop";
 }
 
 LoopDetector::~LoopDetector() {
@@ -45,14 +46,12 @@ bool LoopDetector::perform(ShellcodeSample *sample) {
 			(*m)["size"] = itos(vec->size());
 
 			/* list of vertexes */
-			vertexes = "\n\t";
+			vertexes = "";
 			for(unsigned j = 0; j < vec->size(); ++j) {
-				if(j % 10 == 0 && j != 0)
-					vertexes += "\n\t";
-
 				iv = (instr_vertex *) vec->at(j)->data;
 				vertexes += itos(iv->eip, true);
-				vertexes += ", ";
+				if(j != vec->size() - 1)
+					vertexes += ", ";
 			}
 			(*m)["vertexes"] = vertexes;
 
@@ -83,7 +82,7 @@ bool LoopDetector::perform(ShellcodeSample *sample) {
 			(*m)["hash"] = h;
 
 			/* set traits */
-			sample->getInfo()->setTrait("loop", m);
+			sample->getInfo()->setTrait(trait_name, m);
 		}
 
 		/* delete returned container */

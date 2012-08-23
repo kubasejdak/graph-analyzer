@@ -27,40 +27,31 @@ using namespace std;
 #include <version.h>
 #include <toolbox.h>
 
+void parseArguments(int argc, char *argv[]);
 void printIntro();
 void printUsage();
 void printModuleInfo(ModuleInfo *info);
 void listInputMods();
 void listAnalyzeMods();
+void listOutputMods();
+
+/* global options */
+string outputMethod = "ConsoleOutput";
+list<string> pendingFiles;
 
 int main(int argc, char *argv[]) {
 	printIntro();
 
 	/* check cmd arguments */
-	if(argc < 2) {
-		SHOWERR("no input files");
-		cout << endl;
-		printUsage();
-		return 1;
-	}
-
-	/* collect input files */
-	list<string> pendingFiles;
-	for(int i = 1; i < argc; ++i)
-		pendingFiles.push_back(argv[i]);
+	parseArguments(argc, argv);
+	SHOWVAR(outputMethod);
 
 	/* create main system */
 	CoreSystem system;
 
-	/* list available modules */
-	cout << "============================================" << endl;
-	listInputMods();
-	listAnalyzeMods();
-	cout << "============================================" << endl;
-
-	int i = 1;
+	int i = 0;
+	int exploit_counter = 0;
 	SystemError err;
-	int exploits_counter = 0;
 	while(!pendingFiles.empty()) {
 		string input_file = pendingFiles.front();
 		pendingFiles.pop_front();
@@ -99,6 +90,7 @@ int main(int argc, char *argv[]) {
 
 		/* process all returned files */
 		while(!files.empty()) {
+			++i;
 			string f = files.front();
 			files.pop_front();
 
@@ -115,18 +107,52 @@ int main(int argc, char *argv[]) {
 				continue;
 			}
 
-			ShellcodeInfo *info = system.getResults(f);
-			cout << "Results for sample #" << dec << i << " :" << endl;
-			info->printInfo();
-			cout << endl;
-			if(info->isShellcodePresent())
-				++exploits_counter;
-			++i;
+			if(system.getResults(f)->isShellcodePresent())
+				++exploit_counter;
+
+			system.generateOutput(f, outputMethod);
 		}
 	}
-	cout << "FINISHED: " << exploits_counter << " exploits found in " << i << " samples!" << endl;
+	cout << "FINISHED: found " << exploit_counter << " exploits in " << i << " samples!" << endl;
 
 	return 0;
+}
+
+void parseArguments(int argc, char *argv[]) {
+	if(argc < 2) {
+		SHOWERR("no arguments");
+		cout << endl;
+		printUsage();
+		exit(1);
+	}
+
+	for(int i = 1; i < argc; ++i) {
+		/* output method */
+		if(strcmp(argv[i], "-o") == 0)
+			outputMethod = argv[++i];
+		/* print analyze modules */
+		else if(strcmp(argv[i], "-la") == 0)
+			listAnalyzeMods();
+		/* print input modules */
+		else if(strcmp(argv[i], "-li") == 0)
+			listInputMods();
+		/* print output modules */
+		else if(strcmp(argv[i], "-lo") == 0)
+			listOutputMods();
+		/* print usage */
+		else if(strcmp(argv[i], "-o") == 0) {
+			printUsage();
+			exit(0);
+		}
+		/* collect input files */
+		else
+			pendingFiles.push_back(argv[i]);
+	} /* for */
+
+	if(pendingFiles.empty()) {
+		SHOWERR("no input files");
+		exit(1);
+	}
 }
 
 void printIntro() {
@@ -169,6 +195,19 @@ void listAnalyzeMods() {
 
 	list<ModuleInfo *>::iterator it;
 	cout << "* List of available analyze modules:" << endl;
+	for(it = mods.begin(); it != mods.end(); ++it)
+		printModuleInfo((*it));
+
+	cout << endl;
+}
+
+void listOutputMods() {
+	list<ModuleInfo *> mods = ModuleManager::getInstance()->listOutput();
+	if(mods.size() == 0)
+		return;
+
+	list<ModuleInfo *>::iterator it;
+	cout << "* List of available output modules:" << endl;
 	for(it = mods.begin(); it != mods.end(); ++it)
 		printModuleInfo((*it));
 

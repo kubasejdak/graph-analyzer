@@ -24,6 +24,7 @@ public:
 
 protected:
 	static int nextID;
+	string trait_name;
 };
 
 #endif /* ABSTRACTANALYZE_H_ */

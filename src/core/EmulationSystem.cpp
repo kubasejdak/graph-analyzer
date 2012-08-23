@@ -220,6 +220,7 @@ bool EmulationSystem::emulate() {
 		sample->setCode(NULL);
 	}
 
+	sample->getInfo()->setGraphName(graphName);
 	sample = NULL;
 	SHOWMSG("analyzing finished");
 

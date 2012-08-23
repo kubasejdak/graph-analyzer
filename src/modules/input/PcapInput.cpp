@@ -87,7 +87,7 @@ void PcapInput::loadInput(string filename, queue<ShellcodeSample *> *samples) {
 		/* create new sample */
 		s = new ShellcodeSample();
 		s->getInfo()->setName(de->d_name);
-		s->getInfo()->setBaseName(filename);
+		s->getInfo()->setExtractedFrom(filename);
 		s->getInfo()->setFileType(type);
 		s->getInfo()->setSize(size);
 		s->setCode((byte_t *) buffer);

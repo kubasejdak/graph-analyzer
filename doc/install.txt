@@ -1,5 +1,16 @@
-What should be installed to run Graph Analyzer:
+What should be installed to run graph-analyzer?
+
 - gcc
 - cmake
 - graphiviz
 - tcpflow
+
+How to install graph-analyzer?
+
+1. Make sure there is no other version of graph-analyzer in this directory.
+2. git clone http://code.google.com/p/graph-analyzer/
+3. cd graph-analyzer
+4. mkdir build
+5. cmake ..
+6. make
+7. If no error, executable file will appear in bin directory.

@@ -21,45 +21,52 @@ ModuleManager::~ModuleManager() {
 void ModuleManager::loadInput() {
 	/* BinaryInput */
 	BinaryInput *binaryInput = new BinaryInput();
-	inputModules[binaryInput->getId()] = binaryInput;
+	inputModules[binaryInput->getName()] = binaryInput;
 
 	/* BinaryInput */
 	PcapInput *pcapInput = new PcapInput();
-	inputModules[pcapInput->getId()] = pcapInput;
+	inputModules[pcapInput->getName()] = pcapInput;
 }
 
 void ModuleManager::loadOutput() {
+	/* DatabaseOutput */
+	DatabaseOutput *databaseOutput = new DatabaseOutput();
+	outputModules[databaseOutput->getName()] = databaseOutput;
+
+	/* DatabaseOutput */
+	ConsoleOutput *consoleOutput = new ConsoleOutput();
+	outputModules[consoleOutput->getName()] = consoleOutput;
 }
 
 void ModuleManager::loadAnalyze() {
 	/* SyscallAnalyze */
 	SyscallAnalyze *syscallAnalyze = new SyscallAnalyze();
-	analyzeModules[syscallAnalyze->getId()] = syscallAnalyze;
+	analyzeModules[syscallAnalyze->getName()] = syscallAnalyze;
 
 	/* GraphHash */
 	GraphHash *graphHash = new GraphHash();
-	analyzeModules[graphHash->getId()] = graphHash;
+	analyzeModules[graphHash->getName()] = graphHash;
 
 	/* LoopDetector */
 	LoopDetector *loopDetector = new LoopDetector();
-	analyzeModules[loopDetector->getId()] = loopDetector;
+	analyzeModules[loopDetector->getName()] = loopDetector;
 }
 
-map<int, AbstractInput *> * ModuleManager::getInput() {
+map<string, AbstractInput *> * ModuleManager::getInput() {
 	return &inputModules;
 }
 
-map<int, AbstractOutput *> * ModuleManager::getOutput() {
+map<string, AbstractOutput *> * ModuleManager::getOutput() {
 	return &outputModules;
 }
 
-map<int, AbstractAnalyze *> * ModuleManager::getAnalyze() {
+map<string, AbstractAnalyze *> * ModuleManager::getAnalyze() {
 	return &analyzeModules;
 }
 
 list<ModuleInfo *> ModuleManager::listInput() {
 	list<ModuleInfo *> modList;
-	map<int, AbstractInput *>::iterator it;
+	map<string, AbstractInput *>::iterator it;
 	for(it = inputModules.begin(); it != inputModules.end(); ++it)
 		modList.push_back((*it).second->getModuleInfo());
 
@@ -68,7 +75,7 @@ list<ModuleInfo *> ModuleManager::listInput() {
 
 list<ModuleInfo *> ModuleManager::listOutput() {
 	list<ModuleInfo *> modList;
-	map<int, AbstractOutput *>::iterator it;
+	map<string, AbstractOutput *>::iterator it;
 	for(it = outputModules.begin(); it != outputModules.end(); ++it)
 		modList.push_back((*it).second->getModuleInfo());
 
@@ -77,7 +84,7 @@ list<ModuleInfo *> ModuleManager::listOutput() {
 
 list<ModuleInfo *> ModuleManager::listAnalyze() {
 	list<ModuleInfo *> modList;
-	map<int, AbstractAnalyze *>::iterator it;
+	map<string, AbstractAnalyze *>::iterator it;
 	for(it = analyzeModules.begin(); it != analyzeModules.end(); ++it)
 		modList.push_back((*it).second->getModuleInfo());
 
@@ -85,19 +92,19 @@ list<ModuleInfo *> ModuleManager::listAnalyze() {
 }
 
 void ModuleManager::removeInput() {
-	map<int, AbstractInput *>::iterator it;
+	map<string, AbstractInput *>::iterator it;
 	for(it = inputModules.begin(); it != inputModules.end(); ++it)
 		inputModules.erase(it);
 }
 
 void ModuleManager::removeOutput() {
-	map<int, AbstractOutput *>::iterator it;
+	map<string, AbstractOutput *>::iterator it;
 	for(it = outputModules.begin(); it != outputModules.end(); ++it)
 		outputModules.erase(it);
 }
 
 void ModuleManager::removeAnalyze() {
-	map<int, AbstractAnalyze *>::iterator it;
+	map<string, AbstractAnalyze *>::iterator it;
 	for(it = analyzeModules.begin(); it != analyzeModules.end(); ++it)
 		analyzeModules.erase(it);
 }

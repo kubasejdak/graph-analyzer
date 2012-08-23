@@ -22,3 +22,8 @@ target_link_libraries(graph_analyzer pcap_input)
 target_link_libraries(graph_analyzer syscall_analyze)
 target_link_libraries(graph_analyzer graph_hash)
 target_link_libraries(graph_analyzer loop_detector)
+target_link_libraries(graph_analyzer database_output)
+target_link_libraries(graph_analyzer console_output)
+
+# link with Qt4
+target_link_libraries(graph_analyzer ${QT_LIBRARIES})

@@ -18,6 +18,8 @@
 #include <modules/ModuleInfo.h>
 #include <modules/input/BinaryInput.h>
 #include <modules/input/PcapInput.h>
+#include <modules/output/DatabaseOutput.h>
+#include <modules/output/ConsoleOutput.h>
 #include <modules/analyze/SyscallAnalyze.h>
 #include <modules/analyze/LoopDetector.h>
 #include <modules/analyze/GraphHash.h>
@@ -30,9 +32,9 @@ public:
 	    return &instance;
 	}
 
-	map<int, AbstractInput *> *getInput();
-	map<int, AbstractOutput *> *getOutput();
-	map<int, AbstractAnalyze *> *getAnalyze();
+	map<string, AbstractInput *> *getInput();
+	map<string, AbstractOutput *> *getOutput();
+	map<string, AbstractAnalyze *> *getAnalyze();
 
 	list<ModuleInfo *> listInput();
 	list<ModuleInfo *> listOutput();
@@ -49,9 +51,9 @@ private:
 	void removeOutput();
 	void removeAnalyze();
 
-	map<int, AbstractInput *> inputModules;
-	map<int, AbstractOutput *> outputModules;
-	map<int, AbstractAnalyze *> analyzeModules;
+	map<string, AbstractInput *> inputModules;
+	map<string, AbstractOutput *> outputModules;
+	map<string, AbstractAnalyze *> analyzeModules;
 };
 
 #endif /* MODULEMANAGER_H_ */

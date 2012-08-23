@@ -10,6 +10,7 @@ SyscallAnalyze::SyscallAnalyze() {
 	id = getNextID();
 	name = "SyscallAnalyze";
 	description = "Searches the graph for system API calls.";
+	trait_name = "api";
 }
 
 SyscallAnalyze::~SyscallAnalyze() {
@@ -33,7 +34,7 @@ bool SyscallAnalyze::perform(ShellcodeSample *sample) {
 			m = new map<string, string>();
 			(*m)["syscall"] = syscall;
 			(*m)["DLL"] = dll;
-			sample->getInfo()->setTrait("API", m);
+			sample->getInfo()->setTrait(trait_name, m);
 		}
 	}
 

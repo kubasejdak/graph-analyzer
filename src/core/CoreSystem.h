@@ -33,7 +33,7 @@ public:
 	void emulate(string filename);
 	void analyze(string filename);
 	ShellcodeInfo *getResults(string filename);
-	bool generateOutput(string filename, int method, string *output);
+	bool generateOutput(string filename, string method, string *output = NULL);
 	SystemStatus getStatus();
 	SystemError getError();
 	string mapError(SystemError error);
@@ -42,8 +42,8 @@ public:
 private:
 	EmulationSystem emuSystem;
 	AnalysisSystem anaSystem;
-	map<int, AbstractInput *> *inputModules;
-	map<int, AbstractOutput *> *outputModules;
+	map<string, AbstractInput *> *inputModules;
+	map<string, AbstractOutput *> *outputModules;
 	map<string, ShellcodeSample *> samples;
 
 	void loadModules();

@@ -8,12 +8,14 @@
 
 ShellcodeInfo::ShellcodeInfo() {
 	name = "";
-	baseName = "";
+	extractedFrom = "";
+	graphName = "";
 	fileType = "unknown";
 	size = 0;
 	codeOffset = 0;
 	shellcodePresent = false;
 	traits = new multimap<string, map<string, string> *>();
+	querys = new list<QSqlQuery>();
 }
 
 ShellcodeInfo::~ShellcodeInfo() {
@@ -22,11 +24,13 @@ ShellcodeInfo::~ShellcodeInfo() {
 		delete (*it).second;
 
 	delete traits;
+	delete querys;
 }
 
 void ShellcodeInfo::printInfo() {
 	cout << "\t name : " << name << endl;
-	cout << "\t extracted from: " << baseName << endl;
+	cout << "\t extracted from: " << extractedFrom << endl;
+	cout << "\t graph name: " << graphName << endl;
 	cout << "\t file type : " << fileType << endl;
 	cout << "\t file size : " << dec <<size << endl;
 	cout << "\t shellcode present : " << (shellcodePresent ? "yes" : "no") << endl;
@@ -46,8 +50,12 @@ string ShellcodeInfo::getName() {
 	return name;
 }
 
-string ShellcodeInfo::getBaseName() {
-	return baseName;
+string ShellcodeInfo::getExtractedFrom() {
+	return extractedFrom;
+}
+
+string ShellcodeInfo::getGraphName() {
+	return graphName;
 }
 
 string ShellcodeInfo::getFileType() {
@@ -70,12 +78,20 @@ multimap<string, map<string, string> *> *ShellcodeInfo::getTraits() {
 	return traits;
 }
 
+list<QSqlQuery> *ShellcodeInfo::getQuerys() {
+	return querys;
+}
+
 void ShellcodeInfo::setName(string name) {
 	this->name = name;
 }
 
-void ShellcodeInfo::setBaseName(string baseName) {
-	this->baseName = baseName;
+void ShellcodeInfo::setExtractedFrom(string name) {
+	this->extractedFrom = name;
+}
+
+void ShellcodeInfo::setGraphName(string name) {
+	this->graphName = name;
 }
 
 void ShellcodeInfo::setFileType(string fileType) {
@@ -105,6 +121,10 @@ void ShellcodeInfo::setTrait(string name, map<string, string>  *value) {
 	}
 
 	traits->insert(pair<string, map<string, string> *>(name, value));
+}
+
+void ShellcodeInfo::setQuery(QSqlQuery q) {
+	querys->push_back(q);
 }
 
 bool ShellcodeInfo::equalMaps(map<string, string> *a, map<string, string> *b) {

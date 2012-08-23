@@ -27,7 +27,7 @@ private:
 	void loadModules();
 
 	ShellcodeSample *sample;
-	map<int, AbstractAnalyze *> *analyzeModules;
+	map<string, AbstractAnalyze *> *analyzeModules;
 };
 
 #endif /* ANALYSISSYSTEM_H_ */

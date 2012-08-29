@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, include, url
-from graph_analyzer.views import show_home
+from graph_analyzer.views import show_home, show_analyze, show_browse,\
+	show_options
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -13,8 +14,12 @@ urlpatterns = patterns('',
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
-    # Uncomment the next line to enable the admin:
+    # Admin:
     url(r'^admin/', include(admin.site.urls)),
     
-    url(r'^$', show_home)
+    # Main pages:
+    url(r'^$', show_home),
+    url(r'^analyze/$', show_analyze),
+    url(r'^browse/$', show_browse),
+    url(r'^options/$', show_options),
 )

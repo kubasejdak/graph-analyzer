@@ -15,7 +15,7 @@ public:
 	BinaryInput();
 	virtual ~BinaryInput();
 
-	virtual void loadInput(string filename, queue<ShellcodeSample *> *samples);
+	virtual void loadInput(string filename, list<ShellcodeSample *> *samples);
 };
 
 #endif /* BINARYINPUT_H_ */

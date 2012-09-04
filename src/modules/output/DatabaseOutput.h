@@ -1,6 +1,6 @@
 /*
- * Filename	: DatabaseOutput.h
- * Author	: Kuba Sejdak
+ * Filename		: DatabaseOutput.h
+ * Author		: Kuba Sejdak
  * Created on	: 22-08-2012
  */
 

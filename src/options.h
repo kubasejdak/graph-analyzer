@@ -1,6 +1,6 @@
 /*
- * Filename	: options.h
- * Author	: Kuba Sejdak
+ * Filename		: options.h
+ * Author		: Kuba Sejdak
  * Created on	: 28-07-2012
  */
 
@@ -13,7 +13,7 @@
 #define	EMULATION_STEPS		1000000
 
 /* where to put graphs and samples */
-#define GRAPHS_DIR 		"graphs/"
+#define GRAPHS_DIR 			"graphs/"
 
 /* delete sample's code after analysis (memory management issue) */
 #define DELETE_CODE_INSTANTLY	1
@@ -22,10 +22,10 @@
 
 /* info to connect with database */
 #define DB_QT_DRIVER		"QPSQL"
-#define DB_HOST			"localhost"
-#define DB_NAME			"graph_analyzer_db"
-#define DB_USER			"postgres"
-#define DB_PASS			"poliritiper"
+#define DB_HOST				"localhost"
+#define DB_NAME				"graph_analyzer_db"
+#define DB_USER				"jsejdak"
+#define DB_PASS				"poliritiper"
 #define TABLE_PREFIX		"graph_analyzer_"
 #define ID_SEQ_POSTFIX		"_id_seq"
 

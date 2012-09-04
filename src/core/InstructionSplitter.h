@@ -1,6 +1,6 @@
 /*
- * Filename	: InstructionSplitter.h
- * Author	: Kuba Sejdak
+ * Filename		: InstructionSplitter.h
+ * Author		: Kuba Sejdak
  * Created on	: 12-07-2012
  */
 

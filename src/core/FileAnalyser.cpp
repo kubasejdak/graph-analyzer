@@ -1,19 +1,22 @@
 /*
- * Filename	: FileAnalyser.cpp
- * Author	: Kuba Sejdak
+ * Filename		: FileAnalyser.cpp
+ * Author		: Kuba Sejdak
  * Created on	: 26-07-2012
  */
 
 #include "FileAnalyser.h"
 
-FileAnalyser::FileAnalyser() {
+FileAnalyser::FileAnalyser()
+{
 	type = "binary";
 }
 
-FileAnalyser::~FileAnalyser() {
+FileAnalyser::~FileAnalyser()
+{
 }
 
-string FileAnalyser::analyze(string filename) {
+string FileAnalyser::analyze(string filename)
+{
 	file.open(filename.c_str(), fstream::in | fstream::binary);
 	if(!file.is_open())
 		return "";
@@ -31,7 +34,8 @@ exit:
 	return type;
 }
 
-bool FileAnalyser::checkExe() {
+bool FileAnalyser::checkExe()
+{
 	char buff[2];
 	file.read(buff, 2);
 	file.seekg(0, ios::beg);
@@ -43,13 +47,14 @@ bool FileAnalyser::checkExe() {
 	return true;
 }
 
-bool FileAnalyser::checkPcap() {
+bool FileAnalyser::checkPcap()
+{
 	byte_t buff[4];
 	file.read((char *) buff, 4);
 	file.seekg(0, ios::beg);
 
 	uint32_t magic_number = 0;
-	magic_number +=  buff[3] << 24;
+	magic_number += buff[3] << 24;
 	magic_number += buff[2] << 16;
 	magic_number += buff[1] << 8;
 	magic_number += buff[0];

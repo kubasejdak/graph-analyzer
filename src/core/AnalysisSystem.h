@@ -1,6 +1,6 @@
 /*
- * Filename	: AnalysisSystem.h
- * Author	: Kuba Sejdak
+ * Filename		: AnalysisSystem.h
+ * Author		: Kuba Sejdak
  * Created on	: 21-06-2012
  */
 

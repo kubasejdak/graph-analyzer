@@ -1,22 +1,25 @@
 /*
  *  Filename	: SyscallAnalyze.cpp
- *  Author	: Kuba Sejdak
+ *  Author		: Kuba Sejdak
  *  Created on	: 13-05-2012
  */
 
 #include "SyscallAnalyze.h"
 
-SyscallAnalyze::SyscallAnalyze() {
+SyscallAnalyze::SyscallAnalyze()
+{
 	id = getNextID();
 	name = "SyscallAnalyze";
 	description = "Searches the graph for system API calls.";
 	trait_name = "api";
 }
 
-SyscallAnalyze::~SyscallAnalyze() {
+SyscallAnalyze::~SyscallAnalyze()
+{
 }
 
-bool SyscallAnalyze::perform(ShellcodeSample *sample) {
+bool SyscallAnalyze::perform(ShellcodeSample *sample)
+{
 	Graph *g = sample->getGraph();
 	struct instr_vertex *instr_vert;
 	string syscall, dll;
@@ -31,7 +34,7 @@ bool SyscallAnalyze::perform(ShellcodeSample *sample) {
 			dll = instr_vert->dll->dllname;
 			dll += ".dll";
 			syscall = splitter.getSyscall();
-			m = new map<string, string>();
+			m = new map<string, string> ();
 			(*m)["syscall"] = syscall;
 			(*m)["DLL"] = dll;
 			sample->getInfo()->setTrait(trait_name, m);

@@ -1,6 +1,6 @@
 /*
  *  Filename	: AbstractInput.h
- *  Author	: Kuba Sejdak
+ *  Author		: Kuba Sejdak
  *  Created on	: 06-05-2012
  */
 
@@ -22,12 +22,13 @@ public:
 	AbstractInput();
 	virtual ~AbstractInput();
 
-	static int getNextID() {
+	static int getNextID()
+	{
 		return nextID++;
 	}
 
 	string getType();
-	virtual void loadInput(string filename, queue<ShellcodeSample *> *samples) = 0;
+	virtual void loadInput(string filename, list<ShellcodeSample *> *samples) = 0;
 
 protected:
 	static int nextID;

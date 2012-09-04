@@ -1,6 +1,6 @@
 /*
  *  Filename	: EmulationUnit.cpp
- *  Author	: Kuba Sejdak
+ *  Author		: Kuba Sejdak
  *  Created on	: 12-05-2012
  */
 
@@ -10,15 +10,18 @@
 
 #include "EmulationUnit.h"
 
-EmulationUnit::EmulationUnit() {
+EmulationUnit::EmulationUnit()
+{
 	prepareUnit();
 }
 
-EmulationUnit::~EmulationUnit() {
+EmulationUnit::~EmulationUnit()
+{
 	destroyUnit();
 }
 
-void EmulationUnit::prepareUnit() {
+void EmulationUnit::prepareUnit()
+{
 	/* create emulation unit */
 	emu = emu_new();
 	cpu = emu_cpu_get(emu);
@@ -36,23 +39,27 @@ void EmulationUnit::prepareUnit() {
 	exportLinuxHooks();
 }
 
-void EmulationUnit::destroyUnit() {
-	emu_env_free(env);		// emu_profile destroyed inside emu_env_free
+void EmulationUnit::destroyUnit()
+{
+	emu_env_free(env); // emu_profile destroyed inside emu_env_free
 	emu_free(emu);
 }
 
-void EmulationUnit::resetUnit() {
+void EmulationUnit::resetUnit()
+{
 	destroyUnit();
 	prepareUnit();
 }
 
-bool EmulationUnit::step() {
+bool EmulationUnit::step()
+{
 	return true;
 }
 
-int32_t EmulationUnit::loadCode(byte_t *code, int32_t size) {
+int32_t EmulationUnit::loadCode(byte_t *code, int32_t size)
+{
 	/* perform getPC test */
-		codeOffset = getPcTest(code, size);
+	codeOffset = getPcTest(code, size);
 
 	/* clear registers */
 	for(int i = 0; i < 8; ++i)
@@ -62,8 +69,8 @@ int32_t EmulationUnit::loadCode(byte_t *code, int32_t size) {
 	emu_cpu_eflags_set(cpu, 0);
 
 	/* FIXME: what is it? */
-	emu_memory_write_dword(mem, 0xef787c3c,  4711);
-	emu_memory_write_dword(mem, 0x00416f9a,  4711);
+	emu_memory_write_dword(mem, 0xef787c3c, 4711);
+	emu_memory_write_dword(mem, 0x00416f9a, 4711);
 	emu_memory_write_dword(mem, 0x0044fcf7, 4711);
 	emu_memory_write_dword(mem, 0x00001265, 4711);
 	emu_memory_write_dword(mem, 0x00002583, 4711);
@@ -85,41 +92,49 @@ int32_t EmulationUnit::loadCode(byte_t *code, int32_t size) {
 	return codeOffset;
 }
 
-struct emu *EmulationUnit::getEmu() {
+struct emu *EmulationUnit::getEmu()
+{
 	return emu;
 }
 
-struct emu_cpu *EmulationUnit::getCpu() {
+struct emu_cpu *EmulationUnit::getCpu()
+{
 	return cpu;
 }
 
-struct emu_memory *EmulationUnit::getMemory() {
+struct emu_memory *EmulationUnit::getMemory()
+{
 	return mem;
 }
 
-struct emu_env *EmulationUnit::getEnv() {
+struct emu_env *EmulationUnit::getEnv()
+{
 	return env;
 }
 
-int32_t EmulationUnit::getPcTest(byte_t *code, int32_t size) {
+int32_t EmulationUnit::getPcTest(byte_t *code, int32_t size)
+{
 	int32_t off = emu_shellcode_test(emu, code, size);
 	resetUnit();
 
 	return off;
 }
 
-void EmulationUnit::prepareIATForSQLSlammer() {
+void EmulationUnit::prepareIATForSQLSlammer()
+{
 	emu_memory_write_dword(mem, 0x42AE1018, 0x7c801D77);
 	emu_memory_write_dword(mem, 0x42ae1010, 0x7c80ADA0);
 	emu_memory_write_dword(mem, 0x7c80ADA0, 0x51EC8B55);
-	emu_memory_write_byte(mem,  0x7c814eeb, 0xc3);
+	emu_memory_write_byte(mem, 0x7c814eeb, 0xc3);
 }
 
-int32_t EmulationUnit::getCodeOffset() {
+int32_t EmulationUnit::getCodeOffset()
+{
 	return codeOffset;
 }
 
-void EmulationUnit::exportWin32Hooks() {
+void EmulationUnit::exportWin32Hooks()
+{
 #if 0
 	emu_env_w32_export_hook(env, "ExitProcess", userHook_ExitProcess, NULL);
 	emu_env_w32_export_hook(env, "ExitThread", userHook_ExitThread, NULL);
@@ -159,7 +174,8 @@ void EmulationUnit::exportWin32Hooks() {
 #endif
 }
 
-void EmulationUnit::exportLinuxHooks() {
+void EmulationUnit::exportLinuxHooks()
+{
 #if 0
 	emu_env_linux_syscall_hook(env, "exit", userHook_exit, NULL);
 	emu_env_linux_syscall_hook(env, "socket", userHook_socket, NULL);

@@ -1,24 +1,28 @@
 /*
- * Filename	: AnalysisSystem.cpp
- * Author	: Kuba Sejdak
+ * Filename		: AnalysisSystem.cpp
+ * Author		: Kuba Sejdak
  * Created on	: 21-06-2012
  */
 
 #include "AnalysisSystem.h"
 
-AnalysisSystem::AnalysisSystem() {
+AnalysisSystem::AnalysisSystem()
+{
 	sample = NULL;
 	loadModules();
 }
 
-AnalysisSystem::~AnalysisSystem() {
+AnalysisSystem::~AnalysisSystem()
+{
 }
 
-void AnalysisSystem::loadSample(ShellcodeSample *sample) {
+void AnalysisSystem::loadSample(ShellcodeSample *sample)
+{
 	this->sample = sample;
 }
 
-bool AnalysisSystem::analyze() {
+bool AnalysisSystem::analyze()
+{
 	if(!sample)
 		return false;
 
@@ -39,6 +43,7 @@ bool AnalysisSystem::analyze() {
 	return true;
 }
 
-void AnalysisSystem::loadModules() {
+void AnalysisSystem::loadModules()
+{
 	analyzeModules = ModuleManager::getInstance()->getAnalyze();
 }

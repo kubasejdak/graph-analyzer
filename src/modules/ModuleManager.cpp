@@ -1,24 +1,27 @@
 /*
  *  Filename	: ModuleManager.cpp
- *  Author	: Kuba Sejdak
+ *  Author		: Kuba Sejdak
  *  Created on	: 08-05-2012
  */
 
 #include "ModuleManager.h"
 
-ModuleManager::ModuleManager() {
+ModuleManager::ModuleManager()
+{
 	loadInput();
 	loadOutput();
 	loadAnalyze();
 }
 
-ModuleManager::~ModuleManager() {
+ModuleManager::~ModuleManager()
+{
 	removeInput();
 	removeOutput();
 	removeAnalyze();
 }
 
-void ModuleManager::loadInput() {
+void ModuleManager::loadInput()
+{
 	/* BinaryInput */
 	BinaryInput *binaryInput = new BinaryInput();
 	inputModules[binaryInput->getName()] = binaryInput;
@@ -28,7 +31,8 @@ void ModuleManager::loadInput() {
 	inputModules[pcapInput->getName()] = pcapInput;
 }
 
-void ModuleManager::loadOutput() {
+void ModuleManager::loadOutput()
+{
 	/* DatabaseOutput */
 	DatabaseOutput *databaseOutput = new DatabaseOutput();
 	outputModules[databaseOutput->getName()] = databaseOutput;
@@ -38,7 +42,8 @@ void ModuleManager::loadOutput() {
 	outputModules[consoleOutput->getName()] = consoleOutput;
 }
 
-void ModuleManager::loadAnalyze() {
+void ModuleManager::loadAnalyze()
+{
 	/* SyscallAnalyze */
 	SyscallAnalyze *syscallAnalyze = new SyscallAnalyze();
 	analyzeModules[syscallAnalyze->getName()] = syscallAnalyze;
@@ -52,19 +57,23 @@ void ModuleManager::loadAnalyze() {
 	analyzeModules[loopDetector->getName()] = loopDetector;
 }
 
-map<string, AbstractInput *> * ModuleManager::getInput() {
+map<string, AbstractInput *> * ModuleManager::getInput()
+{
 	return &inputModules;
 }
 
-map<string, AbstractOutput *> * ModuleManager::getOutput() {
+map<string, AbstractOutput *> * ModuleManager::getOutput()
+{
 	return &outputModules;
 }
 
-map<string, AbstractAnalyze *> * ModuleManager::getAnalyze() {
+map<string, AbstractAnalyze *> * ModuleManager::getAnalyze()
+{
 	return &analyzeModules;
 }
 
-list<ModuleInfo *> ModuleManager::listInput() {
+list<ModuleInfo *> ModuleManager::listInput()
+{
 	list<ModuleInfo *> modList;
 	map<string, AbstractInput *>::iterator it;
 	for(it = inputModules.begin(); it != inputModules.end(); ++it)
@@ -73,7 +82,8 @@ list<ModuleInfo *> ModuleManager::listInput() {
 	return modList;
 }
 
-list<ModuleInfo *> ModuleManager::listOutput() {
+list<ModuleInfo *> ModuleManager::listOutput()
+{
 	list<ModuleInfo *> modList;
 	map<string, AbstractOutput *>::iterator it;
 	for(it = outputModules.begin(); it != outputModules.end(); ++it)
@@ -82,7 +92,8 @@ list<ModuleInfo *> ModuleManager::listOutput() {
 	return modList;
 }
 
-list<ModuleInfo *> ModuleManager::listAnalyze() {
+list<ModuleInfo *> ModuleManager::listAnalyze()
+{
 	list<ModuleInfo *> modList;
 	map<string, AbstractAnalyze *>::iterator it;
 	for(it = analyzeModules.begin(); it != analyzeModules.end(); ++it)
@@ -91,19 +102,22 @@ list<ModuleInfo *> ModuleManager::listAnalyze() {
 	return modList;
 }
 
-void ModuleManager::removeInput() {
+void ModuleManager::removeInput()
+{
 	map<string, AbstractInput *>::iterator it;
 	for(it = inputModules.begin(); it != inputModules.end(); ++it)
 		inputModules.erase(it);
 }
 
-void ModuleManager::removeOutput() {
+void ModuleManager::removeOutput()
+{
 	map<string, AbstractOutput *>::iterator it;
 	for(it = outputModules.begin(); it != outputModules.end(); ++it)
 		outputModules.erase(it);
 }
 
-void ModuleManager::removeAnalyze() {
+void ModuleManager::removeAnalyze()
+{
 	map<string, AbstractAnalyze *>::iterator it;
 	for(it = analyzeModules.begin(); it != analyzeModules.end(); ++it)
 		analyzeModules.erase(it);

@@ -1,6 +1,6 @@
 /*
- * Filename	: ConsoleOutput.h
- * Author	: Kuba Sejdak
+ * Filename		: ConsoleOutput.h
+ * Author		: Kuba Sejdak
  * Created on	: 23-08-2012
  */
 

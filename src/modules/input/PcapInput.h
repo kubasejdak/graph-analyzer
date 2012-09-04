@@ -1,6 +1,6 @@
 /*
- * Filename	: PcapInput.h
- * Author	: Kuba Sejdak
+ * Filename		: PcapInput.h
+ * Author		: Kuba Sejdak
  * Created on	: 26-07-2012
  */
 
@@ -26,7 +26,7 @@ public:
 	PcapInput();
 	virtual ~PcapInput();
 
-	virtual void loadInput(string filename, queue<ShellcodeSample *> *samples);
+	virtual void loadInput(string filename, list<ShellcodeSample *> *samples);
 };
 
 #endif /* PCAPINPUT_H_ */

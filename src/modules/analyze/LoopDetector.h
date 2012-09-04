@@ -1,6 +1,6 @@
 /*
- * Filename	: LoopDetector.h
- * Author	: Kuba Sejdak
+ * Filename		: LoopDetector.h
+ * Author		: Kuba Sejdak
  * Created on	: 13-07-2012
  */
 

@@ -1,12 +1,13 @@
 /*
- * Filename	: toolbox.cpp
- * Author	: Kuba Sejdak
+ * Filename		: toolbox.cpp
+ * Author		: Kuba Sejdak
  * Created on	: 20-07-2012
  */
 
 #include "toolbox.h"
 
-string itos(int value, bool hexadecimal) {
+string itos(int value, bool hexadecimal)
+{
 	stringstream ss;
 	string s = "";
 	if(hexadecimal) {
@@ -22,7 +23,8 @@ string itos(int value, bool hexadecimal) {
 	return s;
 }
 
-string hash(string data) {
+string hash(string data)
+{
 	/* Fowler–Noll–Vo (FNV-1) hash function */
 	int h = 2166136261U;
 	for(unsigned i = 0; i < data.size(); ++i)
@@ -33,21 +35,24 @@ string hash(string data) {
 	return itos(h, true);
 }
 
-bool isDirectory(string path) {
+bool isDirectory(string path)
+{
 	struct stat sb;
 	stat(path.c_str(), &sb);
 
 	return S_ISDIR(sb.st_mode);
 }
 
-bool nameExists(string path) {
+bool nameExists(string path)
+{
 	struct stat sb;
 	int ret = stat(path.c_str(), &sb);
 
 	return (ret == 0) ? true : false;
 }
 
-string extractBasename(string path) {
+string extractBasename(string path)
+{
 	size_t pos = path.find_last_of("/");
 	if(pos == string::npos)
 		return path;
@@ -55,7 +60,8 @@ string extractBasename(string path) {
 		return path.substr(pos + 1);
 }
 
-string trimExtension(string path) {
+string trimExtension(string path)
+{
 	size_t pos = path.find_last_of(".");
 	if(pos == string::npos)
 		return path;
@@ -63,7 +69,8 @@ string trimExtension(string path) {
 		return path.erase(pos);
 }
 
-bool isRelative(string path) {
+bool isRelative(string path)
+{
 	if(path[0] == '/')
 		return false;
 	else

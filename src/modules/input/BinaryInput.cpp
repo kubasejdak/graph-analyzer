@@ -1,6 +1,6 @@
 /*
  *  Filename	: BinaryInput.cpp
- *  Author	: Kuba Sejdak
+ *  Author		: Kuba Sejdak
  *  Created on	: 08-05-2012
  */
 
@@ -10,17 +10,20 @@
 
 #include "BinaryInput.h"
 
-BinaryInput::BinaryInput() {
+BinaryInput::BinaryInput()
+{
 	id = getNextID();
 	name = "BinaryInput";
 	type = "binary";
 	description = "Loads shellcode from binary files.";
 }
 
-BinaryInput::~BinaryInput() {
+BinaryInput::~BinaryInput()
+{
 }
 
-void BinaryInput::loadInput(string filename, queue<ShellcodeSample *> *samples) {
+void BinaryInput::loadInput(string filename, list<ShellcodeSample *> *samples)
+{
 	fstream file(filename.c_str(), fstream::in | fstream::binary);
 	if(!file.is_open())
 		return;
@@ -39,5 +42,5 @@ void BinaryInput::loadInput(string filename, queue<ShellcodeSample *> *samples) 
 	s->getInfo()->setFileType(type);
 	s->getInfo()->setSize(size);
 	s->setCode((byte_t *) buffer);
-	samples->push(s);
+	samples->push_back(s);
 }

@@ -1,6 +1,6 @@
 /*
  *  Filename	: AbstractInput.cpp
- *  Author	: Kuba Sejdak
+ *  Author		: Kuba Sejdak
  *  Created on	: 06-05-2012
  */
 
@@ -8,12 +8,15 @@
 
 int AbstractInput::nextID = INPUT_ID_OFFSET;
 
-AbstractInput::AbstractInput() {
+AbstractInput::AbstractInput()
+{
 }
 
-AbstractInput::~AbstractInput() {
+AbstractInput::~AbstractInput()
+{
 }
 
-string AbstractInput::getType() {
+string AbstractInput::getType()
+{
 	return type;
 }

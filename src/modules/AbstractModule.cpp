@@ -1,30 +1,36 @@
 /*
  *  Filename	: AbstractModule.cpp
- *  Author	: Kuba Sejdak
+ *  Author		: Kuba Sejdak
  *  Created on	: 01-05-2012
  */
 
 #include "AbstractModule.h"
 
-AbstractModule::AbstractModule() {
+AbstractModule::AbstractModule()
+{
 }
 
-AbstractModule::~AbstractModule() {
+AbstractModule::~AbstractModule()
+{
 }
 
-int AbstractModule::getId() {
+int AbstractModule::getId()
+{
 	return id;
 }
 
-string AbstractModule::getName() {
+string AbstractModule::getName()
+{
 	return name;
 }
 
-string AbstractModule::getDescription() {
+string AbstractModule::getDescription()
+{
 	return description;
 }
 
-ModuleInfo *AbstractModule::getModuleInfo() {
+ModuleInfo *AbstractModule::getModuleInfo()
+{
 	info.id = id;
 	info.name = name;
 	info.description = description;

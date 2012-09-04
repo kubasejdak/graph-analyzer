@@ -1,6 +1,6 @@
 /*
  *  Filename	: EmulationSystem.cpp
- *  Author	: Kuba Sejdak
+ *  Author		: Kuba Sejdak
  *  Created on	: 03-05-2012
  */
 
@@ -10,20 +10,24 @@
 
 #include "EmulationSystem.h"
 
-EmulationSystem::EmulationSystem() {
+EmulationSystem::EmulationSystem()
+{
 	emuUnit = new EmulationUnit();
 	sample = NULL;
 }
 
-EmulationSystem::~EmulationSystem() {
+EmulationSystem::~EmulationSystem()
+{
 	delete emuUnit;
 }
 
-void EmulationSystem::loadSample(ShellcodeSample *sample) {
+void EmulationSystem::loadSample(ShellcodeSample *sample)
+{
 	this->sample = sample;
 }
 
-bool EmulationSystem::emulate() {
+bool EmulationSystem::emulate()
+{
 	if(!sample)
 		return false;
 
@@ -69,7 +73,7 @@ bool EmulationSystem::emulate() {
 		ret = 0;
 
 		/* check if there is any vertex with actual eip */
-		ehi = emu_hashtable_search(eh, (void *)(uintptr_t) eipsave);
+		ehi = emu_hashtable_search(eh, (void *) (uintptr_t) eipsave);
 		if(ehi != NULL)
 			ev = (struct emu_vertex *) ehi->value;
 
@@ -77,7 +81,7 @@ bool EmulationSystem::emulate() {
 		if(ev == NULL) {
 			ev = emu_vertex_new();
 			emu_graph_vertex_add(eg, ev);
-			emu_hashtable_insert(eh, (void *)(uintptr_t) eipsave, ev);
+			emu_hashtable_insert(eh, (void *) (uintptr_t) eipsave, ev);
 		}
 
 		/* check if we are in any dll */
@@ -97,9 +101,9 @@ bool EmulationSystem::emulate() {
 			/* get the dll */
 			int numdlls = 0;
 			while(env->env.win->loaded_dlls[numdlls] != NULL) {
-				if(eipsave > env->env.win->loaded_dlls[numdlls]->baseaddr &&
-					 eipsave < env->env.win->loaded_dlls[numdlls]->baseaddr + env->env.win->loaded_dlls[numdlls]->imagesize )
-				{
+				if(eipsave > env->env.win->loaded_dlls[numdlls]->baseaddr
+						&& eipsave < env->env.win->loaded_dlls[numdlls]->baseaddr
+						+ env->env.win->loaded_dlls[numdlls]->imagesize) {
 					iv->dll = env->env.win->loaded_dlls[numdlls];
 				}
 				++numdlls;
@@ -115,7 +119,7 @@ bool EmulationSystem::emulate() {
 		else {
 			ret = emu_cpu_parse(cpu);
 
-			struct emu_env_hook *hook =NULL;
+			struct emu_env_hook *hook = NULL;
 			if(ret != -1) {
 				if((hook = emu_env_linux_syscall_check(env)) != NULL) {
 					if(ev->data == NULL) {
@@ -165,7 +169,8 @@ bool EmulationSystem::emulate() {
 		/* link two last vertexes with an edge */
 		if(last_vertex != NULL) {
 			struct emu_edge *ee = emu_vertex_edge_add(last_vertex, ev);
-			if(cpu->instr.is_fpu == 0 && cpu->instr.source.cond_pos == eipsave && cpu->instr.source.has_cond_pos == 1)
+			if(cpu->instr.is_fpu == 0 && cpu->instr.source.cond_pos == eipsave
+					&& cpu->instr.source.has_cond_pos == 1)
 				ee->data = (void *) 0x1;
 		}
 		last_vertex = ev;

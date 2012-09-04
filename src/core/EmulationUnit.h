@@ -1,6 +1,6 @@
 /*
  *  Filename	: EmulationUnit.h
- *  Author	: Kuba Sejdak
+ *  Author		: Kuba Sejdak
  *  Created on	: 12-05-2012
  */
 

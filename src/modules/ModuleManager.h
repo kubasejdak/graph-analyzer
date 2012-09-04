@@ -1,6 +1,6 @@
 /*
  *  Filename	: ModuleManager.h
- *  Author	: Kuba Sejdak
+ *  Author		: Kuba Sejdak
  *  Created on	: 08-05-2012
  */
 
@@ -27,9 +27,10 @@
 class ModuleManager {
 public:
 	virtual ~ModuleManager();
-	static ModuleManager *getInstance() {
+	static ModuleManager *getInstance()
+	{
 		static ModuleManager instance;
-	    return &instance;
+		return &instance;
 	}
 
 	map<string, AbstractInput *> *getInput();

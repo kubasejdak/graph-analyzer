@@ -1,6 +1,6 @@
 /*
- * Filename	: GraphHash.h
- * Author	: Kuba Sejdak
+ * Filename		: GraphHash.h
+ * Author		: Kuba Sejdak
  * Created on	: 23-07-2012
  */
 

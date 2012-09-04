@@ -1,6 +1,6 @@
 /*
- * Filename	: toolbox.h
- * Author	: Kuba Sejdak
+ * Filename		: toolbox.h
+ * Author		: Kuba Sejdak
  * Created on	: 09-07-2012
  */
 
@@ -16,7 +16,7 @@
 #include <sys/stat.h>
 using namespace std;
 
-typedef	uint8_t byte_t;
+typedef uint8_t byte_t;
 
 string itos(int value, bool hexadecimal = false);
 string hash(string data);

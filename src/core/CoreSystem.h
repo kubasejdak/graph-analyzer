@@ -1,6 +1,6 @@
 /*
  *  Filename	: CoreSystem.h
- *  Author	: Kuba Sejdak
+ *  Author		: Kuba Sejdak
  *  Created on	: 01-05-2012
  */
 
@@ -9,8 +9,11 @@
 
 /* standard headers */
 #include <map>
+#include <list>
 #include <string>
-#include <queue>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <dirent.h>
 using namespace std;
 
 /* project headers */
@@ -23,30 +26,56 @@ using namespace std;
 #include <modules/input/AbstractInput.h>
 #include <modules/output/AbstractOutput.h>
 #include <modules/ModuleManager.h>
+#include <toolbox.h>
+#include <core/version.h>
 
 class CoreSystem {
 public:
 	CoreSystem();
 	virtual ~CoreSystem();
 
-	list<string> load(string filename);
-	void emulate(string filename);
-	void analyze(string filename);
-	ShellcodeInfo *getResults(string filename);
-	bool generateOutput(string filename, string method, string *output = NULL);
-	SystemStatus getStatus();
-	SystemError getError();
-	string mapError(SystemError error);
-	void clearCache();
+	/* basic sample operation */
+	void addFile(string root_file);
+	void run();
+	void clear();
+
+	/* status and error */
+	string getStatus();
+	string getError();
+
+	/* results */
+	void setOutput(string method = "ConsoleOutput");
+	int getExploitsNum();
+	int getSamplesNum();
+
+	/* utility */
+	string getVersion();
 
 private:
-	EmulationSystem emuSystem;
-	AnalysisSystem anaSystem;
-	map<string, AbstractInput *> *inputModules;
-	map<string, AbstractOutput *> *outputModules;
-	map<string, ShellcodeSample *> samples;
+	/* function members */
+	bool load(string file);
+	bool emulate(ShellcodeSample *s);
+	bool analyze(ShellcodeSample *s);
+	bool makeOutput(ShellcodeSample *s);
+
+	string mapStatus(SystemStatus status);
+	string mapError(SystemError error);
 
 	void loadModules();
+	void clearSamples();
+
+	/* data members */
+	EmulationSystem emu_system;
+	AnalysisSystem ana_system;
+	map<string, AbstractInput *> *input_mods;
+	map<string, AbstractOutput *> *output_mods;
+
+	list<ShellcodeSample *> samples;
+	list<string> pending_files;
+	list<string> output_methods;
+
+	int exploit_counter;
+	int sample_counter;
 };
 
 #endif /* CORESYSTEM_H_ */

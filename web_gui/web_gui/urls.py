@@ -15,11 +15,11 @@ urlpatterns = patterns('',
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Admin:
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'admin/', include(admin.site.urls)),
     
     # Main pages:
-    url(r'^$', show_home),
-    url(r'^analyze/$', show_analyze),
-    url(r'^browse/$', show_browse),
-    url(r'^options/$', show_options),
+    url(r'^jsejdak/$', show_home),
+    url(r'analyze/$', show_analyze),
+    url(r'browse/$', show_browse),
+    url(r'options/$', show_options),
 )

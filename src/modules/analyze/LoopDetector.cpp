@@ -1,6 +1,6 @@
 /*
- * Filename	: LoopDetector.cpp
- * Author	: Kuba Sejdak
+ * Filename		: LoopDetector.cpp
+ * Author		: Kuba Sejdak
  * Created on	: 13-07-2012
  */
 
@@ -9,17 +9,20 @@
 
 #include "LoopDetector.h"
 
-LoopDetector::LoopDetector() {
+LoopDetector::LoopDetector()
+{
 	id = getNextID();
 	name = "LoopDetector";
 	description = "Detects loops and returns detailed information.";
 	trait_name = "loop";
 }
 
-LoopDetector::~LoopDetector() {
+LoopDetector::~LoopDetector()
+{
 }
 
-bool LoopDetector::perform(ShellcodeSample *sample) {
+bool LoopDetector::perform(ShellcodeSample *sample)
+{
 	Graph *g = sample->getGraph();
 	Graph::graph_iterator it;
 	loop_container *loops;

@@ -1,6 +1,6 @@
 /*
  *  Filename	: UserHooks.cpp
- *  Author	: Kuba Sejdak
+ *  Author		: Kuba Sejdak
  *  Created on	: 13-05-2012
  */
 
@@ -12,14 +12,14 @@
 
 #if EXITPROCESS_HOOK
 uint32_t userHook_ExitProcess(struct emu_env *env, struct emu_env_hook *hook, ...) {
-/*
-VOID WINAPI ExitProcess(
-  UINT uExitCode
-);
-*/
+	/*
+	 VOID WINAPI ExitProcess(
+	 UINT uExitCode
+	 );
+	 */
 	va_list vl;
 	va_start(vl, hook);
-	int exitcode = va_arg(vl,  int);
+	int exitcode = va_arg(vl, int);
 	va_end(vl);
 
 	printf("%s(%i)\n", hook->hook.win->fnname, exitcode);
@@ -30,14 +30,14 @@ VOID WINAPI ExitProcess(
 
 #if EXITTHREAD_HOOK
 uint32_t userHook_ExitThread(struct emu_env *env, struct emu_env_hook *hook, ...) {
-/*
-VOID ExitThread(
-  DWORD dwExitCode
-);
-*/
+	/*
+	 VOID ExitThread(
+	 DWORD dwExitCode
+	 );
+	 */
 	va_list vl;
 	va_start(vl, hook);
-	int exitcode = va_arg(vl,  int);
+	int exitcode = va_arg(vl, int);
 	va_end(vl);
 
 	printf("%s(%i)\n", hook->hook.win->fnname, exitcode);
@@ -52,16 +52,16 @@ uint32_t userHook_CreateProcess(struct emu_env *env, struct emu_env_hook *hook, 
 	va_list vl;
 	va_start(vl, hook);
 
-	/* char *pszImageName				  = */ (void)va_arg(vl, char *);
-	char *pszCmdLine                      = va_arg(vl, char *);
-	/* void *psaProcess, 				  = */ (void)va_arg(vl, void *);
-	/* void *psaThread,  				  = */ (void)va_arg(vl, void *);
-	/* bool fInheritHandles,              = */ (void)va_arg(vl, char *);
-	/* uint32_t fdwCreate,                = */ (void)va_arg(vl, uint32_t);
-	/* void *pvEnvironment             	  = */ (void)va_arg(vl, void *);
-	/* char *pszCurDir                 	  = */ (void)va_arg(vl, char *);
-	STARTUPINFO *psiStartInfo             = va_arg(vl, STARTUPINFO *);
-	PROCESS_INFORMATION *pProcInfo        = va_arg(vl, PROCESS_INFORMATION *);
+	/* char *pszImageName				  = */(void)va_arg(vl, char *);
+	char *pszCmdLine = va_arg(vl, char *);
+	/* void *psaProcess, 				  = */(void)va_arg(vl, void *);
+	/* void *psaThread,  				  = */(void)va_arg(vl, void *);
+	/* bool fInheritHandles,              = */(void)va_arg(vl, char *);
+	/* uint32_t fdwCreate,                = */(void)va_arg(vl, uint32_t);
+	/* void *pvEnvironment             	  = */(void)va_arg(vl, void *);
+	/* char *pszCurDir                 	  = */(void)va_arg(vl, char *);
+	STARTUPINFO *psiStartInfo = va_arg(vl, STARTUPINFO *);
+	PROCESS_INFORMATION *pProcInfo = va_arg(vl, PROCESS_INFORMATION *);
 
 	va_end(vl);
 	printf("CreateProcess(%s)\n",pszCmdLine);
@@ -70,8 +70,6 @@ uint32_t userHook_CreateProcess(struct emu_env *env, struct emu_env_hook *hook, 
 	{
 		pid_t child;
 		pid_t spy;
-
-
 
 		if ( (spy = fork()) == 0 )
 		{ // spy
@@ -98,9 +96,9 @@ uint32_t userHook_CreateProcess(struct emu_env *env, struct emu_env_hook *hook, 
 				int sys = -1;
 				struct emu_hashtable_item *ehi = emu_hashtable_search(opts.override.commands.commands, "cmd");
 				if ( ehi != NULL )
-					sys = system((char *)ehi->value);
+				sys = system((char *)ehi->value);
 				else
-					sys = system("/bin/sh -c \"cd ~/.wine/drive_c/; wine 'c:\\windows\\system32\\cmd_orig.exe' \"");
+				sys = system("/bin/sh -c \"cd ~/.wine/drive_c/; wine 'c:\\windows\\system32\\cmd_orig.exe' \"");
 
 				close(in[1]);
 				close(out[0]);
@@ -108,7 +106,8 @@ uint32_t userHook_CreateProcess(struct emu_env *env, struct emu_env_hook *hook, 
 
 				printf("process ended (%i)!\n", sys);
 				exit(EXIT_SUCCESS);
-			} else
+			}
+			else
 			{
 				struct emu_string *io = emu_string_new();
 				close(in[1]);
@@ -131,8 +130,7 @@ uint32_t userHook_CreateProcess(struct emu_env *env, struct emu_env_hook *hook, 
 
 					int highsock = MAX(psiStartInfo->hStdInput, MAX(out[1], err[1]));
 
-
-					struct timeval timeout = { 10, 0};
+					struct timeval timeout = {10, 0};
 
 					int action = select(highsock+1, &socks, NULL, NULL, &timeout);
 					int written = -1;
@@ -143,39 +141,40 @@ uint32_t userHook_CreateProcess(struct emu_env *env, struct emu_env_hook *hook, 
 							int size = read(psiStartInfo->hStdInput, buf, 1024);
 
 							if ( size > 0 )
-								written = write(in[0], buf, size);
+							written = write(in[0], buf, size);
 							else
-								goto exit_now;
+							goto exit_now;
 							append(io, "in  >", buf, size);
 						}
 						if ( FD_ISSET(out[1], &socks) )
 						{
 							int size = read(out[1], buf, 1024);
 							if ( size > 0 )
-								written = write(psiStartInfo->hStdOutput, buf, size);
+							written = write(psiStartInfo->hStdOutput, buf, size);
 							else
-								goto exit_now;
+							goto exit_now;
 							append(io, "out <", buf, size);
 						}
 						if ( FD_ISSET(err[1], &socks) )
 						{
 							int size = read(err[1], buf, 1024);
-//							printf("read %i err '%.*s'\n",size,size,buf);
+							//							printf("read %i err '%.*s'\n",size,size,buf);
 							if ( size > 0 )
-								written = write(psiStartInfo->hStdOutput, buf, size);
+							written = write(psiStartInfo->hStdOutput, buf, size);
 							else
-								goto exit_now;
+							goto exit_now;
 							append(io, "err <", buf, size);
 						}
 						if( written == -1 )
-							goto exit_now;
+						goto exit_now;
 
-					} else
+					}
+					else
 					{
 						printf("timeout, killing cmd prompt\n");
 						kill(child, SIGKILL);
 
-exit_now:
+						exit_now:
 						printf("spy dies\n");
 						printf("session was\n%s\n", emu_string_char(io));
 						emu_string_free(io);
@@ -189,13 +188,12 @@ exit_now:
 			} // spy
 
 
-		} else
+		}
+		else
 		{ // parent
 			pProcInfo->hProcess = spy;
 		}
 	}
-
-
 
 	return 1;
 }
@@ -204,24 +202,24 @@ exit_now:
 #if WAITFOR_SIGNLEOBJECT_HOOK
 uint32_t userHook_WaitForSingleObject(struct emu_env *env, struct emu_env_hook *hook, ...) {
 	/*
-	DWORD WINAPI WaitForSingleObject(
-	  HANDLE hHandle,
-	  DWORD dwMilliseconds
-	);
-	*/
+	 DWORD WINAPI WaitForSingleObject(
+	 HANDLE hHandle,
+	 DWORD dwMilliseconds
+	 );
+	 */
 
 	va_list vl;
 	va_start(vl, hook);
 
 	int32_t hHandle = va_arg(vl, int32_t);
-	/*int32_t dwMilliseconds = */ (void)va_arg(vl, int32_t);
+	/*int32_t dwMilliseconds = */(void)va_arg(vl, int32_t);
 	va_end(vl);
 
 	int status;
 	while(1)
 	{
 		if (waitpid(hHandle, &status, WNOHANG) != 0)
-			break;
+		break;
 		sleep(1);
 	}
 
@@ -234,7 +232,7 @@ uint32_t userHook_WaitForSingleObject(struct emu_env *env, struct emu_env_hook *
 uint32_t userHook_exit(struct emu_env *env, struct emu_env_hook *hook, ...) {
 	va_list vl;
 	va_start(vl, hook);
-	int code = va_arg(vl,  int);
+	int code = va_arg(vl, int);
 	va_end(vl);
 
 	printf("exit(%i)\n",code);
@@ -247,9 +245,9 @@ uint32_t userHook_accept(struct emu_env *env, struct emu_env_hook *hook, ...) {
 	va_list vl;
 	va_start(vl, hook);
 
-	int s 					= va_arg(vl,  int);
-	/*struct sockaddr* addr 	= */(void)va_arg(vl,  struct sockaddr *);
-	/*socklen_t* addrlen 		= */(void)va_arg(vl,  socklen_t *);
+	int s = va_arg(vl, int);
+	/*struct sockaddr* addr 	= */(void)va_arg(vl, struct sockaddr *);
+	/*socklen_t* addrlen 		= */(void)va_arg(vl, socklen_t *);
 	va_end(vl);
 
 	struct sockaddr sa;
@@ -264,9 +262,9 @@ uint32_t userHook_bind(struct emu_env *env, struct emu_env_hook *hook, ...) {
 	va_list vl;
 	va_start(vl, hook);
 
-	int s 					= va_arg(vl,  int);
-	struct sockaddr* addr 	= va_arg(vl,  struct sockaddr *);
-	socklen_t addrlen = va_arg(vl,  socklen_t );
+	int s = va_arg(vl, int);
+	struct sockaddr* addr = va_arg(vl, struct sockaddr *);
+	socklen_t addrlen = va_arg(vl, socklen_t );
 
 	if (opts.override.bind.host != NULL )
 	{
@@ -282,7 +280,7 @@ uint32_t userHook_bind(struct emu_env *env, struct emu_env_hook *hook, ...) {
 
 	va_end(vl);
 
-    return bind(s, addr, addrlen);
+	return bind(s, addr, addrlen);
 }
 #endif
 
@@ -290,10 +288,10 @@ uint32_t userHook_bind(struct emu_env *env, struct emu_env_hook *hook, ...) {
 uint32_t userHook_closesocket(struct emu_env *env, struct emu_env_hook *hook, ...) {
 	va_list vl;
 	va_start(vl, hook);
-	int s 					= va_arg(vl,  int);
+	int s = va_arg(vl, int);
 	va_end(vl);
 
-    return close(s);
+	return close(s);
 }
 #endif
 
@@ -302,8 +300,8 @@ uint32_t userHook_connect(struct emu_env *env, struct emu_env_hook *hook, ...) {
 	va_list vl;
 	va_start(vl, hook);
 
-	int s 					= va_arg(vl,  int);
-	struct sockaddr* addr 	= va_arg(vl,  struct sockaddr *);
+	int s = va_arg(vl, int);
+	struct sockaddr* addr = va_arg(vl, struct sockaddr *);
 
 	if (opts.override.connect.host != NULL )
 	{
@@ -317,8 +315,7 @@ uint32_t userHook_connect(struct emu_env *env, struct emu_env_hook *hook, ...) {
 		si->sin_port = htons(opts.override.connect.port);
 	}
 
-
-	socklen_t addrlen = va_arg(vl,  socklen_t);
+	socklen_t addrlen = va_arg(vl, socklen_t);
 
 	if (addrlen != sizeof(struct sockaddr))
 	{
@@ -327,7 +324,7 @@ uint32_t userHook_connect(struct emu_env *env, struct emu_env_hook *hook, ...) {
 
 	va_end(vl);
 
-    return connect(s, addr, addrlen);
+	return connect(s, addr, addrlen);
 }
 #endif
 
@@ -344,10 +341,10 @@ uint32_t userHook_fclose(struct emu_env *env, struct emu_env_hook *hook, ...) {
 	{
 		FILE *ef = nf->real_file;
 		nanny_del_file(hook->hook.win->userdata, (uint32_t)(uintptr_t)f);
-    	return fclose(ef);
+		return fclose(ef);
 	}
 	else
-		return 0;
+	return 0;
 
 }
 #endif
@@ -357,15 +354,14 @@ uint32_t userHook_fopen(struct emu_env *env, struct emu_env_hook *hook, ...) {
 	va_list vl;
 	va_start(vl, hook);
 
-	char *filename			= va_arg(vl,  char *);
-	/*char *mode 				= */(void)va_arg(vl,  char *);
+	char *filename = va_arg(vl, char *);
+	/*char *mode 				= */(void)va_arg(vl, char *);
 	va_end(vl);
-
 
 	char *localfile;
 
 	if ( asprintf(&localfile, "/tmp/%s-XXXXXX",filename) == -1)
-		exit(-1);
+	exit(-1);
 
 	int fd = mkstemp(localfile);
 	close(fd);
@@ -394,9 +390,9 @@ uint32_t userHook_fwrite(struct emu_env *env, struct emu_env_hook *hook, ...)
 	struct nanny_file *nf = nanny_get_file(hook->hook.win->userdata, (uint32_t)(uintptr_t)f);
 
 	if (nf != NULL)
-		return fwrite(data, size, nmemb, nf->real_file);
+	return fwrite(data, size, nmemb, nf->real_file);
 	else
-		return size*nmemb;
+	return size*nmemb;
 
 }
 #endif
@@ -406,8 +402,8 @@ uint32_t userHook_listen(struct emu_env *env, struct emu_env_hook *hook, ...) {
 	va_list vl;
 	va_start(vl, hook);
 
-	int s 					= va_arg(vl,  int);
-	int backlog			 	= va_arg(vl,  int);
+	int s = va_arg(vl, int);
+	int backlog = va_arg(vl, int);
 	va_end(vl);
 
 	return listen(s, backlog);
@@ -419,13 +415,13 @@ uint32_t userHook_recv(struct emu_env *env, struct emu_env_hook *hook, ...) {
 	va_list vl;
 	va_start(vl, hook);
 
-	int s = va_arg(vl,  int);
-	char* buf = va_arg(vl,  char *);
-	int len = va_arg(vl,  int);
-	int flags = va_arg(vl,  int);
+	int s = va_arg(vl, int);
+	char* buf = va_arg(vl, char *);
+	int len = va_arg(vl, int);
+	int flags = va_arg(vl, int);
 	va_end(vl);
 
-	return recv(s, buf, len,  flags);
+	return recv(s, buf, len, flags);
 }
 #endif
 
@@ -434,13 +430,13 @@ uint32_t userHook_send(struct emu_env *env, struct emu_env_hook *hook, ...) {
 	va_list vl;
 	va_start(vl, hook);
 
-	int s = va_arg(vl,  int);
-	char* buf = va_arg(vl,  char *);
-	int len = va_arg(vl,  int);
-	int flags = va_arg(vl,  int);
+	int s = va_arg(vl, int);
+	char* buf = va_arg(vl, char *);
+	int len = va_arg(vl, int);
+	int flags = va_arg(vl, int);
 	va_end(vl);
 
-	return send(s, buf, len,  flags);
+	return send(s, buf, len, flags);
 }
 #endif
 
@@ -450,8 +446,8 @@ uint32_t userHook_socket(struct emu_env *env, struct emu_env_hook *hook, ...) {
 	va_list vl;
 	va_start(vl, hook);
 
-	int domain = va_arg(vl,  int);
-	int type = va_arg(vl,  int);
+	int domain = va_arg(vl, int);
+	int type = va_arg(vl, int);
 	int protocol = va_arg(vl, int);
 	va_end(vl);
 
@@ -467,8 +463,8 @@ uint32_t userHook_WSASocket(struct emu_env *env, struct emu_env_hook *hook, ...)
 	va_list vl;
 	va_start(vl, hook);
 
-	int domain = va_arg(vl,  int);
-	int type = va_arg(vl,  int);
+	int domain = va_arg(vl, int);
+	int type = va_arg(vl, int);
 	int protocol = va_arg(vl, int);
 	(void)va_arg(vl, int);
 	(void)va_arg(vl, int);
@@ -484,21 +480,21 @@ uint32_t userHook_WSASocket(struct emu_env *env, struct emu_env_hook *hook, ...)
 
 #if CREATEFILE_HOOK
 uint32_t userHook_CreateFile(struct emu_env *env, struct emu_env_hook *hook, ...) {
-/*
-HANDLE CreateFile(
-  LPCTSTR lpFileName,
-  DWORD dwDesiredAccess,
-  DWORD dwShareMode,
-  LPSECURITY_ATTRIBUTES lpSecurityAttributes,
-  DWORD dwCreationDisposition,
-  DWORD dwFlagsAndAttributes,
-  HANDLE hTemplateFile
-);
-*/
+	/*
+	 HANDLE CreateFile(
+	 LPCTSTR lpFileName,
+	 DWORD dwDesiredAccess,
+	 DWORD dwShareMode,
+	 LPSECURITY_ATTRIBUTES lpSecurityAttributes,
+	 DWORD dwCreationDisposition,
+	 DWORD dwFlagsAndAttributes,
+	 HANDLE hTemplateFile
+	 );
+	 */
 
 	va_list vl;
 	va_start(vl, hook);
-	char *lpFileName			= va_arg(vl, char *);
+	char *lpFileName = va_arg(vl, char *);
 	/*int dwDesiredAccess		=*/(void)va_arg(vl, int);
 	/*int dwShareMode			=*/(void)va_arg(vl, int);
 	/*int lpSecurityAttributes	=*/(void)va_arg(vl, int);
@@ -510,7 +506,7 @@ HANDLE CreateFile(
 	char *localfile;
 
 	if ( asprintf(&localfile, "/tmp/%s-XXXXXX",lpFileName) == -1)
-		exit(-1);
+	exit(-1);
 
 	int fd = mkstemp(localfile);
 	close(fd);
@@ -526,21 +522,21 @@ HANDLE CreateFile(
 
 #if WRITEFILE_HOOK
 uint32_t userHook_WriteFile(struct emu_env *env, struct emu_env_hook *hook, ...) {
-/*
-BOOL WriteFile(
-  HANDLE hFile,
-  LPCVOID lpBuffer,
-  DWORD nNumberOfBytesToWrite,
-  LPDWORD lpNumberOfBytesWritten,
-  LPOVERLAPPED lpOverlapped
-);
-*/
+	/*
+	 BOOL WriteFile(
+	 HANDLE hFile,
+	 LPCVOID lpBuffer,
+	 DWORD nNumberOfBytesToWrite,
+	 LPDWORD lpNumberOfBytesWritten,
+	 LPOVERLAPPED lpOverlapped
+	 );
+	 */
 
 	va_list vl;
 	va_start(vl, hook);
-	FILE *hFile 					= va_arg(vl, FILE *);
-	void *lpBuffer 					= va_arg(vl, void *);
-	int   nNumberOfBytesToWrite 	= va_arg(vl, int);
+	FILE *hFile = va_arg(vl, FILE *);
+	void *lpBuffer = va_arg(vl, void *);
+	int nNumberOfBytesToWrite = va_arg(vl, int);
 	/* int *lpNumberOfBytesWritten  =*/(void)va_arg(vl, int*);
 	/* int *lpOverlapped 		    =*/(void)va_arg(vl, int*);
 	va_end(vl);
@@ -550,10 +546,10 @@ BOOL WriteFile(
 	if (nf != NULL)
 	{
 		if( fwrite(lpBuffer, nNumberOfBytesToWrite, 1, nf->real_file) != 1 )
-			return 0;
+		return 0;
 	}
 	else
-		printf("shellcode tried to write data to not existing handle\n");
+	printf("shellcode tried to write data to not existing handle\n");
 
 	return 1;
 
@@ -562,11 +558,11 @@ BOOL WriteFile(
 
 #if CLOSEHANDLE_HOOK
 uint32_t userHook_CloseHandle(struct emu_env *env, struct emu_env_hook *hook, ...) {
-/*
-BOOL CloseHandle(
-  HANDLE hObject
-);
-*/
+	/*
+	 BOOL CloseHandle(
+	 HANDLE hObject
+	 );
+	 */
 
 	va_list vl;
 	va_start(vl, hook);
@@ -586,7 +582,6 @@ BOOL CloseHandle(
 		printf("shellcode tried to close not existing handle (maybe closed it already?)\n");
 	}
 
-
 	return 0;
 }
 #endif
@@ -597,13 +592,12 @@ uint32_t userHook_URLDownloadToFile(struct emu_env *env, struct emu_env_hook *ho
 	va_start(vl, hook);
 
 	/*void * pCaller    = */(void)va_arg(vl, void *);
-	char * szURL      = va_arg(vl, char *);
+	char * szURL = va_arg(vl, char *);
 	char * szFileName = va_arg(vl, char *);
-	/*int    dwReserved = */(void)va_arg(vl, int   );
+	/*int    dwReserved = */(void)va_arg(vl, int );
 	/*void * lpfnCB     = */(void)va_arg(vl, void *);
 
 	va_end(vl);
-
 
 	printf("download %s -> %s\n", szURL, szFileName);
 
@@ -615,8 +609,8 @@ uint32_t userHook_URLDownloadToFile(struct emu_env *env, struct emu_env_hook *ho
 uint32_t userHook_IEWinMain(struct emu_env *env, struct emu_env_hook *hook, ...) {
 	va_list vl;
 	va_start(vl, hook);
-	/*char *CommandLine =*/ (void)va_arg(vl, char *);
-	/*int nShowWindow   =*/ (void)va_arg(vl, int);
+	/*char *CommandLine =*/(void)va_arg(vl, char *);
+	/*int nShowWindow   =*/(void)va_arg(vl, int);
 	va_end(vl);
 
 	opts.steps = 0;
@@ -631,30 +625,31 @@ void append(struct emu_string *to, const char *dir, char *data, int size)
 	struct emu_string *sanestr = emu_string_new();
 
 	int i;
-	for (i=0;i<size;i++) {
-		if (data[i] == '\r') {
+	for(i = 0; i < size; i++) {
+		if(data[i] == '\r') {
 		}
 
 		else if(isprint(data[i]))
 			emu_string_append_format(sanestr, "%c", data[i]);
 
-		else if (data[i] == '\n')
+		else if(data[i] == '\n')
 			emu_string_append_char(sanestr, "\n");
 
-		else if (data[i] == '\t')
+		else if(data[i] == '\t')
 			emu_string_append_char(sanestr, "\t");
 
 		else
-			emu_string_append_format(sanestr, "\\x%02x", (unsigned char)data[i]);
+			emu_string_append_format(sanestr, "\\x%02x",
+					(unsigned char) data[i]);
 	}
 
 	saveptr = NULL;
 
 	char *tok;
-	tok  = strtok_r(sanestr->data, "\n", &saveptr);
+	tok = strtok_r(sanestr->data, "\n", &saveptr);
 	if(tok != NULL) {
 		emu_string_append_format(to, "%s %s\n", dir, tok);
-		while ( (tok = strtok_r(NULL,"\n",&saveptr)) != NULL )
+		while((tok = strtok_r(NULL, "\n", &saveptr)) != NULL)
 			emu_string_append_format(to, "%s %s\n", dir, tok);
 	}
 	emu_string_free(sanestr);

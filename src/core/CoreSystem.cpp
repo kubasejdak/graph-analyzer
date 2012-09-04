@@ -1,107 +1,263 @@
 /*
  *  Filename	: CoreSystem.cpp
- *  Author	: Kuba Sejdak
+ *  Author		: Kuba Sejdak
  *  Created on	: 01-05-2012
  */
 
+#include <debug.h>
+#define LOCAL_DEBUG
+
 #include "CoreSystem.h"
 
-CoreSystem::CoreSystem() {
+CoreSystem::CoreSystem()
+{
 	loadModules();
 
 	SystemLogger::getInstance()->setStatus(IDLE);
 	SystemLogger::getInstance()->setError(NO_ERROR);
+
+	exploit_counter = 0;
+	sample_counter = 0;
 }
 
-CoreSystem::~CoreSystem() {
-	clearCache();
+CoreSystem::~CoreSystem()
+{
+	/* delete all samples */
+	clearSamples();
 }
 
-list<string> CoreSystem::load(string filename) {
-	SystemLogger::getInstance()->setStatus(LOADING);
-	SystemLogger::getInstance()->setError(CANNOT_HANDLE_FILE);
-	list<string> files;
-	queue<ShellcodeSample *> q;
-	ShellcodeSample *s;
-	FileAnalyser fileAnalyser;
-	string fileType = fileAnalyser.analyze(filename);
+void CoreSystem::addFile(string root_file)
+{
+	if(root_file.empty())
+		return;
 
-	map<string, AbstractInput *>::iterator it;
-	for(it = inputModules->begin(); it!= inputModules->end(); ++it) {
-		if(fileType == (*it).second->getType()) {
-			(*it).second->loadInput(filename, &q);
+	pending_files.push_back(root_file);
+}
 
-			/* process all returned files */
-			while(!q.empty()) {
-				s = q.front();
-				q.pop();
-				samples[s->getInfo()->getName()] = s;
-				files.push_back(s->getInfo()->getName());
+void CoreSystem::run()
+{
+	/* parse all input files */
+	while(!pending_files.empty()) {
+		string current_file = pending_files.front();
+		pending_files.pop_front();
+
+		/* check if directory */
+		if(isDirectory(current_file)) {
+			DIR *dp;
+			dirent *de;
+
+			dp = opendir(current_file.c_str());
+			if(dp == NULL) {
+				PRINTERR("opening directory %s", current_file.c_str());
+				continue;
 			}
 
-			/* indicate that input module was found */
-			SystemLogger::getInstance()->setError(NO_ERROR);
+			while((de = readdir(dp))) {
+				if(strcmp(de->d_name, ".") == 0 || strcmp(de->d_name, "..") == 0)
+					continue;
+
+				string next = current_file;
+				if(current_file[current_file.size() - 1] != '/')
+					next += "/";
+				next += de->d_name;
+				pending_files.push_front(next);
+			}
+
+			continue;
+		} /* if */
+
+		/* load */
+		if(!load(current_file)) {
+			PRINTERR("opening file %s (%s)", current_file.c_str(), getError().c_str());
+			continue;
+		}
+
+		ShellcodeSample *s;
+		while(!samples.empty()) {
+			s = samples.front();
+			samples.pop_front();
+
+			/* emulate */
+			if(!emulate(s)) {
+				PRINTERR("emulating %s (%s)", current_file.c_str(), getError().c_str());
+				continue;
+			}
+
+			/* analyze graph */
+			if(!analyze(s)) {
+				PRINTERR("analyzing %s (%s)", current_file.c_str(), getError().c_str());
+				continue;
+			}
+
+			/* make output */
+			if(!makeOutput(s)) {
+				PRINTERR("output for %s (%s)", current_file.c_str(), getError().c_str());
+				continue;
+			}
+
+			/* clean up */
+			delete s;
+		}
+	} /* while */
+}
+
+void CoreSystem::clear()
+{
+	exploit_counter = 0;
+	sample_counter = 0;
+
+	clearSamples();
+}
+
+string CoreSystem::getStatus()
+{
+	SystemStatus s = SystemLogger::getInstance()->getStatus();
+	return mapStatus(s);
+}
+
+string CoreSystem::getError()
+{
+	SystemError e = SystemLogger::getInstance()->getError();
+	return mapError(e);
+}
+
+void CoreSystem::setOutput(string method)
+{
+	output_methods.push_back(method);
+}
+
+int CoreSystem::getExploitsNum()
+{
+	return exploit_counter;
+}
+
+int CoreSystem::getSamplesNum()
+{
+	return sample_counter;
+}
+
+string CoreSystem::getVersion()
+{
+	return VERSION;
+}
+
+bool CoreSystem::load(string file)
+{
+	SystemLogger::getInstance()->setStatus(LOADING);
+	SystemLogger::getInstance()->setError(NO_ERROR);
+
+	list<ShellcodeSample *> q;
+	ShellcodeSample *s;
+
+	FileAnalyser file_analyser;
+	string file_type = file_analyser.analyze(file);
+
+	map<string, AbstractInput *>::iterator it;
+	for(it = input_mods->begin(); it != input_mods->end(); ++it) {
+		if(file_type == (*it).second->getType()) {
+			(*it).second->loadInput(file, &q);
+
+			/* process all returned samples */
+			while(!q.empty()) {
+				s = q.front();
+				q.pop_front();
+				samples.push_back(s);
+			}
 
 			break;
 		}
 	}
-	SystemLogger::getInstance()->setStatus(IDLE);
 
-	return files;
+	SystemLogger::getInstance()->setStatus(IDLE);
+	if(!samples.empty()) {
+		++sample_counter;
+		return true;
+	}
+
+	SystemLogger::getInstance()->setError(CANNOT_HANDLE_FILE);
+	return false;
 }
 
-void CoreSystem::emulate(string filename) {
+bool CoreSystem::emulate(ShellcodeSample *s)
+{
 	SystemLogger::getInstance()->setStatus(EMULATING);
 	SystemLogger::getInstance()->setError(NO_ERROR);
-	emuSystem.loadSample(samples[filename]);
-	bool ret = emuSystem.emulate();
-	if(!ret)
-		SystemLogger::getInstance()->setError(EMULATION_FAILED);
+
+	emu_system.loadSample(s);
+	bool ret = emu_system.emulate();
+
 	SystemLogger::getInstance()->setStatus(IDLE);
+	if(!ret) {
+		SystemLogger::getInstance()->setError(EMULATION_FAILED);
+		return false;
+	}
+
+	return true;
 }
 
-void CoreSystem::analyze(string filename) {
+bool CoreSystem::analyze(ShellcodeSample *s)
+{
 	SystemLogger::getInstance()->setStatus(ANALYZING);
 	SystemLogger::getInstance()->setError(NO_ERROR);
-	anaSystem.loadSample(samples[filename]);
-	bool ret = anaSystem.analyze();
-	if(!ret)
-		SystemLogger::getInstance()->setError(ANALYZING_FAILED);
+
+	ana_system.loadSample(s);
+	bool ret = ana_system.analyze();
+
 	SystemLogger::getInstance()->setStatus(IDLE);
+	if(!ret) {
+		SystemLogger::getInstance()->setError(ANALYZING_FAILED);
+		return false;
+	}
+
+	if(s->getInfo()->isShellcodePresent())
+		++exploit_counter;
+	return true;
 }
 
-ShellcodeInfo *CoreSystem::getResults(string filename) {
-	if(samples.find(filename) == samples.end())
-		return new ShellcodeInfo();
+bool CoreSystem::makeOutput(ShellcodeSample *s)
+{
+	SystemLogger::getInstance()->setStatus(ANALYZING);
+	SystemLogger::getInstance()->setError(NO_ERROR);
 
-	return samples[filename]->getInfo();
+	list<string>::iterator it;
+	if(!s->getInfo()->isShellcodePresent())
+		return true;
+
+	bool ret;
+	for(it = output_methods.begin(); it != output_methods.end(); ++it) {
+		ret = (*output_mods)[*it]->generateOutput(s);
+
+		SystemLogger::getInstance()->setStatus(IDLE);
+		if(!ret) {
+			SystemLogger::getInstance()->setError(OUTPUT_FAILED);
+			return false;
+		}
+	}
+
+	return true;
 }
 
-bool CoreSystem::generateOutput(string filename, string method, string *output) {
-	return (*outputModules)[method]->generateOutput(samples[filename]);
+string CoreSystem::mapStatus(SystemStatus status)
+{
+	return SystemLogger::getInstance()->mapStatus(status);
 }
 
-SystemStatus CoreSystem::getStatus() {
-	return SystemLogger::getInstance()->getStatus();
-}
-
-SystemError CoreSystem::getError() {
-	return SystemLogger::getInstance()->getError();
-}
-
-string CoreSystem::mapError(SystemError error) {
+string CoreSystem::mapError(SystemError error)
+{
 	return SystemLogger::getInstance()->mapError(error);
 }
 
-void CoreSystem::clearCache() {
-	map<string, ShellcodeSample *>::iterator it;
-	for(it = samples.begin(); it != samples.end(); ++it) {
-		delete (*it).second;
-		samples.erase(it);
-	}
+void CoreSystem::loadModules()
+{
+	input_mods = ModuleManager::getInstance()->getInput();
+	output_mods = ModuleManager::getInstance()->getOutput();
 }
 
-void CoreSystem::loadModules() {
-	inputModules = ModuleManager::getInstance()->getInput();
-	outputModules = ModuleManager::getInstance()->getOutput();
+void CoreSystem::clearSamples()
+{
+	list<ShellcodeSample *>::iterator it;
+	for(it = samples.begin(); it != samples.end(); ++it) {
+		delete &(*it);
+		samples.erase(it);
+	}
 }

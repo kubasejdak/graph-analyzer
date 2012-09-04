@@ -1,6 +1,6 @@
 /*
- * Filename	: DatabaseOutput.cpp
- * Author	: Kuba Sejdak
+ * Filename		: DatabaseOutput.cpp
+ * Author		: Kuba Sejdak
  * Created on	: 22-08-2012
  */
 
@@ -10,7 +10,8 @@
 
 #include "DatabaseOutput.h"
 
-DatabaseOutput::DatabaseOutput() {
+DatabaseOutput::DatabaseOutput()
+{
 	id = getNextID();
 	name = "DatabaseOutput";
 	description = "Inserts info about samples into database.";
@@ -22,10 +23,12 @@ DatabaseOutput::DatabaseOutput() {
 	db.setPassword(DB_PASS);
 }
 
-DatabaseOutput::~DatabaseOutput() {
+DatabaseOutput::~DatabaseOutput()
+{
 }
 
-bool DatabaseOutput::generateOutput(ShellcodeSample *sample) {
+bool DatabaseOutput::generateOutput(ShellcodeSample *sample)
+{
 	if(!sample->getInfo()->isShellcodePresent() && SKIP_NONEXPLOIT_OUTPUT)
 		return false;
 
@@ -79,7 +82,8 @@ bool DatabaseOutput::generateOutput(ShellcodeSample *sample) {
 	return true;
 }
 
-QSqlQuery DatabaseOutput::traitQuery(string table, map<string, string> *v, int sample_id) {
+QSqlQuery DatabaseOutput::traitQuery(string table, map<string, string> *v, int sample_id)
+{
 	QSqlQuery q;
 	string str_q;
 	map<string, string>::iterator it;
@@ -88,7 +92,7 @@ QSqlQuery DatabaseOutput::traitQuery(string table, map<string, string> *v, int s
 	str_q = "INSERT INTO ";
 	str_q += table;
 	str_q += " VALUES (DEFAULT, ";
-	for(unsigned i = 0; i < v->size() + 1; ++i) {	// +1 because sample_id
+	for(unsigned i = 0; i < v->size() + 1; ++i) { // +1 because sample_id
 		str_q += "?";
 		if(i < v->size())
 			str_q += ", ";

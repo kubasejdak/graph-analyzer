@@ -1,6 +1,6 @@
 /*
  *  Filename	: AbstractOutput.h
- *  Author	: Kuba Sejdak
+ *  Author		: Kuba Sejdak
  *  Created on	: 06-05-2012
  */
 
@@ -16,7 +16,8 @@ public:
 	AbstractOutput();
 	virtual ~AbstractOutput();
 
-	static int getNextID() {
+	static int getNextID()
+	{
 		return nextID++;
 	}
 

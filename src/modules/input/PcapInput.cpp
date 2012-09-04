@@ -1,6 +1,6 @@
 /*
- * Filename	: PcapInput.cpp
- * Author	: Kuba Sejdak
+ * Filename		: PcapInput.cpp
+ * Author		: Kuba Sejdak
  * Created on	: 26-07-2012
  */
 
@@ -10,17 +10,20 @@
 
 #include "PcapInput.h"
 
-PcapInput::PcapInput() {
+PcapInput::PcapInput()
+{
 	id = getNextID();
 	name = "PcapInput";
 	type = "pcap";
 	description = "Loads shellcode from pcap files.";
 }
 
-PcapInput::~PcapInput() {
+PcapInput::~PcapInput()
+{
 }
 
-void PcapInput::loadInput(string filename, queue<ShellcodeSample *> *samples) {
+void PcapInput::loadInput(string filename, list<ShellcodeSample *> *samples)
+{
 	int stat;
 	/* move to pcap_tmp */
 	if(!nameExists("pcap_tmp"))
@@ -39,7 +42,7 @@ void PcapInput::loadInput(string filename, queue<ShellcodeSample *> *samples) {
 		tcpflow_cmd += filename;
 	}
 	else
-		tcpflow_cmd +=filename;
+		tcpflow_cmd += filename;
 	tcpflow_cmd += "\"";
 	stat = system(tcpflow_cmd.c_str());
 	if(stat) {
@@ -91,7 +94,7 @@ void PcapInput::loadInput(string filename, queue<ShellcodeSample *> *samples) {
 		s->getInfo()->setFileType(type);
 		s->getInfo()->setSize(size);
 		s->setCode((byte_t *) buffer);
-		samples->push(s);
+		samples->push_back(s);
 
 		unlink(de->d_name);
 		++i;
@@ -108,7 +111,8 @@ void PcapInput::loadInput(string filename, queue<ShellcodeSample *> *samples) {
 	rmdir("pcap_tmp");
 }
 
-int ftw_remove_dir(const char *fpath, const struct stat *sb, int typeflag) {
+int ftw_remove_dir(const char *fpath, const struct stat *sb, int typeflag)
+{
 	unlink(fpath);
 
 	return 0;

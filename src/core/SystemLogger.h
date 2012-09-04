@@ -1,6 +1,6 @@
 /*
- * Filename	: SystemLogger.h
- * Author	: Kuba Sejdak
+ * Filename		: SystemLogger.h
+ * Author		: Kuba Sejdak
  * Created on	: 29-07-2012
  */
 
@@ -9,10 +9,10 @@
 
 enum SystemStatus {
 	IDLE,
-	ERROR,
 	LOADING,
 	EMULATING,
-	ANALYZING
+	ANALYZING,
+	GENERATING_OUTPUT
 };
 
 enum SystemError {
@@ -24,7 +24,8 @@ enum SystemError {
 	TCPFLOW_FAILED,
 	OPEN_DIR_FAILED,
 	UNLINK_FAILED,
-	GRAPH_DRAW_FAILED
+	GRAPH_DRAW_FAILED,
+	OUTPUT_FAILED
 };
 
 /* standard headers */
@@ -35,9 +36,10 @@ using namespace std;
 class SystemLogger {
 public:
 	virtual ~SystemLogger();
-	static SystemLogger *getInstance() {
+	static SystemLogger *getInstance()
+	{
 		static SystemLogger instance;
-	    return &instance;
+		return &instance;
 	}
 
 	void setStatus(SystemStatus status);
@@ -45,6 +47,7 @@ public:
 
 	SystemStatus getStatus();
 	SystemError getError();
+	string mapStatus(SystemStatus status);
 	string mapError(SystemError error);
 
 private:
@@ -52,7 +55,8 @@ private:
 
 	SystemStatus status;
 	SystemError error;
-	map<SystemError, string> errorMap;
+	map<SystemStatus, string> status_map;
+	map<SystemError, string> error_map;
 };
 
 #endif /* SYSTEMLOGGER_H_ */

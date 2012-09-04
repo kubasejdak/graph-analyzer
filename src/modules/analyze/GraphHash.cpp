@@ -1,22 +1,25 @@
 /*
- * Filename	: GraphHash.cpp
- * Author	: Kuba Sejdak
+ * Filename		: GraphHash.cpp
+ * Author		: Kuba Sejdak
  * Created on	: 23-07-2012
  */
 
 #include "GraphHash.h"
 
-GraphHash::GraphHash() {
+GraphHash::GraphHash()
+{
 	id = getNextID();
 	name = "GraphHash";
 	description = "Hashes whole graph for further comparison.";
 	trait_name = "hash";
 }
 
-GraphHash::~GraphHash() {
+GraphHash::~GraphHash()
+{
 }
 
-bool GraphHash::perform(ShellcodeSample *sample) {
+bool GraphHash::perform(ShellcodeSample *sample)
+{
 	Graph *g = sample->getGraph();
 	Graph::graph_iterator it;
 	map<string, string> *m = new map<string, string>();

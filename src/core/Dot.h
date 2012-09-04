@@ -1,6 +1,6 @@
 /*
- * Filename	: Dot.h
- * Author	: Kuba Sejdak
+ * Filename		: Dot.h
+ * Author		: Kuba Sejdak
  * Created on	: 21-06-2012
  */
 

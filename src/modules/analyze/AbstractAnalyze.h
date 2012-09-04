@@ -1,6 +1,6 @@
 /*
  *  Filename	: AbstractAnalyze.h
- *  Author	: Kuba Sejdak
+ *  Author		: Kuba Sejdak
  *  Created on	: 07-05-2012
  */
 
@@ -11,12 +11,13 @@
 #include <modules/AbstractModule.h>
 #include <core/ShellcodeSample.h>
 
-class AbstractAnalyze : public AbstractModule {
+class AbstractAnalyze: public AbstractModule {
 public:
 	AbstractAnalyze();
 	virtual ~AbstractAnalyze();
 
-	static int getNextID() {
+	static int getNextID()
+	{
 		return nextID++;
 	}
 

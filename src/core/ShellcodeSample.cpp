@@ -1,36 +1,42 @@
 /*
  *  Filename	: ShellcodeSample.cpp
- *  Author	: Kuba Sejdak
+ *  Author		: Kuba Sejdak
  *  Created on	: 03-05-2012
  */
 
 #include "ShellcodeSample.h"
 
-ShellcodeSample::ShellcodeSample() {
+ShellcodeSample::ShellcodeSample()
+{
 	code = NULL;
 	graph = new Graph();
 	info = new ShellcodeInfo();
 }
 
-ShellcodeSample::~ShellcodeSample() {
+ShellcodeSample::~ShellcodeSample()
+{
 	delete graph;
 	delete info;
 	if(code)
 		delete code;
 }
 
-byte_t *ShellcodeSample::getCode() {
+byte_t *ShellcodeSample::getCode()
+{
 	return code;
 }
 
-ShellcodeInfo *ShellcodeSample::getInfo() {
+ShellcodeInfo *ShellcodeSample::getInfo()
+{
 	return info;
 }
 
-Graph *ShellcodeSample::getGraph() {
+Graph *ShellcodeSample::getGraph()
+{
 	return graph;
 }
 
-void ShellcodeSample::setCode(byte_t *code) {
+void ShellcodeSample::setCode(byte_t *code)
+{
 	this->code = code;
 }

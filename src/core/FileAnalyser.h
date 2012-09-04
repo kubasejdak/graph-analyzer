@@ -1,6 +1,6 @@
 /*
- * Filename	: FileAnalyser.h
- * Author	: Kuba Sejdak
+ * Filename		: FileAnalyser.h
+ * Author		: Kuba Sejdak
  * Created on	: 26-07-2012
  */
 

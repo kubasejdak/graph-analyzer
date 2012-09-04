@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 2.6)
 
 # project name
-project(graph_analyzer)
+project(graph-analyzer)
 
 # options passed to the compiler
 add_definitions(-g -Wall)
@@ -15,10 +15,15 @@ set(QT_USE_QTSQL TRUE)
 include(${QT_USE_FILE})
 add_definitions(${QT_DEFINITIONS})
 
+# Boost
+find_package(Boost COMPONENTS program_options REQUIRED)
+
 # include
 include_directories(src)
 include_directories(/opt/libemu/include)
 include_directories(${Qt4_INCLUDE_DIRS})
+include_directories(${Boost_INCLUDE_DIR})
+
 
 # source path
 add_subdirectory(src)

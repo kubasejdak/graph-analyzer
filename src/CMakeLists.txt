@@ -1,30 +1,28 @@
-# core source path
+# source paths
 add_subdirectory(core)
-
-# modules source path
 add_subdirectory(modules)
 
-# exe directory
+# project targets
+add_executable(graph-analyzer main.cpp toolbox.cpp)
 set(EXECUTABLE_OUTPUT_PATH "${CMAKE_HOME_DIRECTORY}/bin")
 
-# libemu directory
-link_directories(/opt/libemu/lib)
-
-# compile project
-add_executable(graph-analyzer main.cpp toolbox.cpp)
+add_library(GraphAnalyzerPython SHARED core/GraphAnalyzerPython.cpp toolbox.cpp)
+set_target_properties(GraphAnalyzerPython PROPERTIES PREFIX "")
+set_target_properties(GraphAnalyzerPython PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_HOME_DIRECTORY}/bin")
 
 # link with modules 
 target_link_libraries(graph-analyzer emu)
 target_link_libraries(graph-analyzer core)
-target_link_libraries(graph-analyzer module_manager)
-target_link_libraries(graph-analyzer binary_input)
-target_link_libraries(graph-analyzer pcap_input)
-target_link_libraries(graph-analyzer syscall_analyze)
-target_link_libraries(graph-analyzer graph_hash)
-target_link_libraries(graph-analyzer loop_detector)
-target_link_libraries(graph-analyzer database_output)
-target_link_libraries(graph-analyzer console_output)
+target_link_libraries(graph-analyzer modules)
+
+target_link_libraries(GraphAnalyzerPython emu)
+target_link_libraries(GraphAnalyzerPython core)
+target_link_libraries(GraphAnalyzerPython modules)
 
 # link with external libraries
 target_link_libraries(graph-analyzer ${QT_LIBRARIES})
 target_link_libraries(graph-analyzer ${Boost_LIBRARIES})
+
+target_link_libraries(GraphAnalyzerPython ${QT_LIBRARIES})
+target_link_libraries(GraphAnalyzerPython ${Boost_LIBRARIES})
+target_link_libraries(GraphAnalyzerPython ${PYTHON_LIBRARIES})

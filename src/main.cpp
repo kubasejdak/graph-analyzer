@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
 	/* output */
 	if(!vm.count("output")) {
 		SHOWMSG("no output destination, setting to ConsoleOutput");
-		system.setOutput();
+		system.setOutput("ConsoleOutput");
 	}
 	while(!output.empty()) {
 		system.setOutput(output.back());
@@ -119,8 +119,7 @@ int main(int argc, char *argv[])
 	int e_num = system.getExploitsNum();
 	string e = (e_num == 1) ? "exploit" : "exploits";
 	string s = (s_num == 1) ? "sample" : "samples";
-	cout << "FINISHED: found " << dec << e_num << " " << e << " in " << s_num
-			<< " " << s << "!" << endl;
+	cout << "FINISHED: found " << dec << e_num << " " << e << " in " << s_num << " " << s << "!" << endl;
 
 	return 0;
 }

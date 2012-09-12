@@ -15,7 +15,7 @@ urlpatterns = patterns('',
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Admin:
-    url(r'admin/', include(admin.site.urls)),
+    url(r'^jsejdak/admin/', include(admin.site.urls)),
     
     # Main pages:
     url(r'^jsejdak/$', show_home),

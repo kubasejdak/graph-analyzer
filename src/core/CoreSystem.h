@@ -48,7 +48,7 @@ public:
 	void setLogLevel(int level);
 
 	/* results */
-	void setOutput(string method = "ConsoleOutput");
+	void setOutput(string method);
 	int getExploitsNum();
 	int getSamplesNum();
 

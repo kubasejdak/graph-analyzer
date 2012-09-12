@@ -31,7 +31,14 @@ enum SystemError {
 /* standard headers */
 #include <string>
 #include <map>
+#include <boost/current_function.hpp>
+#include <cstdarg>
+#include <cstdio>
+#include <toolbox.h>
 using namespace std;
+
+#define	LOG(fmt, ...) 		SystemLogger::getInstance()->log(__FILE__, BOOST_CURRENT_FUNCTION, __LINE__, fmt, __VA_ARGS__)
+#define	LOG_ERROR(fmt, ...)	SystemLogger::getInstance()->logError(__FILE__, BOOST_CURRENT_FUNCTION, __LINE__, fmt, __VA_ARGS__)
 
 class SystemLogger {
 public:
@@ -42,13 +49,22 @@ public:
 		return &instance;
 	}
 
+	/* error and status */
 	void setStatus(SystemStatus status);
 	void setError(SystemError error);
 
 	SystemStatus getStatus();
 	SystemError getError();
+
 	string mapStatus(SystemStatus status);
 	string mapError(SystemError error);
+
+	/* logging */
+	void setLogLevel(int level);
+	void setLogFile(string filename);
+
+	void log(string file, string func, int line, string fmt, ...);
+	void logError(string file, string func, int line, string fmt, ...);
 
 private:
 	SystemLogger();
@@ -57,6 +73,9 @@ private:
 	SystemError error;
 	map<SystemStatus, string> status_map;
 	map<SystemError, string> error_map;
+
+	int logging_level;
+	string file;
 };
 
 #endif /* SYSTEMLOGGER_H_ */

@@ -42,6 +42,7 @@ int main(int argc, char *argv[])
 
 	/* parse cmd line arguments */
 	vector<string> input, output;
+	string log_file, log_level;
 	opt::options_description desc("Options");
 	desc.add_options()
 		("help,h", "print help message")
@@ -50,6 +51,8 @@ int main(int argc, char *argv[])
 		("list-analyze", "list analyze modules")
 		("list-input", "list input modules")
 		("list-output", "list output modules")
+		("log-file", opt::value<string>(&log_file), "set file to save logs")
+		("log-level", opt::value<string>(&log_level), "set logging level")
 	;
 
 	opt::positional_options_description p;
@@ -84,6 +87,12 @@ int main(int argc, char *argv[])
 		listOutputMods();
 		exit(0);
 	}
+	/* log-file */
+	if(vm.count("log-file"))
+		system.setLogFile(log_file);
+	/* log-level */
+	if(vm.count("log-level"))
+		system.setLogLevel(atoi(log_level.c_str()));
 	/* input */
 	if(!vm.count("input")) {
 		SHOWERR("no input files");

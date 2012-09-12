@@ -15,6 +15,8 @@ CoreSystem::CoreSystem()
 
 	SystemLogger::getInstance()->setStatus(IDLE);
 	SystemLogger::getInstance()->setError(NO_ERROR);
+	SystemLogger::getInstance()->setLogFile("/home/kuba/analyze_log");
+	SystemLogger::getInstance()->setLogLevel(1);
 
 	exploit_counter = 0;
 	sample_counter = 0;
@@ -119,6 +121,16 @@ string CoreSystem::getError()
 {
 	SystemError e = SystemLogger::getInstance()->getError();
 	return mapError(e);
+}
+
+void CoreSystem::setLogFile(string filename)
+{
+	SystemLogger::getInstance()->setLogFile(filename);
+}
+
+void CoreSystem::setLogLevel(int level)
+{
+	SystemLogger::getInstance()->setLogLevel(level);
 }
 
 void CoreSystem::setOutput(string method)

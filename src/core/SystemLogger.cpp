@@ -21,7 +21,7 @@ SystemLogger::SystemLogger()
 	status_map[GENERATING_OUTPUT] = "generating output";
 
 	/* error strings mapping */
-	error_map[NO_ERROR] = "";
+	error_map[NO_ERROR] = "no error";
 	error_map[CANNOT_HANDLE_FILE] = "no appropriate input module";
 	error_map[EMULATION_FAILED] = "general emulation error";
 	error_map[ANALYZING_FAILED] = "general analyzing error";
@@ -31,6 +31,9 @@ SystemLogger::SystemLogger()
 	error_map[UNLINK_FAILED] = "unlunk function failed";
 	error_map[GRAPH_DRAW_FAILED] = "drawing graph failed";
 	error_map[OUTPUT_FAILED] = "generating output failed";
+
+	logging_level = 0;
+	file = "analyzer_log";
 
 }
 
@@ -66,4 +69,80 @@ string SystemLogger::mapStatus(SystemStatus status)
 string SystemLogger::mapError(SystemError error)
 {
 	return error_map[error];
+}
+
+void SystemLogger::setLogLevel(int level)
+{
+	logging_level = level;
+}
+
+void SystemLogger::setLogFile(string filename)
+{
+	file = filename;
+}
+
+void SystemLogger::log(string file, string func, int line, string fmt, ...)
+{
+	if(logging_level == 0)
+		return;
+
+	FILE *f = fopen(file.c_str(), "a");
+	if(f == NULL)
+		return;
+
+	string m = "";
+	va_list arg_ptr;
+	va_start(arg_ptr, fmt);
+
+	switch(logging_level) {
+	case 1:
+		m.append(fmt);
+		break;
+	case 2:
+		m.append("FUNCTION: ").append(func).append(", ").append(fmt);
+		break;
+	case 3:
+		m.append("FILE: ").append(file).append(", FUNCTION: ").append(func);
+		m.append(", LINE: ").append(itos(line)).append(", ").append(fmt);
+		break;
+	default:
+		break;
+	}
+
+	vfprintf(f, m.c_str(), arg_ptr);
+	fclose(f);
+	va_end(arg_ptr);
+}
+
+void SystemLogger::logError(string file, string func, int line, string fmt, ...)
+{
+	if(logging_level == 0)
+		return;
+
+	FILE *f = fopen(file.c_str(), "a");
+	if(f == NULL)
+		return;
+
+	string m = "ERROR: ";
+	va_list arg_ptr;
+	va_start(arg_ptr, fmt);
+
+	switch(logging_level) {
+	case 1:
+		m.append(fmt);
+		break;
+	case 2:
+		m.append("FUNCTION: ").append(func).append(", ").append(fmt);
+		break;
+	case 3:
+		m.append("FILE: ").append(file).append(", FUNCTION: ").append(func);
+		m.append(", LINE: ").append(itos(line)).append(", ").append(fmt);
+		break;
+	default:
+		break;
+	}
+
+	vfprintf(f, m.c_str(), arg_ptr);
+	fclose(f);
+	va_end(arg_ptr);
 }

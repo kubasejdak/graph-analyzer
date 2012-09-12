@@ -43,6 +43,10 @@ public:
 	string getStatus();
 	string getError();
 
+	/* logging */
+	void setLogFile(string filename);
+	void setLogLevel(int level);
+
 	/* results */
 	void setOutput(string method = "ConsoleOutput");
 	int getExploitsNum();

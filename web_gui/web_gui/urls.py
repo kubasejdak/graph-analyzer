@@ -1,6 +1,5 @@
 from django.conf.urls import patterns, include, url
-from graph_analyzer.views import show_home, show_analyze, show_browse,\
-	show_options
+from graph_analyzer.views import show_home, show_analyze, show_browse, show_options
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin

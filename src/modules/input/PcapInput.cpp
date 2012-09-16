@@ -4,10 +4,6 @@
  * Created on	: 26-07-2012
  */
 
-/* debug */
-#define LOCAL_DEBUG
-#include <debug.h>
-
 #include "PcapInput.h"
 
 PcapInput::PcapInput()
@@ -31,7 +27,7 @@ void PcapInput::loadInput(string filename, list<ShellcodeSample *> *samples)
 	stat = chdir("pcap_tmp");
 	if(stat) {
 		SystemLogger::getInstance()->setError(CHANGE_DIR_FAILED);
-		SHOWERR_L("chdir failed in PcapInput");
+		LOG_ERROR("chdir failed in PcapInput");
 		return;
 	}
 
@@ -47,7 +43,7 @@ void PcapInput::loadInput(string filename, list<ShellcodeSample *> *samples)
 	stat = system(tcpflow_cmd.c_str());
 	if(stat) {
 		SystemLogger::getInstance()->setError(TCPFLOW_FAILED);
-		SHOWERR_L("tcpflow cmd failed in PcapInput");
+		LOG_ERROR("tcpflow cmd failed in PcapInput");
 		chdir("..");
 		ftw("pcap_tmp", ftw_remove_dir, 0);
 		rmdir("pcap_tmp");
@@ -63,7 +59,7 @@ void PcapInput::loadInput(string filename, list<ShellcodeSample *> *samples)
 	dp = opendir(".");
 	if(dp == NULL) {
 		SystemLogger::getInstance()->setError(TCPFLOW_FAILED);
-		SHOWERR_L("opendir failed in PcapInput");
+		LOG_ERROR("opendir failed in PcapInput");
 		return;
 	}
 
@@ -105,7 +101,7 @@ void PcapInput::loadInput(string filename, list<ShellcodeSample *> *samples)
 	stat = chdir("..");
 	if(stat) {
 		SystemLogger::getInstance()->setError(CHANGE_DIR_FAILED);
-		SHOWERR_L("chdir failed in PcapInput");
+		LOG_ERROR("chdir failed in PcapInput");
 		return;
 	}
 	rmdir("pcap_tmp");

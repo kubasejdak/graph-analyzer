@@ -4,10 +4,6 @@
  *  Created on	: 08-05-2012
  */
 
-/* debug */
-#define LOCAL_DEBUG
-#include <debug.h>
-
 #include "BinaryInput.h"
 
 BinaryInput::BinaryInput()

@@ -26,6 +26,9 @@ extern "C" {
 	#include <emu/environment/linux/env_linux_syscall_hooks.h>
 }
 
+/* project headers */
+#include <core/SystemLogger.h>
+
 struct instr_vertex {
 	uint32_t eip;
 	struct emu_string  *instr_string;

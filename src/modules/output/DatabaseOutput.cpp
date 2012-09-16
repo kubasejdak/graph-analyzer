@@ -4,10 +4,6 @@
  * Created on	: 22-08-2012
  */
 
-/* debug */
-#define LOCAL_DEBUG
-#include <debug.h>
-
 #include "DatabaseOutput.h"
 
 DatabaseOutput::DatabaseOutput()
@@ -16,11 +12,11 @@ DatabaseOutput::DatabaseOutput()
 	name = "DatabaseOutput";
 	description = "Inserts info about samples into database.";
 
-	db = QSqlDatabase::addDatabase(DB_QT_DRIVER);
-	db.setHostName(DB_HOST);
-	db.setDatabaseName(DB_NAME);
-	db.setUserName(DB_USER);
-	db.setPassword(DB_PASS);
+	db = QSqlDatabase::addDatabase(DB_QT_DRIVER.c_str());
+	db.setHostName(DB_HOST.c_str());
+	db.setDatabaseName(DB_NAME.c_str());
+	db.setUserName(DB_USER.c_str());
+	db.setPassword(DB_PASS.c_str());
 }
 
 DatabaseOutput::~DatabaseOutput()
@@ -41,7 +37,7 @@ bool DatabaseOutput::generateOutput(ShellcodeSample *sample)
 		/* get next id number */
 		seq_query.prepare("SELECT nextval('graph_analyzer_sample_id_seq')");
 		if(!seq_query.exec()) {
-			SHOWERR(seq_query.lastError().databaseText().toStdString());
+			LOG_ERROR("%s\n", seq_query.lastError().databaseText().toStdString().c_str());
 			return false;
 		}
 		seq_query.next();
@@ -57,7 +53,7 @@ bool DatabaseOutput::generateOutput(ShellcodeSample *sample)
 		query.bindValue(5, itos(info->getSize()).c_str());
 		query.bindValue(6, itos(info->getCodeOffset()).c_str());
 		if(!query.exec()) {
-			SHOWERR(query.lastError().databaseText().toStdString());
+			LOG_ERROR("%s\n", query.lastError().databaseText().toStdString().c_str());
 			return false;
 		}
 
@@ -72,7 +68,7 @@ bool DatabaseOutput::generateOutput(ShellcodeSample *sample)
 
 			q = traitQuery(table, (*it).second, id);
 			if(!q.exec()) {
-				SHOWERR(q.lastError().databaseText().toStdString());
+				LOG_ERROR("%s\n", q.lastError().databaseText().toStdString().c_str());
 				return false;
 			}
 		}

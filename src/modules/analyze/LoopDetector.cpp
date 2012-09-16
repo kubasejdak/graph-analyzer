@@ -4,9 +4,6 @@
  * Created on	: 13-07-2012
  */
 
-#define LOCAL_DEBUG
-#include <debug.h>
-
 #include "LoopDetector.h"
 
 LoopDetector::LoopDetector()

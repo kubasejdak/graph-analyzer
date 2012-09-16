@@ -1,5 +1,13 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <p>Analyze</p>
+  <form action="" method="post">{% csrf_token %}
+    <table>{{ form.as_table }}</table>
+    <input type="submit" value="Analyze">
+  </form>
+  
+  <p>
+    System status: <b>{{ status }}</b><br/>
+    System error: <b>{{ error }}</b>
+  </p>
 {% endblock %}

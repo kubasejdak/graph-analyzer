@@ -4,10 +4,6 @@
  *  Created on	: 13-05-2012
  */
 
-/* debug */
-#define LOCAL_DEBUG
-#include <debug.h>
-
 #include "UserHooks.h"
 
 #if EXITPROCESS_HOOK
@@ -646,7 +642,7 @@ void append(struct emu_string *to, const char *dir, char *data, int size)
 	saveptr = NULL;
 
 	char *tok;
-	tok = strtok_r(sanestr->data, "\n", &saveptr);
+	tok = strtok_r((char *)sanestr->data, "\n", &saveptr);
 	if(tok != NULL) {
 		emu_string_append_format(to, "%s %s\n", dir, tok);
 		while((tok = strtok_r(NULL, "\n", &saveptr)) != NULL)

@@ -37,8 +37,8 @@ enum SystemError {
 #include <toolbox.h>
 using namespace std;
 
-#define	LOG(fmt, ...) 		SystemLogger::getInstance()->log(__FILE__, BOOST_CURRENT_FUNCTION, __LINE__, fmt, __VA_ARGS__)
-#define	LOG_ERROR(fmt, ...)	SystemLogger::getInstance()->logError(__FILE__, BOOST_CURRENT_FUNCTION, __LINE__, fmt, __VA_ARGS__)
+#define	LOG(fmt, args...) 		SystemLogger::getInstance()->log(__FILE__, BOOST_CURRENT_FUNCTION, __LINE__, fmt, ##args)
+#define	LOG_ERROR(fmt, args...)	SystemLogger::getInstance()->logError(__FILE__, BOOST_CURRENT_FUNCTION, __LINE__, fmt, ##args)
 
 class SystemLogger {
 public:
@@ -63,8 +63,8 @@ public:
 	void setLogLevel(int level);
 	void setLogFile(string filename);
 
-	void log(string file, string func, int line, string fmt, ...);
-	void logError(string file, string func, int line, string fmt, ...);
+	void log(string msg_file, string func, int line, string fmt, ...);
+	void logError(string msg_file, string func, int line, string fmt, ...);
 
 private:
 	SystemLogger();

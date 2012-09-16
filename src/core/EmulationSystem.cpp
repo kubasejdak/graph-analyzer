@@ -4,10 +4,6 @@
  *  Created on	: 03-05-2012
  */
 
-/* debug */
-//#define LOCAL_DEBUG
-#include <debug.h>
-
 #include "EmulationSystem.h"
 
 EmulationSystem::EmulationSystem()
@@ -111,7 +107,7 @@ bool EmulationSystem::emulate()
 
 			/* no function defined fot this name */
 			if(hook->hook.win->fnhook == NULL) {
-				PRINTMSG("unhooked call to %s", hook->hook.win->fnname);
+				LOG("unhooked call to %s", hook->hook.win->fnname);
 				return false;
 			}
 		}
@@ -157,7 +153,7 @@ bool EmulationSystem::emulate()
 			if(ret == -1) {
 				/* step failed - maybe SEH */
 				if(emu_env_w32_step_failed(env) != 0) {
-					PRINTMSG("cpu %s", emu_strerror(emuUnit->getEmu()));
+					LOG("cpu %s", emu_strerror(emuUnit->getEmu()));
 					break;
 				}
 			}
@@ -185,7 +181,7 @@ bool EmulationSystem::emulate()
 	graphName += ".png";
 
 	if(!nameExists(GRAPHS_DIR))
-		mkdir(GRAPHS_DIR, S_IRWXU | S_IRWXG | S_IRWXO);
+		mkdir(GRAPHS_DIR.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
 
 	graphName = extractBasename(graphName);
 	graphName.insert(0, GRAPHS_DIR);
@@ -209,15 +205,15 @@ bool EmulationSystem::emulate()
 		ret = unlink("graph.dot");
 		if(ret) {
 			SystemLogger::getInstance()->setError(UNLINK_FAILED);
-			SHOWERR_L("deleting .dot file");
+			LOG_ERROR("deleting .dot file");
 		}
 	}
 	else {
 		SystemLogger::getInstance()->setError(GRAPH_DRAW_FAILED);
-		SHOWERR_L("drawing graph failed");
+		LOG_ERROR("drawing graph failed");
 		ret = unlink("graph.dot");
 		if(ret)
-			SHOWERR_L("deleting .dot file");
+			LOG_ERROR("deleting .dot file");
 	}
 
 	if(DELETE_CODE_INSTANTLY) {
@@ -227,7 +223,7 @@ bool EmulationSystem::emulate()
 
 	sample->getInfo()->setGraphName(graphName);
 	sample = NULL;
-	SHOWMSG("analyzing finished");
+	LOG("analyzing finished");
 
 	return true;
 }

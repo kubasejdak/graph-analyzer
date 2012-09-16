@@ -6,10 +6,6 @@
 
 #define AUTHOR	"Kuba Sejdak"
 
-/* debug */
-#define LOCAL_DEBUG
-#include <debug.h>
-
 /* standard headers */
 #include <boost/program_options.hpp>
 #include <iostream>
@@ -24,6 +20,7 @@ namespace opt = boost::program_options;
 /* project headers */
 #include <core/CoreSystem.h>
 #include <core/ShellcodeInfo.h>
+#include <core/SystemLogger.h>
 #include <modules/ModuleInfo.h>
 #include <modules/ModuleManager.h>
 #include <toolbox.h>
@@ -39,18 +36,21 @@ int main(int argc, char *argv[])
 	/* create main system */
 	CoreSystem system;
 	printIntro(system.getVersion());
+	system.setLogLevel(1);
+	system.setLogFile("/home/kuba/analyzer_log");
 
 	/* parse cmd line arguments */
 	vector<string> input, output;
 	string log_file, log_level;
-	opt::options_description desc("Options");
-	desc.add_options()
+	opt::options_description options("Options");
+	options.add_options()
 		("help,h", "print help message")
 		("input,i", opt::value<vector<string> >(&input), "set input files")
 		("output,o", opt::value<vector<string> >(&output), "set output destinations (default: ConsoleOutput)")
 		("list-analyze", "list analyze modules")
 		("list-input", "list input modules")
 		("list-output", "list output modules")
+		("version,v", "print version")
 		("log-file", opt::value<string>(&log_file), "set file to save logs")
 		("log-level", opt::value<string>(&log_level), "set logging level")
 	;
@@ -59,17 +59,17 @@ int main(int argc, char *argv[])
 	p.add("input", -1);
 
 	opt::variables_map vm;
-	opt::store(opt::command_line_parser(argc, argv).options(desc).positional(p).run(), vm);
+	opt::store(opt::command_line_parser(argc, argv).options(options).positional(p).run(), vm);
 	opt::notify(vm);
 
 	/* check any arguments */
 	if(vm.empty()) {
-		SHOWERR("no arguments");
+		LOG_ERROR("no arguments");
 		exit(1);
 	}
 	/* help */
 	if(vm.count("help")) {
-		cout << desc << endl;
+		cout << options << endl;
 		exit(0);
 	}
 	/* list-analyze */
@@ -87,6 +87,11 @@ int main(int argc, char *argv[])
 		listOutputMods();
 		exit(0);
 	}
+	/* version */
+	if(vm.count("version")) {
+		cout << system.getVersion() << endl;
+		exit(0);
+	}
 	/* log-file */
 	if(vm.count("log-file"))
 		system.setLogFile(log_file);
@@ -95,7 +100,7 @@ int main(int argc, char *argv[])
 		system.setLogLevel(atoi(log_level.c_str()));
 	/* input */
 	if(!vm.count("input")) {
-		SHOWERR("no input files");
+		LOG_ERROR("no input files");
 		exit(1);
 	}
 	while(!input.empty()) {
@@ -104,7 +109,7 @@ int main(int argc, char *argv[])
 	}
 	/* output */
 	if(!vm.count("output")) {
-		SHOWMSG("no output destination, setting to ConsoleOutput");
+		LOG("no output destination, setting to ConsoleOutput");
 		system.setOutput("ConsoleOutput");
 	}
 	while(!output.empty()) {

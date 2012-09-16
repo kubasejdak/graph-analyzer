@@ -12,6 +12,7 @@ set(CORE_SRC
 	Dot.cpp
 	InstructionSplitter.cpp
 	FileAnalyser.cpp
-	SystemLogger.cpp)
+	SystemLogger.cpp
+	Options.cpp)
 
 add_library(core ${CORE_SRC})

@@ -16,8 +16,8 @@
 /* project headers */
 #include "AbstractInput.h"
 #include <core/SystemLogger.h>
+#include <core/Options.h>
 #include <toolbox.h>
-#include <options.h>
 
 int ftw_remove_dir(const char *fpath, const struct stat *sb, int typeflag);
 

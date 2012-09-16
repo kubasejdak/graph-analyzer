@@ -33,7 +33,7 @@ SystemLogger::SystemLogger()
 	error_map[OUTPUT_FAILED] = "generating output failed";
 
 	logging_level = 0;
-	file = "analyzer_log";
+	file = "/home/kuba/analyzer_log";
 
 }
 
@@ -81,7 +81,7 @@ void SystemLogger::setLogFile(string filename)
 	file = filename;
 }
 
-void SystemLogger::log(string file, string func, int line, string fmt, ...)
+void SystemLogger::log(string msg_file, string func, int line, string fmt, ...)
 {
 	if(logging_level == 0)
 		return;
@@ -142,6 +142,7 @@ void SystemLogger::logError(string file, string func, int line, string fmt, ...)
 		break;
 	}
 
+	vfprintf(stdout, m.c_str(), arg_ptr);
 	vfprintf(f, m.c_str(), arg_ptr);
 	fclose(f);
 	va_end(arg_ptr);

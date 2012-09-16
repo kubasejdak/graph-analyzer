@@ -4,10 +4,6 @@
  * Created on	: 21-06-2012
  */
 
-/* debug */
-//#define LOCAL_DEBUG
-#include <debug.h>
-
 #include "Dot.h"
 
 struct instr_vertex *instr_vertex_new(uint32_t theeip, const char *instr_string)
@@ -58,7 +54,7 @@ int graph_draw(struct emu_graph *graph)
 	struct emu_vertex *nev;
 	struct instr_vertex *niv = NULL;
 
-	SHOWMSG("copying vertexes");
+	LOG("copying vertexes\n");
 	for(ev = emu_vertexes_first(graph->vertexes); !emu_vertexes_attail(ev); ev = emu_vertexes_next(ev)) {
 		iv = (struct instr_vertex *) ev->data;
 
@@ -72,13 +68,13 @@ int graph_draw(struct emu_graph *graph)
 		ev->color = white;
 	}
 
-	SHOWMSG("optimizing graph");
+	LOG("optimizing graph\n");
 	for(ev = emu_vertexes_first(graph->vertexes); !emu_vertexes_attail(ev); ev = emu_vertexes_next(ev)) {
 		/* ignore known */
 		if(ev->color == black)
 			continue;
 
-		PRINTMSG("vertex %p", (void *) ev);
+		LOG_ERROR("vertex %p\n", (void *) ev);
 
 		/* find the first in a chain */
 		iv = (struct instr_vertex *) ev->data;
@@ -92,7 +88,7 @@ int graph_draw(struct emu_graph *graph)
 				break;
 
 			ev = xev;
-			PRINTMSG(" -> vertex %p", (void *) ev);
+			LOG(" -> vertex %p\n", (void *) ev);
 		}
 
 		iv = (struct instr_vertex *) ev->data;
@@ -102,7 +98,7 @@ int graph_draw(struct emu_graph *graph)
 		niv = (struct instr_vertex *) nev->data;
 		iv = (struct instr_vertex *) ev->data;
 
-		PRINTMSG("going forwards from %p", (void *) ev);
+		LOG("going forwards from %p\n", (void *) ev);
 		while(emu_edges_length(ev->edges) == 1 && emu_edges_length(ev->backedges) <= 1
 				&& ev->color != black && iv->dll == NULL && iv->syscall == NULL) {
 			ev->color = black;
@@ -116,12 +112,12 @@ int graph_draw(struct emu_graph *graph)
 			ev = xev;
 			iv = (struct instr_vertex *) ev->data;
 			emu_string_append_char(niv->instr_string, emu_string_char(iv->instr_string));
-			PRINTMSG(" -> vertex %p", (void *) ev);
+			LOG(" -> vertex %p\n", (void *) ev);
 		}
 
 		ev->color = black;
 
-		PRINTMSG("copying edges for %p", (void *) ev);
+		LOG("copying edges for %p\n", (void *) ev);
 		struct emu_edge *ee;
 		for(ee = emu_edges_first(ev->edges); !emu_edges_attail(ee); ee = emu_edges_next(ee)) {
 			struct instr_vertex *ivto = (instr_vertex *) emu_vertex_data_get(ee->destination);
@@ -131,7 +127,7 @@ int graph_draw(struct emu_graph *graph)
 				struct emu_edge *nee = emu_vertex_edge_add(nev, to);
 				nee->count = ee->count;
 				nee->data = ee->data;
-				PRINTMSG(" -> %p", (void *) to);
+				LOG(" -> %p\n", (void *) to);
 			}
 		}
 	}

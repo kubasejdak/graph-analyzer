@@ -29,7 +29,7 @@ extern "C" {
 #include <core/ShellcodeSample.h>
 #include <core/SystemLogger.h>
 #include <core/Dot.h>
-#include <options.h>
+#include <core/Options.h>
 
 class EmulationSystem {
 public:

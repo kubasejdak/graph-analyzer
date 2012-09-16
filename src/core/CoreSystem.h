@@ -8,6 +8,7 @@
 #define CORESYSTEM_H_
 
 /* standard headers */
+#include <boost/program_options.hpp>
 #include <map>
 #include <list>
 #include <string>
@@ -15,6 +16,7 @@
 #include <sys/types.h>
 #include <dirent.h>
 using namespace std;
+namespace opt = boost::program_options;
 
 /* project headers */
 #include <core/EmulationSystem.h>
@@ -23,11 +25,11 @@ using namespace std;
 #include <core/ShellcodeInfo.h>
 #include <core/FileAnalyser.h>
 #include <core/SystemLogger.h>
+#include <core/version.h>
 #include <modules/input/AbstractInput.h>
 #include <modules/output/AbstractOutput.h>
 #include <modules/ModuleManager.h>
 #include <toolbox.h>
-#include <core/version.h>
 
 class CoreSystem {
 public:
@@ -54,6 +56,7 @@ public:
 
 	/* utility */
 	string getVersion();
+	void readConfig();
 
 private:
 	/* function members */

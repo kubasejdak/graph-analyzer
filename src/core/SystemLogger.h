@@ -75,7 +75,7 @@ private:
 	map<SystemError, string> error_map;
 
 	int logging_level;
-	string file;
+	string log_file;
 };
 
 #endif /* SYSTEMLOGGER_H_ */

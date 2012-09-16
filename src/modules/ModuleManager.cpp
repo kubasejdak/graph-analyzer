@@ -8,9 +8,6 @@
 
 ModuleManager::ModuleManager()
 {
-	loadInput();
-	loadOutput();
-	loadAnalyze();
 }
 
 ModuleManager::~ModuleManager()
@@ -59,16 +56,19 @@ void ModuleManager::loadAnalyze()
 
 map<string, AbstractInput *> * ModuleManager::getInput()
 {
+	loadInput();
 	return &inputModules;
 }
 
 map<string, AbstractOutput *> * ModuleManager::getOutput()
 {
+	loadOutput();
 	return &outputModules;
 }
 
 map<string, AbstractAnalyze *> * ModuleManager::getAnalyze()
 {
+	loadAnalyze();
 	return &analyzeModules;
 }
 

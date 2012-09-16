@@ -8,6 +8,7 @@
 #define DATABASEOUTPUT_H_
 
 /* standard headers */
+#include <QtCore>
 #include <QtSql>
 
 #include <map>

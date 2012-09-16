@@ -33,7 +33,7 @@ SystemLogger::SystemLogger()
 	error_map[OUTPUT_FAILED] = "generating output failed";
 
 	logging_level = 0;
-	file = "/home/kuba/analyzer_log";
+	log_file = "/home/kuba/analyzer_log";
 
 }
 
@@ -78,7 +78,7 @@ void SystemLogger::setLogLevel(int level)
 
 void SystemLogger::setLogFile(string filename)
 {
-	file = filename;
+	log_file = filename;
 }
 
 void SystemLogger::log(string msg_file, string func, int line, string fmt, ...)
@@ -86,7 +86,7 @@ void SystemLogger::log(string msg_file, string func, int line, string fmt, ...)
 	if(logging_level == 0)
 		return;
 
-	FILE *f = fopen(file.c_str(), "a");
+	FILE *f = fopen(log_file.c_str(), "a");
 	if(f == NULL)
 		return;
 
@@ -102,7 +102,7 @@ void SystemLogger::log(string msg_file, string func, int line, string fmt, ...)
 		m.append("FUNCTION: ").append(func).append(", ").append(fmt);
 		break;
 	case 3:
-		m.append("FILE: ").append(file).append(", FUNCTION: ").append(func);
+		m.append("FILE: ").append(msg_file).append(", FUNCTION: ").append(func);
 		m.append(", LINE: ").append(itos(line)).append(", ").append(fmt);
 		break;
 	default:
@@ -114,12 +114,12 @@ void SystemLogger::log(string msg_file, string func, int line, string fmt, ...)
 	va_end(arg_ptr);
 }
 
-void SystemLogger::logError(string file, string func, int line, string fmt, ...)
+void SystemLogger::logError(string msg_file, string func, int line, string fmt, ...)
 {
 	if(logging_level == 0)
 		return;
 
-	FILE *f = fopen(file.c_str(), "a");
+	FILE *f = fopen(log_file.c_str(), "a");
 	if(f == NULL)
 		return;
 
@@ -135,7 +135,7 @@ void SystemLogger::logError(string file, string func, int line, string fmt, ...)
 		m.append("FUNCTION: ").append(func).append(", ").append(fmt);
 		break;
 	case 3:
-		m.append("FILE: ").append(file).append(", FUNCTION: ").append(func);
+		m.append("FILE: ").append(msg_file).append(", FUNCTION: ").append(func);
 		m.append(", LINE: ").append(itos(line)).append(", ").append(fmt);
 		break;
 	default:

@@ -8,7 +8,6 @@
 #define CORESYSTEM_H_
 
 /* standard headers */
-#include <boost/program_options.hpp>
 #include <map>
 #include <list>
 #include <string>
@@ -16,9 +15,9 @@
 #include <sys/types.h>
 #include <dirent.h>
 using namespace std;
-namespace opt = boost::program_options;
 
 /* project headers */
+#include <core/ConfigFile.h>
 #include <core/EmulationSystem.h>
 #include <core/AnalysisSystem.h>
 #include <core/ShellcodeSample.h>

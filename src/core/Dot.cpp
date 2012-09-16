@@ -74,7 +74,7 @@ int graph_draw(struct emu_graph *graph)
 		if(ev->color == black)
 			continue;
 
-		LOG_ERROR("vertex %p\n", (void *) ev);
+		LOG("vertex %p\n", (void *) ev);
 
 		/* find the first in a chain */
 		iv = (struct instr_vertex *) ev->data;

@@ -12,6 +12,8 @@ DatabaseOutput::DatabaseOutput()
 	name = "DatabaseOutput";
 	description = "Inserts info about samples into database.";
 
+	assert(DB_QT_DRIVER != "");
+	LOG("database module");
 	db = QSqlDatabase::addDatabase(DB_QT_DRIVER.c_str());
 	db.setHostName(DB_HOST.c_str());
 	db.setDatabaseName(DB_NAME.c_str());

@@ -29,5 +29,6 @@ bool nameExists(string path);
 string extractBasename(string path);
 string trimExtension(string path);
 bool isRelative(string path);
+string addSlash(string path);
 
 #endif /* TOOLBOX_H_ */

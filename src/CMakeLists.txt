@@ -39,6 +39,12 @@ target_link_libraries(GraphAnalyzerPython ${PYTHON_LIBRARIES})
 target_link_libraries(GraphAnalyzerCpp ${QT_LIBRARIES})
 target_link_libraries(GraphAnalyzerCpp ${Boost_LIBRARIES})
 
-#install
-add_custom_command(TARGET GraphAnalyzerPython POST_BUILD
+# pre compile
+add_custom_command(TARGET GraphAnalyzer PRE_BUILD
+COMMAND chmod -R 775 ${CMAKE_HOME_DIRECTORY} )
+
+# install
+add_custom_command(TARGET GraphAnalyzer POST_BUILD
 COMMAND cp "${CMAKE_HOME_DIRECTORY}/lib/GraphAnalyzerPython.so" "${CMAKE_HOME_DIRECTORY}/web_gui/")
+add_custom_command(TARGET GraphAnalyzer POST_BUILD
+COMMAND chmod -R 775 ${CMAKE_HOME_DIRECTORY} )

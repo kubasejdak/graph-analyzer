@@ -12,13 +12,7 @@ DatabaseOutput::DatabaseOutput()
 	name = "DatabaseOutput";
 	description = "Inserts info about samples into database.";
 
-	assert(DB_QT_DRIVER != "");
-	LOG("database module");
-	db = QSqlDatabase::addDatabase(DB_QT_DRIVER.c_str());
-	db.setHostName(DB_HOST.c_str());
-	db.setDatabaseName(DB_NAME.c_str());
-	db.setUserName(DB_USER.c_str());
-	db.setPassword(DB_PASS.c_str());
+	LOG("database module\n");
 }
 
 DatabaseOutput::~DatabaseOutput()
@@ -30,6 +24,11 @@ bool DatabaseOutput::generateOutput(ShellcodeSample *sample)
 	if(!sample->getInfo()->isShellcodePresent() && SKIP_NONEXPLOIT_OUTPUT)
 		return false;
 
+	QSqlDatabase db = QSqlDatabase::addDatabase(DB_QT_DRIVER.c_str());
+	db.setHostName(DB_HOST.c_str());
+	db.setDatabaseName(DB_NAME.c_str());
+	db.setUserName(DB_USER.c_str());
+	db.setPassword(DB_PASS.c_str());
 	bool ok = db.open();
 	if(ok) {
 		QSqlQuery query;
@@ -74,9 +73,9 @@ bool DatabaseOutput::generateOutput(ShellcodeSample *sample)
 				return false;
 			}
 		}
+		db.close();
 	}
 
-	db.close();
 	return true;
 }
 

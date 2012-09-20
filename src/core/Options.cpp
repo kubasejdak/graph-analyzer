@@ -6,6 +6,11 @@
 
 #include <core/Options.h>
 
+/* ===== CoreSystem ===== */
+
+/* path to root folder of GraphAnalyzer resources */
+string APP_ROOT_PATH;
+
 /* ===== EmulationSystem ===== */
 
 /* how many steps should EmulationUnit go */

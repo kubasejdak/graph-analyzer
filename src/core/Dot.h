@@ -28,6 +28,7 @@ extern "C" {
 
 /* project headers */
 #include <core/SystemLogger.h>
+#include <core/Options.h>
 
 struct instr_vertex {
 	uint32_t eip;
@@ -44,6 +45,6 @@ struct instr_vertex *instr_vertex_copy(struct instr_vertex *from);
 
 void instr_vertex_destructor(void *data);
 
-int graph_draw(struct emu_graph *graph);
+int graph_draw(struct emu_graph *graph, string dot_file);
 
 #endif /* DOT_H_ */

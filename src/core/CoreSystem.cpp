@@ -9,9 +9,9 @@
 CoreSystem::CoreSystem()
 {
 	SystemLogger::getInstance()->setLogFile("/home/kuba/analyzer_log");
-	SystemLogger::getInstance()->setLogLevel(1);
+	SystemLogger::getInstance()->setLogLevel(2);
 
-	LOG("reading config file");
+	LOG("reading config file\n");
 	ConfigFile::getInstance()->read();
 	loadModules();
 
@@ -84,18 +84,21 @@ void CoreSystem::run()
 			/* emulate */
 			if(!emulate(s)) {
 				LOG_ERROR("emulating %s (%s)\n", current_file.c_str(), getError().c_str());
+				delete s;
 				continue;
 			}
 
 			/* analyze graph */
 			if(!analyze(s)) {
 				LOG_ERROR("analyzing %s (%s)\n", current_file.c_str(), getError().c_str());
+				delete s;
 				continue;
 			}
 
 			/* make output */
 			if(!makeOutput(s)) {
 				LOG_ERROR("output for %s (%s)\n", current_file.c_str(), getError().c_str());
+				delete s;
 				continue;
 			}
 

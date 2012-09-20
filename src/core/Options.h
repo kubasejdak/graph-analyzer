@@ -10,6 +10,9 @@
 #include <string>
 using namespace std;
 
+#define CONFIG_FILE		"/home/kuba/Projects/graph-analyzer/conf/analyzer.conf"
+
+extern string APP_ROOT_PATH;
 extern int EMULATION_STEPS;
 extern string GRAPHS_DIR;
 extern bool DELETE_CODE_INSTANTLY;

@@ -22,6 +22,7 @@ def show_analyze(request):
 		form = AnalyzeForm(request.POST)
 		if form.is_valid():
 			cd = form.cleaned_data
+			system.setLogLevel(2)
 			system.setOutput(cd["output"].encode("utf-8"))
 			system.addFile(cd["path"].encode("utf-8"))
 			system.run()

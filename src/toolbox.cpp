@@ -76,3 +76,12 @@ bool isRelative(string path)
 	else
 		return true;
 }
+
+string addSlash(string path)
+{
+	size_t pos = path.find_last_of("/");
+	if(pos != path.size() - 1)
+		path += "/";
+
+	return path;
+}

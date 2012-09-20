@@ -22,9 +22,15 @@ void PcapInput::loadInput(string filename, list<ShellcodeSample *> *samples)
 {
 	int stat;
 	/* move to pcap_tmp */
-	if(!nameExists("pcap_tmp"))
-		mkdir("pcap_tmp", S_IRWXU | S_IRWXG | S_IRWXO);
-	stat = chdir("pcap_tmp");
+	string pcap_dir = APP_ROOT_PATH.append("bin/pcap_tmp");
+	if(!nameExists(pcap_dir.c_str())) {
+		int ret = mkdir(pcap_dir.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
+		if(ret != 0) {
+			LOG_ERROR("cannot create directory %s\n", pcap_dir.c_str());
+			exit(1);
+		}
+	}
+	stat = chdir(pcap_dir.c_str());
 	if(stat) {
 		SystemLogger::getInstance()->setError(CHANGE_DIR_FAILED);
 		LOG_ERROR("chdir failed in PcapInput");
@@ -104,7 +110,7 @@ void PcapInput::loadInput(string filename, list<ShellcodeSample *> *samples)
 		LOG_ERROR("chdir failed in PcapInput");
 		return;
 	}
-	rmdir("pcap_tmp");
+	rmdir(pcap_dir.c_str());
 }
 
 int ftw_remove_dir(const char *fpath, const struct stat *sb, int typeflag)

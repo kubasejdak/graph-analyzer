@@ -107,7 +107,7 @@ bool EmulationSystem::emulate()
 
 			/* no function defined fot this name */
 			if(hook->hook.win->fnhook == NULL) {
-				LOG("unhooked call to %s", hook->hook.win->fnname);
+				LOG("unhooked call to %s\n", hook->hook.win->fnname);
 				return false;
 			}
 		}
@@ -153,7 +153,7 @@ bool EmulationSystem::emulate()
 			if(ret == -1) {
 				/* step failed - maybe SEH */
 				if(emu_env_w32_step_failed(env) != 0) {
-					LOG("cpu %s", emu_strerror(emuUnit->getEmu()));
+					LOG("cpu %s\n", emu_strerror(emuUnit->getEmu()));
 					break;
 				}
 			}
@@ -173,47 +173,55 @@ bool EmulationSystem::emulate()
 	} /* emulation loop */
 
 	/* create .dot file */
-	graph_draw(graph->getEmuGraph());
+	string dot_file = APP_ROOT_PATH;
+	dot_file.append("bin/graph.dot");
+	graph_draw(graph->getEmuGraph(), dot_file);
 
 	/* draw graph using dot package and sample name */
-	string graphName = sample->getInfo()->getName();
-	graphName = trimExtension(graphName);
-	graphName += ".png";
+	string graph_name = sample->getInfo()->getName();
+	graph_name = trimExtension(graph_name);
+	graph_name += ".png";
 
-	if(!nameExists(GRAPHS_DIR))
-		mkdir(GRAPHS_DIR.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
+	if(!nameExists(GRAPHS_DIR)) {
+		int ret = mkdir(GRAPHS_DIR.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
+		if(ret != 0) {
+			LOG_ERROR("cannot create directory %s\n", GRAPHS_DIR.c_str());
+			return false;
+		}
+	}
 
-	graphName = extractBasename(graphName);
-	graphName.insert(0, GRAPHS_DIR);
+	graph_name = extractBasename(graph_name);
+	graph_name.insert(0, GRAPHS_DIR);
 
 	/* check for duplicates */
 	int k = 2;
-	while(nameExists(graphName)) {
-		graphName = trimExtension(graphName);
-		graphName += "_";
-		size_t n = graphName.find_first_of("_");
-		graphName.erase(n + 1);
-		graphName += itos(k);
-		graphName += ".png";
+	while(nameExists(graph_name)) {
+		graph_name = trimExtension(graph_name);
+		graph_name += "_";
+		size_t n = graph_name.find_first_of("_");
+		graph_name.erase(n + 1);
+		graph_name += itos(k);
+		graph_name += ".png";
 		++k;
 	}
 
-	string dot_cmd = "dot graph.dot -Tpng -o \"" + graphName;
-	dot_cmd += "\"";
+	string dot_cmd = "dot ";
+	dot_cmd.append(dot_file.c_str()).append(" -Tpng -o \"");
+	dot_cmd.append(graph_name.c_str()).append("\"");
 	ret = system(dot_cmd.c_str());
 	if(!ret) {
-		ret = unlink("graph.dot");
+		ret = unlink(dot_file.c_str());
 		if(ret) {
 			SystemLogger::getInstance()->setError(UNLINK_FAILED);
-			LOG_ERROR("deleting .dot file");
+			LOG_ERROR("deleting .dot file\n");
 		}
 	}
 	else {
 		SystemLogger::getInstance()->setError(GRAPH_DRAW_FAILED);
-		LOG_ERROR("drawing graph failed");
-		ret = unlink("graph.dot");
+		LOG_ERROR("drawing graph failed\n");
+		ret = unlink(dot_file.c_str());
 		if(ret)
-			LOG_ERROR("deleting .dot file");
+			LOG_ERROR("deleting .dot file\n");
 	}
 
 	if(DELETE_CODE_INSTANTLY) {
@@ -221,9 +229,9 @@ bool EmulationSystem::emulate()
 		sample->setCode(NULL);
 	}
 
-	sample->getInfo()->setGraphName(graphName);
+	sample->getInfo()->setGraphName(graph_name);
 	sample = NULL;
-	LOG("analyzing finished");
+	LOG("emulation finished\n");
 
 	return true;
 }

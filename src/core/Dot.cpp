@@ -41,12 +41,16 @@ void instr_vertex_destructor(void *data)
 	instr_vertex_free((struct instr_vertex *) data);
 }
 
-int graph_draw(struct emu_graph *graph)
+int graph_draw(struct emu_graph *graph, string dot_file)
 {
 	struct emu_vertex *ev;
 	struct instr_vertex *iv;
 
-	FILE *f = fopen("graph.dot", "w+");
+	FILE *f = fopen(dot_file.c_str(), "w+");
+	if(f == NULL) {
+		LOG_ERROR("cannot open temporary file %s\n", dot_file.c_str());
+		exit(1);
+	}
 
 	struct emu_graph *sgraph = emu_graph_new();
 	struct emu_hashtable *ht = emu_hashtable_new(2047, emu_hashtable_ptr_hash, emu_hashtable_ptr_cmp);

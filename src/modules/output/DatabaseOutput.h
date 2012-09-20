@@ -29,7 +29,6 @@ public:
 
 private:
 	QSqlQuery traitQuery(string table, map<string, string> *v, int sample_id);
-	QSqlDatabase db;
 };
 
 #endif /* DATABASEOUTPUT_H_ */

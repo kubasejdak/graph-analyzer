@@ -14,6 +14,7 @@ namespace opt = boost::program_options;
 /* project headers */
 #include <core/Options.h>
 #include <core/SystemLogger.h>
+#include <toolbox.h>
 
 class ConfigFile {
 public:

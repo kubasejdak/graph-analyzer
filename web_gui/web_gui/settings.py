@@ -120,7 +120,9 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
-    "graph_analyzer",
+    "analyze",
+    "browse",
+    "options",
 )
 
 # A sample logging configuration. The only tangible logging
@@ -151,3 +153,6 @@ LOGGING = {
         },
     }
 }
+
+ANALYZE_SCRIPT = "/home/kuba/Projects/graph-analyzer/bin/run_analyze"
+UPDATE_SCRIPT = "/home/kuba/Projects/graph-analyzer/bin/update_info"

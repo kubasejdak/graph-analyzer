@@ -1,5 +1,12 @@
 {% extends "base.html" %}
 
-{% block content %}
-  <p>Options</p>
+{% block content %}  
+  <form action="" method="post">{% csrf_token %}
+    <table>{{ form.as_table }}</table>
+    <input type="submit" value="Save">
+  </form>
+  
+  {% if is_message %}
+    <p><b>{{ message }}</b></p>
+  {% endif %}
 {% endblock %}

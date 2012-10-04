@@ -1,12 +1,20 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <form action="" method="post">{% csrf_token %}
-    <table>{{ form.as_table }}</table>
-    <input type="submit" value="Analyze">
-  </form>
+  <div class="AddForm">
+    <form action="" method="post">{% csrf_token %}
+      <table>{{ form.as_p }}</table>
+      <input type="submit" value="Add file" name="add">
+    </form>
+  </div>
   
-  <p>
+  <p class="PendingFiles">Files to analyze
+    {% for file in pending_files %}
+      <li>{{ file.name }}</li>
+    {% endfor %}
+  </p>
+  
+  <p class="StatusError">
     System status: <b>{{ status }}</b><br/>
     System error: <b>{{ error }}</b>
   </p>

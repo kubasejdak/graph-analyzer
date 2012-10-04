@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
 		system.setLogLevel(atoi(log_level.c_str()));
 	/* input */
 	if(!vm.count("input")) {
-		LOG_ERROR("no input files");
+		LOG_ERROR("no input files\n");
 		exit(1);
 	}
 	while(!input.empty()) {

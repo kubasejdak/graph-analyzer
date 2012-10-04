@@ -1,0 +1,4 @@
+#!/bin/bash
+# Script to run graph-analyzer from www GUI
+
+./graph-analyzer & >> test

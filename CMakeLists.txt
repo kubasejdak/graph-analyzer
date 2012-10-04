@@ -16,10 +16,7 @@ include(${QT_USE_FILE})
 add_definitions(${QT_DEFINITIONS})
 
 # Boost
-find_package(Boost COMPONENTS program_options python REQUIRED)
-
-#Python
-find_package(PythonLibs REQUIRED)
+find_package(Boost COMPONENTS program_options REQUIRED)
 
 # Libemu
 link_directories(/opt/libemu/lib)
@@ -29,8 +26,6 @@ include_directories(src)
 include_directories(/opt/libemu/include)
 include_directories(${Qt4_INCLUDE_DIRS})
 include_directories(${Boost_INCLUDE_DIR})
-include_directories(${PYTHON_INCLUDE_DIRS})
-
 
 # source path
 add_subdirectory(src)

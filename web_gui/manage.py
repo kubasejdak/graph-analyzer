@@ -2,6 +2,8 @@
 import os
 import sys
 
+os.environ.setdefault('LANG','en_US')
+
 if __name__ == "__main__":
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "web_gui.settings")
 

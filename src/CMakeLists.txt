@@ -33,5 +33,5 @@ add_custom_command(TARGET GraphAnalyzer PRE_BUILD
 COMMAND chmod -R 775 ${CMAKE_HOME_DIRECTORY} )
 
 # install
-add_custom_command(TARGET GraphAnalyzer POST_BUILD
-COMMAND chmod -R 775 ${CMAKE_HOME_DIRECTORY} )
+add_custom_command(TARGET graph-analyzer POST_BUILD COMMAND chmod -R 775 ${CMAKE_HOME_DIRECTORY})
+add_custom_command(TARGET graph-analyzer POST_BUILD COMMAND ${CMAKE_HOME_DIRECTORY}/bin/update_info)

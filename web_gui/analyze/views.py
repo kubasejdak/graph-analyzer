@@ -6,8 +6,8 @@ from django.core.context_processors import csrf
 from subprocess import call
 
 from analyze.forms import AnalyzeForm
-from options.models import Option, PendingFile
-from web_gui.settings import ANALYZE_SCRIPT, UPDATE_SCRIPT
+from options.models import Option, PendingFile, SystemInfo
+from web_gui.settings import ANALYZE_SCRIPT
 
 def show_analyze(request):
 	# get options (only one object should exists)
@@ -21,12 +21,20 @@ def show_analyze(request):
 	else:
 		options = options_list[0]
 	
-	# get system info
-	call([UPDATE_SCRIPT])
+	# get system info (only one object should exists)
+	systemInfo_list = SystemInfo.objects.all()
+	if systemInfo_list.count() == 0:
+		info = SystemInfo()
+		info.version = "0.00"
+		info.status = "idle"
+		info.error = "no_error"
+		info.save()
+	else:
+		info = systemInfo_list[0]
 
 	# create form and update html content	
 	form = AnalyzeForm()
-	c = RequestContext(request, {"version": "unknown", "form": form})
+	c = RequestContext(request, {"version": info.version, "form": form})
 	c.update(csrf(request))
 	
 	# run system if "Analyze" clicked
@@ -39,6 +47,7 @@ def show_analyze(request):
 				cd = form.cleaned_data
 				filename = PendingFile()
 				filename.name = cd["file"]
+				filename.progress = "0"
 				filename.save()
 		
 		# run analysis
@@ -46,5 +55,5 @@ def show_analyze(request):
 			call([ANALYZE_SCRIPT])
 	
 	pending_files = PendingFile.objects.all()
-	c.update({"error": "unknown", "status": "unknown", "pending_files": pending_files})
+	c.update({"error": info.error, "status": info.status, "pending_files": pending_files})
 	return render_to_response("analyze.html", c)

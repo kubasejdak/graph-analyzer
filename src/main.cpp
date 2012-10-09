@@ -8,12 +8,18 @@
 
 /* standard headers */
 #include <boost/program_options.hpp>
+
 #include <iostream>
 #include <list>
 #include <iomanip>
+
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <dirent.h>
+
+#include <qt4/QtCore/QtCore>
+#include <qt4/QtSql/QtSql>
+//#include <QtSql>
 using namespace std;
 namespace opt = boost::program_options;
 
@@ -21,6 +27,7 @@ namespace opt = boost::program_options;
 #include <core/CoreSystem.h>
 #include <core/ShellcodeInfo.h>
 #include <core/SystemLogger.h>
+#include <core/Options.h>
 #include <modules/ModuleInfo.h>
 #include <modules/ModuleManager.h>
 #include <toolbox.h>
@@ -35,7 +42,6 @@ int main(int argc, char *argv[])
 {
 	/* create main system */
 	CoreSystem system;
-	printIntro(system.getVersion());
 	system.setLogLevel(1);
 	system.setLogFile("/home/kuba/analyzer_log");
 
@@ -45,12 +51,14 @@ int main(int argc, char *argv[])
 	opt::options_description options("Options");
 	options.add_options()
 		("help,h", "print help message")
+		("slave,s", "run program as GUI slave")
 		("input,i", opt::value<vector<string> >(&input), "set input files")
 		("output,o", opt::value<vector<string> >(&output), "set output destinations (default: ConsoleOutput)")
 		("list-analyze", "list analyze modules")
 		("list-input", "list input modules")
 		("list-output", "list output modules")
 		("version,v", "print version")
+		("update-db,u", "update database with system info")
 		("log-file", opt::value<string>(&log_file), "set file to save logs")
 		("log-level", opt::value<string>(&log_level), "set logging level")
 	;
@@ -64,7 +72,7 @@ int main(int argc, char *argv[])
 
 	/* check any arguments */
 	if(vm.empty()) {
-		LOG_ERROR("no arguments");
+		LOG_ERROR("no arguments\n");
 		exit(1);
 	}
 	/* help */
@@ -92,32 +100,147 @@ int main(int argc, char *argv[])
 		cout << system.getVersion() << endl;
 		exit(0);
 	}
-	/* log-file */
-	if(vm.count("log-file"))
-		system.setLogFile(log_file);
-	/* log-level */
-	if(vm.count("log-level"))
-		system.setLogLevel(atoi(log_level.c_str()));
-	/* input */
-	if(!vm.count("input")) {
-		LOG_ERROR("no input files\n");
-		exit(1);
+	/* update database */
+	if(vm.count("update-db")) {
+		string version = system.getVersion();
+		string status = system.getStatus();
+		string error = system.getError();
+
+		QQSqlDatabase db = QSqlDatabase::addDatabase(DB_QT_DRIVER.c_str());
+		db.setHostName(DB_HOST.c_str());
+		db.setDatabaseName(DB_NAME.c_str());
+		db.setUserName(DB_USER.c_str());
+		db.setPassword(DB_PASS.c_str());
+		bool db_opened = db.open();
+		if(db_opened) {
+			QSqlQuery query;
+			QSqlQuery update_query;
+			QSqlQuery insert_query;
+			QSqlQuery seq_query;
+
+			query.prepare("SELECT * FROM options_systeminfo");
+			if(!query.exec()) {
+				LOG_ERROR("%s\n", query.lastError().databaseText().toStdString().c_str());
+				db.close();
+				exit(1);
+			}
+			bool record_exists = query.next();
+
+			/* there is record in db, only update is necessary */
+			if(record_exists) {
+				int id = query.record().value("id").toInt();
+				update_query.prepare("UPDATE options_systeminfo SET id = ?, version = ?, status = ?, error = ? WHERE id = ?");
+				update_query.bindValue(0, id);
+				update_query.bindValue(1, version.c_str());
+				update_query.bindValue(2, status.c_str());
+				update_query.bindValue(3, error.c_str());
+				update_query.bindValue(4, id);
+				if(!update_query.exec()) {
+					LOG_ERROR("%s\n", update_query.lastError().databaseText().toStdString().c_str());
+					db.close();
+					exit(1);
+				}
+			}
+			/* no record in db, create a new one */
+			else {
+				/* get next id number */
+				seq_query.prepare("SELECT nextval('options_systeminfo_id_seq')");
+				if(!seq_query.exec()) {
+					LOG_ERROR("%s\n", seq_query.lastError().databaseText().toStdString().c_str());
+					db.close();
+					exit(1);
+				}
+				seq_query.next();
+				int id = seq_query.record().value("nextval").toInt();
+				insert_query.prepare("INSERT INTO options_systeminfo VALUES (?, ?, ?, ?)");
+				insert_query.bindValue(0, id);
+				insert_query.bindValue(1, version.c_str());
+				insert_query.bindValue(2, status.c_str());
+				insert_query.bindValue(3, error.c_str());
+				if(!insert_query.exec()) {
+					LOG_ERROR("%s\n", insert_query.lastError().databaseText().toStdString().c_str());
+					db.close();
+					exit(1);
+				}
+			}
+			db.close();
+		} /* if db_opened */
+
+		exit(0);
 	}
-	while(!input.empty()) {
-		system.addFile(input.back());
-		input.pop_back();
+	/* run as GUI slave */
+	if(vm.count("slave")) {
+		QSqlDatabase db = QSqlDatabase::addDatabase(DB_QT_DRIVER.c_str());
+		db.setHostName(DB_HOST.c_str());
+		db.setDatabaseName(DB_NAME.c_str());
+		db.setUserName(DB_USER.c_str());
+		db.setPassword(DB_PASS.c_str());
+		bool db_opened = db.open();
+		if(db_opened) {
+			QSqlQuery options_query;
+			QSqlQuery files_query;
+
+			options_query.prepare("SELECT * FROM options_option");
+			if(!options_query.exec()) {
+				LOG_ERROR("%s\n", options_query.lastError().databaseText().toStdString().c_str());
+				db.close();
+				exit(1);
+			}
+			query.next();
+
+			/* there is record in db, only update is necessary */
+			int id = query.record().value("id").toInt();
+			update_query.prepare("UPDATE options_systeminfo SET id = ?, version = ?, status = ?, error = ? WHERE id = ?");
+			update_query.bindValue(0, id);
+			update_query.bindValue(1, version.c_str());
+			update_query.bindValue(2, status.c_str());
+			update_query.bindValue(3, error.c_str());
+			update_query.bindValue(4, id);
+			if(!update_query.exec()) {
+				LOG_ERROR("%s\n", update_query.lastError().databaseText().toStdString().c_str());
+				db.close();
+				exit(1);
+			}
+
+			db.close();
+		} /* if db_opened */
+		//TODO: poboerz log_file z db
+		//TODO: pobierz log_level z db
+		//TODO: pobierz output_dest z db
+		//TODO: pobierz pending_files z db do input
 	}
-	/* output */
-	if(!vm.count("output")) {
-		LOG("no output destination, setting to ConsoleOutput");
-		system.setOutput("ConsoleOutput");
-	}
-	while(!output.empty()) {
-		system.setOutput(output.back());
-		output.pop_back();
+	else {
+		/* log-file */
+		if(vm.count("log-file"))
+			system.setLogFile(log_file);
+		/* log-level */
+		if(vm.count("log-level"))
+			system.setLogLevel(atoi(log_level.c_str()));
+		/* input */
+		if(!vm.count("input")) {
+			LOG_ERROR("no input files\n");
+			exit(1);
+		}
+
+		// TODO: nie dodawac tego na raz
+		while(!input.empty()) {
+			system.addFile(input.back());
+			input.pop_back();
+		}
+		/* output */
+		if(!vm.count("output")) {
+			LOG("no output destination, setting to ConsoleOutput");
+			system.setOutput("ConsoleOutput");
+		}
+		while(!output.empty()) {
+			system.setOutput(output.back());
+			output.pop_back();
+		}
 	}
 
 	/* run */
+	// TODO: dodawac sekwencyjnie, analizowac w jednym watku a w drugim sprawdzac w petli status
+	printIntro(system.getVersion());
 	system.run();
 
 	int s_num = system.getSamplesNum();

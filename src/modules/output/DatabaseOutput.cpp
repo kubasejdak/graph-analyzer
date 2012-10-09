@@ -36,7 +36,7 @@ bool DatabaseOutput::generateOutput(ShellcodeSample *sample)
 		ShellcodeInfo *info = sample->getInfo();
 
 		/* get next id number */
-		seq_query.prepare("SELECT nextval('graph_analyzer_sample_id_seq')");
+		seq_query.prepare("SELECT nextval('analyze_sample_id_seq')");
 		if(!seq_query.exec()) {
 			LOG_ERROR("%s\n", seq_query.lastError().databaseText().toStdString().c_str());
 			return false;
@@ -45,7 +45,7 @@ bool DatabaseOutput::generateOutput(ShellcodeSample *sample)
 		int id = seq_query.record().value("nextval").toInt();
 
 		/* general sample data */
-		query.prepare("INSERT INTO graph_analyzer_sample VALUES (?, ?, ?, ?, ?, ?, ?)");
+		query.prepare("INSERT INTO analyze_sample VALUES (?, ?, ?, ?, ?, ?, ?)");
 		query.bindValue(0, id);
 		query.bindValue(1, info->getName().c_str());
 		query.bindValue(2, info->getExtractedFrom().c_str());
@@ -64,7 +64,7 @@ bool DatabaseOutput::generateOutput(ShellcodeSample *sample)
 		QSqlQuery q;
 		string table;
 		for(it = t->begin(); it != t->end(); ++it) {
-			table = TABLE_PREFIX;
+			table = ANA_TABLE_PREFIX;
 			table += (*it).first;
 
 			q = traitQuery(table, (*it).second, id);

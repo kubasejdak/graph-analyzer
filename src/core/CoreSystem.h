@@ -55,7 +55,6 @@ public:
 
 	/* utility */
 	string getVersion();
-	void readConfig();
 
 private:
 	/* function members */

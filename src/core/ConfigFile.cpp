@@ -27,7 +27,8 @@ void ConfigFile::read()
 		("DB_NAME", opt::value<string>(), "database name")
 		("DB_USER", opt::value<string>(), "database user")
 		("DB_PASS", opt::value<string>(), "database password")
-		("TABLE_PREFIX", opt::value<string>(), "prefix for all GraphAnalyzer tables in database")
+		("ANA_TABLE_PREFIX", opt::value<string>(), "prefix for all analyze tables in database")
+		("OPT_TABLE_PREFIX", opt::value<string>(), "prefix for all options tables in database")
 		("ID_SEQ_POSTFIX", opt::value<string>(), "postfix for all GraphAnalyzer sequences in database")
 		("SKIP_NONEXPLOIT_OUTPUT", opt::value<bool>(), "should samples without exploits be skipped");
 	opt::variables_map vm;
@@ -95,10 +96,16 @@ void ConfigFile::read()
 		LOG_ERROR("DB_PASS not set in config file.\n");
 		exit(1);
 	}
-	if(vm.count("TABLE_PREFIX"))
-		TABLE_PREFIX = vm["TABLE_PREFIX"].as<string>();
+	if(vm.count("ANA_TABLE_PREFIX"))
+		ANA_TABLE_PREFIX = vm["ANA_TABLE_PREFIX"].as<string>();
 	else {
-		LOG_ERROR("TABLE_PREFIX not set in config file.\n");
+		LOG_ERROR("ANA_TABLE_PREFIX not set in config file.\n");
+		exit(1);
+	}
+	if(vm.count("OPT_TABLE_PREFIX"))
+		OPT_TABLE_PREFIX = vm["OPT_TABLE_PREFIX"].as<string>();
+	else {
+		LOG_ERROR("OPT_TABLE_PREFIX not set in config file.\n");
 		exit(1);
 	}
 	if(vm.count("ID_SEQ_POSTFIX"))

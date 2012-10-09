@@ -21,7 +21,8 @@ extern string DB_HOST;
 extern string DB_NAME;
 extern string DB_USER;
 extern string DB_PASS;
-extern string TABLE_PREFIX;
+extern string ANA_TABLE_PREFIX;
+extern string OPT_TABLE_PREFIX;
 extern string ID_SEQ_POSTFIX;
 extern bool SKIP_NONEXPLOIT_OUTPUT;
 

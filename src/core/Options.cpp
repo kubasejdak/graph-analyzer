@@ -30,7 +30,8 @@ string DB_HOST;
 string DB_NAME;
 string DB_USER;
 string DB_PASS;
-string TABLE_PREFIX;
+string ANA_TABLE_PREFIX;
+string OPT_TABLE_PREFIX;
 string ID_SEQ_POSTFIX;
 
 /* should system skip output for non-explit samples */

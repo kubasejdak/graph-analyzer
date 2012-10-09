@@ -10,7 +10,7 @@
   
   <p class="PendingFiles">Files to analyze
     {% for file in pending_files %}
-      <li>{{ file.name }}</li>
+      <li>{{ file.name }} ({{ file.progress }} %)</li>
     {% endfor %}
   </p>
   

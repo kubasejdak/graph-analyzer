@@ -8,20 +8,18 @@
 
 /* standard headers */
 #include <boost/program_options.hpp>
+namespace opt = boost::program_options;
 
 #include <iostream>
 #include <list>
 #include <iomanip>
+using namespace std;
 
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <dirent.h>
 
-#include <qt4/QtCore/QtCore>
 #include <qt4/QtSql/QtSql>
-//#include <QtSql>
-using namespace std;
-namespace opt = boost::program_options;
 
 /* project headers */
 #include <core/CoreSystem.h>
@@ -32,11 +30,24 @@ namespace opt = boost::program_options;
 #include <modules/ModuleManager.h>
 #include <toolbox.h>
 
+/* global variables */
+struct Options {
+	vector<string> input, output;
+	string log_file;
+	int log_level;
+} sys_options;
+
+/* console printing */
 void printIntro(string version);
 void printModuleInfo(ModuleInfo *info);
 void listInputMods();
 void listAnalyzeMods();
 void listOutputMods();
+
+/* database connections */
+bool dbUpdateSystemInfo(string version, string status, string error);
+bool dbGetOptions();
+bool dbGetPendingFiles();
 
 int main(int argc, char *argv[])
 {
@@ -46,21 +57,19 @@ int main(int argc, char *argv[])
 	system.setLogFile("/home/kuba/analyzer_log");
 
 	/* parse cmd line arguments */
-	vector<string> input, output;
-	string log_file, log_level;
 	opt::options_description options("Options");
 	options.add_options()
 		("help,h", "print help message")
 		("slave,s", "run program as GUI slave")
-		("input,i", opt::value<vector<string> >(&input), "set input files")
-		("output,o", opt::value<vector<string> >(&output), "set output destinations (default: ConsoleOutput)")
+		("input,i", opt::value<vector<string> >(&sys_options.input), "set input files")
+		("output,o", opt::value<vector<string> >(&sys_options.output), "set output destinations (default: ConsoleOutput)")
 		("list-analyze", "list analyze modules")
 		("list-input", "list input modules")
 		("list-output", "list output modules")
 		("version,v", "print version")
 		("update-db,u", "update database with system info")
-		("log-file", opt::value<string>(&log_file), "set file to save logs")
-		("log-level", opt::value<string>(&log_level), "set logging level")
+		("log-file", opt::value<string>(&sys_options.log_file), "set file to save logs")
+		("log-level", opt::value<int>(&sys_options.log_level), "set logging level")
 	;
 
 	opt::positional_options_description p;
@@ -73,175 +82,75 @@ int main(int argc, char *argv[])
 	/* check any arguments */
 	if(vm.empty()) {
 		LOG_ERROR("no arguments\n");
-		exit(1);
+		return 1;
 	}
 	/* help */
 	if(vm.count("help")) {
 		cout << options << endl;
-		exit(0);
+		return 0;
 	}
 	/* list-analyze */
 	if(vm.count("list-analyze")) {
 		listAnalyzeMods();
-		exit(0);
+		return 0;
 	}
 	/* list-input */
 	if(vm.count("list-input")) {
 		listInputMods();
-		exit(0);
+		return 0;
 	}
 	/* list-output */
 	if(vm.count("list-output")) {
 		listOutputMods();
-		exit(0);
+		return 0;
 	}
 	/* version */
 	if(vm.count("version")) {
 		cout << system.getVersion() << endl;
-		exit(0);
+		return 0;
 	}
 	/* update database */
 	if(vm.count("update-db")) {
-		string version = system.getVersion();
-		string status = system.getStatus();
-		string error = system.getError();
-
-		QQSqlDatabase db = QSqlDatabase::addDatabase(DB_QT_DRIVER.c_str());
-		db.setHostName(DB_HOST.c_str());
-		db.setDatabaseName(DB_NAME.c_str());
-		db.setUserName(DB_USER.c_str());
-		db.setPassword(DB_PASS.c_str());
-		bool db_opened = db.open();
-		if(db_opened) {
-			QSqlQuery query;
-			QSqlQuery update_query;
-			QSqlQuery insert_query;
-			QSqlQuery seq_query;
-
-			query.prepare("SELECT * FROM options_systeminfo");
-			if(!query.exec()) {
-				LOG_ERROR("%s\n", query.lastError().databaseText().toStdString().c_str());
-				db.close();
-				exit(1);
-			}
-			bool record_exists = query.next();
-
-			/* there is record in db, only update is necessary */
-			if(record_exists) {
-				int id = query.record().value("id").toInt();
-				update_query.prepare("UPDATE options_systeminfo SET id = ?, version = ?, status = ?, error = ? WHERE id = ?");
-				update_query.bindValue(0, id);
-				update_query.bindValue(1, version.c_str());
-				update_query.bindValue(2, status.c_str());
-				update_query.bindValue(3, error.c_str());
-				update_query.bindValue(4, id);
-				if(!update_query.exec()) {
-					LOG_ERROR("%s\n", update_query.lastError().databaseText().toStdString().c_str());
-					db.close();
-					exit(1);
-				}
-			}
-			/* no record in db, create a new one */
-			else {
-				/* get next id number */
-				seq_query.prepare("SELECT nextval('options_systeminfo_id_seq')");
-				if(!seq_query.exec()) {
-					LOG_ERROR("%s\n", seq_query.lastError().databaseText().toStdString().c_str());
-					db.close();
-					exit(1);
-				}
-				seq_query.next();
-				int id = seq_query.record().value("nextval").toInt();
-				insert_query.prepare("INSERT INTO options_systeminfo VALUES (?, ?, ?, ?)");
-				insert_query.bindValue(0, id);
-				insert_query.bindValue(1, version.c_str());
-				insert_query.bindValue(2, status.c_str());
-				insert_query.bindValue(3, error.c_str());
-				if(!insert_query.exec()) {
-					LOG_ERROR("%s\n", insert_query.lastError().databaseText().toStdString().c_str());
-					db.close();
-					exit(1);
-				}
-			}
-			db.close();
-		} /* if db_opened */
-
-		exit(0);
+		bool ok = dbUpdateSystemInfo(system.getVersion(), system.getStatus(), system.getError());
+		return (ok) ? 0 : 1;
 	}
 	/* run as GUI slave */
 	if(vm.count("slave")) {
-		QSqlDatabase db = QSqlDatabase::addDatabase(DB_QT_DRIVER.c_str());
-		db.setHostName(DB_HOST.c_str());
-		db.setDatabaseName(DB_NAME.c_str());
-		db.setUserName(DB_USER.c_str());
-		db.setPassword(DB_PASS.c_str());
-		bool db_opened = db.open();
-		if(db_opened) {
-			QSqlQuery options_query;
-			QSqlQuery files_query;
-
-			options_query.prepare("SELECT * FROM options_option");
-			if(!options_query.exec()) {
-				LOG_ERROR("%s\n", options_query.lastError().databaseText().toStdString().c_str());
-				db.close();
-				exit(1);
-			}
-			query.next();
-
-			/* there is record in db, only update is necessary */
-			int id = query.record().value("id").toInt();
-			update_query.prepare("UPDATE options_systeminfo SET id = ?, version = ?, status = ?, error = ? WHERE id = ?");
-			update_query.bindValue(0, id);
-			update_query.bindValue(1, version.c_str());
-			update_query.bindValue(2, status.c_str());
-			update_query.bindValue(3, error.c_str());
-			update_query.bindValue(4, id);
-			if(!update_query.exec()) {
-				LOG_ERROR("%s\n", update_query.lastError().databaseText().toStdString().c_str());
-				db.close();
-				exit(1);
-			}
-
-			db.close();
-		} /* if db_opened */
-		//TODO: poboerz log_file z db
-		//TODO: pobierz log_level z db
-		//TODO: pobierz output_dest z db
-		//TODO: pobierz pending_files z db do input
+		bool ok = dbGetOptions();
+		if(!ok)
+			return 1;
 	}
 	else {
 		/* log-file */
 		if(vm.count("log-file"))
-			system.setLogFile(log_file);
+			system.setLogFile(sys_options.log_file);
 		/* log-level */
 		if(vm.count("log-level"))
-			system.setLogLevel(atoi(log_level.c_str()));
+			system.setLogLevel(sys_options.log_level);
 		/* input */
 		if(!vm.count("input")) {
 			LOG_ERROR("no input files\n");
 			exit(1);
-		}
-
-		// TODO: nie dodawac tego na raz
-		while(!input.empty()) {
-			system.addFile(input.back());
-			input.pop_back();
 		}
 		/* output */
 		if(!vm.count("output")) {
 			LOG("no output destination, setting to ConsoleOutput");
 			system.setOutput("ConsoleOutput");
 		}
-		while(!output.empty()) {
-			system.setOutput(output.back());
-			output.pop_back();
+		while(!sys_options.output.empty()) {
+			system.setOutput(sys_options.output.back());
+			sys_options.output.pop_back();
 		}
 	}
 
 	/* run */
-	// TODO: dodawac sekwencyjnie, analizowac w jednym watku a w drugim sprawdzac w petli status
 	printIntro(system.getVersion());
-	system.run();
+	while(!sys_options.input.empty()) {
+		system.addFile(sys_options.input.back());
+		sys_options.input.pop_back();
+		system.run();
+		system.clear();
+	}
 
 	int s_num = system.getSamplesNum();
 	int e_num = system.getExploitsNum();
@@ -308,4 +217,113 @@ void listOutputMods()
 		printModuleInfo((*it));
 
 	cout << endl;
+}
+
+bool dbUpdateSystemInfo(string version, string status, string error)
+{
+	QSqlDatabase db = QSqlDatabase::addDatabase(DB_QT_DRIVER.c_str());
+	db.setHostName(DB_HOST.c_str());
+	db.setDatabaseName(DB_NAME.c_str());
+	db.setUserName(DB_USER.c_str());
+	db.setPassword(DB_PASS.c_str());
+
+	bool db_opened = db.open();
+	if(db_opened) {
+		QSqlQuery select_query;
+		select_query.prepare("SELECT * FROM options_systeminfo");
+		if(!select_query.exec()) {
+			LOG_ERROR("%s\n", select_query.lastError().databaseText().toStdString().c_str());
+			db.close();
+			return false;
+		}
+		bool record_exists = select_query.next();
+
+		/* there is record in db, only update is necessary */
+		if(record_exists) {
+			QSqlQuery update_query;
+			int id = update_query.record().value("id").toInt();
+			update_query.prepare("UPDATE options_systeminfo SET id = ?, version = ?, status = ?, error = ? WHERE id = ?");
+			update_query.bindValue(0, id);
+			update_query.bindValue(1, version.c_str());
+			update_query.bindValue(2, status.c_str());
+			update_query.bindValue(3, error.c_str());
+			update_query.bindValue(4, id);
+			if(!update_query.exec()) {
+				LOG_ERROR("%s\n", update_query.lastError().databaseText().toStdString().c_str());
+				db.close();
+				return false;
+			}
+		}
+		/* no record in db, create a new one */
+		else {
+			/* get next id number */
+			QSqlQuery seq_query;
+			seq_query.prepare("SELECT nextval('options_systeminfo_id_seq')");
+			if(!seq_query.exec()) {
+				LOG_ERROR("%s\n", seq_query.lastError().databaseText().toStdString().c_str());
+				db.close();
+				return false;
+			}
+			seq_query.next();
+			int id = seq_query.record().value("nextval").toInt();
+
+			QSqlQuery insert_query;
+			insert_query.prepare("INSERT INTO options_systeminfo VALUES (?, ?, ?, ?)");
+			insert_query.bindValue(0, id);
+			insert_query.bindValue(1, version.c_str());
+			insert_query.bindValue(2, status.c_str());
+			insert_query.bindValue(3, error.c_str());
+			if(!insert_query.exec()) {
+				LOG_ERROR("%s\n", insert_query.lastError().databaseText().toStdString().c_str());
+				db.close();
+				return false;
+			}
+		}
+		db.close();
+		return true;
+	} /* if db_opened */
+
+	return false;
+}
+
+bool dbGetOptions()
+{
+	QSqlDatabase db = QSqlDatabase::addDatabase(DB_QT_DRIVER.c_str());
+	db.setHostName(DB_HOST.c_str());
+	db.setDatabaseName(DB_NAME.c_str());
+	db.setUserName(DB_USER.c_str());
+	db.setPassword(DB_PASS.c_str());
+
+	bool db_opened = db.open();
+	if(db_opened) {
+		/* get options */
+		QSqlQuery options_query;
+		options_query.prepare("SELECT * FROM options_option");
+		if(!options_query.exec()) {
+			LOG_ERROR("%s\n", options_query.lastError().databaseText().toStdString().c_str());
+			db.close();
+			return false;
+		}
+		options_query.next();
+		sys_options.log_file = options_query.record().value("log_file").toString().toStdString();
+		sys_options.log_level = options_query.record().value("log_level").toInt();
+		sys_options.output.push_back(options_query.record().value("output_dest").toString().toStdString());
+
+		/* get pending files */
+		QSqlQuery files_query;
+		files_query.prepare("SELECT * FROM options_pendingfile");
+		if(!files_query.exec()) {
+			LOG_ERROR("%s\n", files_query.lastError().databaseText().toStdString().c_str());
+			db.close();
+			return false;
+		}
+
+		while(files_query.next())
+			sys_options.input.push_back(files_query.record().value("name").toString().toStdString());
+
+		db.close();
+		return true;
+	}  /* if db_opened */
+
+	return false;
 }

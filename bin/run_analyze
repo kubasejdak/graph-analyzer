@@ -1,4 +1,4 @@
 #!/bin/bash
 # Script to run graph-analyzer from www GUI
 
-./graph-analyzer & >> test
+/home/kuba/Projects/graph-analyzer/bin/graph-analyzer --slave &

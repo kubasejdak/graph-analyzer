@@ -24,15 +24,15 @@ bool DatabaseOutput::generateOutput(ShellcodeSample *sample)
 	if(!sample->getInfo()->isShellcodePresent() && SKIP_NONEXPLOIT_OUTPUT)
 		return false;
 
-	QSqlDatabase db = QSqlDatabase::addDatabase(DB_QT_DRIVER.c_str());
+    QSqlDatabase db = QSqlDatabase::addDatabase(DB_QT_DRIVER.c_str());
 	db.setHostName(DB_HOST.c_str());
 	db.setDatabaseName(DB_NAME.c_str());
 	db.setUserName(DB_USER.c_str());
 	db.setPassword(DB_PASS.c_str());
 	bool ok = db.open();
 	if(ok) {
-		QSqlQuery query;
-		QSqlQuery seq_query;
+        QSqlQuery query(db);
+        QSqlQuery seq_query(db);
 		ShellcodeInfo *info = sample->getInfo();
 
 		/* get next id number */
@@ -61,7 +61,7 @@ bool DatabaseOutput::generateOutput(ShellcodeSample *sample)
 		/* analyze modules specific data */
 		multimap<string, map<string, string> *> *t = sample->getInfo()->getTraits();
 		multimap<string, map<string, string> *>::iterator it;
-		QSqlQuery q;
+        QSqlQuery q(db);
 		string table;
 		for(it = t->begin(); it != t->end(); ++it) {
 			table = ANA_TABLE_PREFIX;

@@ -28,6 +28,9 @@ def show_analyze(request):
 		info.version = "0.00"
 		info.status = "idle"
 		info.error = "no_error"
+		info.progress = 0
+		info.exploits_num = 0
+		info.samples_num = 0
 		info.save()
 	else:
 		info = systemInfo_list[0]
@@ -47,7 +50,6 @@ def show_analyze(request):
 				cd = form.cleaned_data
 				filename = PendingFile()
 				filename.name = cd["file"]
-				filename.progress = "0"
 				filename.save()
 		
 		# run analysis
@@ -55,5 +57,8 @@ def show_analyze(request):
 			call([ANALYZE_SCRIPT])
 	
 	pending_files = PendingFile.objects.all()
+	systemInfo_list = SystemInfo.objects.all()
+	info = systemInfo_list[0]
 	c.update({"error": info.error, "status": info.status, "pending_files": pending_files})
+	c.update({"progress": info.progress, "exploits": info.exploits_num, "samples": info.samples_num})
 	return render_to_response("analyze.html", c)

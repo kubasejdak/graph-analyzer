@@ -5,6 +5,9 @@ class SystemInfo(models.Model):
     version = models.CharField(max_length = 10)
     status = models.CharField(max_length = 50)
     error = models.CharField(max_length = 50)
+    progress = models.IntegerField()
+    exploits_num = models.IntegerField()
+    samples_num = models.IntegerField()
 
 # Options table
 class Option(models.Model):
@@ -27,4 +30,3 @@ class Option(models.Model):
 # PendingFile table
 class PendingFile(models.Model):
     name = models.CharField(max_length = 100)
-    progress = models.CharField(max_length = 3)

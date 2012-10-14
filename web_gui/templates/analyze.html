@@ -5,16 +5,21 @@
     <form action="" method="post">{% csrf_token %}
       <table>{{ form.as_p }}</table>
       <input type="submit" value="Add file" name="add">
+      <input type="submit" value="Analyze" name="analyze">
     </form>
   </div>
   
   <p class="PendingFiles">Files to analyze
     {% for file in pending_files %}
-      <li>{{ file.name }} ({{ file.progress }} %)</li>
+      <li>{{ file.name }}</li>
     {% endfor %}
   </p>
   
-  <p class="StatusError">
+  <p class="SystemInfo">
+    Overal progress: <b>{{ progress }} %</b><br/>
+    Exploits number: <b>{{ exploits }}</b><br/>
+    Samples number: <b>{{ samples }}</b><br/><br/>
+
     System status: <b>{{ status }}</b><br/>
     System error: <b>{{ error }}</b>
   </p>

@@ -30,3 +30,7 @@ class Option(models.Model):
 # PendingFile table
 class PendingFile(models.Model):
     name = models.CharField(max_length = 100)
+
+# RecentFile table
+class RecentFile(models.Model):
+    name = models.CharField(max_length = 100)

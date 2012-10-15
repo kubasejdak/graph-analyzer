@@ -49,6 +49,8 @@ void listOutputMods();
 bool dbUpdateSystemInfo(string version, string status, string error, int progress, int exploits, int samples);
 bool dbGetOptions();
 bool dbRemoveFile(string file);
+bool dbAddRecentFile(string file);
+bool dbDropRecentFiles();
 
 int main(int argc, char *argv[])
 {
@@ -112,7 +114,8 @@ int main(int argc, char *argv[])
     }
     /* update database */
     if(vm.count("update-db")) {
-        bool ok = dbUpdateSystemInfo(system.getVersion(), system.getStatus(), system.getError(), 0, system.getExploitsNum(), system.getSamplesNum());
+        dbDropRecentFiles();
+        bool ok = dbUpdateSystemInfo(system.getVersion(), system.getStatus(), system.getError(), 0, 0, 0);
         return (ok) ? 0 : 1;
     }
     /* run as GUI slave */
@@ -152,12 +155,16 @@ int main(int argc, char *argv[])
     }
 
     /* run */
+    dbDropRecentFiles();
+    dbUpdateSystemInfo(system.getVersion(), system.getStatus(), system.getError(), 0, 0, 0);
     int beg_size = sys_options.input.size();
     printIntro(system.getVersion());
     while(!sys_options.input.empty()) {
         system.addFile(sys_options.input.back());
-        if(vm.count("slave"))
+        if(vm.count("slave")) {
             dbRemoveFile(sys_options.input.back());
+            dbAddRecentFile(sys_options.input.back());
+        }
         sys_options.input.pop_back();
         system.run();
         double perc = ((beg_size - sys_options.input.size()) / beg_size) * 100;
@@ -367,6 +374,71 @@ bool dbRemoveFile(string file)
         remove_query.addBindValue(file.c_str());
         if(!remove_query.exec()) {
             LOG_ERROR("%s\n", remove_query.lastError().databaseText().toStdString().c_str());
+            db.close();
+            return false;
+        }
+
+        db.close();
+        return true;
+    }  /* if db_opened */
+
+    return false;
+}
+
+bool dbAddRecentFile(string file)
+{
+    QSqlDatabase db = QSqlDatabase::addDatabase(DB_QT_DRIVER.c_str(), "conn_add_recent");
+    db.setHostName(DB_HOST.c_str());
+    db.setDatabaseName(DB_NAME.c_str());
+    db.setUserName(DB_USER.c_str());
+    db.setPassword(DB_PASS.c_str());
+
+    bool db_opened = db.open();
+    if(db_opened) {
+        /* get next id number */
+        QSqlQuery seq_query(db);
+        seq_query.prepare("SELECT nextval('options_systeminfo_id_seq')");
+        if(!seq_query.exec()) {
+            LOG_ERROR("%s\n", seq_query.lastError().databaseText().toStdString().c_str());
+            db.close();
+            return false;
+        }
+        seq_query.next();
+        int id = seq_query.record().value("nextval").toInt();
+
+        /* add file */
+        QSqlQuery insert_query(db);
+        insert_query.prepare("INSERT INTO options_recentfile VALUES (?, ?)");
+        insert_query.addBindValue(id);
+        insert_query.addBindValue(file.c_str());
+        if(!insert_query.exec()) {
+            LOG_ERROR("%s\n", insert_query.lastError().databaseText().toStdString().c_str());
+            db.close();
+            return false;
+        }
+
+        db.close();
+        return true;
+    }  /* if db_opened */
+
+    return false;
+}
+
+bool dbDropRecentFiles()
+{
+    QSqlDatabase db = QSqlDatabase::addDatabase(DB_QT_DRIVER.c_str(), "conn_add_recent");
+    db.setHostName(DB_HOST.c_str());
+    db.setDatabaseName(DB_NAME.c_str());
+    db.setUserName(DB_USER.c_str());
+    db.setPassword(DB_PASS.c_str());
+
+    bool db_opened = db.open();
+    if(db_opened) {
+        /* remove file */
+        QSqlQuery delete_query(db);
+        delete_query.prepare("DELETE FROM options_recentfile");
+        if(!delete_query.exec()) {
+            LOG_ERROR("%s\n", delete_query.lastError().databaseText().toStdString().c_str());
             db.close();
             return false;
         }

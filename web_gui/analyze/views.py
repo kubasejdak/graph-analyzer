@@ -6,7 +6,7 @@ from django.core.context_processors import csrf
 from subprocess import call
 
 from analyze.forms import AnalyzeForm
-from options.models import Option, PendingFile, SystemInfo
+from options.models import Option, PendingFile, SystemInfo, RecentFile
 from web_gui.settings import ANALYZE_SCRIPT
 
 def show_analyze(request):
@@ -57,8 +57,9 @@ def show_analyze(request):
 			call([ANALYZE_SCRIPT])
 	
 	pending_files = PendingFile.objects.all()
+	recent_files = RecentFile.objects.all()
 	systemInfo_list = SystemInfo.objects.all()
 	info = systemInfo_list[0]
-	c.update({"error": info.error, "status": info.status, "pending_files": pending_files})
+	c.update({"error": info.error, "status": info.status, "pending_files": pending_files, "recent_files": recent_files})
 	c.update({"progress": info.progress, "exploits": info.exploits_num, "samples": info.samples_num})
 	return render_to_response("analyze.html", c)

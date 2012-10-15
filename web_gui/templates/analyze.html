@@ -9,8 +9,14 @@
     </form>
   </div>
   
-  <p class="PendingFiles">Files to analyze
+  <p class="PendingFiles"><b>Files to analyze:</b>
     {% for file in pending_files %}
+      <li>{{ file.name }}</li>
+    {% endfor %}
+  </p>
+  
+  <p class="RecentFiles"><b>Recently analyzed:</b>
+    {% for file in recent_files %}
       <li>{{ file.name }}</li>
     {% endfor %}
   </p>

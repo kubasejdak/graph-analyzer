@@ -33,7 +33,7 @@ SystemLogger::SystemLogger()
 	error_map[OUTPUT_FAILED] = "generating output failed";
 
 	logging_level = 0;
-	log_file = "/home/kuba/analyzer_log";
+    log_file = "";
 
 }
 
@@ -83,7 +83,7 @@ void SystemLogger::setLogFile(string filename)
 
 void SystemLogger::log(string msg_file, string func, int line, string fmt, ...)
 {
-	if(logging_level == 0)
+    if(logging_level == 0 || log_file == "")
 		return;
 
 	FILE *f = fopen(log_file.c_str(), "a");
@@ -116,7 +116,7 @@ void SystemLogger::log(string msg_file, string func, int line, string fmt, ...)
 
 void SystemLogger::logError(string msg_file, string func, int line, string fmt, ...)
 {
-	if(logging_level == 0)
+    if(logging_level == 0 || log_file == "")
 		return;
 
 	FILE *f = fopen(log_file.c_str(), "a");

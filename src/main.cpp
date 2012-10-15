@@ -56,8 +56,6 @@ int main(int argc, char *argv[])
 {
     /* create main system */
     CoreSystem system;
-    system.setLogLevel(1);
-    system.setLogFile("/home/kuba/analyzer_log");
 
     /* parse cmd line arguments */
     opt::options_description options("Options");

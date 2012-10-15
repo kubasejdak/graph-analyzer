@@ -10,7 +10,11 @@
 #include <string>
 using namespace std;
 
-#define CONFIG_FILE		"/home/kuba/Projects/graph-analyzer/conf/analyzer.conf"
+#ifdef HOME_CONFIG
+    #define CONFIG_FILE		"/home/kuba/Projects/graph-analyzer/conf/analyzer.conf"
+#else
+    #define CONFIG_FILE		"/home/jsejdak/graph-analyzer/conf/analyzer.conf"
+#endif
 
 extern string APP_ROOT_PATH;
 extern int EMULATION_STEPS;

@@ -10,15 +10,19 @@
   </div>
   
   <p class="PendingFiles"><b>Files to analyze:</b>
+    <ul>
     {% for file in pending_files %}
       <li>{{ file.name }}</li>
     {% endfor %}
+    </ul>
   </p>
   
   <p class="RecentFiles"><b>Recently analyzed:</b>
+    <ul>
     {% for file in recent_files %}
       <li>{{ file.name }}</li>
     {% endfor %}
+    </ul>
   </p>
   
   <p class="SystemInfo">

@@ -7,28 +7,28 @@
 #ifndef CONFIGFILE_H_
 #define CONFIGFILE_H_
 
-/* standard headers */
+#include <QString>
+#include <string>
 #include <boost/program_options.hpp>
+using namespace std;
 namespace opt = boost::program_options;
 
-/* project headers */
 #include <core/Options.h>
 #include <core/SystemLogger.h>
-#include <toolbox.h>
+#include <core/Toolbox.h>
 
 class ConfigFile {
 public:
-	virtual ~ConfigFile();
-	static ConfigFile *getInstance()
+    static ConfigFile *instance()
 	{
-		static ConfigFile instance;
-		return &instance;
+        static ConfigFile obj;
+        return &obj;
 	}
 
 	void read();
 
 private:
-	ConfigFile();
+    ConfigFile() {}
 };
 
 #endif /* CONFIGFILE_H_ */

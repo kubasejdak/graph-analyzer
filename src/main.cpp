@@ -6,50 +6,45 @@
 
 #define AUTHOR	"Kuba Sejdak"
 
-/* standard headers */
 #include <boost/program_options.hpp>
 namespace opt = boost::program_options;
 
+#include <QString>
+#include <QtSql>
+#include <QList>
+#include <vector>
+#include <string>
 #include <iostream>
-#include <list>
 #include <iomanip>
 using namespace std;
 
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <dirent.h>
-
-#include <qt4/QtSql/QtSql>
-#include <qt4/QtCore/QString>
-
-/* project headers */
 #include <core/CoreSystem.h>
 #include <core/ShellcodeInfo.h>
 #include <core/SystemLogger.h>
 #include <core/Options.h>
+#include <core/DatabaseManager.h>
 #include <modules/ModuleInfo.h>
 #include <modules/ModuleManager.h>
-#include <toolbox.h>
 
 /* global variables */
 struct Options {
     vector<string> input, output;
-    string log_file;
-    int log_level;
-} sys_options;
+    string logFile;
+    int logLevel;
+} sysOptions;
 
 /* console printing */
-void printIntro(string version);
+void printIntro(QString version);
 void printModuleInfo(ModuleInfo *info);
 void listInputMods();
 void listAnalyzeMods();
 void listOutputMods();
 
 /* database connections */
-bool dbUpdateSystemInfo(string version, string status, string error, int progress, int exploits, int samples);
+bool dbUpdateSystemInfo(QString version, QString status, QString error, int progress, int exploits, int samples);
 bool dbGetOptions();
-bool dbRemoveFile(string file);
-bool dbAddRecentFile(string file);
+bool dbRemoveFile(QString file);
+bool dbAddRecentFile(QString file);
 bool dbDropRecentFiles();
 
 int main(int argc, char *argv[])
@@ -62,15 +57,15 @@ int main(int argc, char *argv[])
     options.add_options()
             ("help,h", "print help message")
             ("slave,s", "run program as GUI slave")
-            ("input,i", opt::value<vector<string> >(&sys_options.input), "set input files")
-            ("output,o", opt::value<vector<string> >(&sys_options.output), "set output destinations (default: ConsoleOutput)")
+            ("input,i", opt::value<vector<string> >(&sysOptions.input), "set input files")
+            ("output,o", opt::value<vector<string> >(&sysOptions.output), "set output destinations (default: ConsoleOutput)")
             ("list-analyze", "list analyze modules")
             ("list-input", "list input modules")
             ("list-output", "list output modules")
             ("version,v", "print version")
             ("update-db,u", "update database with system info")
-            ("log-file", opt::value<string>(&sys_options.log_file), "set file to save logs")
-            ("log-level", opt::value<int>(&sys_options.log_level), "set logging level")
+            ("log-file", opt::value<string>(&sysOptions.logFile), "set file to save logs")
+            ("log-level", opt::value<int>(&sysOptions.logLevel), "set logging level")
             ;
 
     opt::positional_options_description p;
@@ -107,13 +102,13 @@ int main(int argc, char *argv[])
     }
     /* version */
     if(vm.count("version")) {
-        cout << system.getVersion() << endl;
+        cout << system.version().toStdString() << endl;
         return 0;
     }
     /* update database */
     if(vm.count("update-db")) {
         dbDropRecentFiles();
-        bool ok = dbUpdateSystemInfo(system.getVersion(), system.getStatus(), system.getError(), 0, 0, 0);
+        bool ok = dbUpdateSystemInfo(system.version(), system.status(), system.error(), 0, 0, 0);
         return (ok) ? 0 : 1;
     }
     /* run as GUI slave */
@@ -122,66 +117,70 @@ int main(int argc, char *argv[])
         if(!ok)
             return 1;
 
-        system.setLogFile(sys_options.log_file);
-        system.setLogLevel(sys_options.log_level);
-        while(!sys_options.output.empty()) {
-            system.setOutput(sys_options.output.back());
-            sys_options.output.pop_back();
+        system.setLogFile(sysOptions.logFile.c_str());
+        system.setLogLevel(sysOptions.logLevel);
+        while(!sysOptions.output.empty()) {
+            system.setOutput(sysOptions.output.back().c_str());
+            sysOptions.output.pop_back();
         }
     }
+    /* run in normal mode */
     else {
         /* log-file */
         if(vm.count("log-file"))
-            system.setLogFile(sys_options.log_file);
+            system.setLogFile(sysOptions.logFile.c_str());
         /* log-level */
         if(vm.count("log-level"))
-            system.setLogLevel(sys_options.log_level);
+            system.setLogLevel(sysOptions.logLevel);
         /* input */
         if(!vm.count("input")) {
             LOG_ERROR("no input files\n");
-            exit(1);
+            return 1;
         }
         /* output */
         if(!vm.count("output")) {
-            LOG("no output destination, setting to ConsoleOutput");
-            system.setOutput("ConsoleOutput");
+            LOG("no output destination, setting to DatabaseOutput\n");
+            system.setOutput("DatabaseOutput");
         }
-        while(!sys_options.output.empty()) {
-            system.setOutput(sys_options.output.back());
-            sys_options.output.pop_back();
+        while(!sysOptions.output.empty()) {
+            system.setOutput(sysOptions.output.back().c_str());
+            sysOptions.output.pop_back();
         }
     }
 
     /* run */
+    LOG("starting system\n");
     dbDropRecentFiles();
-    dbUpdateSystemInfo(system.getVersion(), system.getStatus(), system.getError(), 0, 0, 0);
-    int beg_size = sys_options.input.size();
-    printIntro(system.getVersion());
-    while(!sys_options.input.empty()) {
-        system.addFile(sys_options.input.back());
+    dbUpdateSystemInfo(system.version(), system.status(), system.error(), 0, 0, 0);
+    int begSize = sysOptions.input.size();
+    printIntro(system.version());
+    while(!sysOptions.input.empty()) {
+        system.addFile(sysOptions.input.back().c_str());
         if(vm.count("slave")) {
-            dbRemoveFile(sys_options.input.back());
-            dbAddRecentFile(sys_options.input.back());
+            dbRemoveFile(sysOptions.input.back().c_str());
+            dbAddRecentFile(sysOptions.input.back().c_str());
         }
-        sys_options.input.pop_back();
+        sysOptions.input.pop_back();
         system.run();
-        double perc = ((beg_size - sys_options.input.size()) / beg_size) * 100;
+        LOG("file processing completed\n");
+        double perc = ((begSize - sysOptions.input.size()) / begSize) * 100;
         if(vm.count("slave"))
-            dbUpdateSystemInfo(system.getVersion(), system.getStatus(), system.getError(), (int) perc, system.getExploitsNum(), system.getSamplesNum());
+            dbUpdateSystemInfo(system.version(), system.status(), system.error(), (int) perc, system.exploitsNum(), system.samplesNum());
     }
 
-    int s_num = system.getSamplesNum();
-    int e_num = system.getExploitsNum();
+    int s_num = system.samplesNum();
+    int e_num = system.exploitsNum();
     string e = (e_num == 1) ? "exploit" : "exploits";
     string s = (s_num == 1) ? "sample" : "samples";
     cout << "FINISHED: found " << dec << e_num << " " << e << " in " << s_num << " " << s << "!" << endl;
+    LOG("program FINISHED without error\n");
 
     return 0;
 }
 
-void printIntro(string version)
+void printIntro(QString version)
 {
-    cout << "graph-analyzer " << version << endl;
+    cout << "graph-analyzer " << version.toStdString() << endl;
     cout << "Author: " << AUTHOR << endl;
     cout << "Build date: " << __DATE__ << endl;
     cout << endl;
@@ -189,261 +188,199 @@ void printIntro(string version)
 
 void printModuleInfo(ModuleInfo *info)
 {
-    cout << "id: " << setw(6) << left << info->id << " ";
-    cout << "name: " << setw(17) << left << info->name << " ";
-    cout << "description: " << info->description << endl;
+    cout << "id: " << setw(6) << left << info->m_id << " ";
+    cout << "name: " << setw(17) << left << info->m_name.toStdString() << " ";
+    cout << "description: " << info->m_description.toStdString() << endl;
 }
 
 void listInputMods()
 {
-    list<ModuleInfo *> mods = ModuleManager::getInstance()->listInput();
+    QList<ModuleInfo *> mods = ModuleManager::instance()->listInput();
     if(mods.size() == 0)
         return;
 
-    list<ModuleInfo *>::iterator it;
-
+    QList<ModuleInfo *>::iterator it;
     cout << "* List of available input modules:" << endl;
     for(it = mods.begin(); it != mods.end(); ++it)
-        printModuleInfo((*it));
+        printModuleInfo(*it);
 
     cout << endl;
 }
 
 void listAnalyzeMods()
 {
-    list<ModuleInfo *> mods = ModuleManager::getInstance()->listAnalyze();
+    QList<ModuleInfo *> mods = ModuleManager::instance()->listAnalyze();
     if(mods.size() == 0)
         return;
 
-    list<ModuleInfo *>::iterator it;
+    QList<ModuleInfo *>::iterator it;
     cout << "* List of available analyze modules:" << endl;
     for(it = mods.begin(); it != mods.end(); ++it)
-        printModuleInfo((*it));
+        printModuleInfo(*it);
 
     cout << endl;
 }
 
 void listOutputMods()
 {
-    list<ModuleInfo *> mods = ModuleManager::getInstance()->listOutput();
+    QList<ModuleInfo *> mods = ModuleManager::instance()->listOutput();
     if(mods.size() == 0)
         return;
 
-    list<ModuleInfo *>::iterator it;
+    QList<ModuleInfo *>::iterator it;
     cout << "* List of available output modules:" << endl;
     for(it = mods.begin(); it != mods.end(); ++it)
-        printModuleInfo((*it));
+        printModuleInfo(*it);
 
     cout << endl;
 }
 
-bool dbUpdateSystemInfo(string version, string status, string error, int progress, int exploits, int samples)
+bool dbUpdateSystemInfo(QString version, QString status, QString error, int progress, int exploits, int samples)
 {
-    QSqlDatabase db = QSqlDatabase::addDatabase(DB_QT_DRIVER.c_str(), "conn_update_info");
-    db.setHostName(DB_HOST.c_str());
-    db.setDatabaseName(DB_NAME.c_str());
-    db.setUserName(DB_USER.c_str());
-    db.setPassword(DB_PASS.c_str());
+    QSqlQuery select_query(DatabaseManager::instance()->database());
+    select_query.prepare("SELECT * FROM options_systeminfo");
+    if(!DatabaseManager::instance()->exec(&select_query)) {
+        SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
+        LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
+        return false;
+    }
+    bool record_exists = select_query.next();
 
-    bool db_opened = db.open();
-    if(db_opened) {
-        QSqlQuery select_query(db);
-        select_query.prepare("SELECT * FROM options_systeminfo");
-        if(!select_query.exec()) {
-            LOG_ERROR("%s\n", select_query.lastError().databaseText().toStdString().c_str());
-            db.close();
-            return false;
-        }
-        bool record_exists = select_query.next();
+    /* there is record in db, only update is necessary */
+    if(record_exists) {
         int id = select_query.record().value("id").toInt();
-        select_query.finish();
-
-        /* there is record in db, only update is necessary */
-        if(record_exists) {
-            QSqlQuery update_query(db);
-            update_query.prepare("UPDATE options_systeminfo SET id = ?, version = ?, status = ?, error = ?, progress = ?, exploits_num = ?, samples_num = ? WHERE id = ?");
-            update_query.addBindValue(id);
-            update_query.addBindValue(version.c_str());
-            update_query.addBindValue(status.c_str());
-            update_query.addBindValue(error.c_str());
-            update_query.addBindValue(progress);
-            update_query.addBindValue(exploits);
-            update_query.addBindValue(samples);
-            update_query.addBindValue(id);
-            if(!update_query.exec()) {
-                LOG_ERROR("%s\n", update_query.lastError().databaseText().toStdString().c_str());
-                db.close();
-                return false;
-            }
-            update_query.finish();
-        }
-        /* no record in db, create a new one */
-        else {
-            /* get next id number */
-            QSqlQuery seq_query(db);
-            seq_query.prepare("SELECT nextval('options_systeminfo_id_seq')");
-            if(!seq_query.exec()) {
-                LOG_ERROR("%s\n", seq_query.lastError().databaseText().toStdString().c_str());
-                db.close();
-                return false;
-            }
-            seq_query.next();
-            int id = seq_query.record().value("nextval").toInt();
-
-            QSqlQuery insert_query(db);
-            insert_query.prepare("INSERT INTO options_systeminfo VALUES (?, ?, ?, ?, ?, ?, ?)");
-            insert_query.addBindValue(id);
-            insert_query.addBindValue(version.c_str());
-            insert_query.addBindValue(status.c_str());
-            insert_query.addBindValue(error.c_str());
-            insert_query.addBindValue(progress);
-            insert_query.addBindValue(exploits);
-            insert_query.addBindValue(samples);
-            if(!insert_query.exec()) {
-                LOG_ERROR("%s\n", insert_query.lastError().databaseText().toStdString().c_str());
-                db.close();
-                return false;
-            }
-        }
-        db.close();
-        return true;
-    } /* if db_opened */
-
-    return false;
-}
-
-bool dbGetOptions()
-{
-    QSqlDatabase db = QSqlDatabase::addDatabase(DB_QT_DRIVER.c_str(), "conn_get_options");
-    db.setHostName(DB_HOST.c_str());
-    db.setDatabaseName(DB_NAME.c_str());
-    db.setUserName(DB_USER.c_str());
-    db.setPassword(DB_PASS.c_str());
-
-    bool db_opened = db.open();
-    if(db_opened) {
-        /* get options */
-        QSqlQuery options_query(db);
-        options_query.prepare("SELECT * FROM options_option");
-        if(!options_query.exec()) {
-            LOG_ERROR("%s\n", options_query.lastError().databaseText().toStdString().c_str());
-            db.close();
+        QSqlQuery update_query(DatabaseManager::instance()->database());
+        update_query.prepare("UPDATE options_systeminfo SET id = ?, version = ?, status = ?, error = ?, progress = ?, exploits_num = ?, samples_num = ? WHERE id = ?");
+        update_query.addBindValue(id);
+        update_query.addBindValue(version);
+        update_query.addBindValue(status);
+        update_query.addBindValue(error);
+        update_query.addBindValue(progress);
+        update_query.addBindValue(exploits);
+        update_query.addBindValue(samples);
+        update_query.addBindValue(id);
+        if(!DatabaseManager::instance()->exec(&update_query)) {
+            SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
+            LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
             return false;
         }
-        options_query.next();
-        sys_options.log_file = options_query.record().value("log_file").toString().toStdString();
-        sys_options.log_level = options_query.record().value("log_level").toInt();
-        sys_options.output.push_back(options_query.record().value("output_dest").toString().toStdString());
-        options_query.finish();
-
-        /* get pending files */
-        QSqlQuery files_query(db);
-        files_query.prepare("SELECT * FROM options_pendingfile");
-        if(!files_query.exec()) {
-            LOG_ERROR("%s\n", files_query.lastError().databaseText().toStdString().c_str());
-            db.close();
-            return false;
-        }
-
-        while(files_query.next())
-            sys_options.input.push_back(files_query.record().value("name").toString().toStdString());
-        files_query.finish();
-
-        db.close();
-        return true;
-    }  /* if db_opened */
-
-    return false;
-}
-
-bool dbRemoveFile(string file)
-{
-    QSqlDatabase db = QSqlDatabase::addDatabase(DB_QT_DRIVER.c_str(), "conn_remove_file");
-    db.setHostName(DB_HOST.c_str());
-    db.setDatabaseName(DB_NAME.c_str());
-    db.setUserName(DB_USER.c_str());
-    db.setPassword(DB_PASS.c_str());
-
-    bool db_opened = db.open();
-    if(db_opened) {
-        /* remove file */
-        QSqlQuery remove_query(db);
-        remove_query.prepare("DELETE FROM options_pendingfile WHERE name = ?");
-        remove_query.addBindValue(file.c_str());
-        if(!remove_query.exec()) {
-            LOG_ERROR("%s\n", remove_query.lastError().databaseText().toStdString().c_str());
-            db.close();
-            return false;
-        }
-
-        db.close();
-        return true;
-    }  /* if db_opened */
-
-    return false;
-}
-
-bool dbAddRecentFile(string file)
-{
-    QSqlDatabase db = QSqlDatabase::addDatabase(DB_QT_DRIVER.c_str(), "conn_add_recent");
-    db.setHostName(DB_HOST.c_str());
-    db.setDatabaseName(DB_NAME.c_str());
-    db.setUserName(DB_USER.c_str());
-    db.setPassword(DB_PASS.c_str());
-
-    bool db_opened = db.open();
-    if(db_opened) {
+    }
+    /* no record in db, create a new one */
+    else {
         /* get next id number */
-        QSqlQuery seq_query(db);
+        QSqlQuery seq_query(DatabaseManager::instance()->database());
         seq_query.prepare("SELECT nextval('options_systeminfo_id_seq')");
-        if(!seq_query.exec()) {
-            LOG_ERROR("%s\n", seq_query.lastError().databaseText().toStdString().c_str());
-            db.close();
+        if(!DatabaseManager::instance()->exec(&seq_query)) {
+            SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
+            LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
             return false;
         }
         seq_query.next();
         int id = seq_query.record().value("nextval").toInt();
 
-        /* add file */
-        QSqlQuery insert_query(db);
-        insert_query.prepare("INSERT INTO options_recentfile VALUES (?, ?)");
+        QSqlQuery insert_query(DatabaseManager::instance()->database());
+        insert_query.prepare("INSERT INTO options_systeminfo VALUES (?, ?, ?, ?, ?, ?, ?)");
         insert_query.addBindValue(id);
-        insert_query.addBindValue(file.c_str());
-        if(!insert_query.exec()) {
-            LOG_ERROR("%s\n", insert_query.lastError().databaseText().toStdString().c_str());
-            db.close();
+        insert_query.addBindValue(version.toStdString().c_str());
+        insert_query.addBindValue(status.toStdString().c_str());
+        insert_query.addBindValue(error.toStdString().c_str());
+        insert_query.addBindValue(progress);
+        insert_query.addBindValue(exploits);
+        insert_query.addBindValue(samples);
+        if(!DatabaseManager::instance()->exec(&insert_query)) {
+            SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
+            LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
             return false;
         }
+    } /* else */
 
-        db.close();
-        return true;
-    }  /* if db_opened */
+    return true;
+}
 
-    return false;
+bool dbGetOptions()
+{
+    /* get options */
+    QSqlQuery options_query(DatabaseManager::instance()->database());
+    options_query.prepare("SELECT * FROM options_option");
+    if(!DatabaseManager::instance()->exec(&options_query)) {
+        SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
+        LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
+        return false;
+    }
+
+    options_query.next();
+    sysOptions.logFile = options_query.record().value("log_file").toString().toStdString();
+    sysOptions.logLevel = options_query.record().value("log_level").toInt();
+    sysOptions.output.push_back(options_query.record().value("output_dest").toString().toStdString());
+
+    /* get pending files */
+    QSqlQuery files_query(DatabaseManager::instance()->database());
+    files_query.prepare("SELECT * FROM options_pendingfile");
+    if(!DatabaseManager::instance()->exec(&files_query)) {
+        SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
+        LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
+        return false;
+    }
+
+    while(files_query.next())
+        sysOptions.input.push_back(files_query.record().value("name").toString().toStdString());
+
+    return true;
+}
+
+bool dbRemoveFile(QString file)
+{
+    /* remove file */
+    QSqlQuery remove_query(DatabaseManager::instance()->database());
+    remove_query.prepare("DELETE FROM options_pendingfile WHERE name = ?");
+    remove_query.addBindValue(file);
+    if(!DatabaseManager::instance()->exec(&remove_query)) {
+        SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
+        LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
+        return false;
+    }
+
+    return true;
+}
+
+bool dbAddRecentFile(QString file)
+{
+    /* get next id number */
+    QSqlQuery seq_query(DatabaseManager::instance()->database());
+    seq_query.prepare("SELECT nextval('options_systeminfo_id_seq')");
+    if(!DatabaseManager::instance()->exec(&seq_query)) {
+        SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
+        LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
+        return false;
+    }
+
+    seq_query.next();
+    int id = seq_query.record().value("nextval").toInt();
+
+    /* add file */
+    QSqlQuery insert_query(DatabaseManager::instance()->database());
+    insert_query.prepare("INSERT INTO options_recentfile VALUES (?, ?)");
+    insert_query.addBindValue(id);
+    insert_query.addBindValue(file);
+    if(!DatabaseManager::instance()->exec(&insert_query)) {
+        SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
+        LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
+        return false;
+    }
+
+    return true;
 }
 
 bool dbDropRecentFiles()
 {
-    QSqlDatabase db = QSqlDatabase::addDatabase(DB_QT_DRIVER.c_str(), "conn_add_recent");
-    db.setHostName(DB_HOST.c_str());
-    db.setDatabaseName(DB_NAME.c_str());
-    db.setUserName(DB_USER.c_str());
-    db.setPassword(DB_PASS.c_str());
+    /* remove file */
+    QSqlQuery delete_query(DatabaseManager::instance()->database());
+    delete_query.prepare("DELETE FROM options_recentfile");
+    if(!DatabaseManager::instance()->exec(&delete_query)) {
+        SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
+        LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
+        return false;
+    }
 
-    bool db_opened = db.open();
-    if(db_opened) {
-        /* remove file */
-        QSqlQuery delete_query(db);
-        delete_query.prepare("DELETE FROM options_recentfile");
-        if(!delete_query.exec()) {
-            LOG_ERROR("%s\n", delete_query.lastError().databaseText().toStdString().c_str());
-            db.close();
-            return false;
-        }
-
-        db.close();
-        return true;
-    }  /* if db_opened */
-
-    return false;
+    return true;
 }

@@ -8,38 +8,33 @@
 
 GraphHash::GraphHash()
 {
-	id = getNextID();
-	name = "GraphHash";
-	description = "Hashes whole graph for further comparison.";
-	trait_name = "hash";
-}
-
-GraphHash::~GraphHash()
-{
+    m_name = "GraphHash";
+    m_description = "Hashes whole graph for further comparison.";
+    m_traitName = "hash";
 }
 
 bool GraphHash::perform(ShellcodeSample *sample)
 {
-	Graph *g = sample->getGraph();
+    Graph *g = sample->graph();
 	Graph::graph_iterator it;
-	map<string, string> *m = new map<string, string>();
-	string graph_string = "";
+    QMap<QString, QString> *m = new QMap<QString, QString>();
+    QString graphString = "";
 	InstructionSplitter splitter;
 	instr_vertex *iv;
 	for(it = g->begin(); it != g->end(); ++it) {
 		iv = (instr_vertex *) it->data;
 		splitter = emu_string_char(iv->instr_string);
-		graph_string += splitter.getCode();
-		graph_string += splitter.getFirstArg();
-		graph_string += splitter.getSecondArg();
-		graph_string += splitter.getSyscall();
+        graphString += splitter.code();
+        graphString += splitter.firstArg();
+        graphString += splitter.secondArg();
+        graphString += splitter.syscall();
 		splitter.clear();
 	}
 
-	(*m)["hash"] = hash(graph_string);
+    (*m)["hash"] = Toolbox::hash(graphString);
 
 	/* set traits */
-	sample->getInfo()->setTrait(trait_name, m);
+    sample->info()->setTrait(m_traitName, m);
 
 	return true;
 }

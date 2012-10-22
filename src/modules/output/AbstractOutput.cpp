@@ -6,12 +6,9 @@
 
 #include "AbstractOutput.h"
 
-int AbstractOutput::nextID = OUTPUT_ID_OFFSET;
+int AbstractOutput::m_nextID = OUTPUT_ID_OFFSET;
 
 AbstractOutput::AbstractOutput()
 {
-}
-
-AbstractOutput::~AbstractOutput()
-{
+    m_id = nextID();
 }

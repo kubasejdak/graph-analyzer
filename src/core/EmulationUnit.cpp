@@ -19,13 +19,13 @@ EmulationUnit::~EmulationUnit()
 void EmulationUnit::prepareUnit()
 {
 	/* create emulation unit */
-	emu = emu_new();
-	cpu = emu_cpu_get(emu);
-	mem = emu_memory_get(emu);
+    m_emu = emu_new();
+    m_cpu = emu_cpu_get(m_emu);
+    m_mem = emu_memory_get(m_emu);
 
 	/* create enviroment unit */
-	env = emu_env_new(emu);
-	env->profile = emu_profile_new();
+    m_env = emu_env_new(m_emu);
+    m_env->profile = emu_profile_new();
 
 	/* IAT for sqlslammer */
 	prepareIATForSQLSlammer();
@@ -37,8 +37,8 @@ void EmulationUnit::prepareUnit()
 
 void EmulationUnit::destroyUnit()
 {
-	emu_env_free(env); // emu_profile destroyed inside emu_env_free
-	emu_free(emu);
+    emu_env_free(m_env); // emu_profile destroyed inside emu_env_free
+    emu_free(m_emu);
 }
 
 void EmulationUnit::resetUnit()
@@ -55,62 +55,62 @@ bool EmulationUnit::step()
 int32_t EmulationUnit::loadCode(byte_t *code, int32_t size)
 {
 	/* perform getPC test */
-	codeOffset = getPcTest(code, size);
+    m_codeOffset = getPcTest(code, size);
 
 	/* clear registers */
 	for(int i = 0; i < 8; ++i)
-		emu_cpu_reg32_set(cpu, (emu_reg32) i, 0);
+        emu_cpu_reg32_set(m_cpu, (emu_reg32) i, 0);
 
 	/* clear flags */
-	emu_cpu_eflags_set(cpu, 0);
+    emu_cpu_eflags_set(m_cpu, 0);
 
 	/* FIXME: what is it? */
-	emu_memory_write_dword(mem, 0xef787c3c, 4711);
-	emu_memory_write_dword(mem, 0x00416f9a, 4711);
-	emu_memory_write_dword(mem, 0x0044fcf7, 4711);
-	emu_memory_write_dword(mem, 0x00001265, 4711);
-	emu_memory_write_dword(mem, 0x00002583, 4711);
-	emu_memory_write_dword(mem, 0x00e000de, 4711);
-	emu_memory_write_dword(mem, 0x01001265, 4711);
-	emu_memory_write_dword(mem, 0x8a000066, 4711);
+    emu_memory_write_dword(m_mem, 0xef787c3c, 4711);
+    emu_memory_write_dword(m_mem, 0x00416f9a, 4711);
+    emu_memory_write_dword(m_mem, 0x0044fcf7, 4711);
+    emu_memory_write_dword(m_mem, 0x00001265, 4711);
+    emu_memory_write_dword(m_mem, 0x00002583, 4711);
+    emu_memory_write_dword(m_mem, 0x00e000de, 4711);
+    emu_memory_write_dword(m_mem, 0x01001265, 4711);
+    emu_memory_write_dword(m_mem, 0x8a000066, 4711);
 
 	/* write the code to the offset */
-	emu_memory_write_block(mem, STATIC_CODE_OFFSET, code, size);
+    emu_memory_write_block(m_mem, STATIC_CODE_OFFSET, code, size);
 
 	/* set eip to the code */
-	emu_cpu_eip_set(cpu, STATIC_CODE_OFFSET + codeOffset);
+    emu_cpu_eip_set(m_cpu, STATIC_CODE_OFFSET + m_codeOffset);
 
 	/* FIXME: what is it? */
-	emu_memory_write_block(mem, 0x0012fe98, code, size);
-	emu_cpu_reg32_set(cpu, esp, STATIC_CODE_OFFSET - 50); //0x0012fe98);
-	emu_memory_write_dword(mem, 0x7df7b0bb, 0x00000000); //UrldownloadToFile
+    emu_memory_write_block(m_mem, 0x0012fe98, code, size);
+    emu_cpu_reg32_set(m_cpu, esp, STATIC_CODE_OFFSET - 50); //0x0012fe98);
+    emu_memory_write_dword(m_mem, 0x7df7b0bb, 0x00000000); //UrldownloadToFile
 
-	return codeOffset;
+    return m_codeOffset;
 }
 
-struct emu *EmulationUnit::getEmu()
+struct emu *EmulationUnit::emu()
 {
-	return emu;
+    return m_emu;
 }
 
-struct emu_cpu *EmulationUnit::getCpu()
+struct emu_cpu *EmulationUnit::cpu()
 {
-	return cpu;
+    return m_cpu;
 }
 
-struct emu_memory *EmulationUnit::getMemory()
+struct emu_memory *EmulationUnit::memory()
 {
-	return mem;
+    return m_mem;
 }
 
-struct emu_env *EmulationUnit::getEnv()
+struct emu_env *EmulationUnit::env()
 {
-	return env;
+    return m_env;
 }
 
 int32_t EmulationUnit::getPcTest(byte_t *code, int32_t size)
 {
-	int32_t off = emu_shellcode_test(emu, code, size);
+    int32_t off = emu_shellcode_test(m_emu, code, size);
 	resetUnit();
 
 	return off;
@@ -118,62 +118,62 @@ int32_t EmulationUnit::getPcTest(byte_t *code, int32_t size)
 
 void EmulationUnit::prepareIATForSQLSlammer()
 {
-	emu_memory_write_dword(mem, 0x42AE1018, 0x7c801D77);
-	emu_memory_write_dword(mem, 0x42ae1010, 0x7c80ADA0);
-	emu_memory_write_dword(mem, 0x7c80ADA0, 0x51EC8B55);
-	emu_memory_write_byte(mem, 0x7c814eeb, 0xc3);
+    emu_memory_write_dword(m_mem, 0x42AE1018, 0x7c801D77);
+    emu_memory_write_dword(m_mem, 0x42ae1010, 0x7c80ADA0);
+    emu_memory_write_dword(m_mem, 0x7c80ADA0, 0x51EC8B55);
+    emu_memory_write_byte(m_mem, 0x7c814eeb, 0xc3);
 }
 
-int32_t EmulationUnit::getCodeOffset()
+int32_t EmulationUnit::codeOffset()
 {
-	return codeOffset;
+    return m_codeOffset;
 }
 
 void EmulationUnit::exportWin32Hooks()
 {
 #if 0
-	emu_env_w32_export_hook(env, "ExitProcess", userHook_ExitProcess, NULL);
-	emu_env_w32_export_hook(env, "ExitThread", userHook_ExitThread, NULL);
+    emu_env_w32_export_hook(m_env, "ExitProcess", userHook_ExitProcess, NULL);
+    emu_env_w32_export_hook(m_env, "ExitThread", userHook_ExitThread, NULL);
 
 	/* shdocvw.dll */
-	emu_env_w32_load_dll(env->env.win,"shdocvw.dll");
-	emu_env_w32_export_hook(env, "IEWinMain", userHook_IEWinMain, NULL);
+    emu_env_w32_load_dll(m_env->env.win,"shdocvw.dll");
+    emu_env_w32_export_hook(m_env, "IEWinMain", userHook_IEWinMain, NULL);
 
 	/* msvcrt.dll */
-	emu_env_w32_load_dll(env->env.win,"msvcrt.dll");
-	emu_env_w32_export_hook(env, "fclose", userHook_fclose, na);
-	emu_env_w32_export_hook(env, "fopen", userHook_fopen, na);
-	emu_env_w32_export_hook(env, "fwrite", userHook_fwrite, na);
+    emu_env_w32_load_dll(m_env->env.win,"msvcrt.dll");
+    emu_env_w32_export_hook(m_env, "fclose", userHook_fclose, na);
+    emu_env_w32_export_hook(m_env, "fopen", userHook_fopen, na);
+    emu_env_w32_export_hook(m_env, "fwrite", userHook_fwrite, na);
 
-	emu_env_w32_export_hook(env, "CreateProcessA", userHook_CreateProcess, NULL);
-	emu_env_w32_export_hook(env, "WaitForSingleObject", userHook_WaitForSingleObject, NULL);
-	emu_env_w32_export_hook(env, "CreateFileA", userHook_CreateFile, na);
-	emu_env_w32_export_hook(env, "WriteFile", userHook_WriteFile, na);
-	emu_env_w32_export_hook(env, "CloseHandle", userHook_CloseHandle, na);
+    emu_env_w32_export_hook(m_env, "CreateProcessA", userHook_CreateProcess, NULL);
+    emu_env_w32_export_hook(m_env, "WaitForSingleObject", userHook_WaitForSingleObject, NULL);
+    emu_env_w32_export_hook(m_env, "CreateFileA", userHook_CreateFile, na);
+    emu_env_w32_export_hook(m_env, "WriteFile", userHook_WriteFile, na);
+    emu_env_w32_export_hook(m_env, "CloseHandle", userHook_CloseHandle, na);
 
 	/* ws2_32.dll */
-	emu_env_w32_load_dll(env->env.win,"ws2_32.dll");
-	emu_env_w32_export_hook(env, "accept", userHook_accept, NULL);
-	emu_env_w32_export_hook(env, "bind", userHook_bind, NULL);
-	emu_env_w32_export_hook(env, "closesocket", userHook_closesocket, NULL);
-	emu_env_w32_export_hook(env, "connect", userHook_connect, NULL);
+    emu_env_w32_load_dll(m_env->env.win,"ws2_32.dll");
+    emu_env_w32_export_hook(m_env, "accept", userHook_accept, NULL);
+    emu_env_w32_export_hook(m_env, "bind", userHook_bind, NULL);
+    emu_env_w32_export_hook(m_env, "closesocket", userHook_closesocket, NULL);
+    emu_env_w32_export_hook(m_env, "connect", userHook_connect, NULL);
 
-	emu_env_w32_export_hook(env, "listen", userHook_listen, NULL);
-	emu_env_w32_export_hook(env, "recv", userHook_recv, NULL);
-	emu_env_w32_export_hook(env, "send", userHook_send, NULL);
-	emu_env_w32_export_hook(env, "socket", userHook_socket, NULL);
-	emu_env_w32_export_hook(env, "WSASocketA", userHook_WSASocket, NULL);
+    emu_env_w32_export_hook(m_env, "listen", userHook_listen, NULL);
+    emu_env_w32_export_hook(m_env, "recv", userHook_recv, NULL);
+    emu_env_w32_export_hook(m_env, "send", userHook_send, NULL);
+    emu_env_w32_export_hook(m_env, "socket", userHook_socket, NULL);
+    emu_env_w32_export_hook(m_env, "WSASocketA", userHook_WSASocket, NULL);
 
 	/* urlmon.dll */
-	emu_env_w32_load_dll(env->env.win,"urlmon.dll");
-	emu_env_w32_export_hook(env, "URLDownloadToFileA", userHook_URLDownloadToFile, NULL);
+    emu_env_w32_load_dll(m_env->env.win,"urlmon.dll");
+    emu_env_w32_export_hook(m_env, "URLDownloadToFileA", userHook_URLDownloadToFile, NULL);
 #endif
 }
 
 void EmulationUnit::exportLinuxHooks()
 {
 #if 0
-	emu_env_linux_syscall_hook(env, "exit", userHook_exit, NULL);
-	emu_env_linux_syscall_hook(env, "socket", userHook_socket, NULL);
+    emu_env_linux_syscall_hook(m_env, "exit", userHook_exit, NULL);
+    emu_env_linux_syscall_hook(m_env, "socket", userHook_socket, NULL);
 #endif
 }

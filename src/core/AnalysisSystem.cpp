@@ -8,7 +8,7 @@
 
 AnalysisSystem::AnalysisSystem()
 {
-	sample = NULL;
+    m_sample = NULL;
 	loadModules();
 }
 
@@ -18,32 +18,32 @@ AnalysisSystem::~AnalysisSystem()
 
 void AnalysisSystem::loadSample(ShellcodeSample *sample)
 {
-	this->sample = sample;
+    m_sample = sample;
 }
 
 bool AnalysisSystem::analyze()
 {
-	if(!sample)
+    if(!m_sample)
 		return false;
 
-	if(!sample->getInfo()->isShellcodePresent()) {
-		sample = NULL;
+    if(!m_sample->info()->isShellcodePresent()) {
+        m_sample = NULL;
 		return true;
 	}
 
 	bool status;
-	map<string, AbstractAnalyze *>::iterator it;
-	for(it = analyzeModules->begin(); it != analyzeModules->end(); ++it) {
-		status = (*it).second->perform(sample);
-		if(!status)
-			return false;
+    QMap<QString, AbstractAnalyze *>::iterator it;
+    for(it = m_analyzeModules->begin(); it != m_analyzeModules->end(); ++it) {
+        status = it.value()->perform(m_sample);
+        if(!status)
+            return false;
 	}
 
-	sample = NULL;
+    m_sample = NULL;
 	return true;
 }
 
 void AnalysisSystem::loadModules()
 {
-	analyzeModules = ModuleManager::getInstance()->getAnalyze();
+    m_analyzeModules = ModuleManager::instance()->analyze();
 }

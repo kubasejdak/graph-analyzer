@@ -7,11 +7,9 @@
 #ifndef MODULEMANAGER_H_
 #define MODULEMANAGER_H_
 
-/* standard headers */
-#include <map>
-#include <list>
+#include <QMap>
+#include <QList>
 
-/* project headers */
 #include <modules/input/AbstractInput.h>
 #include <modules/output/AbstractOutput.h>
 #include <modules/analyze/AbstractAnalyze.h>
@@ -27,19 +25,19 @@
 class ModuleManager {
 public:
 	virtual ~ModuleManager();
-	static ModuleManager *getInstance()
+    static ModuleManager *instance()
 	{
-		static ModuleManager instance;
-		return &instance;
+        static ModuleManager obj;
+        return &obj;
 	}
 
-	map<string, AbstractInput *> *getInput();
-	map<string, AbstractOutput *> *getOutput();
-	map<string, AbstractAnalyze *> *getAnalyze();
+    QMap<QString, AbstractInput *> *input();
+    QMap<QString, AbstractOutput *> *output();
+    QMap<QString, AbstractAnalyze *> *analyze();
 
-	list<ModuleInfo *> listInput();
-	list<ModuleInfo *> listOutput();
-	list<ModuleInfo *> listAnalyze();
+    QList<ModuleInfo *> listInput();
+    QList<ModuleInfo *> listOutput();
+    QList<ModuleInfo *> listAnalyze();
 
 private:
 	ModuleManager();
@@ -52,9 +50,9 @@ private:
 	void removeOutput();
 	void removeAnalyze();
 
-	map<string, AbstractInput *> inputModules;
-	map<string, AbstractOutput *> outputModules;
-	map<string, AbstractAnalyze *> analyzeModules;
+    QMap<QString, AbstractInput *> m_inputModules;
+    QMap<QString, AbstractOutput *> m_outputModules;
+    QMap<QString, AbstractAnalyze *> m_analyzeModules;
 };
 
 #endif /* MODULEMANAGER_H_ */

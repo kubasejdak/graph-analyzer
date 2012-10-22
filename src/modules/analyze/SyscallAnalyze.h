@@ -7,7 +7,6 @@
 #ifndef SYSCALLANALYZE_H_
 #define SYSCALLANALYZE_H_
 
-/* project headers */
 #include "AbstractAnalyze.h"
 #include <core/Graph.h>
 #include <core/InstructionSplitter.h>

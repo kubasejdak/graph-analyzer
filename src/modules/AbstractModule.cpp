@@ -6,34 +6,26 @@
 
 #include "AbstractModule.h"
 
-AbstractModule::AbstractModule()
+int AbstractModule::id()
 {
+    return m_id;
 }
 
-AbstractModule::~AbstractModule()
+QString AbstractModule::name()
 {
+    return m_name;
 }
 
-int AbstractModule::getId()
+QString AbstractModule::description()
 {
-	return id;
+    return m_description;
 }
 
-string AbstractModule::getName()
+ModuleInfo *AbstractModule::moduleInfo()
 {
-	return name;
-}
+    m_info.m_id = m_id;
+    m_info.m_name = m_name;
+    m_info.m_description = m_description;
 
-string AbstractModule::getDescription()
-{
-	return description;
-}
-
-ModuleInfo *AbstractModule::getModuleInfo()
-{
-	info.id = id;
-	info.name = name;
-	info.description = description;
-
-	return &info;
+    return &m_info;
 }

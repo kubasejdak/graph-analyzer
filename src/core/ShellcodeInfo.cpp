@@ -8,157 +8,140 @@
 
 ShellcodeInfo::ShellcodeInfo()
 {
-	name = "";
-	extractedFrom = "";
-	graphName = "";
-	fileType = "unknown";
-	size = 0;
-	codeOffset = 0;
-	shellcodePresent = false;
-	traits = new multimap<string, map<string, string> *> ();
-	querys = new list<QSqlQuery> ();
+    m_name = "";
+    m_extractedFrom = "";
+    m_graphName = "";
+    m_fileType = "unknown";
+    m_size = 0;
+    m_codeOffset = 0;
+    m_shellcodePresent = false;
+    m_traits = new QMultiMap<QString, QMap<QString, QString> *> ();
+    m_querys = new QList<QSqlQuery> ();
 }
 
 ShellcodeInfo::~ShellcodeInfo()
 {
-	multimap<string, map<string, string> *>::iterator it;
-	for(it = traits->begin(); it != traits->end(); ++it)
-		delete (*it).second;
+    QMultiMap<QString, QMap<QString, QString> *>::iterator it_map;
+    for(it_map = m_traits->begin(); it_map != m_traits->end(); ++it_map)
+        delete it_map.value();
 
-	delete traits;
-	delete querys;
+    m_traits->clear();
+    delete m_traits;
+
+    m_querys->clear();
+    delete m_querys;
 }
 
 void ShellcodeInfo::printInfo()
 {
-	cout << "\t name : " << name << endl;
-	cout << "\t extracted from: " << extractedFrom << endl;
-	cout << "\t graph name: " << graphName << endl;
-	cout << "\t file type : " << fileType << endl;
-	cout << "\t file size : " << dec << size << endl;
-	cout << "\t shellcode present : " << (shellcodePresent ? "yes" : "no") << endl;
-	if(shellcodePresent)
-		cout << "\t shellcode offset : 0x" << hex << codeOffset << endl;
-	multimap<string, map<string, string> *>::iterator it;
-	map<string, string>::iterator it2;
-	for(it = traits->begin(); it != traits->end(); ++it) {
-		cout << "\t * " << (*it).first << " *" << "\t";
-		for(it2 = (*it).second->begin(); it2 != (*it).second->end(); ++it2)
-			cout << (*it2).first << " : " << (*it2).second << ", ";
+    cout << "\t name : " << m_name.toStdString() << endl;
+    cout << "\t extracted from: " << m_extractedFrom.toStdString() << endl;
+    cout << "\t graph name: " << m_graphName.toStdString() << endl;
+    cout << "\t file type : " << m_fileType.toStdString() << endl;
+    cout << "\t file size : " << dec << m_size << endl;
+    cout << "\t shellcode present : " << (m_shellcodePresent ? "yes" : "no") << endl;
+    if(m_shellcodePresent)
+        cout << "\t shellcode offset : 0x" << hex << m_codeOffset << endl;
+    QMultiMap<QString, QMap<QString, QString> *>::iterator it;
+    QMap<QString, QString>::iterator it2;
+    for(it = m_traits->begin(); it != m_traits->end(); ++it) {
+        cout << "\t * " << it.key().toStdString() << " *" << "\t";
+        for(it2 = it.value()->begin(); it2 != it.value()->end(); ++it2)
+            cout << it2.key().toStdString() << " : " << it2.value().toStdString() << ", ";
 		cout << endl << endl;
 	}
 }
 
-string ShellcodeInfo::getName()
+QString ShellcodeInfo::name()
 {
-	return name;
+    return m_name;
 }
 
-string ShellcodeInfo::getExtractedFrom()
+QString ShellcodeInfo::extractedFrom()
 {
-	return extractedFrom;
+    return m_extractedFrom;
 }
 
-string ShellcodeInfo::getGraphName()
+QString ShellcodeInfo::graphName()
 {
-	return graphName;
+    return m_graphName;
 }
 
-string ShellcodeInfo::getFileType()
+QString ShellcodeInfo::fileType()
 {
-	return fileType;
+    return m_fileType;
 }
 
-int32_t ShellcodeInfo::getSize()
+int32_t ShellcodeInfo::size()
 {
-	return size;
+    return m_size;
 }
 
-int32_t ShellcodeInfo::getCodeOffset()
+int32_t ShellcodeInfo::codeOffset()
 {
-	return codeOffset;
+    return m_codeOffset;
 }
 
 bool ShellcodeInfo::isShellcodePresent()
 {
-	return shellcodePresent;
+    return m_shellcodePresent;
 }
 
-multimap<string, map<string, string> *> *ShellcodeInfo::getTraits()
+QMultiMap<QString, QMap<QString, QString> *> *ShellcodeInfo::traits()
 {
-	return traits;
+    return m_traits;
 }
 
-list<QSqlQuery> *ShellcodeInfo::getQuerys()
+QList<QSqlQuery> *ShellcodeInfo::querys()
 {
-	return querys;
+    return m_querys;
 }
 
-void ShellcodeInfo::setName(string name)
+void ShellcodeInfo::setName(QString name)
 {
-	this->name = name;
+    m_name = name;
 }
 
-void ShellcodeInfo::setExtractedFrom(string name)
+void ShellcodeInfo::setExtractedFrom(QString name)
 {
-	this->extractedFrom = name;
+    m_extractedFrom = name;
 }
 
-void ShellcodeInfo::setGraphName(string name)
+void ShellcodeInfo::setGraphName(QString name)
 {
-	this->graphName = name;
+    m_graphName = name;
 }
 
-void ShellcodeInfo::setFileType(string fileType)
+void ShellcodeInfo::setFileType(QString fileType)
 {
-	this->fileType = fileType;
+    m_fileType = fileType;
 }
 
 void ShellcodeInfo::setSize(int size)
 {
-	this->size = size;
+    m_size = size;
 }
 
 void ShellcodeInfo::setCodeOffset(int codeOffset)
 {
-	this->codeOffset = codeOffset;
+    m_codeOffset = codeOffset;
 }
 
 void ShellcodeInfo::setShellcodePresent(bool shellcodePresent)
 {
-	this->shellcodePresent = shellcodePresent;
+    m_shellcodePresent = shellcodePresent;
 }
 
-void ShellcodeInfo::setTrait(string name, map<string, string> *value)
+void ShellcodeInfo::setTrait(QString name, QMap<QString, QString> *value)
 {
 	/* ensure that key/value is unique */
-	pair<multimap<string, map<string, string> *>::iterator, multimap<string,
-			map<string, string> *>::iterator> ret;
-	multimap<string, map<string, string> *>::iterator it;
-	ret = traits->equal_range(name);
-	for(it = ret.first; it != ret.second; ++it) {
-		if(equalMaps((*it).second, value))
-			return;
-	}
+    if(m_traits->contains(name, value))
+        return;
 
-	traits->insert(pair<string, map<string, string> *> (name, value));
+    m_traits->insert(name, value);
 }
 
 void ShellcodeInfo::setQuery(QSqlQuery q)
 {
-	querys->push_back(q);
-}
-
-bool ShellcodeInfo::equalMaps(map<string, string> *a, map<string, string> *b)
-{
-	if(a->size() != b->size())
-		return false;
-
-	map<string, string>::iterator it;
-	for(it = a->begin(); it != a->end(); ++it) {
-		if((*b)[(*it).first] != (*it).second)
-			return false;
-	}
-
-	return true;
+    m_querys->push_back(q);
 }

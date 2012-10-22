@@ -7,28 +7,27 @@
 #ifndef DATABASEOUTPUT_H_
 #define DATABASEOUTPUT_H_
 
-/* standard headers */
 #include <QtCore>
 #include <QtSql>
+#include <QMap>
+#include <QFile>
 
-#include <map>
-using namespace std;
-
-/* project headers */
 #include "AbstractOutput.h"
 #include <core/SystemLogger.h>
 #include <core/Options.h>
+#include <core/DatabaseManager.h>
 #include <modules/ModuleManager.h>
 
 class DatabaseOutput: public AbstractOutput {
 public:
 	DatabaseOutput();
-	virtual ~DatabaseOutput();
+    virtual ~DatabaseOutput() {}
 
 	virtual bool generateOutput(ShellcodeSample *sample);
 
 private:
-	QSqlQuery traitQuery(string table, map<string, string> *v, int sample_id);
+    void traitQuery(QSqlQuery *query, QString table, QMap<QString, QString> *v, int sample_id);
+    bool checkDuplicate(ShellcodeInfo *info);
 };
 
 #endif /* DATABASEOUTPUT_H_ */

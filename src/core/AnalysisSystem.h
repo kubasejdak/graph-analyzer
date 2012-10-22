@@ -7,10 +7,8 @@
 #ifndef ANALYSISSYSTEM_H_
 #define ANALYSISSYSTEM_H_
 
-/* standard headers */
-#include <map>
+#include <QMap>
 
-/* project headers */
 #include <core/ShellcodeSample.h>
 #include <modules/analyze/AbstractAnalyze.h>
 #include <modules/ModuleManager.h>
@@ -26,8 +24,8 @@ public:
 private:
 	void loadModules();
 
-	ShellcodeSample *sample;
-	map<string, AbstractAnalyze *> *analyzeModules;
+    ShellcodeSample *m_sample;
+    QMap<QString, AbstractAnalyze *> *m_analyzeModules;
 };
 
 #endif /* ANALYSISSYSTEM_H_ */

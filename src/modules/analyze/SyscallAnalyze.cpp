@@ -8,10 +8,9 @@
 
 SyscallAnalyze::SyscallAnalyze()
 {
-	id = getNextID();
-	name = "SyscallAnalyze";
-	description = "Searches the graph for system API calls.";
-	trait_name = "api";
+    m_name = "SyscallAnalyze";
+    m_description = "Searches the graph for system API calls.";
+    m_traitName = "api";
 }
 
 SyscallAnalyze::~SyscallAnalyze()
@@ -20,12 +19,12 @@ SyscallAnalyze::~SyscallAnalyze()
 
 bool SyscallAnalyze::perform(ShellcodeSample *sample)
 {
-	Graph *g = sample->getGraph();
+    Graph *g = sample->graph();
 	struct instr_vertex *instr_vert;
-	string syscall, dll;
+    QString syscall, dll;
 	Graph::graph_iterator it;
 	InstructionSplitter splitter;
-	map<string, string> *m;
+    QMap<QString, QString> *m;
 
 	for(it = g->begin(); it != g->end(); ++it) {
 		instr_vert = (struct instr_vertex *) it->data;
@@ -33,11 +32,11 @@ bool SyscallAnalyze::perform(ShellcodeSample *sample)
 			splitter = emu_string_char(instr_vert->instr_string);
 			dll = instr_vert->dll->dllname;
 			dll += ".dll";
-			syscall = splitter.getSyscall();
-			m = new map<string, string> ();
+            syscall = splitter.syscall();
+            m = new QMap<QString, QString> ();
 			(*m)["syscall"] = syscall;
 			(*m)["DLL"] = dll;
-			sample->getInfo()->setTrait(trait_name, m);
+            sample->info()->setTrait(m_traitName, m);
 		}
 	}
 

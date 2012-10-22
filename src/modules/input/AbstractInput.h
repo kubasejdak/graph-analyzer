@@ -7,32 +7,30 @@
 #ifndef ABSTRACTINPUT_H_
 #define ABSTRACTINPUT_H_
 
-/* standard headers*/
-#include <string>
-#include <fstream>
-#include <queue>
-using namespace std;
+#include <QString>
+#include <QList>
+#include <QFile>
+#include <QQueue>
 
-/* project headers */
 #include <modules/AbstractModule.h>
 #include <core/ShellcodeSample.h>
 
 class AbstractInput: public AbstractModule {
 public:
-	AbstractInput();
-	virtual ~AbstractInput();
+    AbstractInput();
+    virtual ~AbstractInput() {}
 
-	static int getNextID()
+    static int nextID()
 	{
-		return nextID++;
+        return m_nextID++;
 	}
 
-	string getType();
-	virtual void loadInput(string filename, list<ShellcodeSample *> *samples) = 0;
+    QString type();
+    virtual void loadInput(QString filename, QList<ShellcodeSample *> *samples) = 0;
 
 protected:
-	static int nextID;
-	string type;
+    static int m_nextID;
+    QString m_type;
 };
 
 #endif /* ABSTRACTINPUT_H_ */

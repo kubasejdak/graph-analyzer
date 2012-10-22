@@ -7,24 +7,23 @@
 #ifndef ABSTRACTOUTPUT_H_
 #define ABSTRACTOUTPUT_H_
 
-/* project headers */
 #include <modules/AbstractModule.h>
 #include <core/ShellcodeSample.h>
 
 class AbstractOutput: public AbstractModule {
 public:
-	AbstractOutput();
-	virtual ~AbstractOutput();
+    AbstractOutput();
+    virtual ~AbstractOutput() {}
 
-	static int getNextID()
+    static int nextID()
 	{
-		return nextID++;
+        return m_nextID++;
 	}
 
 	virtual bool generateOutput(ShellcodeSample *sample) = 0;
 
 protected:
-	static int nextID;
+    static int m_nextID;
 };
 
 #endif /* ABSTRACTOUTPUT_H_ */

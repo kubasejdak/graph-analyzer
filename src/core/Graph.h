@@ -7,12 +7,10 @@
 #ifndef GRAPH_H_
 #define GRAPH_H_
 
-/* standard headers */
 #include <iterator>
-#include <vector>
+#include <QVector>
 using namespace std;
 
-/* libemu headers */
 extern "C" {
 	#include <emu/emu_graph.h>
 	#include <emu/emu_hashtable.h>
@@ -23,8 +21,8 @@ extern "C" {
 #include <core/Dot.h>
 #include <core/InstructionSplitter.h>
 
-typedef vector<emu_vertex *> loop_vec;
-typedef vector<loop_vec *> loop_container;
+typedef QVector<emu_vertex *> LoopVec;
+typedef QVector<LoopVec *> LoopContainer;
 
 class Graph {
 public:
@@ -32,8 +30,8 @@ public:
 	Graph(struct emu_graph *g, struct emu_hashtable *h);
 	virtual ~Graph();
 
-	emu_graph *getEmuGraph();
-	emu_hashtable *getEmuHashtable();
+    emu_graph *emuGraph();
+    emu_hashtable *emuHashtable();
 
 	/* iterator */
 	class graph_iterator : public std::iterator<forward_iterator_tag, emu_vertex> {
@@ -50,21 +48,21 @@ public:
 		emu_vertex *operator->();
 
 	private:
-		emu_vertex *outVertex;
-		Graph *outGraph;
+        emu_vertex *m_outVertex;
+        Graph *m_outGraph;
 		friend class Graph;
 	}; /* iterator */
 
 	graph_iterator begin();
 	graph_iterator end();
 
-	loop_container *detectLoop(graph_iterator from_it);
+    LoopContainer *detectLoop(graph_iterator from_it);
 
 private:
 	void clearVertColor(emu_vertex *from);
 
-	struct emu_graph *graph;
-	struct emu_hashtable *hashtable;
+    struct emu_graph *m_graph;
+    struct emu_hashtable *m_hashtable;
 };
 
 #endif /* GRAPH_H_ */

@@ -8,34 +8,34 @@
 
 EmulationSystem::EmulationSystem()
 {
-	emuUnit = new EmulationUnit();
-	sample = NULL;
+    m_emuUnit = new EmulationUnit();
+    m_sample = NULL;
 }
 
 EmulationSystem::~EmulationSystem()
 {
-	delete emuUnit;
+    delete m_emuUnit;
 }
 
 void EmulationSystem::loadSample(ShellcodeSample *sample)
 {
-	this->sample = sample;
+    m_sample = sample;
 }
 
 bool EmulationSystem::emulate()
 {
-	if(!sample)
+    if(!m_sample)
 		return false;
 
 	/* load code to emu unit */
 	int32_t codeOffset;
-	codeOffset = emuUnit->loadCode(sample->getCode(), sample->getInfo()->getSize());
-	sample->getInfo()->setCodeOffset(codeOffset);
-	sample->getInfo()->setShellcodePresent(codeOffset >= 0 ? true : false);
+    codeOffset = m_emuUnit->loadCode(m_sample->code(), m_sample->info()->size());
+    m_sample->info()->setCodeOffset(codeOffset);
+    m_sample->info()->setShellcodePresent(codeOffset >= 0 ? true : false);
 
 	/* if exploit not detected return */
-	if(!sample->getInfo()->isShellcodePresent()) {
-		sample = NULL;
+    if(!m_sample->info()->isShellcodePresent()) {
+        m_sample = NULL;
 		return true;
 	}
 
@@ -43,11 +43,11 @@ bool EmulationSystem::emulate()
 	uint32_t eipsave = 0;
 	int ret = 0;
 
-	Graph *graph = sample->getGraph();
-	struct emu_cpu *cpu = emuUnit->getCpu();
-	struct emu_env *env = emuUnit->getEnv();
-	struct emu_graph *eg = graph->getEmuGraph();
-	struct emu_hashtable *eh = graph->getEmuHashtable();
+    Graph *graph = m_sample->graph();
+    struct emu_cpu *cpu = m_emuUnit->cpu();
+    struct emu_env *env = m_emuUnit->env();
+    struct emu_graph *eg = graph->emuGraph();
+    struct emu_hashtable *eh = graph->emuHashtable();
 	struct emu_vertex *last_vertex = NULL;
 	struct emu_vertex *ev = NULL;
 	struct emu_hashtable_item *ehi = NULL;
@@ -58,6 +58,7 @@ bool EmulationSystem::emulate()
 	emu_cpu_debugflag_set(cpu, instruction_string);
 
 	/* emulation loop */
+    LOG("entering emulation loop\n");
 	for(int i = 0; i < EMULATION_STEPS; ++i) {
 		if(!cpu->repeat_current_instr)
 			eipsave = emu_cpu_eip_get(cpu);
@@ -153,7 +154,7 @@ bool EmulationSystem::emulate()
 			if(ret == -1) {
 				/* step failed - maybe SEH */
 				if(emu_env_w32_step_failed(env) != 0) {
-					LOG("cpu %s\n", emu_strerror(emuUnit->getEmu()));
+                    LOG("cpu %s\n", emu_strerror(m_emuUnit->emu()));
 					break;
 				}
 			}
@@ -173,65 +174,69 @@ bool EmulationSystem::emulate()
 	} /* emulation loop */
 
 	/* create .dot file */
-	string dot_file = APP_ROOT_PATH;
-	dot_file.append("bin/graph.dot");
-	graph_draw(graph->getEmuGraph(), dot_file);
+    LOG("creating .dot file\n");
+    QString dotFile = QString("%1/bin/graph.dot").arg(APP_ROOT_PATH);;
+    graph_draw(graph->emuGraph(), dotFile);
 
 	/* draw graph using dot package and sample name */
-	string graph_name = sample->getInfo()->getName();
-	graph_name = trimExtension(graph_name);
-	graph_name += ".png";
-
-	if(!nameExists(GRAPHS_DIR)) {
-		int ret = mkdir(GRAPHS_DIR.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
-		if(ret != 0) {
-			LOG_ERROR("cannot create directory %s\n", GRAPHS_DIR.c_str());
+    if(!QDir(GRAPHS_DIR).exists()) {
+        bool success = QDir().mkdir(GRAPHS_DIR);
+        if(!success) {
+            LOG_ERROR("cannot create directory %s\n", GRAPHS_DIR.toStdString().c_str());
 			return false;
 		}
 	}
 
-	graph_name = extractBasename(graph_name);
-	graph_name.insert(0, GRAPHS_DIR);
+    QFileInfo graphFile(m_sample->info()->name());
+    QString graphName = QString("%1/%2.png").arg(GRAPHS_DIR).arg(graphFile.baseName());
 
 	/* check for duplicates */
 	int k = 2;
-	while(nameExists(graph_name)) {
-		graph_name = trimExtension(graph_name);
-		graph_name += "_";
-		size_t n = graph_name.find_first_of("_");
-		graph_name.erase(n + 1);
-		graph_name += itos(k);
-		graph_name += ".png";
+    while(QFile(graphName).exists()) {
+        LOG("duplicate name for graph name found, renaming\n");
+        QFileInfo duplicate(graphName);
+        graphName = QString("%1/%2").arg(duplicate.absolutePath()).arg(duplicate.baseName());
+
+        if(k != 2) {
+            int n = graphName.lastIndexOf('_');
+            graphName.truncate(n + 1);
+        }
+        else
+            graphName += "_";
+        QString str_num;
+        graphName += str_num.setNum(k) + ".png";
 		++k;
 	}
+    LOG("graph name will be: %s\n", graphName.toStdString().c_str());
 
-	string dot_cmd = "dot ";
-	dot_cmd.append(dot_file.c_str()).append(" -Tpng -o \"");
-	dot_cmd.append(graph_name.c_str()).append("\"");
-	ret = system(dot_cmd.c_str());
+    QString dotCmd = QString("dot %1 -Tpng -o \"%2\"").arg(dotFile.toStdString().c_str()).arg(graphName.toStdString().c_str());
+    LOG("trying to execute '%s'\n", dotCmd.toStdString().c_str());
+    ret = system(dotCmd.toStdString().c_str());
 	if(!ret) {
-		ret = unlink(dot_file.c_str());
-		if(ret) {
-			SystemLogger::getInstance()->setError(UNLINK_FAILED);
+        bool success = QFile(dotFile).remove();
+        if(!success) {
+            SystemLogger::instance()->setError("removing .dot file failed");
 			LOG_ERROR("deleting .dot file\n");
 		}
 	}
 	else {
-		SystemLogger::getInstance()->setError(GRAPH_DRAW_FAILED);
+        SystemLogger::instance()->setError("drawing graph failed");
 		LOG_ERROR("drawing graph failed\n");
-		ret = unlink(dot_file.c_str());
-		if(ret)
+        bool success = QFile(dotFile).remove();
+        if(!success) {
+            SystemLogger::instance()->setError("removing .dot file failed");
 			LOG_ERROR("deleting .dot file\n");
+        }
 	}
 
 	if(DELETE_CODE_INSTANTLY) {
-		delete sample->getCode();
-		sample->setCode(NULL);
+        delete m_sample->code();
+        m_sample->setCode(NULL);
 	}
 
-	sample->getInfo()->setGraphName(graph_name);
-	sample = NULL;
-	LOG("emulation finished\n");
+    m_sample->info()->setGraphName(graphName);
+    m_sample = NULL;
+    LOG("emulation finished\n");
 
 	return true;
 }

@@ -7,26 +7,25 @@
 #ifndef SHELLCODESAMPLE_H_
 #define SHELLCODESAMPLE_H_
 
-/* project headers */
 #include <core/ShellcodeInfo.h>
 #include <core/Graph.h>
-#include <toolbox.h>
+#include <core/Toolbox.h>
 
 class ShellcodeSample {
 public:
 	ShellcodeSample();
 	virtual ~ShellcodeSample();
 
-	byte_t *getCode();
-	ShellcodeInfo *getInfo();
-	Graph *getGraph();
+    byte_t *code();
+    ShellcodeInfo *info();
+    Graph *graph();
 
 	void setCode(byte_t *code);
 
 private:
-	byte_t *code;
-	ShellcodeInfo *info;
-	Graph *graph;
+    byte_t *m_code;
+    ShellcodeInfo *m_info;
+    Graph *m_graph;
 };
 
 #endif /* SHELLCODESAMPLE_H_ */

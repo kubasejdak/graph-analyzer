@@ -41,14 +41,14 @@ void instr_vertex_destructor(void *data)
 	instr_vertex_free((struct instr_vertex *) data);
 }
 
-int graph_draw(struct emu_graph *graph, string dot_file)
+void graph_draw(struct emu_graph *graph, QString dot_file)
 {
 	struct emu_vertex *ev;
 	struct instr_vertex *iv;
 
-	FILE *f = fopen(dot_file.c_str(), "w+");
+    FILE *f = fopen(dot_file.toStdString().c_str(), "w+");
 	if(f == NULL) {
-		LOG_ERROR("cannot open temporary file %s\n", dot_file.c_str());
+        LOG_ERROR("cannot open temporary file %s\n", dot_file.toStdString().c_str());
 		exit(1);
 	}
 
@@ -58,7 +58,6 @@ int graph_draw(struct emu_graph *graph, string dot_file)
 	struct emu_vertex *nev;
 	struct instr_vertex *niv = NULL;
 
-	LOG("copying vertexes\n");
 	for(ev = emu_vertexes_first(graph->vertexes); !emu_vertexes_attail(ev); ev = emu_vertexes_next(ev)) {
 		iv = (struct instr_vertex *) ev->data;
 
@@ -72,13 +71,10 @@ int graph_draw(struct emu_graph *graph, string dot_file)
 		ev->color = white;
 	}
 
-	LOG("optimizing graph\n");
 	for(ev = emu_vertexes_first(graph->vertexes); !emu_vertexes_attail(ev); ev = emu_vertexes_next(ev)) {
 		/* ignore known */
 		if(ev->color == black)
 			continue;
-
-		LOG("vertex %p\n", (void *) ev);
 
 		/* find the first in a chain */
 		iv = (struct instr_vertex *) ev->data;
@@ -92,7 +88,6 @@ int graph_draw(struct emu_graph *graph, string dot_file)
 				break;
 
 			ev = xev;
-			LOG(" -> vertex %p\n", (void *) ev);
 		}
 
 		iv = (struct instr_vertex *) ev->data;
@@ -102,7 +97,6 @@ int graph_draw(struct emu_graph *graph, string dot_file)
 		niv = (struct instr_vertex *) nev->data;
 		iv = (struct instr_vertex *) ev->data;
 
-		LOG("going forwards from %p\n", (void *) ev);
 		while(emu_edges_length(ev->edges) == 1 && emu_edges_length(ev->backedges) <= 1
 				&& ev->color != black && iv->dll == NULL && iv->syscall == NULL) {
 			ev->color = black;
@@ -116,12 +110,10 @@ int graph_draw(struct emu_graph *graph, string dot_file)
 			ev = xev;
 			iv = (struct instr_vertex *) ev->data;
 			emu_string_append_char(niv->instr_string, emu_string_char(iv->instr_string));
-			LOG(" -> vertex %p\n", (void *) ev);
 		}
 
 		ev->color = black;
 
-		LOG("copying edges for %p\n", (void *) ev);
 		struct emu_edge *ee;
 		for(ee = emu_edges_first(ev->edges); !emu_edges_attail(ee); ee = emu_edges_next(ee)) {
 			struct instr_vertex *ivto = (instr_vertex *) emu_vertex_data_get(ee->destination);
@@ -131,7 +123,6 @@ int graph_draw(struct emu_graph *graph, string dot_file)
 				struct emu_edge *nee = emu_vertex_edge_add(nev, to);
 				nee->count = ee->count;
 				nee->data = ee->data;
-				LOG(" -> %p\n", (void *) to);
 			}
 		}
 	}
@@ -188,6 +179,4 @@ int graph_draw(struct emu_graph *graph, string dot_file)
 
 	graph->vertex_destructor = instr_vertex_destructor;
 	emu_graph_free(sgraph);
-
-	return 0;
 }

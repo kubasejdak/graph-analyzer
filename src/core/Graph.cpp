@@ -8,105 +8,105 @@
 
 Graph::Graph()
 {
-	graph = emu_graph_new();
-	hashtable = emu_hashtable_new(2047, emu_hashtable_ptr_hash, emu_hashtable_ptr_cmp);
+    m_graph = emu_graph_new();
+    m_hashtable = emu_hashtable_new(2047, emu_hashtable_ptr_hash, emu_hashtable_ptr_cmp);
 }
 
 Graph::Graph(struct emu_graph *g, struct emu_hashtable *h)
 {
-	graph = g;
-	hashtable = h;
+    m_graph = g;
+    m_hashtable = h;
 }
 
 Graph::~Graph()
 {
-	emu_hashtable_free(hashtable);
-	emu_graph_free(graph);
+    emu_hashtable_free(m_hashtable);
+    emu_graph_free(m_graph);
 }
 
-emu_graph *Graph::getEmuGraph()
+emu_graph *Graph::emuGraph()
 {
-	return graph;
+    return m_graph;
 }
 
-emu_hashtable *Graph::getEmuHashtable()
+emu_hashtable *Graph::emuHashtable()
 {
-	return hashtable;
+    return m_hashtable;
 }
 
 Graph::graph_iterator::graph_iterator()
 {
-	outGraph = NULL;
-	outVertex = NULL;
+    m_outGraph = NULL;
+    m_outVertex = NULL;
 }
 
 Graph::graph_iterator::graph_iterator(Graph *g, emu_vertex *v)
 {
-	outGraph = g;
-	outVertex = v;
+    m_outGraph = g;
+    m_outVertex = v;
 }
 
 Graph::graph_iterator::graph_iterator(const graph_iterator &it)
 {
-	outGraph = it.outGraph;
-	outVertex = it.outVertex;
+    m_outGraph = it.m_outGraph;
+    m_outVertex = it.m_outVertex;
 }
 
 Graph::graph_iterator &Graph::graph_iterator::operator++()
 {
-	if(!outVertex || *this == outGraph->end())
+    if(!m_outVertex || *this == m_outGraph->end())
 		return *this;
 
-	outVertex = emu_vertexes_next(outVertex);
+    m_outVertex = emu_vertexes_next(m_outVertex);
 	return *this;
 }
 
 Graph::graph_iterator &Graph::graph_iterator::operator--()
 {
-	if(!outVertex || *this == outGraph->begin())
+    if(!m_outVertex || *this == m_outGraph->begin())
 		return *this;
 
-	outVertex = emu_vertexes_prev(outVertex);
+    m_outVertex = emu_vertexes_prev(m_outVertex);
 	return *this;
 }
 
 bool Graph::graph_iterator::operator==(const graph_iterator &r)
 {
-	return outVertex == r.outVertex;
+    return m_outVertex == r.m_outVertex;
 }
 
 bool Graph::graph_iterator::operator!=(const graph_iterator &r)
 {
-	return outVertex != r.outVertex;
+    return m_outVertex != r.m_outVertex;
 }
 
 emu_vertex &Graph::graph_iterator::operator*()
 {
-	return *outVertex;
+    return *m_outVertex;
 }
 
 emu_vertex *Graph::graph_iterator::operator->()
 {
-	return outVertex;
+    return m_outVertex;
 }
 
 Graph::graph_iterator Graph::begin()
 {
-	if(emu_vertexes_empty(graph->vertexes))
+    if(emu_vertexes_empty(m_graph->vertexes))
 		return end();
 
-	return graph_iterator(this, emu_vertexes_first(graph->vertexes));
+    return graph_iterator(this, emu_vertexes_first(m_graph->vertexes));
 }
 
 Graph::graph_iterator Graph::end()
 {
-	if(emu_vertexes_empty(graph->vertexes))
+    if(emu_vertexes_empty(m_graph->vertexes))
 		return graph_iterator(this, NULL);
 
-	return graph_iterator(this, emu_vertexes_last(graph->vertexes));
+    return graph_iterator(this, emu_vertexes_last(m_graph->vertexes));
 }
 
-loop_container *Graph::detectLoop(Graph::graph_iterator from_it)
+LoopContainer *Graph::detectLoop(Graph::graph_iterator from_it)
 {
 	emu_vertex *from = &(*from_it);
 
@@ -115,9 +115,9 @@ loop_container *Graph::detectLoop(Graph::graph_iterator from_it)
 	if(from->backlinks < n)
 		return NULL;
 
-	loop_container *loops = new loop_container();
-	loop_vec *vec = new loop_vec();
-	loop_vec *tmp = new loop_vec();
+    LoopContainer *loops = new LoopContainer();
+    LoopVec *vec = new LoopVec();
+    LoopVec *tmp = new LoopVec();
 
 	vec->push_back(from);
 	loops->push_back(vec);
@@ -127,7 +127,7 @@ loop_container *Graph::detectLoop(Graph::graph_iterator from_it)
 	emu_vertex *v;
 
 	/* possible loop paths for vertex "from" */
-	for(unsigned i = 0; i < loops->size(); ++i) {
+    for(int i = 0; i < loops->size(); ++i) {
 		/* last vertex in actual path */
 		v = (*loops)[i]->back();
 
@@ -168,7 +168,7 @@ loop_container *Graph::detectLoop(Graph::graph_iterator from_it)
 					if(e->destination->color == black)
 						continue;
 					else {
-						vec = new loop_vec();
+                        vec = new LoopVec();
 						*vec = *tmp;
 						vec->push_back(e->destination);
 						loops->push_back(vec);

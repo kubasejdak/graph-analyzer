@@ -7,75 +7,49 @@
 #ifndef SYSTEMLOGGER_H_
 #define SYSTEMLOGGER_H_
 
-enum SystemStatus {
-	IDLE,
-	LOADING,
-	EMULATING,
-	ANALYZING,
-	GENERATING_OUTPUT
-};
-
-enum SystemError {
-	NO_ERROR,
-	CANNOT_HANDLE_FILE,
-	EMULATION_FAILED,
-	ANALYZING_FAILED,
-	CHANGE_DIR_FAILED,
-	TCPFLOW_FAILED,
-	OPEN_DIR_FAILED,
-	UNLINK_FAILED,
-	GRAPH_DRAW_FAILED,
-	OUTPUT_FAILED
-};
-
-/* standard headers */
-#include <string>
-#include <map>
+#include <QString>
+#include <QDate>
+#include <QTime>
 #include <boost/current_function.hpp>
 #include <cstdarg>
 #include <cstdio>
-#include <toolbox.h>
-using namespace std;
 
-#define	LOG(fmt, args...) 		SystemLogger::getInstance()->log(__FILE__, BOOST_CURRENT_FUNCTION, __LINE__, fmt, ##args)
-#define	LOG_ERROR(fmt, args...)	SystemLogger::getInstance()->logError(__FILE__, BOOST_CURRENT_FUNCTION, __LINE__, fmt, ##args)
+#include <core/Toolbox.h>
+
+#define	LOG(fmt, args...) 		SystemLogger::instance()->log(__FILE__, BOOST_CURRENT_FUNCTION, __LINE__, fmt, ##args)
+#define	LOG_ERROR(fmt, args...)	SystemLogger::instance()->logError(__FILE__, BOOST_CURRENT_FUNCTION, __LINE__, fmt, ##args)
 
 class SystemLogger {
 public:
-	virtual ~SystemLogger();
-	static SystemLogger *getInstance()
+    static SystemLogger *instance()
 	{
-		static SystemLogger instance;
-		return &instance;
+        static SystemLogger obj;
+        return &obj;
 	}
 
 	/* error and status */
-	void setStatus(SystemStatus status);
-	void setError(SystemError error);
+    void setStatus(QString status);
+    void setError(QString error);
+    void clearError();
 
-	SystemStatus getStatus();
-	SystemError getError();
-
-	string mapStatus(SystemStatus status);
-	string mapError(SystemError error);
+    QString status();
+    QString error();
 
 	/* logging */
 	void setLogLevel(int level);
-	void setLogFile(string filename);
+    void setLogFile(QString filename);
 
-	void log(string msg_file, string func, int line, string fmt, ...);
-	void logError(string msg_file, string func, int line, string fmt, ...);
+    void log(QString msg_file, QString func, int line, QString fmt, ...);
+    void logError(QString msg_file, QString func, int line, QString fmt, ...);
 
 private:
 	SystemLogger();
 
-	SystemStatus status;
-	SystemError error;
-	map<SystemStatus, string> status_map;
-	map<SystemError, string> error_map;
+    QString m_status;
+    QString m_error;
 
-	int logging_level;
-	string log_file;
+    int m_logLevel;
+    QString m_logFile;
 };
 
 #endif /* SYSTEMLOGGER_H_ */

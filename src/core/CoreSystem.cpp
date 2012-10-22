@@ -8,18 +8,18 @@
 
 CoreSystem::CoreSystem()
 {
-	SystemLogger::getInstance()->setLogFile("/home/kuba/analyzer_log");
-	SystemLogger::getInstance()->setLogLevel(2);
+    SystemLogger::instance()->setLogFile("/home/kuba/analyzer_log");
+    SystemLogger::instance()->setLogLevel(2);
 
 	LOG("reading config file\n");
-	ConfigFile::getInstance()->read();
+    ConfigFile::instance()->read();
 	loadModules();
 
-	SystemLogger::getInstance()->setStatus(IDLE);
-	SystemLogger::getInstance()->setError(NO_ERROR);
+    SystemLogger::instance()->setStatus("idle");
+    SystemLogger::instance()->clearError();
 
-	exploit_counter = 0;
-	sample_counter = 0;
+    m_exploitCounter = 0;
+    m_sampleCounter = 0;
 
 	LOG("created CoreSystem instance\n");
 }
@@ -30,182 +30,176 @@ CoreSystem::~CoreSystem()
 	clearSamples();
 }
 
-void CoreSystem::addFile(string root_file)
+void CoreSystem::addFile(QString file)
 {
-	if(root_file.empty())
+    if(file.isEmpty())
 		return;
 
-	pending_files.push_back(root_file);
+    m_pendingFiles.push_back(file);
 }
 
 void CoreSystem::run()
 {
 	/* parse all input files */
-	while(!pending_files.empty()) {
-		string current_file = pending_files.front();
-		pending_files.pop_front();
+    LOG("parsing input files...\n");
+    while(!m_pendingFiles.isEmpty()) {
+        QString currentFile = m_pendingFiles.front();
+        m_pendingFiles.pop_front();
 
 		/* check if directory */
-		if(isDirectory(current_file)) {
-			DIR *dp;
-			dirent *de;
+        if(QDir(currentFile).exists()) {
+            QDirIterator it(currentFile, QDirIterator::Subdirectories);
+            while(it.hasNext()) {
+                QString entryName = it.next();
+                if(QDir(entryName).exists() || entryName == "." || entryName == "..")
+                    continue;
 
-			dp = opendir(current_file.c_str());
-			if(dp == NULL) {
-				LOG_ERROR("opening directory %s\n", current_file.c_str());
-				continue;
-			}
-
-			while((de = readdir(dp))) {
-				if(strcmp(de->d_name, ".") == 0 || strcmp(de->d_name, "..") == 0)
-					continue;
-
-				string next = current_file;
-				if(current_file[current_file.size() - 1] != '/')
-					next += "/";
-				next += de->d_name;
-				pending_files.push_front(next);
+                m_pendingFiles.push_back(entryName);
 			}
 
 			continue;
-		} /* if */
+        }
 
 		/* load */
-		if(!load(current_file)) {
-			LOG_ERROR("opening file %s (%s)\n", current_file.c_str(), getError().c_str());
+        LOG("loading...\n");
+        if(!load(currentFile)) {
+            LOG_ERROR("opening file %s (%s)\n", currentFile.toStdString().c_str(), error().toStdString().c_str());
 			continue;
 		}
 
 		ShellcodeSample *s;
-		while(!samples.empty()) {
-			s = samples.front();
-			samples.pop_front();
+        while(!m_samples.isEmpty()) {
+            s = m_samples.front();
+            m_samples.pop_front();
 
 			/* emulate */
+            LOG("emulating...\n");
 			if(!emulate(s)) {
-				LOG_ERROR("emulating %s (%s)\n", current_file.c_str(), getError().c_str());
+                LOG_ERROR("emulating %s (%s)\n", currentFile.toStdString().c_str(), error().toStdString().c_str());
 				delete s;
 				continue;
 			}
 
 			/* analyze graph */
+            LOG("analyzing...\n");
 			if(!analyze(s)) {
-				LOG_ERROR("analyzing %s (%s)\n", current_file.c_str(), getError().c_str());
+                LOG_ERROR("analyzing %s (%s)\n", currentFile.toStdString().c_str(), error().toStdString().c_str());
 				delete s;
 				continue;
 			}
 
 			/* make output */
+            LOG("generating output...\n");
 			if(!makeOutput(s)) {
-				LOG_ERROR("output for %s (%s)\n", current_file.c_str(), getError().c_str());
+                LOG_ERROR("output for %s (%s)\n", currentFile.toStdString().c_str(), error().toStdString().c_str());
 				delete s;
 				continue;
 			}
 
 			/* clean up */
 			delete s;
+
+            LOG("sample analysis SUCCESS!\n");
 		}
 	} /* while */
 }
 
 void CoreSystem::clear()
 {
-	exploit_counter = 0;
-	sample_counter = 0;
+    m_exploitCounter = 0;
+    m_sampleCounter = 0;
 
 	clearSamples();
 }
 
-string CoreSystem::getStatus()
+QString CoreSystem::status()
 {
-	SystemStatus s = SystemLogger::getInstance()->getStatus();
-	return mapStatus(s);
+    return SystemLogger::instance()->status();
 }
 
-string CoreSystem::getError()
+QString CoreSystem::error()
 {
-	SystemError e = SystemLogger::getInstance()->getError();
-	return mapError(e);
+    return SystemLogger::instance()->error();
 }
 
-void CoreSystem::setLogFile(string filename)
+void CoreSystem::setLogFile(QString file)
 {
-	SystemLogger::getInstance()->setLogFile(filename);
+    SystemLogger::instance()->setLogFile(file);
 }
 
 void CoreSystem::setLogLevel(int level)
 {
-	SystemLogger::getInstance()->setLogLevel(level);
+    SystemLogger::instance()->setLogLevel(level);
 }
 
-void CoreSystem::setOutput(string method)
+void CoreSystem::setOutput(QString method)
 {
-	output_methods.push_back(method);
+    m_outputMethods.push_back(method);
 }
 
-int CoreSystem::getExploitsNum()
+int CoreSystem::exploitsNum()
 {
-	return exploit_counter;
+    return m_exploitCounter;
 }
 
-int CoreSystem::getSamplesNum()
+int CoreSystem::samplesNum()
 {
-	return sample_counter;
+    return m_sampleCounter;
 }
 
-string CoreSystem::getVersion()
+QString CoreSystem::version()
 {
-	return VERSION;
+    return VERSION;
 }
 
-bool CoreSystem::load(string file)
+bool CoreSystem::load(QString file)
 {
-	SystemLogger::getInstance()->setStatus(LOADING);
-	SystemLogger::getInstance()->setError(NO_ERROR);
+    SystemLogger::instance()->setStatus("loading");
+    SystemLogger::instance()->clearError();
 
-	list<ShellcodeSample *> q;
+    QList<ShellcodeSample *> q;
 	ShellcodeSample *s;
 
-	FileAnalyser file_analyser;
-	string file_type = file_analyser.analyze(file);
+    FileAnalyser fileAnalyser;
+    QString fileType = fileAnalyser.analyze(file);
 
-	map<string, AbstractInput *>::iterator it;
-	for(it = input_mods->begin(); it != input_mods->end(); ++it) {
-		if(file_type == (*it).second->getType()) {
-			(*it).second->loadInput(file, &q);
+    QMap<QString, AbstractInput *>::iterator it;
+    for(it = m_inputMods->begin(); it != m_inputMods->end(); ++it) {
+        if(fileType == it.value()->type()) {
+            it.value()->loadInput(file, &q);
 
 			/* process all returned samples */
-			while(!q.empty()) {
+            while(!q.isEmpty()) {
 				s = q.front();
 				q.pop_front();
-				samples.push_back(s);
+                m_samples.push_back(s);
 			}
 
 			break;
 		}
 	}
 
-	SystemLogger::getInstance()->setStatus(IDLE);
-	if(!samples.empty()) {
-		++sample_counter;
+    SystemLogger::instance()->setStatus("idle");
+    if(!m_samples.isEmpty()) {
+        ++m_sampleCounter;
 		return true;
 	}
 
-	SystemLogger::getInstance()->setError(CANNOT_HANDLE_FILE);
+    SystemLogger::instance()->setError("no appropriate input module");
 	return false;
 }
 
 bool CoreSystem::emulate(ShellcodeSample *s)
 {
-	SystemLogger::getInstance()->setStatus(EMULATING);
-	SystemLogger::getInstance()->setError(NO_ERROR);
+    SystemLogger::instance()->setStatus("emulating");
+    SystemLogger::instance()->clearError();
 
-	emu_system.loadSample(s);
-	bool ret = emu_system.emulate();
+    m_emuSystem.loadSample(s);
+    bool ret = m_emuSystem.emulate();
 
-	SystemLogger::getInstance()->setStatus(IDLE);
+    SystemLogger::instance()->setStatus("idle");
 	if(!ret) {
-		SystemLogger::getInstance()->setError(EMULATION_FAILED);
+        SystemLogger::instance()->setError("general emulation error");
 		return false;
 	}
 
@@ -214,39 +208,39 @@ bool CoreSystem::emulate(ShellcodeSample *s)
 
 bool CoreSystem::analyze(ShellcodeSample *s)
 {
-	SystemLogger::getInstance()->setStatus(ANALYZING);
-	SystemLogger::getInstance()->setError(NO_ERROR);
+    SystemLogger::instance()->setStatus("analyzing");
+    SystemLogger::instance()->clearError();
 
-	ana_system.loadSample(s);
-	bool ret = ana_system.analyze();
+    m_anaSystem.loadSample(s);
+    bool ret = m_anaSystem.analyze();
 
-	SystemLogger::getInstance()->setStatus(IDLE);
+    SystemLogger::instance()->setStatus("idle");
 	if(!ret) {
-		SystemLogger::getInstance()->setError(ANALYZING_FAILED);
+        SystemLogger::instance()->setError("general analyzing error");
 		return false;
 	}
 
-	if(s->getInfo()->isShellcodePresent())
-		++exploit_counter;
+    if(s->info()->isShellcodePresent())
+        ++m_exploitCounter;
 	return true;
 }
 
 bool CoreSystem::makeOutput(ShellcodeSample *s)
 {
-	SystemLogger::getInstance()->setStatus(ANALYZING);
-	SystemLogger::getInstance()->setError(NO_ERROR);
+    SystemLogger::instance()->setStatus("generating output");
+    SystemLogger::instance()->clearError();
 
-	list<string>::iterator it;
-	if(!s->getInfo()->isShellcodePresent())
+    QList<QString>::iterator it;
+    if(!s->info()->isShellcodePresent())
 		return true;
 
 	bool ret;
-	for(it = output_methods.begin(); it != output_methods.end(); ++it) {
-		ret = (*output_mods)[*it]->generateOutput(s);
+    for(it = m_outputMethods.begin(); it != m_outputMethods.end(); ++it) {
+        ret = (*m_outputMods)[*it]->generateOutput(s);
 
-		SystemLogger::getInstance()->setStatus(IDLE);
+        SystemLogger::instance()->setStatus("idle");
 		if(!ret) {
-			SystemLogger::getInstance()->setError(OUTPUT_FAILED);
+            SystemLogger::instance()->setError("generating output failed");
 			return false;
 		}
 	}
@@ -254,27 +248,17 @@ bool CoreSystem::makeOutput(ShellcodeSample *s)
 	return true;
 }
 
-string CoreSystem::mapStatus(SystemStatus status)
-{
-	return SystemLogger::getInstance()->mapStatus(status);
-}
-
-string CoreSystem::mapError(SystemError error)
-{
-	return SystemLogger::getInstance()->mapError(error);
-}
-
 void CoreSystem::loadModules()
 {
-	input_mods = ModuleManager::getInstance()->getInput();
-	output_mods = ModuleManager::getInstance()->getOutput();
+    m_inputMods = ModuleManager::instance()->input();
+    m_outputMods = ModuleManager::instance()->output();
 }
 
 void CoreSystem::clearSamples()
 {
-	list<ShellcodeSample *>::iterator it;
-	for(it = samples.begin(); it != samples.end(); ++it) {
-		delete &(*it);
-		samples.erase(it);
+    QList<ShellcodeSample *>::iterator it = m_samples.begin();
+    while(it != m_samples.end()) {
+        delete *it;
+        it = m_samples.erase(it);
 	}
 }

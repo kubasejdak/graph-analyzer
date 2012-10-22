@@ -8,88 +8,81 @@
 
 DatabaseOutput::DatabaseOutput()
 {
-	id = getNextID();
-	name = "DatabaseOutput";
-	description = "Inserts info about samples into database.";
-
-	LOG("database module\n");
-}
-
-DatabaseOutput::~DatabaseOutput()
-{
+    m_name = "DatabaseOutput";
+    m_description = "Inserts info about samples into database.";
 }
 
 bool DatabaseOutput::generateOutput(ShellcodeSample *sample)
 {
-	if(!sample->getInfo()->isShellcodePresent() && SKIP_NONEXPLOIT_OUTPUT)
+    if(!sample->info()->isShellcodePresent() && SKIP_NONEXPLOIT_OUTPUT)
 		return false;
 
-    QSqlDatabase db = QSqlDatabase::addDatabase(DB_QT_DRIVER.c_str());
-	db.setHostName(DB_HOST.c_str());
-	db.setDatabaseName(DB_NAME.c_str());
-	db.setUserName(DB_USER.c_str());
-	db.setPassword(DB_PASS.c_str());
-	bool ok = db.open();
-	if(ok) {
-        QSqlQuery query(db);
-        QSqlQuery seq_query(db);
-		ShellcodeInfo *info = sample->getInfo();
+    ShellcodeInfo *info = sample->info();
 
-		/* get next id number */
-		seq_query.prepare("SELECT nextval('analyze_sample_id_seq')");
-		if(!seq_query.exec()) {
-			LOG_ERROR("%s\n", seq_query.lastError().databaseText().toStdString().c_str());
-			return false;
-		}
-		seq_query.next();
-		int id = seq_query.record().value("nextval").toInt();
+    /* ensure that sample is not a duplicate */
+    bool duplicate = checkDuplicate(info);
+    if(duplicate) {
+        LOG("duplicate sample: skipping and removing duplicated graph file\n");
+        QFile file(info->graphName());
+        file.remove();
+        return true;
+    }
 
-		/* general sample data */
-		query.prepare("INSERT INTO analyze_sample VALUES (?, ?, ?, ?, ?, ?, ?)");
-		query.bindValue(0, id);
-		query.bindValue(1, info->getName().c_str());
-		query.bindValue(2, info->getExtractedFrom().c_str());
-		query.bindValue(3, info->getGraphName().c_str());
-		query.bindValue(4, info->getFileType().c_str());
-		query.bindValue(5, itos(info->getSize()).c_str());
-		query.bindValue(6, itos(info->getCodeOffset()).c_str());
-		if(!query.exec()) {
-			LOG_ERROR("%s\n", query.lastError().databaseText().toStdString().c_str());
-			return false;
-		}
+    /* get next id number */
+    QSqlQuery seq_query(DatabaseManager::instance()->database());
+    seq_query.prepare("SELECT nextval('analyze_sample_id_seq')");
+    if(!DatabaseManager::instance()->exec(&seq_query)) {
+        SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
+        LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
+        return false;
+    }
 
-		/* analyze modules specific data */
-		multimap<string, map<string, string> *> *t = sample->getInfo()->getTraits();
-		multimap<string, map<string, string> *>::iterator it;
-        QSqlQuery q(db);
-		string table;
-		for(it = t->begin(); it != t->end(); ++it) {
-			table = ANA_TABLE_PREFIX;
-			table += (*it).first;
+    seq_query.next();
+    int id = seq_query.record().value("nextval").toInt();
 
-			q = traitQuery(table, (*it).second, id);
-			if(!q.exec()) {
-				LOG_ERROR("%s\n", q.lastError().databaseText().toStdString().c_str());
-				return false;
-			}
-		}
-		db.close();
-	}
+    /* general sample data */
+    QSqlQuery sample_query(DatabaseManager::instance()->database());
+    sample_query.prepare("INSERT INTO analyze_sample VALUES (?, ?, ?, ?, ?, ?, ?)");
+    sample_query.bindValue(0, id);
+    sample_query.bindValue(1, info->name());
+    sample_query.bindValue(2, info->extractedFrom());
+    sample_query.bindValue(3, info->graphName());
+    sample_query.bindValue(4, info->fileType());
+    sample_query.bindValue(5, QString().setNum(info->size()));
+    sample_query.bindValue(6, QString().setNum(info->codeOffset()));
+    if(!DatabaseManager::instance()->exec(&sample_query)) {
+        SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
+        LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
+        return false;
+    }
+
+    /* analyze modules specific data */
+    QMultiMap<QString, QMap<QString, QString> *> *t = sample->info()->traits();
+    QMultiMap<QString, QMap<QString, QString> *>::iterator it;
+    QSqlQuery mod_query(DatabaseManager::instance()->database());
+    QString table;
+    for(it = t->begin(); it != t->end(); ++it) {
+        table = ANA_TABLE_PREFIX;
+        table += it.key();
+
+        traitQuery(&mod_query, table, it.value(), id);
+        if(!DatabaseManager::instance()->exec(&mod_query)) {
+            SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
+            LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
+            return false;
+        }
+    }
 
 	return true;
 }
 
-QSqlQuery DatabaseOutput::traitQuery(string table, map<string, string> *v, int sample_id)
+void DatabaseOutput::traitQuery(QSqlQuery *query, QString table, QMap<QString, QString> *v, int sample_id)
 {
-	QSqlQuery q;
-	string str_q;
-	map<string, string>::iterator it;
+    QMap<QString, QString>::iterator it;
 
 	/* prepare query */
-	str_q = "INSERT INTO ";
-	str_q += table;
-	str_q += " VALUES (DEFAULT, ";
-	for(unsigned i = 0; i < v->size() + 1; ++i) { // +1 because sample_id
+    QString str_q = QString("INSERT INTO %1 VALUES (DEFAULT, ").arg(table);
+    for(int i = 0; i < v->size() + 1; ++i) { // +1 because sample_id
 		str_q += "?";
 		if(i < v->size())
 			str_q += ", ";
@@ -97,13 +90,29 @@ QSqlQuery DatabaseOutput::traitQuery(string table, map<string, string> *v, int s
 	str_q += ")";
 
 	/* bind values */
-	q.prepare(str_q.c_str());
-	q.bindValue(0, sample_id);
+    query->prepare(str_q);
+    query->bindValue(0, sample_id);
 	int i = 1;
 	for(it = v->begin(); it != v->end(); ++it) {
-		q.bindValue(i, (*it).second.c_str());
+        query->bindValue(i, it.value());
 		++i;
 	}
+}
 
-	return q;
+bool DatabaseOutput::checkDuplicate(ShellcodeInfo *info)
+{
+    /* check sample */
+    QSqlQuery select_query(DatabaseManager::instance()->database());
+    select_query.prepare("SELECT * FROM analyze_sample WHERE name = ? AND extracted_from = ? AND file_size = ? AND shellcode_offset = ?");
+    select_query.addBindValue(info->name());
+    select_query.addBindValue(info->extractedFrom());
+    select_query.addBindValue(info->size());
+    select_query.addBindValue(info->codeOffset());
+    if(!DatabaseManager::instance()->exec(&select_query)) {
+        SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
+        LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
+        return false;
+    }
+
+    return select_query.next();
 }

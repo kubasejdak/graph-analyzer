@@ -8,50 +8,49 @@
 
 FileAnalyser::FileAnalyser()
 {
-	type = "binary";
+    m_type = "binary";
 }
 
 FileAnalyser::~FileAnalyser()
 {
 }
 
-string FileAnalyser::analyze(string filename)
+QString FileAnalyser::analyze(QString filename)
 {
-	file.open(filename.c_str(), fstream::in | fstream::binary);
-	if(!file.is_open())
+    m_file.setFileName(filename);
+    if(!m_file.open(QIODevice::ReadOnly))
 		return "";
 
 	/* Windows executable */
 	if(checkExe())
-		goto exit;
-
+        goto exit;
 	/* pcap */
 	if(checkPcap())
 		goto exit;
 
 exit:
-	file.close();
-	return type;
+    m_file.close();
+    return m_type;
 }
 
 bool FileAnalyser::checkExe()
 {
 	char buff[2];
-	file.read(buff, 2);
-	file.seekg(0, ios::beg);
+    m_file.read(buff, 2);
+    m_file.seek(0);
 
 	if(strcmp(buff, "MZ") != 0)
 		return false;
 
-	type = "exe";
+    m_type = "exe";
 	return true;
 }
 
 bool FileAnalyser::checkPcap()
 {
 	byte_t buff[4];
-	file.read((char *) buff, 4);
-	file.seekg(0, ios::beg);
+    m_file.read((char *) buff, 4);
+    m_file.seek(0);
 
 	uint32_t magic_number = 0;
 	magic_number += buff[3] << 24;
@@ -62,6 +61,6 @@ bool FileAnalyser::checkPcap()
 	if(magic_number != 0xa1b2c3d4 && magic_number != 0xd4c3b2a1)
 		return false;
 
-	type = "pcap";
+    m_type = "pcap";
 	return true;
 }

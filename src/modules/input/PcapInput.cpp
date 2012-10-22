@@ -8,114 +8,78 @@
 
 PcapInput::PcapInput()
 {
-	id = getNextID();
-	name = "PcapInput";
-	type = "pcap";
-	description = "Loads shellcode from pcap files.";
+    m_name = "PcapInput";
+    m_type = "pcap";
+    m_description = "Loads shellcode from pcap files.";
 }
 
-PcapInput::~PcapInput()
+void PcapInput::loadInput(QString filename, QList<ShellcodeSample *> *samples)
 {
-}
+    int success;
 
-void PcapInput::loadInput(string filename, list<ShellcodeSample *> *samples)
-{
-	int stat;
-	/* move to pcap_tmp */
-	string pcap_dir = APP_ROOT_PATH.append("bin/pcap_tmp");
-	if(!nameExists(pcap_dir.c_str())) {
-		int ret = mkdir(pcap_dir.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
-		if(ret != 0) {
-			LOG_ERROR("cannot create directory %s\n", pcap_dir.c_str());
-			exit(1);
+    /* move to /tmp/pcap_tmp */
+    QDir pcapDir;
+    if(!QDir("/tmp/pcap_tmp").exists()) {
+        success = pcapDir.mkdir("/tmp/pcap_tmp");
+        if(!success) {
+            LOG_ERROR("cannot create /tmp/pcap_tmp directory\n");
+            exit(1);
 		}
 	}
-	stat = chdir(pcap_dir.c_str());
-	if(stat) {
-		SystemLogger::getInstance()->setError(CHANGE_DIR_FAILED);
-		LOG_ERROR("chdir failed in PcapInput");
-		return;
+
+    success = QDir::setCurrent("/tmp/pcap_tmp");
+    if(!success) {
+        LOG_ERROR("cannot change directory to /tmp/pcap_dir");
+        Toolbox::removeDirectory("tmp/pcap_tmp");
+        exit(1);
 	}
 
 	/* create flow files */
-	string tcpflow_cmd = "tcpflow -r \"";
-	if(isRelative(filename)) {
-		tcpflow_cmd += "../";
-		tcpflow_cmd += filename;
-	}
-	else
-		tcpflow_cmd += filename;
-	tcpflow_cmd += "\"";
-	stat = system(tcpflow_cmd.c_str());
-	if(stat) {
-		SystemLogger::getInstance()->setError(TCPFLOW_FAILED);
+    QFileInfo f(filename);
+    QString tcpflowCmd = QString("tcpflow -r \"%1\"").arg(f.absoluteFilePath());
+
+    int ret = system(tcpflowCmd.toStdString().c_str());
+    if(ret) {
+        SystemLogger::instance()->setError("external program 'tcpflow' failed");
 		LOG_ERROR("tcpflow cmd failed in PcapInput");
-		chdir("..");
-		ftw("pcap_tmp", ftw_remove_dir, 0);
-		rmdir("pcap_tmp");
-		return;
+        QDir::setCurrent("..");
+
+        /* clear recursively directory */
+        Toolbox::removeDirectory("/tmp/pcap_tmp");
+        exit(1);
 	}
 
-	unlink("report.xml");
+    /* iterate through all flow files */
+    ShellcodeSample *s;
+    QDirIterator it(".", QDirIterator::Subdirectories);
+    while(it.hasNext()) {
+        QString entryName = it.next();
+        if(entryName == "." || entryName == ".." || entryName == "report.xml")
+            continue;
 
-	/* get all flow files stored in pcap_tmp */
-	DIR *dp;
-	dirent *de;
+        /* read code */
+        QFile file(entryName);
+        file.open(QIODevice::ReadOnly);
+        if(!file.isOpen())
+            continue;
 
-	dp = opendir(".");
-	if(dp == NULL) {
-		SystemLogger::getInstance()->setError(TCPFLOW_FAILED);
-		LOG_ERROR("opendir failed in PcapInput");
-		return;
-	}
+        int size = file.size();
+        char *buffer = new char[size];
 
-	int i = 1;
-	ShellcodeSample *s;
-	while((de = readdir(dp))) {
-		if(strcmp(de->d_name, ".") == 0 || strcmp(de->d_name, "..") == 0)
-			continue;
+        file.read(buffer, size);
+        file.close();
 
-		/* read code */
-		chmod(de->d_name, S_IRWXU | S_IRWXG | S_IRWXO);
-		fstream file(de->d_name, fstream::in | fstream::binary);
-		if(!file.is_open())
-			continue;
+        /* create new sample */
+        s = new ShellcodeSample();
+        s->info()->setName(entryName);
+        s->info()->setExtractedFrom(filename);
+        s->info()->setFileType(m_type);
+        s->info()->setSize(size);
+        s->setCode((byte_t *) buffer);
+        samples->push_back(s);
+    }
 
-		file.seekg(0, ios::end);
-		int size = file.tellg();
-		file.seekg(0, ios::beg);
-		char *buffer = new char[size];
-
-		file.read(buffer, size);
-		file.close();
-
-		/* create new sample */
-		s = new ShellcodeSample();
-		s->getInfo()->setName(de->d_name);
-		s->getInfo()->setExtractedFrom(filename);
-		s->getInfo()->setFileType(type);
-		s->getInfo()->setSize(size);
-		s->setCode((byte_t *) buffer);
-		samples->push_back(s);
-
-		unlink(de->d_name);
-		++i;
-	}
-
-	/* clean and move to SAMPLES_DIR again */
-	closedir(dp);
-	stat = chdir("..");
-	if(stat) {
-		SystemLogger::getInstance()->setError(CHANGE_DIR_FAILED);
-		LOG_ERROR("chdir failed in PcapInput");
-		return;
-	}
-	rmdir(pcap_dir.c_str());
-}
-
-int ftw_remove_dir(const char *fpath, const struct stat *sb, int typeflag)
-{
-	unlink(fpath);
-
-	return 0;
+    /* clean up */
+    QDir::setCurrent("..");
+    Toolbox::removeDirectory("/tmp/pcap_tmp");
 }

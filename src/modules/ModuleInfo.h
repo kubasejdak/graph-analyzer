@@ -7,14 +7,12 @@
 #ifndef MODULEINFO_H_
 #define MODULEINFO_H_
 
-/* standard headers */
-#include <string>
-using namespace std;
+#include <QString>
 
 struct ModuleInfo {
-	int id;
-	string name;
-	string description;
+    int m_id;
+    QString m_name;
+    QString m_description;
 };
 
 #endif /* MODULEINFO_H_ */

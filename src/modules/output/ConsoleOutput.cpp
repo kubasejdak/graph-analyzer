@@ -8,19 +8,14 @@
 
 ConsoleOutput::ConsoleOutput()
 {
-	id = getNextID();
-	name = "ConsoleOutput";
-	description = "Prints info about samples in console.";
-}
-
-ConsoleOutput::~ConsoleOutput()
-{
+    m_name = "ConsoleOutput";
+    m_description = "Prints info about samples in console.";
 }
 
 bool ConsoleOutput::generateOutput(ShellcodeSample *sample)
 {
 	cout << "Results for sample:" << endl;
-	sample->getInfo()->printInfo();
+    sample->info()->printInfo();
 	cout << endl;
 
 	return true;

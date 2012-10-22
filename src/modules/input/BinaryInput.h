@@ -7,15 +7,14 @@
 #ifndef BINARYINPUT_H_
 #define BINARYINPUT_H_
 
-/* project headers */
 #include "AbstractInput.h"
 
 class BinaryInput: public AbstractInput {
 public:
 	BinaryInput();
-	virtual ~BinaryInput();
+    virtual ~BinaryInput() {}
 
-	virtual void loadInput(string filename, list<ShellcodeSample *> *samples);
+    virtual void loadInput(QString filename, QList<ShellcodeSample *> *samples);
 };
 
 #endif /* BINARYINPUT_H_ */

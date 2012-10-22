@@ -7,16 +7,13 @@
 #ifndef CORESYSTEM_H_
 #define CORESYSTEM_H_
 
-/* standard headers */
-#include <map>
-#include <list>
-#include <string>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <dirent.h>
-using namespace std;
+#include <QMap>
+#include <QMapIterator>
+#include <QList>
+#include <QString>
+#include <QDir>
+#include <QFile>
 
-/* project headers */
 #include <core/ConfigFile.h>
 #include <core/EmulationSystem.h>
 #include <core/AnalysisSystem.h>
@@ -25,10 +22,10 @@ using namespace std;
 #include <core/FileAnalyser.h>
 #include <core/SystemLogger.h>
 #include <core/version.h>
+#include <core/Toolbox.h>
 #include <modules/input/AbstractInput.h>
 #include <modules/output/AbstractOutput.h>
 #include <modules/ModuleManager.h>
-#include <toolbox.h>
 
 class CoreSystem {
 public:
@@ -36,51 +33,48 @@ public:
 	virtual ~CoreSystem();
 
 	/* basic sample operation */
-	void addFile(string root_file);
+    void addFile(QString file);
 	void run();
 	void clear();
 
 	/* status and error */
-	string getStatus();
-	string getError();
+    QString status();
+    QString error();
 
 	/* logging */
-	void setLogFile(string filename);
+    void setLogFile(QString file);
 	void setLogLevel(int level);
 
 	/* results */
-	void setOutput(string method);
-	int getExploitsNum();
-	int getSamplesNum();
+    void setOutput(QString method);
+    int exploitsNum();
+    int samplesNum();
 
 	/* utility */
-	string getVersion();
+    QString version();
 
 private:
 	/* function members */
-	bool load(string file);
+    bool load(QString file);
 	bool emulate(ShellcodeSample *s);
 	bool analyze(ShellcodeSample *s);
 	bool makeOutput(ShellcodeSample *s);
-
-	string mapStatus(SystemStatus status);
-	string mapError(SystemError error);
 
 	void loadModules();
 	void clearSamples();
 
 	/* data members */
-	EmulationSystem emu_system;
-	AnalysisSystem ana_system;
-	map<string, AbstractInput *> *input_mods;
-	map<string, AbstractOutput *> *output_mods;
+    EmulationSystem m_emuSystem;
+    AnalysisSystem m_anaSystem;
+    QMap<QString, AbstractInput *> *m_inputMods;
+    QMap<QString, AbstractOutput *> *m_outputMods;
 
-	list<ShellcodeSample *> samples;
-	list<string> pending_files;
-	list<string> output_methods;
+    QList<ShellcodeSample *> m_samples;
+    QList<QString> m_pendingFiles;
+    QList<QString> m_outputMethods;
 
-	int exploit_counter;
-	int sample_counter;
+    int m_exploitCounter;
+    int m_sampleCounter;
 };
 
 #endif /* CORESYSTEM_H_ */

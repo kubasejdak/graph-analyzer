@@ -14,6 +14,8 @@ set(CORE_SRC
 	FileAnalyser.cpp
 	SystemLogger.cpp
 	Options.cpp
-	ConfigFile.cpp)
+	ConfigFile.cpp
+	DatabaseManager.cpp
+	Toolbox.cpp)
 
 add_library(core ${CORE_SRC})

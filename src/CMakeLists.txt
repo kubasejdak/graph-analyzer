@@ -7,9 +7,9 @@ set(EXECUTABLE_OUTPUT_PATH "${CMAKE_HOME_DIRECTORY}/bin")
 set(LIBRARY_OUTPUT_PATH "${CMAKE_HOME_DIRECTORY}/lib")
 
 # project targets
-add_executable(graph-analyzer main.cpp toolbox.cpp)
+add_executable(graph-analyzer main.cpp)
 
-add_library(GraphAnalyzerCpp SHARED core/CoreSystem.cpp toolbox.cpp)
+add_library(GraphAnalyzerCpp SHARED core/CoreSystem.cpp)
 set_target_properties(GraphAnalyzerCpp PROPERTIES PREFIX "")
 
 # link with modules 

@@ -9,7 +9,6 @@
 
 #define STATIC_CODE_OFFSET	0x417000
 
-/* libemu headers */
 extern "C" {
 	#include <emu/emu.h>
 	#include <emu/emu_cpu.h>
@@ -19,11 +18,9 @@ extern "C" {
 	#include <emu/environment/emu_profile.h>
 }
 
-/* standard headers */
 #include <stdint.h>
 
-/* project headers */
-#include <toolbox.h>
+#include <core/Toolbox.h>
 #if 0
 #include <core/UserHooks.h>
 #endif
@@ -40,11 +37,11 @@ public:
 	bool step();
 	int32_t loadCode(byte_t *code, int32_t size);
 
-	struct emu *getEmu();
-	struct emu_cpu *getCpu();
-	struct emu_memory *getMemory();
-	struct emu_env *getEnv();
-	int32_t getCodeOffset();
+    struct emu *emu();
+    struct emu_cpu *cpu();
+    struct emu_memory *memory();
+    struct emu_env *env();
+    int32_t codeOffset();
 
 private:
 	int32_t getPcTest(byte_t *code, int32_t size);
@@ -52,12 +49,12 @@ private:
 	void exportWin32Hooks();
 	void exportLinuxHooks();
 
-	struct emu *emu;
-	struct emu_cpu *cpu;
-	struct emu_memory *mem;
-	struct emu_env *env;
+    struct emu *m_emu;
+    struct emu_cpu *m_cpu;
+    struct emu_memory *m_mem;
+    struct emu_env *m_env;
 
-	int32_t codeOffset;
+    int32_t m_codeOffset;
 };
 
 #endif /* EMULATIONUNIT_H_ */

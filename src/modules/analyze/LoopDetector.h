@@ -7,19 +7,14 @@
 #ifndef LOOPDETECTOR_H_
 #define LOOPDETECTOR_H_
 
-/* standard headers */
-#include <sstream>
-#include <map>
-
-/* project headers */
 #include "AbstractAnalyze.h"
 #include <core/Graph.h>
-#include <toolbox.h>
+#include <core/Toolbox.h>
 
 class LoopDetector: public AbstractAnalyze {
 public:
 	LoopDetector();
-	virtual ~LoopDetector();
+    virtual ~LoopDetector() {}
 
 	virtual bool perform(ShellcodeSample *sample);
 };

@@ -7,7 +7,9 @@
 #ifndef EMULATIONSYSTEM_H_
 #define EMULATIONSYSTEM_H_
 
-/* libemu headers */
+#include <QString>
+#include <QDir>
+
 extern "C" {
 	#include <emu/emu.h>
 	#include <emu/emu_cpu_data.h>
@@ -24,7 +26,6 @@ extern "C" {
 	#include <emu/environment/linux/env_linux_syscall_hooks.h>
 }
 
-/* project headers */
 #include <core/EmulationUnit.h>
 #include <core/ShellcodeSample.h>
 #include <core/SystemLogger.h>
@@ -40,8 +41,8 @@ public:
 	bool emulate();
 
 private:
-	EmulationUnit *emuUnit;
-	ShellcodeSample *sample;
+    EmulationUnit *m_emuUnit;
+    ShellcodeSample *m_sample;
 };
 
 #endif /* EMULATIONSYSTEM_H_ */

@@ -8,35 +8,28 @@
 
 BinaryInput::BinaryInput()
 {
-	id = getNextID();
-	name = "BinaryInput";
-	type = "binary";
-	description = "Loads shellcode from binary files.";
+    m_name = "BinaryInput";
+    m_type = "binary";
+    m_description = "Loads shellcode from binary files.";
 }
 
-BinaryInput::~BinaryInput()
+void BinaryInput::loadInput(QString filename, QList<ShellcodeSample *> *samples)
 {
-}
-
-void BinaryInput::loadInput(string filename, list<ShellcodeSample *> *samples)
-{
-	fstream file(filename.c_str(), fstream::in | fstream::binary);
-	if(!file.is_open())
+    QFile file(filename);
+    file.open(QIODevice::ReadOnly);
+    if(!file.isOpen())
 		return;
 
-	file.seekg(0, ios::end);
-	int size = file.tellg();
-	file.seekg(0, ios::beg);
+    int size = file.size();
 	char *buffer = new char[size];
-
 	file.read(buffer, size);
 	file.close();
 
 	ShellcodeSample *s = new ShellcodeSample();
-	s->getInfo()->setName(filename);
-	s->getInfo()->setExtractedFrom(filename);
-	s->getInfo()->setFileType(type);
-	s->getInfo()->setSize(size);
+    s->info()->setName(filename);
+    s->info()->setExtractedFrom(filename);
+    s->info()->setFileType(m_type);
+    s->info()->setSize(size);
 	s->setCode((byte_t *) buffer);
 	samples->push_back(s);
 }

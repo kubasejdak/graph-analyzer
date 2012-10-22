@@ -21,104 +21,110 @@ void ModuleManager::loadInput()
 {
 	/* BinaryInput */
 	BinaryInput *binaryInput = new BinaryInput();
-	inputModules[binaryInput->getName()] = binaryInput;
+    m_inputModules[binaryInput->name()] = binaryInput;
 
 	/* BinaryInput */
 	PcapInput *pcapInput = new PcapInput();
-	inputModules[pcapInput->getName()] = pcapInput;
+    m_inputModules[pcapInput->name()] = pcapInput;
 }
 
 void ModuleManager::loadOutput()
 {
 	/* DatabaseOutput */
 	DatabaseOutput *databaseOutput = new DatabaseOutput();
-	outputModules[databaseOutput->getName()] = databaseOutput;
+    m_outputModules[databaseOutput->name()] = databaseOutput;
 
 	/* DatabaseOutput */
 	ConsoleOutput *consoleOutput = new ConsoleOutput();
-	outputModules[consoleOutput->getName()] = consoleOutput;
+    m_outputModules[consoleOutput->name()] = consoleOutput;
 }
 
 void ModuleManager::loadAnalyze()
 {
 	/* SyscallAnalyze */
 	SyscallAnalyze *syscallAnalyze = new SyscallAnalyze();
-	analyzeModules[syscallAnalyze->getName()] = syscallAnalyze;
+    m_analyzeModules[syscallAnalyze->name()] = syscallAnalyze;
 
 	/* GraphHash */
 	GraphHash *graphHash = new GraphHash();
-	analyzeModules[graphHash->getName()] = graphHash;
+    m_analyzeModules[graphHash->name()] = graphHash;
 
 	/* LoopDetector */
 	LoopDetector *loopDetector = new LoopDetector();
-	analyzeModules[loopDetector->getName()] = loopDetector;
+    m_analyzeModules[loopDetector->name()] = loopDetector;
 }
 
-map<string, AbstractInput *> * ModuleManager::getInput()
+QMap<QString, AbstractInput *> *ModuleManager::input()
 {
 	loadInput();
-	return &inputModules;
+    return &m_inputModules;
 }
 
-map<string, AbstractOutput *> * ModuleManager::getOutput()
+QMap<QString, AbstractOutput *> *ModuleManager::output()
 {
 	loadOutput();
-	return &outputModules;
+    return &m_outputModules;
 }
 
-map<string, AbstractAnalyze *> * ModuleManager::getAnalyze()
+QMap<QString, AbstractAnalyze *> *ModuleManager::analyze()
 {
 	loadAnalyze();
-	return &analyzeModules;
+    return &m_analyzeModules;
 }
 
-list<ModuleInfo *> ModuleManager::listInput()
+QList<ModuleInfo *> ModuleManager::listInput()
 {
-	list<ModuleInfo *> modList;
-	map<string, AbstractInput *>::iterator it;
-	for(it = inputModules.begin(); it != inputModules.end(); ++it)
-		modList.push_back((*it).second->getModuleInfo());
+    QList<ModuleInfo *> modList;
+    QMap<QString, AbstractInput *>::iterator it;
+    for(it = m_inputModules.begin(); it != m_inputModules.end(); ++it)
+        modList.push_back(it.value()->moduleInfo());
 
 	return modList;
 }
 
-list<ModuleInfo *> ModuleManager::listOutput()
+QList<ModuleInfo *> ModuleManager::listOutput()
 {
-	list<ModuleInfo *> modList;
-	map<string, AbstractOutput *>::iterator it;
-	for(it = outputModules.begin(); it != outputModules.end(); ++it)
-		modList.push_back((*it).second->getModuleInfo());
+    QList<ModuleInfo *> modList;
+    QMap<QString, AbstractOutput *>::iterator it;
+    for(it = m_outputModules.begin(); it != m_outputModules.end(); ++it)
+        modList.push_back(it.value()->moduleInfo());
 
 	return modList;
 }
 
-list<ModuleInfo *> ModuleManager::listAnalyze()
+QList<ModuleInfo *> ModuleManager::listAnalyze()
 {
-	list<ModuleInfo *> modList;
-	map<string, AbstractAnalyze *>::iterator it;
-	for(it = analyzeModules.begin(); it != analyzeModules.end(); ++it)
-		modList.push_back((*it).second->getModuleInfo());
+    QList<ModuleInfo *> modList;
+    QMap<QString, AbstractAnalyze *>::iterator it;
+    for(it = m_analyzeModules.begin(); it != m_analyzeModules.end(); ++it)
+        modList.push_back(it.value()->moduleInfo());
 
 	return modList;
 }
 
 void ModuleManager::removeInput()
 {
-	map<string, AbstractInput *>::iterator it;
-	for(it = inputModules.begin(); it != inputModules.end(); ++it)
-		inputModules.erase(it);
+    QMap<QString, AbstractInput *>::iterator it;
+    for(it = m_inputModules.begin(); it != m_inputModules.end(); ++it)
+        delete it.value();
+
+    m_inputModules.clear();
 }
 
 void ModuleManager::removeOutput()
 {
-	map<string, AbstractOutput *>::iterator it;
-	for(it = outputModules.begin(); it != outputModules.end(); ++it)
-		outputModules.erase(it);
+    QMap<QString, AbstractOutput *>::iterator it;
+    for(it = m_outputModules.begin(); it != m_outputModules.end(); ++it)
+        delete it.value();
+
+    m_outputModules.clear();
 }
 
 void ModuleManager::removeAnalyze()
 {
-	map<string, AbstractAnalyze *>::iterator it;
-	for(it = analyzeModules.begin(); it != analyzeModules.end(); ++it)
-		analyzeModules.erase(it);
+    QMap<QString, AbstractAnalyze *>::iterator it;
+    for(it = m_analyzeModules.begin(); it != m_analyzeModules.end(); ++it)
+        delete it.value();
+
+    m_analyzeModules.clear();
 }

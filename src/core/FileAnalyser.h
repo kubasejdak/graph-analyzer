@@ -7,27 +7,26 @@
 #ifndef FILEANALYSER_H_
 #define FILEANALYSER_H_
 
-/* standard headers */
-#include <string>
-#include <fstream>
+#include <QString>
+#include <QFile>
 #include <cstring>
 #include <stdint.h>
-#include <toolbox.h>
-using namespace std;
+
+#include <core/Toolbox.h>
 
 class FileAnalyser {
 public:
 	FileAnalyser();
 	virtual ~FileAnalyser();
 
-	string analyze(string filename);
+    QString analyze(QString filename);
 
 private:
 	bool checkExe();
 	bool checkPcap();
 
-	fstream file;
-	string type;
+    QFile m_file;
+    QString m_type;
 };
 
 #endif /* FILEANALYSER_H_ */

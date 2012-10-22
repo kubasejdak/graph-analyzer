@@ -11,28 +11,25 @@
 #define OUTPUT_ID_OFFSET	200
 #define ANALYZE_ID_OFFSET	300
 
-/* standard headers */
-#include <string>
-using namespace std;
+#include <QString>
 
-/* project headers */
 #include <modules/ModuleInfo.h>
 
 class AbstractModule {
 public:
-	AbstractModule();
-	virtual ~AbstractModule();
+    AbstractModule() {}
+    virtual ~AbstractModule() {}
 
-	int getId();
-	string getName();
-	string getDescription();
-	ModuleInfo *getModuleInfo();
+    int id();
+    QString name();
+    QString description();
+    ModuleInfo *moduleInfo();
 
 protected:
-	int id;
-	string name;
-	string description;
-	ModuleInfo info;
+    int m_id;
+    QString m_name;
+    QString m_description;
+    ModuleInfo m_info;
 };
 
 #endif /* ABSTRACTMODULE_H_ */

@@ -7,7 +7,6 @@
 #ifndef CONSOLEOUTPUT_H_
 #define CONSOLEOUTPUT_H_
 
-/* standard headers */
 #include <iostream>
 using namespace std;
 
@@ -16,7 +15,7 @@ using namespace std;
 class ConsoleOutput: public AbstractOutput {
 public:
 	ConsoleOutput();
-	virtual ~ConsoleOutput();
+    virtual ~ConsoleOutput() {}
 
 	virtual bool generateOutput(ShellcodeSample *sample);
 };

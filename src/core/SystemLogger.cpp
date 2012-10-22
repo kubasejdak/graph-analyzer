@@ -8,142 +8,132 @@
 
 SystemLogger::SystemLogger()
 {
-	status = IDLE;
-	error = NO_ERROR;
-	status_map.clear();
-	error_map.clear();
-
-	/* status strings mapping */
-	status_map[IDLE] = "idle";
-	status_map[LOADING] = "loading";
-	status_map[EMULATING] = "emulating";
-	status_map[ANALYZING] = "analyzing";
-	status_map[GENERATING_OUTPUT] = "generating output";
-
-	/* error strings mapping */
-	error_map[NO_ERROR] = "no error";
-	error_map[CANNOT_HANDLE_FILE] = "no appropriate input module";
-	error_map[EMULATION_FAILED] = "general emulation error";
-	error_map[ANALYZING_FAILED] = "general analyzing error";
-	error_map[CHANGE_DIR_FAILED] = "chdir function failed";
-	error_map[TCPFLOW_FAILED] = "external program 'tcpflow' failed";
-	error_map[OPEN_DIR_FAILED] = "opendir function failed";
-	error_map[UNLINK_FAILED] = "unlunk function failed";
-	error_map[GRAPH_DRAW_FAILED] = "drawing graph failed";
-	error_map[OUTPUT_FAILED] = "generating output failed";
-
-	logging_level = 0;
-    log_file = "";
+    m_status = "idle";
+    m_error = "no error";
+    m_logLevel = 0;
+    m_logFile = "";
 
 }
 
-SystemLogger::~SystemLogger()
+void SystemLogger::setStatus(QString status)
 {
+    m_status = status;
 }
 
-void SystemLogger::setStatus(SystemStatus status)
+void SystemLogger::setError(QString error)
 {
-	this->status = status;
+    m_error = error;
 }
 
-void SystemLogger::setError(SystemError error)
+QString SystemLogger::status()
 {
-	this->error = error;
+    return m_error;
 }
 
-SystemStatus SystemLogger::getStatus()
+QString SystemLogger::error()
 {
-	return status;
-}
-
-SystemError SystemLogger::getError()
-{
-	return error;
-}
-
-string SystemLogger::mapStatus(SystemStatus status)
-{
-	return status_map[status];
-}
-
-string SystemLogger::mapError(SystemError error)
-{
-	return error_map[error];
+    return m_error;
 }
 
 void SystemLogger::setLogLevel(int level)
 {
-	logging_level = level;
+    m_logLevel = level;
 }
 
-void SystemLogger::setLogFile(string filename)
+void SystemLogger::setLogFile(QString filename)
 {
-	log_file = filename;
+    m_logFile = filename;
 }
 
-void SystemLogger::log(string msg_file, string func, int line, string fmt, ...)
+void SystemLogger::log(QString msg_file, QString func, int line, QString fmt, ...)
 {
-    if(logging_level == 0 || log_file == "")
+    if(m_logLevel == 0)
 		return;
 
-	FILE *f = fopen(log_file.c_str(), "a");
-	if(f == NULL)
-		return;
-
-	string m = "";
+    /* prepare string */
+    QString date = QDate::currentDate().toString("dd.MM.yyyy");
+    QString time = QTime::currentTime().toString("hh:mm:ss");
+    QString m = QString("[%1 %2] ").arg(date).arg(time);
 	va_list arg_ptr;
 	va_start(arg_ptr, fmt);
 
-	switch(logging_level) {
-	case 1:
-		m.append(fmt);
+    switch(m_logLevel) {
+    case 1:
+        m += fmt;
 		break;
 	case 2:
-		m.append("FUNCTION: ").append(func).append(", ").append(fmt);
+        m += QString("FUNCTION: %1, LINE: %2 %3").arg(func).arg(line).arg(fmt);
 		break;
 	case 3:
-		m.append("FILE: ").append(msg_file).append(", FUNCTION: ").append(func);
-		m.append(", LINE: ").append(itos(line)).append(", ").append(fmt);
+        m += QString("FILE: %1, FUNCTION: %2, LINE: %3 %4").arg(msg_file).arg(func).arg(QString().setNum(line)).arg(fmt);
 		break;
 	default:
 		break;
 	}
 
-	vfprintf(f, m.c_str(), arg_ptr);
-	fclose(f);
+    /* print to console */
+    vfprintf(stderr, m.toStdString().c_str(), arg_ptr);
+
+    /* print to file */
+    if(m_logFile != "") {
+
+        FILE *f = fopen(m_logFile.toStdString().c_str(), "a");
+        if(f == NULL) {
+            va_end(arg_ptr);
+            return;
+        }
+
+        vfprintf(f, m.toStdString().c_str(), arg_ptr);
+        fclose(f);
+    }
 	va_end(arg_ptr);
 }
 
-void SystemLogger::logError(string msg_file, string func, int line, string fmt, ...)
+void SystemLogger::logError(QString msg_file, QString func, int line, QString fmt, ...)
 {
-    if(logging_level == 0 || log_file == "")
-		return;
+    if(m_logLevel == 0)
+        return;
 
-	FILE *f = fopen(log_file.c_str(), "a");
-	if(f == NULL)
-		return;
+    /* prepare string */
+    QString date = QDate::currentDate().toString("dd.MM.yyyy");
+    QString time = QTime::currentTime().toString("hh:mm:ss");
+    QString m = QString("[%1 %2] ").arg(date).arg(time);
+    va_list arg_ptr;
+    va_start(arg_ptr, fmt);
 
-	string m = "ERROR: ";
-	va_list arg_ptr;
-	va_start(arg_ptr, fmt);
+    switch(m_logLevel) {
+    case 1:
+        m += QString("ERROR: %1").arg(fmt);
+        break;
+    case 2:
+        m += QString("FUNCTION: %1, LINE: %2, ERROR: %3").arg(func).arg(line).arg(fmt);
+        break;
+    case 3:
+        m += QString("FILE: %1, FUNCTION: %2, LINE: %3, ERROR: %4").arg(msg_file).arg(func).arg(QString().setNum(line)).arg(fmt);
+        break;
+    default:
+        break;
+    }
 
-	switch(logging_level) {
-	case 1:
-		m.append(fmt);
-		break;
-	case 2:
-		m.append("FUNCTION: ").append(func).append(", ").append(fmt);
-		break;
-	case 3:
-		m.append("FILE: ").append(msg_file).append(", FUNCTION: ").append(func);
-		m.append(", LINE: ").append(itos(line)).append(", ").append(fmt);
-		break;
-	default:
-		break;
-	}
+    /* print to console */
+    vfprintf(stderr, m.toStdString().c_str(), arg_ptr);
 
-	vfprintf(stdout, m.c_str(), arg_ptr);
-	vfprintf(f, m.c_str(), arg_ptr);
-	fclose(f);
-	va_end(arg_ptr);
+    /* print to file */
+    if(m_logFile != "") {
+
+        FILE *f = fopen(m_logFile.toStdString().c_str(), "a");
+        if(f == NULL) {
+            va_end(arg_ptr);
+            return;
+        }
+
+        vfprintf(f, m.toStdString().c_str(), arg_ptr);
+        fclose(f);
+    }
+    va_end(arg_ptr);
+}
+
+void SystemLogger::clearError()
+{
+    m_error = "no error";
 }

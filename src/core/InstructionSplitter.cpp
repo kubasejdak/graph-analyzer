@@ -14,64 +14,66 @@ InstructionSplitter::~InstructionSplitter()
 {
 }
 
-string InstructionSplitter::getAddress()
+QString InstructionSplitter::address()
 {
-	if(holder.size() < 1)
+    if(m_holder.size() < 1)
 		return "";
 
-	return holder[0];
+    return m_holder[0];
 }
 
-string InstructionSplitter::getCode()
+QString InstructionSplitter::code()
 {
-	if(holder.size() < 2)
+    if(m_holder.size() < 2)
 		return "";
 
-	return holder[1];
+    return m_holder[1];
 }
 
-string InstructionSplitter::getSyscall()
+QString InstructionSplitter::syscall()
 {
-	if(holder.size() != 2)
+    if(m_holder.size() != 2)
 		return "";
 
-	return holder[1];
+    return m_holder[1];
 }
 
-string InstructionSplitter::getInstr()
+QString InstructionSplitter::instr()
 {
-	if(holder.size() < 3)
+    if(m_holder.size() < 3)
 		return "";
 
-	return holder[2];
+    return m_holder[2];
 }
 
-string InstructionSplitter::getFirstArg()
+QString InstructionSplitter::firstArg()
 {
-	if(holder.size() < 4)
+    if(m_holder.size() < 4)
 		return "";
 
-	return holder[3];
+    return m_holder[3];
 }
 
-string InstructionSplitter::getSecondArg()
+QString InstructionSplitter::secondArg()
 {
-	if(holder.size() < 5)
+    if(m_holder.size() < 5)
 		return "";
 
-	return holder[4];
+    return m_holder[4];
 }
 
-InstructionSplitter &InstructionSplitter::operator=(string s)
+InstructionSplitter &InstructionSplitter::operator=(QString s)
 {
-	holder.clear();
-	s.erase(s.size() - 2, 2);
-	split(holder, s, is_any_of(" ,"), token_compress_on);
+    m_holder.clear();
+    s.chop(2);
+
+    m_holder = s.split(" ,");
+    //split(m_holder, s, is_any_of(" ,"), token_compress_on);
 
 	return *this;
 }
 
 void InstructionSplitter::clear()
 {
-	holder.clear();
+    m_holder.clear();
 }

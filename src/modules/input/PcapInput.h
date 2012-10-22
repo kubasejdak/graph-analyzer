@@ -7,26 +7,20 @@
 #ifndef PCAPINPUT_H_
 #define PCAPINPUT_H_
 
-/* standard headers */
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <dirent.h>
-#include <ftw.h>
+#include <QFile>
+#include <QDir>
 
-/* project headers */
 #include "AbstractInput.h"
 #include <core/SystemLogger.h>
 #include <core/Options.h>
-#include <toolbox.h>
-
-int ftw_remove_dir(const char *fpath, const struct stat *sb, int typeflag);
+#include <core/Toolbox.h>
 
 class PcapInput: public AbstractInput {
 public:
 	PcapInput();
-	virtual ~PcapInput();
+    virtual ~PcapInput() {}
 
-	virtual void loadInput(string filename, list<ShellcodeSample *> *samples);
+    virtual void loadInput(QString filename, QList<ShellcodeSample *> *samples);
 };
 
 #endif /* PCAPINPUT_H_ */

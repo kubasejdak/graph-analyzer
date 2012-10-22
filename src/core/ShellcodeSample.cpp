@@ -8,35 +8,35 @@
 
 ShellcodeSample::ShellcodeSample()
 {
-	code = NULL;
-	graph = new Graph();
-	info = new ShellcodeInfo();
+    m_code = NULL;
+    m_graph = new Graph();
+    m_info = new ShellcodeInfo();
 }
 
 ShellcodeSample::~ShellcodeSample()
 {
-	delete graph;
-	delete info;
-	if(code)
-		delete code;
+    delete m_graph;
+    delete m_info;
+    if(m_code)
+        delete m_code;
 }
 
-byte_t *ShellcodeSample::getCode()
+byte_t *ShellcodeSample::code()
 {
-	return code;
+    return m_code;
 }
 
-ShellcodeInfo *ShellcodeSample::getInfo()
+ShellcodeInfo *ShellcodeSample::info()
 {
-	return info;
+    return m_info;
 }
 
-Graph *ShellcodeSample::getGraph()
+Graph *ShellcodeSample::graph()
 {
-	return graph;
+    return m_graph;
 }
 
 void ShellcodeSample::setCode(byte_t *code)
 {
-	this->code = code;
+    m_code = code;
 }

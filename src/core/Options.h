@@ -7,8 +7,7 @@
 #ifndef OPTIONS_H_
 #define OPTIONS_H_
 
-#include <string>
-using namespace std;
+#include <QString>
 
 #ifdef HOME_CONFIG
     #define CONFIG_FILE		"/home/kuba/Projects/graph-analyzer/conf/analyzer.conf"
@@ -16,18 +15,18 @@ using namespace std;
     #define CONFIG_FILE		"/home/jsejdak/graph-analyzer/conf/analyzer.conf"
 #endif
 
-extern string APP_ROOT_PATH;
+extern QString APP_ROOT_PATH;
 extern int EMULATION_STEPS;
-extern string GRAPHS_DIR;
+extern QString GRAPHS_DIR;
 extern bool DELETE_CODE_INSTANTLY;
-extern string DB_QT_DRIVER;
-extern string DB_HOST;
-extern string DB_NAME;
-extern string DB_USER;
-extern string DB_PASS;
-extern string ANA_TABLE_PREFIX;
-extern string OPT_TABLE_PREFIX;
-extern string ID_SEQ_POSTFIX;
+extern QString DB_QT_DRIVER;
+extern QString DB_HOST;
+extern QString DB_NAME;
+extern QString DB_USER;
+extern QString DB_PASS;
+extern QString ANA_TABLE_PREFIX;
+extern QString OPT_TABLE_PREFIX;
+extern QString ID_SEQ_POSTFIX;
 extern bool SKIP_NONEXPLOIT_OUTPUT;
 
 #endif /* OPTIONS_H_ */

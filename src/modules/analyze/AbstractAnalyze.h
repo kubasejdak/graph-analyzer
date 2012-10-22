@@ -7,25 +7,26 @@
 #ifndef ABSTRACTANALYZE_H_
 #define ABSTRACTANALYZE_H_
 
-/* project headers */
+#include <QMap>
+
 #include <modules/AbstractModule.h>
 #include <core/ShellcodeSample.h>
 
 class AbstractAnalyze: public AbstractModule {
 public:
-	AbstractAnalyze();
-	virtual ~AbstractAnalyze();
+    AbstractAnalyze();
+    virtual ~AbstractAnalyze() {}
 
-	static int getNextID()
+    static int nextID()
 	{
-		return nextID++;
+        return m_nextID++;
 	}
 
 	virtual bool perform(ShellcodeSample *sample) = 0;
 
 protected:
-	static int nextID;
-	string trait_name;
+    static int m_nextID;
+    QString m_traitName;
 };
 
 #endif /* ABSTRACTANALYZE_H_ */

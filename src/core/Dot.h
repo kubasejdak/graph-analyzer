@@ -7,7 +7,8 @@
 #ifndef DOT_H_
 #define DOT_H_
 
-/* libemu headers */
+#include <QString>
+
 extern "C" {
 	#include <emu/emu.h>
 	#include <emu/emu_memory.h>
@@ -26,7 +27,6 @@ extern "C" {
 	#include <emu/environment/linux/env_linux_syscall_hooks.h>
 }
 
-/* project headers */
 #include <core/SystemLogger.h>
 #include <core/Options.h>
 
@@ -45,6 +45,6 @@ struct instr_vertex *instr_vertex_copy(struct instr_vertex *from);
 
 void instr_vertex_destructor(void *data);
 
-int graph_draw(struct emu_graph *graph, string dot_file);
+void graph_draw(struct emu_graph *graph, QString dot_file);
 
 #endif /* DOT_H_ */

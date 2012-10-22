@@ -6,17 +6,14 @@
 
 #include "AbstractInput.h"
 
-int AbstractInput::nextID = INPUT_ID_OFFSET;
+int AbstractInput::m_nextID = INPUT_ID_OFFSET;
 
 AbstractInput::AbstractInput()
 {
+    m_id = nextID();
 }
 
-AbstractInput::~AbstractInput()
+QString AbstractInput::type()
 {
-}
-
-string AbstractInput::getType()
-{
-	return type;
+    return m_type;
 }

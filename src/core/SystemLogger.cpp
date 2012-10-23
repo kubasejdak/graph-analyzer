@@ -71,6 +71,10 @@ void SystemLogger::log(QString msg_file, QString func, int line, QString fmt, ..
 		break;
 	}
 
+    /* empty line feature */
+    if(fmt == "\n")
+        m = "\n\n";
+
     /* print to console */
     vfprintf(stderr, m.toStdString().c_str(), arg_ptr);
 
@@ -114,6 +118,10 @@ void SystemLogger::logError(QString msg_file, QString func, int line, QString fm
     default:
         break;
     }
+
+    /* empty line feature */
+    if(fmt == "\n")
+        m = "\n\n";
 
     /* print to console */
     vfprintf(stderr, m.toStdString().c_str(), arg_ptr);

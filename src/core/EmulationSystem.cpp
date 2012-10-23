@@ -32,7 +32,7 @@ bool EmulationSystem::emulate()
     }
 
 	/* load code to emu unit */
-    LOG("sample name: [%s]\n");
+    LOG("sample name: [%s]\n", m_sample->info()->name().toStdString().c_str());
 	int32_t codeOffset;
     codeOffset = m_emuUnit->loadCode(m_sample->code(), m_sample->info()->size());
     m_sample->info()->setCodeOffset(codeOffset);

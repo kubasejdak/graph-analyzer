@@ -132,12 +132,14 @@ int32_t EmulationUnit::codeOffset()
 void EmulationUnit::exportWin32Hooks()
 {
 #if 0
+    LOG("\n");
     emu_env_w32_export_hook(m_env, "ExitProcess", userHook_ExitProcess, NULL);
     emu_env_w32_export_hook(m_env, "ExitThread", userHook_ExitThread, NULL);
 
 	/* shdocvw.dll */
     emu_env_w32_load_dll(m_env->env.win,"shdocvw.dll");
     emu_env_w32_export_hook(m_env, "IEWinMain", userHook_IEWinMain, NULL);
+    LOG("loaded: [shdocvw.dll]\n");
 
 	/* msvcrt.dll */
     emu_env_w32_load_dll(m_env->env.win,"msvcrt.dll");
@@ -150,6 +152,7 @@ void EmulationUnit::exportWin32Hooks()
     emu_env_w32_export_hook(m_env, "CreateFileA", userHook_CreateFile, na);
     emu_env_w32_export_hook(m_env, "WriteFile", userHook_WriteFile, na);
     emu_env_w32_export_hook(m_env, "CloseHandle", userHook_CloseHandle, na);
+    LOG("loaded: [msvcrt.dll]\n");
 
 	/* ws2_32.dll */
     emu_env_w32_load_dll(m_env->env.win,"ws2_32.dll");
@@ -163,17 +166,22 @@ void EmulationUnit::exportWin32Hooks()
     emu_env_w32_export_hook(m_env, "send", userHook_send, NULL);
     emu_env_w32_export_hook(m_env, "socket", userHook_socket, NULL);
     emu_env_w32_export_hook(m_env, "WSASocketA", userHook_WSASocket, NULL);
+    LOG("loaded: [ws2_32.dll]\n");
 
 	/* urlmon.dll */
     emu_env_w32_load_dll(m_env->env.win,"urlmon.dll");
     emu_env_w32_export_hook(m_env, "URLDownloadToFileA", userHook_URLDownloadToFile, NULL);
+    LOG("loaded: [urlmon.dll]\n");
+    LOG("Win32Hooks loaded\n");
 #endif
 }
 
 void EmulationUnit::exportLinuxHooks()
 {
 #if 0
+    LOG("\n");
     emu_env_linux_syscall_hook(m_env, "exit", userHook_exit, NULL);
     emu_env_linux_syscall_hook(m_env, "socket", userHook_socket, NULL);
+    LOG("LinuxHooks loaded\n");
 #endif
 }

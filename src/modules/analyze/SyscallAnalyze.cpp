@@ -13,12 +13,9 @@ SyscallAnalyze::SyscallAnalyze()
     m_traitName = "api";
 }
 
-SyscallAnalyze::~SyscallAnalyze()
-{
-}
-
 bool SyscallAnalyze::perform(ShellcodeSample *sample)
 {
+    LOG("\n");
     Graph *g = sample->graph();
 	struct instr_vertex *instr_vert;
     QString syscall, dll;
@@ -35,10 +32,13 @@ bool SyscallAnalyze::perform(ShellcodeSample *sample)
             syscall = splitter.syscall();
             m = new QMap<QString, QString> ();
 			(*m)["syscall"] = syscall;
+            LOG("syscall: [%s]\n", syscall.toStdString().c_str());
 			(*m)["DLL"] = dll;
+            LOG("DLL: [%s]\n", dll.toStdString().c_str());
             sample->info()->setTrait(m_traitName, m);
 		}
 	}
 
+    LOG("SUCCESS\n");
 	return true;
 }

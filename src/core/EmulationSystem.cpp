@@ -24,10 +24,15 @@ void EmulationSystem::loadSample(ShellcodeSample *sample)
 
 bool EmulationSystem::emulate()
 {
-    if(!m_sample)
+    LOG("\n");
+    if(!m_sample) {
+        LOG_ERROR("m_sample: [null]\n");
+        LOG_ERROR("FAILURE\n");
 		return false;
+    }
 
 	/* load code to emu unit */
+    LOG("sample name: [%s]\n");
 	int32_t codeOffset;
     codeOffset = m_emuUnit->loadCode(m_sample->code(), m_sample->info()->size());
     m_sample->info()->setCodeOffset(codeOffset);
@@ -35,6 +40,8 @@ bool EmulationSystem::emulate()
 
 	/* if exploit not detected return */
     if(!m_sample->info()->isShellcodePresent()) {
+        LOG("exploit not detected, returning\n");
+        LOG("SUCCESS\n");
         m_sample = NULL;
 		return true;
 	}
@@ -108,7 +115,8 @@ bool EmulationSystem::emulate()
 
 			/* no function defined fot this name */
 			if(hook->hook.win->fnhook == NULL) {
-				LOG("unhooked call to %s\n", hook->hook.win->fnname);
+                LOG_ERROR("unhooked call to: [%s]\n", hook->hook.win->fnname);
+                LOG_ERROR("FAILURE\n");
 				return false;
 			}
 		}
@@ -146,15 +154,18 @@ bool EmulationSystem::emulate()
 				else {
 					if(hook->hook.lin->fnhook != NULL)
 						hook->hook.lin->fnhook(env, hook);
-					else
+                    else {
+                        LOG_ERROR("hook.lin->fnhook: [null]\n");
+                        LOG_ERROR("FAILURE\n");
 						return false;
+                    }
 				}
 			}
 
 			if(ret == -1) {
 				/* step failed - maybe SEH */
 				if(emu_env_w32_step_failed(env) != 0) {
-                    LOG("cpu %s\n", emu_strerror(m_emuUnit->emu()));
+                    LOG("cpu: [%s]\n", emu_strerror(m_emuUnit->emu()));
 					break;
 				}
 			}
@@ -174,26 +185,29 @@ bool EmulationSystem::emulate()
 	} /* emulation loop */
 
 	/* create .dot file */
-    LOG("creating .dot file\n");
-    QString dotFile = QString("%1/bin/graph.dot").arg(APP_ROOT_PATH);;
+    QString dotFile = QString("%1/bin/graph.dot").arg(APP_ROOT_PATH);
+    LOG("dotFile: [%s]\n", dotFile.toStdString().c_str());
     graph_draw(graph->emuGraph(), dotFile);
 
 	/* draw graph using dot package and sample name */
     if(!QDir(GRAPHS_DIR).exists()) {
         bool success = QDir().mkdir(GRAPHS_DIR);
         if(!success) {
-            LOG_ERROR("cannot create directory %s\n", GRAPHS_DIR.toStdString().c_str());
+            LOG_ERROR("cannot create directory: [%s]\n", GRAPHS_DIR.toStdString().c_str());
+            LOG_ERROR("FAILURE\n");
 			return false;
 		}
 	}
+    LOG("using directory: [%s]\n", GRAPHS_DIR.toStdString().c_str());
 
     QFileInfo graphFile(m_sample->info()->name());
     QString graphName = QString("%1/%2.png").arg(GRAPHS_DIR).arg(graphFile.baseName());
+    LOG("graphName: [%s]\n", graphName.toStdString().c_str());
 
 	/* check for duplicates */
 	int k = 2;
     while(QFile(graphName).exists()) {
-        LOG("duplicate name for graph name found, renaming\n");
+        LOG("duplicate for graphName found, renaming\n");
         QFileInfo duplicate(graphName);
         graphName = QString("%1/%2").arg(duplicate.absolutePath()).arg(duplicate.baseName());
 
@@ -205,28 +219,24 @@ bool EmulationSystem::emulate()
             graphName += "_";
         QString str_num;
         graphName += str_num.setNum(k) + ".png";
+        LOG("renamed to graphName: [%s]\n", graphName.toStdString().c_str());
 		++k;
 	}
-    LOG("graph name will be: %s\n", graphName.toStdString().c_str());
+    LOG("fianl graphName: [%s]\n", graphName.toStdString().c_str());
 
     QString dotCmd = QString("dot %1 -Tpng -o \"%2\"").arg(dotFile.toStdString().c_str()).arg(graphName.toStdString().c_str());
-    LOG("trying to execute '%s'\n", dotCmd.toStdString().c_str());
+    LOG("executing [%s]\n", dotCmd.toStdString().c_str());
     ret = system(dotCmd.toStdString().c_str());
 	if(!ret) {
         bool success = QFile(dotFile).remove();
-        if(!success) {
-            SystemLogger::instance()->setError("removing .dot file failed");
+        if(!success)
 			LOG_ERROR("deleting .dot file\n");
-		}
 	}
 	else {
-        SystemLogger::instance()->setError("drawing graph failed");
 		LOG_ERROR("drawing graph failed\n");
         bool success = QFile(dotFile).remove();
-        if(!success) {
-            SystemLogger::instance()->setError("removing .dot file failed");
+        if(!success)
 			LOG_ERROR("deleting .dot file\n");
-        }
 	}
 
 	if(DELETE_CODE_INSTANTLY) {
@@ -237,6 +247,7 @@ bool EmulationSystem::emulate()
     m_sample->info()->setGraphName(graphName);
     m_sample = NULL;
     LOG("emulation finished\n");
+    LOG("SUCCESS\n");
 
 	return true;
 }

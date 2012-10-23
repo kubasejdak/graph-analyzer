@@ -14,7 +14,7 @@
 class SyscallAnalyze: public AbstractAnalyze {
 public:
 	SyscallAnalyze();
-	virtual ~SyscallAnalyze();
+    virtual ~SyscallAnalyze() {}
 
 	virtual bool perform(ShellcodeSample *sample);
 };

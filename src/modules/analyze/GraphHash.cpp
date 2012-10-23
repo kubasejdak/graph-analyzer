@@ -15,6 +15,7 @@ GraphHash::GraphHash()
 
 bool GraphHash::perform(ShellcodeSample *sample)
 {
+    LOG("\n");
     Graph *g = sample->graph();
 	Graph::graph_iterator it;
     QMap<QString, QString> *m = new QMap<QString, QString>();
@@ -32,9 +33,11 @@ bool GraphHash::perform(ShellcodeSample *sample)
 	}
 
     (*m)["hash"] = Toolbox::hash(graphString);
+    LOG("hash: [%s]\n", Toolbox::hash(graphString).toStdString().c_str());
 
 	/* set traits */
     sample->info()->setTrait(m_traitName, m);
 
+    LOG("SUCCESS\n");
 	return true;
 }

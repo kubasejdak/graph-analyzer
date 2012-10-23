@@ -14,8 +14,11 @@ DatabaseOutput::DatabaseOutput()
 
 bool DatabaseOutput::generateOutput(ShellcodeSample *sample)
 {
-    if(!sample->info()->isShellcodePresent() && SKIP_NONEXPLOIT_OUTPUT)
-		return false;
+    LOG("\n");
+    if(!sample->info()->isShellcodePresent() && SKIP_NONEXPLOIT_OUTPUT) {
+        LOG("no exploit found, returning\n");
+        return true;
+    }
 
     ShellcodeInfo *info = sample->info();
 
@@ -101,6 +104,7 @@ void DatabaseOutput::traitQuery(QSqlQuery *query, QString table, QMap<QString, Q
 
 bool DatabaseOutput::checkDuplicate(ShellcodeInfo *info)
 {
+    LOG("\n");
     /* check sample */
     QSqlQuery select_query(DatabaseManager::instance()->database());
     select_query.prepare("SELECT * FROM analyze_sample WHERE name = ? AND extracted_from = ? AND file_size = ? AND shellcode_offset = ?");
@@ -114,5 +118,6 @@ bool DatabaseOutput::checkDuplicate(ShellcodeInfo *info)
         return false;
     }
 
+    LOG("SUCCESS\n");
     return select_query.next();
 }

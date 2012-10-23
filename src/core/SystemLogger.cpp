@@ -62,10 +62,10 @@ void SystemLogger::log(QString msg_file, QString func, int line, QString fmt, ..
         m += fmt;
 		break;
 	case 2:
-        m += QString("FUNCTION: %1, LINE: %2 %3").arg(func).arg(line).arg(fmt);
+        m += QString("FUNC: %1, LINE: %2 %3").arg(func).arg(line).arg(fmt);
 		break;
 	case 3:
-        m += QString("FILE: %1, FUNCTION: %2, LINE: %3 %4").arg(msg_file).arg(func).arg(QString().setNum(line)).arg(fmt);
+        m += QString("FILE: %1, FUNC: %2, LINE: %3 %4").arg(msg_file).arg(func).arg(QString().setNum(line)).arg(fmt);
 		break;
 	default:
 		break;
@@ -106,10 +106,10 @@ void SystemLogger::logError(QString msg_file, QString func, int line, QString fm
         m += QString("ERROR: %1").arg(fmt);
         break;
     case 2:
-        m += QString("FUNCTION: %1, LINE: %2, ERROR: %3").arg(func).arg(line).arg(fmt);
+        m += QString("FUNC: %1, LINE: %2, ERROR: %3").arg(func).arg(line).arg(fmt);
         break;
     case 3:
-        m += QString("FILE: %1, FUNCTION: %2, LINE: %3, ERROR: %4").arg(msg_file).arg(func).arg(QString().setNum(line)).arg(fmt);
+        m += QString("FILE: %1, FUNC: %2, LINE: %3, ERROR: %4").arg(msg_file).arg(func).arg(QString().setNum(line)).arg(fmt);
         break;
     default:
         break;

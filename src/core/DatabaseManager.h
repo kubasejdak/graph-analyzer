@@ -6,6 +6,7 @@
 #include <QtSql>
 
 #include <core/Options.h>
+#include <core/SystemLogger.h>
 
 class DatabaseManager {
 public:

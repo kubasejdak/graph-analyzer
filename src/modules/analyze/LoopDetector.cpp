@@ -15,6 +15,7 @@ LoopDetector::LoopDetector()
 
 bool LoopDetector::perform(ShellcodeSample *sample)
 {
+    LOG("\n");
     Graph *g = sample->graph();
 	Graph::graph_iterator it;
     LoopContainer *loops;
@@ -29,6 +30,7 @@ bool LoopDetector::perform(ShellcodeSample *sample)
 			continue;
 
 		/* extract information about loops */
+        LOG("loop found\n");
         for(int i = 0; i < loops->size(); ++i) {
 			vec = (*loops)[i];
 			iv = (instr_vertex *) vec->front()->data;
@@ -36,9 +38,11 @@ bool LoopDetector::perform(ShellcodeSample *sample)
 
 			/* start address */
             (*m)["start"] = Toolbox::itos(iv->eip, 16);
+            LOG("start: [%s]\n", Toolbox::itos(iv->eip).toStdString().c_str());
 
 			/* number of vertexes */
             (*m)["size"] = Toolbox::itos(vec->size());
+            LOG("size: [%s]\n", Toolbox::itos(vec->size()).toStdString().c_str());
 
 			/* list of vertexes */
 			vertexes = "";
@@ -49,6 +53,7 @@ bool LoopDetector::perform(ShellcodeSample *sample)
 					vertexes += ", ";
 			}
 			(*m)["vertexes"] = vertexes;
+            LOG("vertexes: [%s]\n", vertexes.toStdString().c_str());
 
 			/* number of iterations */
 			emu_edge *e = emu_edges_first(vec->back()->edges);
@@ -56,6 +61,7 @@ bool LoopDetector::perform(ShellcodeSample *sample)
 				iv = (instr_vertex *) e->destination->data;
                 if(Toolbox::itos(iv->eip, 16) == (*m)["start"]) {
                     (*m)["iterations"] = Toolbox::itos(e->count);
+                    LOG("iterations: [%s]\n", Toolbox::itos(e->count).toStdString().c_str());
 					break;
 				}
 
@@ -86,5 +92,6 @@ bool LoopDetector::perform(ShellcodeSample *sample)
 		delete loops;
 	}
 
+    LOG("SUCCESS\n");
 	return true;
 }

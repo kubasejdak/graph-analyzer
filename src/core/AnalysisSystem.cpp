@@ -23,11 +23,17 @@ void AnalysisSystem::loadSample(ShellcodeSample *sample)
 
 bool AnalysisSystem::analyze()
 {
-    if(!m_sample)
+    LOG("\n");
+    if(!m_sample) {
+        LOG_ERROR("m_sample: [null]\n");
+        LOG_ERROR("FAILURE\n");
 		return false;
+    }
 
     if(!m_sample->info()->isShellcodePresent()) {
         m_sample = NULL;
+        LOG("no exploit found, nothing to analyze, returning\n");
+        LOG("SUCCESS\n");
 		return true;
 	}
 
@@ -35,11 +41,15 @@ bool AnalysisSystem::analyze()
     QMap<QString, AbstractAnalyze *>::iterator it;
     for(it = m_analyzeModules->begin(); it != m_analyzeModules->end(); ++it) {
         status = it.value()->perform(m_sample);
-        if(!status)
+        if(!status) {
+            LOG_ERROR("analyze module failed: [%s]\n", it.key().toStdString().c_str());
+            LOG_ERROR("FAILURE\n");
             return false;
+        }
 	}
 
     m_sample = NULL;
+    LOG("SUCCESS\n");
 	return true;
 }
 

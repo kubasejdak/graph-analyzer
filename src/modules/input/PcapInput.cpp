@@ -15,6 +15,7 @@ PcapInput::PcapInput()
 
 void PcapInput::loadInput(QString filename, QList<ShellcodeSample *> *samples)
 {
+    LOG("\n");
     int success;
 
     /* move to /tmp/pcap_tmp */
@@ -82,4 +83,5 @@ void PcapInput::loadInput(QString filename, QList<ShellcodeSample *> *samples)
     /* clean up */
     QDir::setCurrent("..");
     Toolbox::removeDirectory("/tmp/pcap_tmp");
+    LOG("SUCCESS\n");
 }

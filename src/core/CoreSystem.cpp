@@ -8,10 +8,10 @@
 
 CoreSystem::CoreSystem()
 {
+    LOG("\n");
     SystemLogger::instance()->setLogFile("/home/kuba/analyzer_log");
     SystemLogger::instance()->setLogLevel(2);
 
-	LOG("reading config file\n");
     ConfigFile::instance()->read();
 	loadModules();
 
@@ -40,8 +40,9 @@ void CoreSystem::addFile(QString file)
 
 void CoreSystem::run()
 {
+    LOG("\n");
 	/* parse all input files */
-    LOG("parsing input files...\n");
+    LOG("parsing input files\n");
     while(!m_pendingFiles.isEmpty()) {
         QString currentFile = m_pendingFiles.front();
         m_pendingFiles.pop_front();
@@ -61,9 +62,9 @@ void CoreSystem::run()
         }
 
 		/* load */
-        LOG("loading...\n");
+        LOG("loading\n");
         if(!load(currentFile)) {
-            LOG_ERROR("opening file %s (%s)\n", currentFile.toStdString().c_str(), error().toStdString().c_str());
+            LOG_ERROR("opening file [%s] -> [%s]\n", currentFile.toStdString().c_str(), error().toStdString().c_str());
 			continue;
 		}
 
@@ -73,35 +74,36 @@ void CoreSystem::run()
             m_samples.pop_front();
 
 			/* emulate */
-            LOG("emulating...\n");
+            LOG("emulating\n");
 			if(!emulate(s)) {
-                LOG_ERROR("emulating %s (%s)\n", currentFile.toStdString().c_str(), error().toStdString().c_str());
+                LOG_ERROR("emulating [%s] -> [%s]\n", currentFile.toStdString().c_str(), error().toStdString().c_str());
 				delete s;
 				continue;
 			}
 
 			/* analyze graph */
-            LOG("analyzing...\n");
+            LOG("analyzing\n");
 			if(!analyze(s)) {
-                LOG_ERROR("analyzing %s (%s)\n", currentFile.toStdString().c_str(), error().toStdString().c_str());
+                LOG_ERROR("analyzing [%s] -> [%s]\n", currentFile.toStdString().c_str(), error().toStdString().c_str());
 				delete s;
 				continue;
 			}
 
 			/* make output */
-            LOG("generating output...\n");
+            LOG("generating output\n");
 			if(!makeOutput(s)) {
-                LOG_ERROR("output for %s (%s)\n", currentFile.toStdString().c_str(), error().toStdString().c_str());
+                LOG_ERROR("output for [%s] -> [%s]\n", currentFile.toStdString().c_str(), error().toStdString().c_str());
 				delete s;
 				continue;
 			}
 
 			/* clean up */
 			delete s;
-
-            LOG("sample analysis SUCCESS!\n");
+            LOG("sample processing finished\n");
 		}
+        LOG("file processing finished\n");
 	} /* while */
+    LOG("SUCCESS\n");
 }
 
 void CoreSystem::clear()
@@ -154,6 +156,7 @@ QString CoreSystem::version()
 
 bool CoreSystem::load(QString file)
 {
+    LOG("\n");
     SystemLogger::instance()->setStatus("loading");
     SystemLogger::instance()->clearError();
 
@@ -162,6 +165,7 @@ bool CoreSystem::load(QString file)
 
     FileAnalyser fileAnalyser;
     QString fileType = fileAnalyser.analyze(file);
+    LOG("fileType: [%s]\n", fileType.toStdString().c_str());
 
     QMap<QString, AbstractInput *>::iterator it;
     for(it = m_inputMods->begin(); it != m_inputMods->end(); ++it) {
@@ -182,15 +186,19 @@ bool CoreSystem::load(QString file)
     SystemLogger::instance()->setStatus("idle");
     if(!m_samples.isEmpty()) {
         ++m_sampleCounter;
+        LOG("SUCCESS\n");
 		return true;
 	}
 
     SystemLogger::instance()->setError("no appropriate input module");
+    LOG_ERROR("no appropriate input module\n");
+    LOG_ERROR("FAILUR\n");
 	return false;
 }
 
 bool CoreSystem::emulate(ShellcodeSample *s)
 {
+    LOG("\n");
     SystemLogger::instance()->setStatus("emulating");
     SystemLogger::instance()->clearError();
 
@@ -200,14 +208,18 @@ bool CoreSystem::emulate(ShellcodeSample *s)
     SystemLogger::instance()->setStatus("idle");
 	if(!ret) {
         SystemLogger::instance()->setError("general emulation error");
+        LOG_ERROR("general emulation error\n");
+        LOG_ERROR("FAILURE\n");
 		return false;
 	}
 
+    LOG("SUCCESS\n");
 	return true;
 }
 
 bool CoreSystem::analyze(ShellcodeSample *s)
 {
+    LOG("\n");
     SystemLogger::instance()->setStatus("analyzing");
     SystemLogger::instance()->clearError();
 
@@ -217,22 +229,29 @@ bool CoreSystem::analyze(ShellcodeSample *s)
     SystemLogger::instance()->setStatus("idle");
 	if(!ret) {
         SystemLogger::instance()->setError("general analyzing error");
+        LOG_ERROR("general analyzing error\n");
+        LOG_ERROR("FAILURE\n");
 		return false;
 	}
 
     if(s->info()->isShellcodePresent())
         ++m_exploitCounter;
+    LOG("SUCCESS\n");
 	return true;
 }
 
 bool CoreSystem::makeOutput(ShellcodeSample *s)
 {
+    LOG("\n");
     SystemLogger::instance()->setStatus("generating output");
     SystemLogger::instance()->clearError();
 
     QList<QString>::iterator it;
-    if(!s->info()->isShellcodePresent())
+    if(!s->info()->isShellcodePresent()) {
+        LOG("no exploit found, returning\n");
+        LOG("SUCCESS\n");
 		return true;
+    }
 
 	bool ret;
     for(it = m_outputMethods.begin(); it != m_outputMethods.end(); ++it) {
@@ -241,10 +260,13 @@ bool CoreSystem::makeOutput(ShellcodeSample *s)
         SystemLogger::instance()->setStatus("idle");
 		if(!ret) {
             SystemLogger::instance()->setError("generating output failed");
+            LOG_ERROR("generating output error\n");
+            LOG_ERROR("FAILURE\n");
 			return false;
 		}
 	}
 
+    LOG("SUCCESS\n");
 	return true;
 }
 

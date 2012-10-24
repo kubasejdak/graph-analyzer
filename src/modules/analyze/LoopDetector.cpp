@@ -15,7 +15,6 @@ LoopDetector::LoopDetector()
 
 bool LoopDetector::perform(ShellcodeSample *sample)
 {
-    LOG("\n");
     Graph *g = sample->graph();
 	Graph::graph_iterator it;
     LoopContainer *loops;
@@ -92,6 +91,6 @@ bool LoopDetector::perform(ShellcodeSample *sample)
 		delete loops;
 	}
 
-    LOG("SUCCESS\n");
+    LOG("SUCCESS\n\n");
 	return true;
 }

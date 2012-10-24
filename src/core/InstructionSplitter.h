@@ -8,7 +8,11 @@
 #define INSTRUCTIONSPLITTER_H_
 
 #include <QString>
-#include <QStringList>
+#include <vector>
+#include <string>
+#include <boost/algorithm/string.hpp>
+using namespace std;
+using namespace boost;
 
 class InstructionSplitter {
 public:
@@ -26,8 +30,7 @@ public:
     InstructionSplitter &operator=(QString s);
 
 private:
-    //QVector<QString> m_holder;
-    QStringList m_holder;
+    vector<string> m_holder;
 };
 
 #endif /* INSTRUCTIONSPLITTER_H_ */

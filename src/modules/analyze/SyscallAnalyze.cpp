@@ -15,7 +15,6 @@ SyscallAnalyze::SyscallAnalyze()
 
 bool SyscallAnalyze::perform(ShellcodeSample *sample)
 {
-    LOG("\n");
     Graph *g = sample->graph();
 	struct instr_vertex *instr_vert;
     QString syscall, dll;
@@ -39,6 +38,6 @@ bool SyscallAnalyze::perform(ShellcodeSample *sample)
 		}
 	}
 
-    LOG("SUCCESS\n");
+    LOG("SUCCESS\n\n");
 	return true;
 }

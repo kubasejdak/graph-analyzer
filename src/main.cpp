@@ -118,7 +118,9 @@ int main(int argc, char *argv[])
             return 1;
 
         system.setLogFile(sysOptions.logFile.c_str());
+        LOG("using logFile: [%s]\n", sysOptions.logFile.c_str());
         system.setLogLevel(sysOptions.logLevel);
+        LOG("setting logLevel: [%d]\n", sysOptions.logLevel);
         while(!sysOptions.output.empty()) {
             system.setOutput(sysOptions.output.back().c_str());
             sysOptions.output.pop_back();

@@ -24,10 +24,9 @@ void EmulationSystem::loadSample(ShellcodeSample *sample)
 
 bool EmulationSystem::emulate()
 {
-    LOG("\n");
     if(!m_sample) {
         LOG_ERROR("m_sample: [null]\n");
-        LOG_ERROR("FAILURE\n");
+        LOG_ERROR("FAILURE\n\n");
 		return false;
     }
 
@@ -41,7 +40,7 @@ bool EmulationSystem::emulate()
 	/* if exploit not detected return */
     if(!m_sample->info()->isShellcodePresent()) {
         LOG("exploit not detected, returning\n");
-        LOG("SUCCESS\n");
+        LOG("SUCCESS\n\n");
         m_sample = NULL;
 		return true;
 	}
@@ -116,7 +115,7 @@ bool EmulationSystem::emulate()
 			/* no function defined fot this name */
 			if(hook->hook.win->fnhook == NULL) {
                 LOG_ERROR("unhooked call to: [%s]\n", hook->hook.win->fnname);
-                LOG_ERROR("FAILURE\n");
+                LOG_ERROR("FAILURE\n\n");
 				return false;
 			}
 		}
@@ -156,7 +155,7 @@ bool EmulationSystem::emulate()
 						hook->hook.lin->fnhook(env, hook);
                     else {
                         LOG_ERROR("hook.lin->fnhook: [null]\n");
-                        LOG_ERROR("FAILURE\n");
+                        LOG_ERROR("FAILURE\n\n");
 						return false;
                     }
 				}
@@ -194,7 +193,7 @@ bool EmulationSystem::emulate()
         bool success = QDir().mkdir(GRAPHS_DIR);
         if(!success) {
             LOG_ERROR("cannot create directory: [%s]\n", GRAPHS_DIR.toStdString().c_str());
-            LOG_ERROR("FAILURE\n");
+            LOG_ERROR("FAILURE\n\n");
 			return false;
 		}
 	}
@@ -247,7 +246,7 @@ bool EmulationSystem::emulate()
     m_sample->info()->setGraphName(graphName);
     m_sample = NULL;
     LOG("emulation finished\n");
-    LOG("SUCCESS\n");
+    LOG("SUCCESS\n\n");
 
 	return true;
 }

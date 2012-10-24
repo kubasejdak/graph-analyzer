@@ -56,6 +56,7 @@ int32_t EmulationUnit::loadCode(byte_t *code, int32_t size)
 {
 	/* perform getPC test */
     m_codeOffset = getPcTest(code, size);
+    LOG("m_codeOffset: [%d]\n", m_codeOffset);
 
 	/* clear registers */
 	for(int i = 0; i < 8; ++i)
@@ -132,7 +133,6 @@ int32_t EmulationUnit::codeOffset()
 void EmulationUnit::exportWin32Hooks()
 {
 #if 0
-    LOG("\n");
     emu_env_w32_export_hook(m_env, "ExitProcess", userHook_ExitProcess, NULL);
     emu_env_w32_export_hook(m_env, "ExitThread", userHook_ExitThread, NULL);
 
@@ -179,7 +179,6 @@ void EmulationUnit::exportWin32Hooks()
 void EmulationUnit::exportLinuxHooks()
 {
 #if 0
-    LOG("\n");
     emu_env_linux_syscall_hook(m_env, "exit", userHook_exit, NULL);
     emu_env_linux_syscall_hook(m_env, "socket", userHook_socket, NULL);
     LOG("LinuxHooks loaded\n");

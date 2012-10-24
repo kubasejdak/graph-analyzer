@@ -15,7 +15,6 @@ PcapInput::PcapInput()
 
 void PcapInput::loadInput(QString filename, QList<ShellcodeSample *> *samples)
 {
-    LOG("\n");
     int success;
 
     /* move to /tmp/pcap_tmp */
@@ -24,6 +23,7 @@ void PcapInput::loadInput(QString filename, QList<ShellcodeSample *> *samples)
         success = pcapDir.mkdir("/tmp/pcap_tmp");
         if(!success) {
             LOG_ERROR("cannot create /tmp/pcap_tmp directory\n");
+            LOG_ERROR("FAILURE\n\n");
             exit(1);
 		}
 	}
@@ -47,6 +47,7 @@ void PcapInput::loadInput(QString filename, QList<ShellcodeSample *> *samples)
 
         /* clear recursively directory */
         Toolbox::removeDirectory("/tmp/pcap_tmp");
+        LOG_ERROR("FAILURE\n\n");
         exit(1);
 	}
 
@@ -83,5 +84,5 @@ void PcapInput::loadInput(QString filename, QList<ShellcodeSample *> *samples)
     /* clean up */
     QDir::setCurrent("..");
     Toolbox::removeDirectory("/tmp/pcap_tmp");
-    LOG("SUCCESS\n");
+    LOG("SUCCESS\n\n");
 }

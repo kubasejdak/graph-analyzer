@@ -14,9 +14,9 @@ DatabaseOutput::DatabaseOutput()
 
 bool DatabaseOutput::generateOutput(ShellcodeSample *sample)
 {
-    LOG("\n");
     if(!sample->info()->isShellcodePresent() && SKIP_NONEXPLOIT_OUTPUT) {
         LOG("no exploit found, returning\n");
+        LOG("SUCCESS\n\n");
         return true;
     }
 
@@ -28,6 +28,7 @@ bool DatabaseOutput::generateOutput(ShellcodeSample *sample)
         LOG("duplicate sample: skipping and removing duplicated graph file\n");
         QFile file(info->graphName());
         file.remove();
+        LOG("SUCCESS\n\n");
         return true;
     }
 
@@ -37,6 +38,7 @@ bool DatabaseOutput::generateOutput(ShellcodeSample *sample)
     if(!DatabaseManager::instance()->exec(&seq_query)) {
         SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
         LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
+        LOG_ERROR("FAILURE\n\n");
         return false;
     }
 
@@ -56,6 +58,7 @@ bool DatabaseOutput::generateOutput(ShellcodeSample *sample)
     if(!DatabaseManager::instance()->exec(&sample_query)) {
         SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
         LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
+        LOG_ERROR("FAILURE\n\n");
         return false;
     }
 
@@ -72,10 +75,12 @@ bool DatabaseOutput::generateOutput(ShellcodeSample *sample)
         if(!DatabaseManager::instance()->exec(&mod_query)) {
             SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
             LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
+            LOG_ERROR("FAILURE\n\n");
             return false;
         }
     }
 
+    LOG("SUCCESS\n\n");
 	return true;
 }
 
@@ -104,7 +109,6 @@ void DatabaseOutput::traitQuery(QSqlQuery *query, QString table, QMap<QString, Q
 
 bool DatabaseOutput::checkDuplicate(ShellcodeInfo *info)
 {
-    LOG("\n");
     /* check sample */
     QSqlQuery select_query(DatabaseManager::instance()->database());
     select_query.prepare("SELECT * FROM analyze_sample WHERE name = ? AND extracted_from = ? AND file_size = ? AND shellcode_offset = ?");
@@ -115,9 +119,10 @@ bool DatabaseOutput::checkDuplicate(ShellcodeInfo *info)
     if(!DatabaseManager::instance()->exec(&select_query)) {
         SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
         LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
+        LOG_ERROR("FAILURE\n\n");
         return false;
     }
 
-    LOG("SUCCESS\n");
+    LOG("SUCCESS\n\n");
     return select_query.next();
 }

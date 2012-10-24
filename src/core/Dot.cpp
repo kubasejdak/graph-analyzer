@@ -43,7 +43,6 @@ void instr_vertex_destructor(void *data)
 
 void graph_draw(struct emu_graph *graph, QString dot_file)
 {
-    LOG("\n");
 	struct emu_vertex *ev;
 	struct instr_vertex *iv;
 
@@ -181,5 +180,5 @@ void graph_draw(struct emu_graph *graph, QString dot_file)
 	graph->vertex_destructor = instr_vertex_destructor;
 	emu_graph_free(sgraph);
 
-    LOG("SUCCESS\n");
+    LOG("SUCCESS\n\n");
 }

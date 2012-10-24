@@ -23,17 +23,16 @@ void AnalysisSystem::loadSample(ShellcodeSample *sample)
 
 bool AnalysisSystem::analyze()
 {
-    LOG("\n");
     if(!m_sample) {
         LOG_ERROR("m_sample: [null]\n");
-        LOG_ERROR("FAILURE\n");
+        LOG_ERROR("FAILURE\n\n");
 		return false;
     }
 
     if(!m_sample->info()->isShellcodePresent()) {
         m_sample = NULL;
         LOG("no exploit found, nothing to analyze, returning\n");
-        LOG("SUCCESS\n");
+        LOG("SUCCESS\n\n");
 		return true;
 	}
 
@@ -43,13 +42,13 @@ bool AnalysisSystem::analyze()
         status = it.value()->perform(m_sample);
         if(!status) {
             LOG_ERROR("analyze module failed: [%s]\n", it.key().toStdString().c_str());
-            LOG_ERROR("FAILURE\n");
+            LOG_ERROR("FAILURE\n\n");
             return false;
         }
 	}
 
     m_sample = NULL;
-    LOG("SUCCESS\n");
+    LOG("SUCCESS\n\n");
 	return true;
 }
 

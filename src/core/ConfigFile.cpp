@@ -8,7 +8,6 @@
 
 void ConfigFile::read()
 {
-    LOG("\n");
     LOG("reading config file\n");
 	opt::options_description config("config");
 	config.add_options()
@@ -139,5 +138,5 @@ void ConfigFile::read()
 		exit(1);
 	}
 
-    LOG("SUCCESS\n");
+    LOG("SUCCESS\n\n");
 }

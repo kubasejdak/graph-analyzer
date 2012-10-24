@@ -15,11 +15,10 @@ BinaryInput::BinaryInput()
 
 void BinaryInput::loadInput(QString filename, QList<ShellcodeSample *> *samples)
 {
-    LOG("\n");
     QFile file(filename);
     file.open(QIODevice::ReadOnly);
     if(!file.isOpen()) {
-        LOG_ERROR("FAILURE\n");
+        LOG_ERROR("FAILURE\n\n");
 		return;
     }
 
@@ -35,5 +34,5 @@ void BinaryInput::loadInput(QString filename, QList<ShellcodeSample *> *samples)
     s->info()->setSize(size);
 	s->setCode((byte_t *) buffer);
 	samples->push_back(s);
-    LOG("SUCCESS\n");
+    LOG("SUCCESS\n\n");
 }

@@ -31,7 +31,6 @@ bool EmulationSystem::emulate()
     }
 
 	/* load code to emu unit */
-    LOG("sample name: [%s]\n", m_sample->info()->name().toStdString().c_str());
 	int32_t codeOffset;
     codeOffset = m_emuUnit->loadCode(m_sample->code(), m_sample->info()->size());
     m_sample->info()->setCodeOffset(codeOffset);
@@ -221,7 +220,7 @@ bool EmulationSystem::emulate()
         LOG("renamed to graphName: [%s]\n", graphName.toStdString().c_str());
 		++k;
 	}
-    LOG("fianl graphName: [%s]\n", graphName.toStdString().c_str());
+    LOG("final graphName: [%s]\n", graphName.toStdString().c_str());
 
     QString dotCmd = QString("dot %1 -Tpng -o \"%2\"").arg(dotFile.toStdString().c_str()).arg(graphName.toStdString().c_str());
     LOG("executing [%s]\n", dotCmd.toStdString().c_str());

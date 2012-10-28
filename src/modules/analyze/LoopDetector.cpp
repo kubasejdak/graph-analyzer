@@ -37,7 +37,7 @@ bool LoopDetector::perform(ShellcodeSample *sample)
 
 			/* start address */
             (*m)["start"] = Toolbox::itos(iv->eip, 16);
-            LOG("start: [%s]\n", Toolbox::itos(iv->eip).toStdString().c_str());
+            LOG("start: [%s]\n", Toolbox::itos(iv->eip, 16).toStdString().c_str());
 
 			/* number of vertexes */
             (*m)["size"] = Toolbox::itos(vec->size());

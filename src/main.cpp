@@ -162,8 +162,9 @@ int main(int argc, char *argv[])
             dbRemoveFile(sysOptions.input.back().c_str());
             dbAddRecentFile(sysOptions.input.back().c_str());
         }
-        sysOptions.input.pop_back();
+        LOG("sample name: [%s]\n", sysOptions.input.back().c_str());
         system.run();
+        sysOptions.input.pop_back();
         LOG("file processing completed\n");
         double perc = ((begSize - sysOptions.input.size()) / begSize) * 100;
         if(vm.count("slave"))

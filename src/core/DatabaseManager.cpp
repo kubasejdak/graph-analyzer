@@ -31,8 +31,8 @@ bool DatabaseManager::exec(QSqlQuery *query) {
         LOG_ERROR("FAILURE\n\n");
         return false;
     }
-    LOG("executed query: [%s]\n", query->lastQuery().toStdString().c_str());
 
+    LOG("executed query: [%s]\n", query->executedQuery().toStdString().c_str());
     LOG("SUCCESS\n\n");
     return true;
 }

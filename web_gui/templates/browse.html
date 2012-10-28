@@ -1,5 +1,39 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <p>Browse</p>
+<form class="well form-search">
+	<input type="text" class="span3 search-query" placeholder="Search..."/>
+	<button class="btn" name="search">Search</button>
+</form>
+
+<table class="table table-striped">
+	<thead>
+		<tr>
+			<th>Name</th>
+			<th>Extracted from</th>
+			<th>Graph name</th>
+			<th>File type</th>
+			<th>File size [bytes]</th>
+			<th>Shellcode offset [bytes]</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>Test</td>
+			<td>Test</td>
+			<td>Test</td>
+			<td>Test</td>
+			<td>Test</td>
+			<td>Test</td>
+		</tr>
+		<tr>
+			<td>Test2</td>
+			<td>Test2</td>
+			<td>Test2</td>
+			<td>Test2</td>
+			<td>Test2</td>
+			<td>Test2</td>
+		</tr>
+	</tbody>
+</table>
 {% endblock %}

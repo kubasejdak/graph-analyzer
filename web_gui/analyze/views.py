@@ -16,7 +16,7 @@ def show_analyze(request):
 		options = Option()
 		options.output_dest = "DatabaseOutput"
 		options.log_level = 1
-		options.log_file = "/home/kuba/nalyzer_log"
+		options.log_file = "/home/kuba/analyzer_log"
 		options.save()
 	else:
 		options = options_list[0]
@@ -37,7 +37,7 @@ def show_analyze(request):
 
 	# create form and update html content	
 	form = AnalyzeForm()
-	c = RequestContext(request, {"version": info.version, "form": form})
+	c = RequestContext(request, {"version": info.version, "form": form, "analyze": True})
 	c.update(csrf(request))
 	
 	# run system if "Analyze" clicked

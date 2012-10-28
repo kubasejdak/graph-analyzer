@@ -17,7 +17,7 @@ def show_home(request):
     else:
         info = systemInfo_list[0]
     
-    c = RequestContext(request, {"version": info.version})
+    c = RequestContext(request, {"version": info.version, "home": True})
     return render_to_response("home.html", c)
 
 def show_options(request):
@@ -46,8 +46,7 @@ def show_options(request):
     # create objects
     form = OptionsForm(initial = {"output_dest": options.output_dest, "log_level": options.log_level, "log_file": options.log_file})
     
-    m = "Enter options"
-    c = RequestContext(request, {"version": info.version, "is_message": False})
+    c = RequestContext(request, {"version": info.version, "is_message": False, "options": True})
     c.update(csrf(request))
     
     # save option in session if "Save" clicked
@@ -59,10 +58,8 @@ def show_options(request):
             options.log_level = cd["log_level"]
             options.log_file = cd["log_file"]
             options.save(force_update = True)
-            m = "Options saved"
-        else:
-            m = "ERROR: option fields are not valid"    
-        c.update({"is_message": True, "message": m})
+   
+        c.update({"is_message": True})
     
     c.update({"form": form})
             

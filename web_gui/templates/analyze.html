@@ -1,36 +1,41 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="AddForm">
-    <form action="" method="post">{% csrf_token %}
-      <table>{{ form.as_p }}</table>
-      <input type="submit" value="Add file" name="add">
-      <input type="submit" value="Analyze" name="analyze">
-    </form>
-  </div>
+	<div class="well">
+		<form action="" method="post">{% csrf_token %}
+			<table>{{ form.as_table }}</table>
+			<button class="btn" name="add">Add</button>
+			<button class="btn btn-danger" name="clear"><i class="icon-trash icon-white"></i> Clear</button>
+			<button class="btn btn-primary" name="analyze">Analyze</button>
+			<button class="btn" name="refresh"><i class="icon-refresh"></i> Refresh</button>
+		</form>
+	</div>
   
-  <p class="PendingFiles"><b>Files to analyze:</b>
-    <ul>
-    {% for file in pending_files %}
-      <li>{{ file.name }}</li>
-    {% endfor %}
-    </ul>
-  </p>
+	<p class="PendingFiles"><b>Files to analyze:</b>
+		<ul>
+			{% for file in pending_files %}
+				<li>{{ file.name }}</li>
+			{% endfor %}
+		</ul>
+	</p>
   
-  <p class="RecentFiles"><b>Recently analyzed:</b>
-    <ul>
-    {% for file in recent_files %}
-      <li>{{ file.name }}</li>
-    {% endfor %}
-    </ul>
-  </p>
+	<p class="RecentFiles"><b>Recently analyzed:</b>
+		<ul>
+			{% for file in recent_files %}
+				<li>{{ file.name }}</li>
+			{% endfor %}
+		</ul>
+	</p>
   
-  <p class="SystemInfo">
-    Overal progress: <b>{{ progress }} %</b><br/>
-    Exploits number: <b>{{ exploits }}</b><br/>
-    Samples number: <b>{{ samples }}</b><br/><br/>
+	<div class="well">
+		Overal progress:<br/>
+		<div class="progress progress-striped active">
+			<div class="bar" style="width: {{ progress }}%;">{{ progress }} %</div>
+    </div>
+		Exploits number: <b>{{ exploits }}</b><br/>
+		Samples number: <b>{{ samples }}</b><br/><br/>
 
-    System status: <b>{{ status }}</b><br/>
-    System error: <b>{{ error }}</b>
-  </p>
+		System status: <b>{{ status }}</b><br/>
+		System error: <b>{{ error }}</b>
+	</div>
 {% endblock %}

@@ -15,5 +15,5 @@ def show_browse(request):
     else:
         info = systemInfo_list[0]
     
-    c = RequestContext(request, {"version": info.version})
+    c = RequestContext(request, {"version": info.version, "browse": True})
     return render_to_response("browse.html", c)

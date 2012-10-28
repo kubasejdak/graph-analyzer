@@ -27,7 +27,7 @@ void SystemLogger::setError(QString error)
 
 QString SystemLogger::status()
 {
-    return m_error;
+    return m_status;
 }
 
 QString SystemLogger::error()

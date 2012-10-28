@@ -33,7 +33,7 @@ public:
 	virtual ~CoreSystem();
 
 	/* basic sample operation */
-    void addFile(QString file);
+    int addFile(QString file);
 	void run();
 	void clear();
 

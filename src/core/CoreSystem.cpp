@@ -29,12 +29,26 @@ CoreSystem::~CoreSystem()
 	clearSamples();
 }
 
-void CoreSystem::addFile(QString file)
+int CoreSystem::addFile(QString file)
 {
     if(file.isEmpty())
-		return;
+        return 0;
 
-    m_pendingFiles.push_back(file);
+    /* check if directory */
+    if(QDir(file).exists()) {
+        QDirIterator it(file, QDirIterator::Subdirectories);
+        while(it.hasNext()) {
+            QString entryName = it.next();
+            if(QDir(entryName).exists() || entryName == "." || entryName == "..")
+                continue;
+
+            m_pendingFiles.push_back(entryName);
+        }
+    }
+    else
+        m_pendingFiles.push_back(file);
+
+    return m_pendingFiles.size();
 }
 
 void CoreSystem::run()
@@ -44,20 +58,6 @@ void CoreSystem::run()
     while(!m_pendingFiles.isEmpty()) {
         QString currentFile = m_pendingFiles.front();
         m_pendingFiles.pop_front();
-
-		/* check if directory */
-        if(QDir(currentFile).exists()) {
-            QDirIterator it(currentFile, QDirIterator::Subdirectories);
-            while(it.hasNext()) {
-                QString entryName = it.next();
-                if(QDir(entryName).exists() || entryName == "." || entryName == "..")
-                    continue;
-
-                m_pendingFiles.push_back(entryName);
-			}
-
-			continue;
-        }
 
 		/* load */
         LOG("loading\n");

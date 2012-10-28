@@ -157,12 +157,13 @@ int main(int argc, char *argv[])
     int begSize = sysOptions.input.size();
     printIntro(system.version());
     while(!sysOptions.input.empty()) {
-        system.addFile(sysOptions.input.back().c_str());
+        string file = sysOptions.input.back();
+        system.addFile(file.c_str());
         if(vm.count("slave")) {
-            dbRemoveFile(sysOptions.input.back().c_str());
-            dbAddRecentFile(sysOptions.input.back().c_str());
+            dbRemoveFile(file.c_str());
+            dbAddRecentFile(file.c_str());
         }
-        LOG("sample name: [%s]\n", sysOptions.input.back().c_str());
+        LOG("processing file: [%s]\n", file.c_str());
         system.run();
         sysOptions.input.pop_back();
         LOG("file processing completed\n");

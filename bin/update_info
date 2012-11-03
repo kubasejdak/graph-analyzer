@@ -1,4 +1,0 @@
-#!/bin/bash
-# Script to update info about system in database
-
-/home/kuba/Projects/graph-analyzer/bin/graph-analyzer --update-db &

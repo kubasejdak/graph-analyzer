@@ -8,7 +8,7 @@
 
 CoreSystem::CoreSystem()
 {
-    SystemLogger::instance()->setLogFile("/home/kuba/analyzer_log");
+    SystemLogger::instance()->setLogFile("/var/www/jsejdak/analyzer_log");
     SystemLogger::instance()->setLogLevel(2);
 
     ConfigFile::instance()->read();
@@ -20,7 +20,7 @@ CoreSystem::CoreSystem()
     m_exploitCounter = 0;
     m_sampleCounter = 0;
 
-    LOG("created CoreSystem instance\n\n");
+    LOG("created CoreSystem instance, version: [%s]\n\n", VERSION);
 }
 
 CoreSystem::~CoreSystem()
@@ -51,18 +51,22 @@ int CoreSystem::addFile(QString file)
     return m_pendingFiles.size();
 }
 
-void CoreSystem::run()
+int CoreSystem::run()
 {
+    int errorCounter = 0;
+
 	/* parse all input files */
     LOG("parsing input files\n");
     while(!m_pendingFiles.isEmpty()) {
         QString currentFile = m_pendingFiles.front();
         m_pendingFiles.pop_front();
+        LOG("processing file: [%s]\n", currentFile.toStdString().c_str());
 
 		/* load */
         LOG("loading\n");
         if(!load(currentFile)) {
-            LOG_ERROR("opening file [%s] -> [%s]\n", currentFile.toStdString().c_str(), error().toStdString().c_str());
+            LOG_ERROR("loading file [%s] -> [%s]\n", currentFile.toStdString().c_str(), error().toStdString().c_str());
+            ++errorCounter;
 			continue;
 		}
 
@@ -76,6 +80,7 @@ void CoreSystem::run()
 			if(!emulate(s)) {
                 LOG_ERROR("emulating [%s] -> [%s]\n", currentFile.toStdString().c_str(), error().toStdString().c_str());
 				delete s;
+                ++errorCounter;
 				continue;
 			}
 
@@ -84,6 +89,7 @@ void CoreSystem::run()
 			if(!analyze(s)) {
                 LOG_ERROR("analyzing [%s] -> [%s]\n", currentFile.toStdString().c_str(), error().toStdString().c_str());
 				delete s;
+                ++errorCounter;
 				continue;
 			}
 
@@ -92,6 +98,7 @@ void CoreSystem::run()
 			if(!makeOutput(s)) {
                 LOG_ERROR("output for [%s] -> [%s]\n", currentFile.toStdString().c_str(), error().toStdString().c_str());
 				delete s;
+                ++errorCounter;
 				continue;
 			}
 
@@ -101,7 +108,12 @@ void CoreSystem::run()
 		}
         LOG("file processing finished\n");
 	} /* while */
+    if(errorCounter)
+        LOG("some errors occured, errorCounter: [%d]", errorCounter);
+
+    SystemLogger::instance()->setStatus("idle");
     LOG("SUCCESS\n\n");
+    return errorCounter;
 }
 
 void CoreSystem::clear()
@@ -167,7 +179,9 @@ bool CoreSystem::load(QString file)
     QMap<QString, AbstractInput *>::iterator it;
     for(it = m_inputMods->begin(); it != m_inputMods->end(); ++it) {
         if(fileType == it.value()->type()) {
-            it.value()->loadInput(file, &q);
+            bool ok = it.value()->loadInput(file, &q);
+            if(!ok)
+                return false;
 
 			/* process all returned samples */
             while(!q.isEmpty()) {

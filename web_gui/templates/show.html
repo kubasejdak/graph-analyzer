@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row-fluid">
+	<div class="span4">{{ show_sample.name }}</div>
+	<div class="span8">{{ show_sample.name }}</div>
+	<div class="span12"><img src="{{ show_sample.graph_name }}"></img></div>
+</div>
+{% endblock %}

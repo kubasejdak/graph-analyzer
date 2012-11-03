@@ -153,5 +153,3 @@ LOGGING = {
         },
     }
 }
-
-ANALYZE_SCRIPT = "/home/kuba/Projects/graph-analyzer/bin/run_analyze"

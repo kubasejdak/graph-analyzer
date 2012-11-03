@@ -13,13 +13,13 @@ BinaryInput::BinaryInput()
     m_description = "Loads shellcode from binary files.";
 }
 
-void BinaryInput::loadInput(QString filename, QList<ShellcodeSample *> *samples)
+bool BinaryInput::loadInput(QString filename, QList<ShellcodeSample *> *samples)
 {
     QFile file(filename);
     file.open(QIODevice::ReadOnly);
     if(!file.isOpen()) {
         LOG_ERROR("FAILURE\n\n");
-		return;
+        return false;
     }
 
     int size = file.size();
@@ -28,11 +28,13 @@ void BinaryInput::loadInput(QString filename, QList<ShellcodeSample *> *samples)
 	file.close();
 
 	ShellcodeSample *s = new ShellcodeSample();
-    s->info()->setName(filename);
-    s->info()->setExtractedFrom(filename);
+    QFileInfo info(filename);
+    s->info()->setName(info.absoluteFilePath());
+    s->info()->setExtractedFrom(info.absoluteFilePath());
     s->info()->setFileType(m_type);
     s->info()->setSize(size);
 	s->setCode((byte_t *) buffer);
 	samples->push_back(s);
     LOG("SUCCESS\n\n");
+    return true;
 }

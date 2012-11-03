@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
             ("help,h", "print help message")
             ("slave,s", "run program as GUI slave")
             ("input,i", opt::value<vector<string> >(&sysOptions.input), "set input files")
-            ("output,o", opt::value<vector<string> >(&sysOptions.output), "set output destinations (default: ConsoleOutput)")
+            ("output,o", opt::value<vector<string> >(&sysOptions.output), "set output destinations (default: DatabaseOutput)")
             ("list-analyze", "list analyze modules")
             ("list-input", "list input modules")
             ("list-output", "list output modules")
@@ -117,12 +117,16 @@ int main(int argc, char *argv[])
         if(!ok)
             return 1;
 
-        system.setLogFile(sysOptions.logFile.c_str());
-        LOG("using logFile: [%s]\n", sysOptions.logFile.c_str());
-        system.setLogLevel(sysOptions.logLevel);
-        LOG("setting logLevel: [%d]\n", sysOptions.logLevel);
+        string logFile = sysOptions.logFile;
+        system.setLogFile(logFile.c_str());
+        LOG("using logFile: [%s]\n", logFile.c_str());
+
+        int logLevel = sysOptions.logLevel;
+        system.setLogLevel(logLevel);
+        LOG("setting logLevel: [%d]\n", logLevel);
         while(!sysOptions.output.empty()) {
-            system.setOutput(sysOptions.output.back().c_str());
+            string output = sysOptions.output.back();
+            system.setOutput(output.c_str());
             sysOptions.output.pop_back();
         }
     }
@@ -152,10 +156,12 @@ int main(int argc, char *argv[])
 
     /* run */
     LOG("starting system\n");
+    int errorCounter = 0;
     dbDropRecentFiles();
     dbUpdateSystemInfo(system.version(), system.status(), system.error(), 0, 0, 0);
     int begSize = sysOptions.input.size();
     printIntro(system.version());
+    double perc = 0.0;
     while(!sysOptions.input.empty()) {
         string file = sysOptions.input.back();
         system.addFile(file.c_str());
@@ -163,21 +169,26 @@ int main(int argc, char *argv[])
             dbRemoveFile(file.c_str());
             dbAddRecentFile(file.c_str());
         }
-        LOG("processing file: [%s]\n", file.c_str());
-        system.run();
+        LOG("passing to run(): [%s]\n", file.c_str());
+        errorCounter += system.run();
         sysOptions.input.pop_back();
         LOG("file processing completed\n");
-        double perc = ((begSize - sysOptions.input.size()) / begSize) * 100;
+        perc = ((begSize - sysOptions.input.size()) / begSize) * 100;
         if(vm.count("slave"))
             dbUpdateSystemInfo(system.version(), system.status(), system.error(), (int) perc, system.exploitsNum(), system.samplesNum());
     }
+    if(vm.count("slave"))
+        dbUpdateSystemInfo(system.version(), system.status(), system.error(), (int) perc, system.exploitsNum(), system.samplesNum());
 
     int s_num = system.samplesNum();
     int e_num = system.exploitsNum();
     string e = (e_num == 1) ? "exploit" : "exploits";
     string s = (s_num == 1) ? "sample" : "samples";
     cout << "FINISHED: found " << dec << e_num << " " << e << " in " << s_num << " " << s << "!" << endl;
-    LOG("program FINISHED without error\n");
+    if(errorCounter)
+        LOG("program FINISHED with some ERRORS, errorCounter: [%d]\n", errorCounter);
+    else
+        LOG("program FINISHED without errors\n");
 
     return 0;
 }

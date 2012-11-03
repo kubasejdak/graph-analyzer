@@ -10,14 +10,13 @@
 #include <QString>
 #include <QDate>
 #include <QTime>
+#include <QFile>
 #include <boost/current_function.hpp>
-#include <cstdarg>
-#include <cstdio>
+#include <iostream>
+using namespace std;
 
-#include <core/Toolbox.h>
-
-#define	LOG(fmt, args...) 		SystemLogger::instance()->log(__FILE__, BOOST_CURRENT_FUNCTION, __LINE__, fmt, ##args)
-#define	LOG_ERROR(fmt, args...)	SystemLogger::instance()->logError(__FILE__, BOOST_CURRENT_FUNCTION, __LINE__, fmt, ##args)
+#define	LOG(fmt, args...)           SystemLogger::instance()->log(__FILE__, BOOST_CURRENT_FUNCTION, __LINE__, QString().sprintf(fmt, ##args))
+#define	LOG_ERROR(fmt, args...)     SystemLogger::instance()->logError(__FILE__, BOOST_CURRENT_FUNCTION, __LINE__, QString().sprintf(fmt, ##args))
 
 class SystemLogger {
 public:
@@ -39,8 +38,8 @@ public:
 	void setLogLevel(int level);
     void setLogFile(QString filename);
 
-    void log(QString msg_file, QString func, int line, QString fmt, ...);
-    void logError(QString msg_file, QString func, int line, QString fmt, ...);
+    void log(QString file, QString func, int line, QString msg);
+    void logError(QString file, QString func, int line, QString msg);
 
 private:
 	SystemLogger();

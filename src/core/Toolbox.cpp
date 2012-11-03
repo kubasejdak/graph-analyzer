@@ -39,14 +39,13 @@ QString Toolbox::removeSlash(QString path)
 	return path;
 }
 
-int ftw_remove_dir(const char *fpath, const struct stat *sb, int typeflag)
+QString Toolbox::pcapFlowBasename(QString path)
 {
-    return unlink(fpath);
+    int n = path.lastIndexOf("/");
+    return path.mid(n + 1);
 }
 
-void Toolbox::removeDirectory(QString path)
+bool Toolbox::removeDirectory(QString path)
 {
-    ftw(path.toStdString().c_str(), ftw_remove_dir, 0);
-    QDir d;
-    d.remove(path);
+    return QDir().rmdir(path);
 }

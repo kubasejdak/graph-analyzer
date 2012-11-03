@@ -26,7 +26,7 @@ public:
 	}
 
     QString type();
-    virtual void loadInput(QString filename, QList<ShellcodeSample *> *samples) = 0;
+    virtual bool loadInput(QString filename, QList<ShellcodeSample *> *samples) = 0;
 
 protected:
     static int m_nextID;

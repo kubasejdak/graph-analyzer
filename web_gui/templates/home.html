@@ -1,5 +1,32 @@
 {% extends "base.html" %}
 
 {% block content %}
-		<p>Welcome to Graph Analyzer.</p>
+<div class="hero-unit">
+	<h1>Welcome to Graph Analyzer (v{{ version }})</h1>
+	<p>This tool allows you to analyze and categorize exploit samples by comparing their flow graps.</p>
+	<p>List of available input modules:
+		<ul>
+		{% for input in input_list %}
+			<li></li>
+		{% endfor %}
+		</ul>
+	</p>
+	<p>List of available analyze modules:
+		<ul>
+		{% for analyze in analyze_list %}
+			<li></li>
+		{% endfor %}
+		</ul>
+	</p>
+	<p>List of available output modules:
+		<ul>
+		{% for output in output_list %}
+			<li></li>
+		{% endfor %}
+		</ul>
+	</p>
+	<p>
+		<a href="https://www.paypal.com/pl/webapps/mpp/home" class="btn btn-primary btn-large">Donate author ($1000000)</a>
+	</p>
+</div>
 {% endblock %}

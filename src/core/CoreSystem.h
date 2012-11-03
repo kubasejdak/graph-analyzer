@@ -34,7 +34,7 @@ public:
 
 	/* basic sample operation */
     int addFile(QString file);
-	void run();
+    int run();
 	void clear();
 
 	/* status and error */

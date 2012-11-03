@@ -8,7 +8,6 @@ project(graph-analyzer)
 
 # options passed to the compiler
 add_definitions(-g -Wall -fPIC)
-add_definitions(-DHOME_CONFIG)
 
 # Qt4
 find_package(Qt4 REQUIRED)

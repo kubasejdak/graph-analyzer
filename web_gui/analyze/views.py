@@ -3,11 +3,10 @@
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.core.context_processors import csrf
-from subprocess import call
+from subprocess import call, Popen
 
 from analyze.forms import AnalyzeForm
 from options.models import Option, PendingFile, SystemInfo, RecentFile
-from web_gui.settings import ANALYZE_SCRIPT
 
 def show_analyze(request):
 	# get options (only one object should exists)
@@ -27,7 +26,7 @@ def show_analyze(request):
 		info = SystemInfo()
 		info.version = "0.00"
 		info.status = "idle"
-		info.error = "no_error"
+		info.error = "no error"
 		info.progress = 0
 		info.exploits_num = 0
 		info.samples_num = 0
@@ -53,8 +52,22 @@ def show_analyze(request):
 				filename.save()
 		
 		# run analysis
-		if "analyze" in request.POST:
-			call([ANALYZE_SCRIPT])
+		if "analyze" in request.POST and PendingFile.objects.count() > 0:
+			Popen(["graph-analyzer", "--slave"])
+			#call(["graph-analyzer", "--slave"])
+
+		# run analysis
+		if "clear" in request.POST:
+			PendingFile.objects.all().delete()
+			RecentFile.objects.all().delete()
+			systemInfo_list = SystemInfo.objects.all()
+			info = systemInfo_list[0]
+			info.exploits_num = 0
+			info.samples_num = 0;
+			info.status = "idle"
+			info.error = "no error"
+			info.progress = 0
+			info.save()
 	
 	pending_files = PendingFile.objects.all()
 	recent_files = RecentFile.objects.all()

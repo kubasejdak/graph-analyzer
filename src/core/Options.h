@@ -9,13 +9,8 @@
 
 #include <QString>
 
-#ifdef HOME_CONFIG
-    #define CONFIG_FILE		"/home/kuba/Projects/graph-analyzer/conf/analyzer.conf"
-#else
-    #define CONFIG_FILE		"/home/jsejdak/graph-analyzer/conf/analyzer.conf"
-#endif
+#define CONFIG_FILE         "/var/www/jsejdak/analyzer.conf"
 
-extern QString APP_ROOT_PATH;
 extern int EMULATION_STEPS;
 extern QString GRAPHS_DIR;
 extern bool DELETE_CODE_INSTANTLY;

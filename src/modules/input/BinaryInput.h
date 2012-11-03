@@ -7,6 +7,8 @@
 #ifndef BINARYINPUT_H_
 #define BINARYINPUT_H_
 
+#include <QFileInfo>
+
 #include "AbstractInput.h"
 
 class BinaryInput: public AbstractInput {
@@ -14,7 +16,7 @@ public:
 	BinaryInput();
     virtual ~BinaryInput() {}
 
-    virtual void loadInput(QString filename, QList<ShellcodeSample *> *samples);
+    virtual bool loadInput(QString filename, QList<ShellcodeSample *> *samples);
 };
 
 #endif /* BINARYINPUT_H_ */

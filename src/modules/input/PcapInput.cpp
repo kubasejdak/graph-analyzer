@@ -13,7 +13,7 @@ PcapInput::PcapInput()
     m_description = "Loads shellcode from pcap files.";
 }
 
-void PcapInput::loadInput(QString filename, QList<ShellcodeSample *> *samples)
+bool PcapInput::loadInput(QString filename, QList<ShellcodeSample *> *samples)
 {
     int success;
 
@@ -24,7 +24,7 @@ void PcapInput::loadInput(QString filename, QList<ShellcodeSample *> *samples)
         if(!success) {
             LOG_ERROR("cannot create /tmp/pcap_tmp directory\n");
             LOG_ERROR("FAILURE\n\n");
-            exit(1);
+            return false;
 		}
 	}
 
@@ -32,7 +32,7 @@ void PcapInput::loadInput(QString filename, QList<ShellcodeSample *> *samples)
     if(!success) {
         LOG_ERROR("cannot change directory to /tmp/pcap_dir");
         Toolbox::removeDirectory("tmp/pcap_tmp");
-        exit(1);
+        return false;
 	}
 
 	/* create flow files */
@@ -48,7 +48,7 @@ void PcapInput::loadInput(QString filename, QList<ShellcodeSample *> *samples)
         /* clear recursively directory */
         Toolbox::removeDirectory("/tmp/pcap_tmp");
         LOG_ERROR("FAILURE\n\n");
-        exit(1);
+        return false;
 	}
 
     /* iterate through all flow files */
@@ -60,6 +60,7 @@ void PcapInput::loadInput(QString filename, QList<ShellcodeSample *> *samples)
             continue;
 
         /* read code */
+        LOG("opening pcap flow file: [%s]\n", entryName.toStdString().c_str());
         QFile file(entryName);
         file.open(QIODevice::ReadOnly);
         if(!file.isOpen())
@@ -73,16 +74,26 @@ void PcapInput::loadInput(QString filename, QList<ShellcodeSample *> *samples)
 
         /* create new sample */
         s = new ShellcodeSample();
-        s->info()->setName(entryName);
-        s->info()->setExtractedFrom(filename);
+        QFileInfo info(filename);
+        s->info()->setName(Toolbox::pcapFlowBasename(entryName));
+        s->info()->setExtractedFrom(info.absoluteFilePath());
         s->info()->setFileType(m_type);
         s->info()->setSize(size);
         s->setCode((byte_t *) buffer);
         samples->push_back(s);
+        file.remove();
     }
 
     /* clean up */
     QDir::setCurrent("..");
-    Toolbox::removeDirectory("/tmp/pcap_tmp");
+    LOG("removing directory: [/tmp/pcap_tmp]\n");
+    bool removed = Toolbox::removeDirectory("/tmp/pcap_tmp");
+    if(!removed) {
+        SystemLogger::instance()->setError("removing directory '/tmp/pcap_tmp']' failed");
+        LOG_ERROR("removing directory failed: [/tmp/pcap_tmp]\n");
+        LOG_ERROR("FAILURE\n\n");
+        return false;
+    }
     LOG("SUCCESS\n\n");
+    return true;
 }

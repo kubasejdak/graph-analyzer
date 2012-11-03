@@ -45,51 +45,7 @@ void SystemLogger::setLogFile(QString filename)
     m_logFile = filename;
 }
 
-void SystemLogger::log(QString msg_file, QString func, int line, QString fmt, ...)
-{
-    if(m_logLevel == 0)
-		return;
-
-    /* prepare string */
-    QString date = QDate::currentDate().toString("dd.MM.yyyy");
-    QString time = QTime::currentTime().toString("hh:mm:ss");
-    QString m = QString("[%1 %2] ").arg(date).arg(time);
-	va_list arg_ptr;
-	va_start(arg_ptr, fmt);
-
-    switch(m_logLevel) {
-    case 1:
-        m += fmt;
-		break;
-	case 2:
-        m += QString("FUNC: %1, LINE: %2 %3").arg(func).arg(line).arg(fmt);
-		break;
-	case 3:
-        m += QString("FILE: %1, FUNC: %2, LINE: %3 %4").arg(msg_file).arg(func).arg(QString().setNum(line)).arg(fmt);
-		break;
-	default:
-		break;
-	}
-
-    /* print to console */
-    vfprintf(stderr, m.toStdString().c_str(), arg_ptr);
-
-    /* print to file */
-    if(m_logFile != "") {
-
-        FILE *f = fopen(m_logFile.toStdString().c_str(), "a");
-        if(f == NULL) {
-            va_end(arg_ptr);
-            return;
-        }
-
-        vfprintf(f, m.toStdString().c_str(), arg_ptr);
-        fclose(f);
-    }
-	va_end(arg_ptr);
-}
-
-void SystemLogger::logError(QString msg_file, QString func, int line, QString fmt, ...)
+void SystemLogger::log(QString file, QString func, int line, QString msg)
 {
     if(m_logLevel == 0)
         return;
@@ -98,39 +54,73 @@ void SystemLogger::logError(QString msg_file, QString func, int line, QString fm
     QString date = QDate::currentDate().toString("dd.MM.yyyy");
     QString time = QTime::currentTime().toString("hh:mm:ss");
     QString m = QString("[%1 %2] ").arg(date).arg(time);
-    va_list arg_ptr;
-    va_start(arg_ptr, fmt);
 
     switch(m_logLevel) {
     case 1:
-        m += QString("ERROR: %1").arg(fmt);
+        m += msg;
         break;
     case 2:
-        m += QString("FUNC: %1, LINE: %2, ERROR: %3").arg(func).arg(line).arg(fmt);
+        m += QString("FUNC: %1, LINE: %2 %3").arg(func).arg(line).arg(msg);
         break;
     case 3:
-        m += QString("FILE: %1, FUNC: %2, LINE: %3, ERROR: %4").arg(msg_file).arg(func).arg(QString().setNum(line)).arg(fmt);
+        m += QString("FILE: %1, FUNC: %2, LINE: %3 %4").arg(file).arg(func).arg(line).arg(msg);
         break;
     default:
         break;
     }
 
     /* print to console */
-    vfprintf(stderr, m.toStdString().c_str(), arg_ptr);
+    clog << m.toStdString();
 
     /* print to file */
     if(m_logFile != "") {
-
-        FILE *f = fopen(m_logFile.toStdString().c_str(), "a");
-        if(f == NULL) {
-            va_end(arg_ptr);
+        QFile f(m_logFile);
+        f.open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Append);
+        if(!f.isOpen())
             return;
-        }
 
-        vfprintf(f, m.toStdString().c_str(), arg_ptr);
-        fclose(f);
+        f.write(m.toUtf8());
+        f.close();
     }
-    va_end(arg_ptr);
+}
+
+void SystemLogger::logError(QString file, QString func, int line, QString msg)
+{
+    if(m_logLevel == 0)
+        return;
+
+    /* prepare string */
+    QString date = QDate::currentDate().toString("dd.MM.yyyy");
+    QString time = QTime::currentTime().toString("hh:mm:ss");
+    QString m = QString("[%1 %2] ").arg(date).arg(time);
+
+    switch(m_logLevel) {
+    case 1:
+        m += QString("ERROR: %1").arg(msg);
+        break;
+    case 2:
+        m += QString("FUNC: %1, LINE: %2 ERROR: %3").arg(func).arg(line).arg(msg);
+        break;
+    case 3:
+        m += QString("FILE: %1, FUNC: %2, LINE: %3 ERROR: %4").arg(file).arg(func).arg(line).arg(msg);
+        break;
+    default:
+        break;
+    }
+
+    /* print to console */
+    clog << m.toStdString();
+
+    /* print to file */
+    if(m_logFile != "") {
+        QFile f(m_logFile);
+        f.open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Append);
+        if(!f.isOpen())
+            return;
+
+        f.write(m.toUtf8());
+        f.close();
+    }
 }
 
 void SystemLogger::clearError()

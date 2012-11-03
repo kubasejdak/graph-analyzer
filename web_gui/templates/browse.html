@@ -14,26 +14,22 @@
 			<th>Graph name</th>
 			<th>File type</th>
 			<th>File size [bytes]</th>
-			<th>Shellcode offset [bytes]</th>
+			<th>Exploit offset [bytes]</th>
+			<th>More</th>
 		</tr>
 	</thead>
 	<tbody>
+		{% for sample in sample_list %}
 		<tr>
-			<td>Test</td>
-			<td>Test</td>
-			<td>Test</td>
-			<td>Test</td>
-			<td>Test</td>
-			<td>Test</td>
+			<td>{{ sample.name }}</td>
+			<td>{{ sample.extracted_from }}</td>
+			<td>{{ sample.graph_name }}</td>
+			<td>{{ sample.file_type }}</td>
+			<td>{{ sample.file_size }}</td>
+			<td>{{ sample.shellcode_offset }}</td>
+			<td><form method="post">{% csrf_token %}<button class="btn" name="show" value={{ sample.id }}>Show</button></form></td>
 		</tr>
-		<tr>
-			<td>Test2</td>
-			<td>Test2</td>
-			<td>Test2</td>
-			<td>Test2</td>
-			<td>Test2</td>
-			<td>Test2</td>
-		</tr>
+		{% endfor %}
 	</tbody>
 </table>
 {% endblock %}

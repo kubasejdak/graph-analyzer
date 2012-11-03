@@ -10,10 +10,11 @@
 #include <QString>
 #include <QFileInfo>
 #include <QDir>
-#include <ftw.h>
 #include <stdint.h>
 #include <string>
 using namespace std;
+
+#include <core/SystemLogger.h>
 
 typedef uint8_t byte_t;
 
@@ -25,7 +26,8 @@ public:
     /* paths */
     static QString makeRelative(QString path);
     static QString removeSlash(QString path);
-    static void removeDirectory(QString path);
+    static QString pcapFlowBasename(QString path);
+    static bool removeDirectory(QString path);
 };
 
 #endif /* TOOLBOX_H_ */

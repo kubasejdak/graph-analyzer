@@ -12,7 +12,7 @@ def show_home(request):
         info = SystemInfo()
         info.version = "0.00"
         info.status = "idle"
-        info.error = "no_error"
+        info.error = "no error"
         info.save()
     else:
         info = systemInfo_list[0]
@@ -38,7 +38,7 @@ def show_options(request):
         info = SystemInfo()
         info.version = "0.00"
         info.status = "idle"
-        info.error = "no_error"
+        info.error = "no error"
         info.save()
     else:
         info = systemInfo_list[0]

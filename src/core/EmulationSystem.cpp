@@ -183,7 +183,7 @@ bool EmulationSystem::emulate()
 	} /* emulation loop */
 
 	/* create .dot file */
-    QString dotFile = QString("%1/bin/graph.dot").arg(APP_ROOT_PATH);
+    QString dotFile = "/tmp/graph.dot";
     LOG("dotFile: [%s]\n", dotFile.toStdString().c_str());
     graph_draw(graph->emuGraph(), dotFile);
 
@@ -196,10 +196,14 @@ bool EmulationSystem::emulate()
 			return false;
 		}
 	}
-    LOG("using directory: [%s]\n", GRAPHS_DIR.toStdString().c_str());
+    LOG("using graphs directory: [%s]\n", GRAPHS_DIR.toStdString().c_str());
 
     QFileInfo graphFile(m_sample->info()->name());
-    QString graphName = QString("%1/%2.png").arg(GRAPHS_DIR).arg(graphFile.baseName());
+    QString graphName;
+    if(m_sample->info()->fileType() == "pcap")
+        graphName = QString("%1/%2.png").arg(GRAPHS_DIR).arg(Toolbox::pcapFlowBasename(m_sample->info()->name()));
+    else
+        graphName = QString("%1/%2.png").arg(GRAPHS_DIR).arg(graphFile.baseName());
     LOG("graphName: [%s]\n", graphName.toStdString().c_str());
 
 	/* check for duplicates */
@@ -227,14 +231,20 @@ bool EmulationSystem::emulate()
     ret = system(dotCmd.toStdString().c_str());
 	if(!ret) {
         bool success = QFile(dotFile).remove();
-        if(!success)
+        if(!success) {
 			LOG_ERROR("deleting .dot file\n");
+            LOG_ERROR("FAILURE\n\n");
+            return false;
+        }
 	}
 	else {
 		LOG_ERROR("drawing graph failed\n");
         bool success = QFile(dotFile).remove();
-        if(!success)
+        if(!success) {
 			LOG_ERROR("deleting .dot file\n");
+            LOG_ERROR("FAILURE\n\n");
+            return false;
+        }
 	}
 
 	if(DELETE_CODE_INSTANTLY) {

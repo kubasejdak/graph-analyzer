@@ -11,7 +11,6 @@ void ConfigFile::read()
     LOG("reading config file\n");
 	opt::options_description config("config");
 	config.add_options()
-        ("APP_ROOT_PATH", opt::value<string>(), "path to root folder of GraphAnalyzer resources")
 		("EMULATION_STEPS", opt::value<int>(), "number of emulation steps for libemu")
         ("GRAPHS_DIR", opt::value<string>(), "directory to store generated graphs")
 		("DELETE_CODE_INSTANTLY", opt::value<bool>(), "should code be deleted right after analysis")
@@ -29,16 +28,6 @@ void ConfigFile::read()
 	opt::store(opt::parse_config_file<char>(CONFIG_FILE, config), vm);
 	opt::notify(vm);
 
-	if(vm.count("APP_ROOT_PATH")) {
-        APP_ROOT_PATH = vm["APP_ROOT_PATH"].as<string>().c_str();
-        APP_ROOT_PATH = Toolbox::removeSlash(APP_ROOT_PATH);
-        APP_ROOT_PATH = Toolbox::makeRelative(APP_ROOT_PATH);
-        LOG("APP_ROOT_PATH: [%s]\n", APP_ROOT_PATH.toStdString().c_str());
-	}
-	else {
-        LOG_ERROR("APP_ROOT_PATH not set in config file\n");
-		exit(1);
-	}
     if(vm.count("EMULATION_STEPS")) {
 		EMULATION_STEPS = vm["EMULATION_STEPS"].as<int>();
         LOG("EMULATION_STEPS: [%d]\n", EMULATION_STEPS);

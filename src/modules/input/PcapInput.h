@@ -9,6 +9,7 @@
 
 #include <QFile>
 #include <QDir>
+#include <QFileInfo>
 
 #include "AbstractInput.h"
 #include <core/SystemLogger.h>
@@ -20,7 +21,7 @@ public:
 	PcapInput();
     virtual ~PcapInput() {}
 
-    virtual void loadInput(QString filename, QList<ShellcodeSample *> *samples);
+    virtual bool loadInput(QString filename, QList<ShellcodeSample *> *samples);
 };
 
 #endif /* PCAPINPUT_H_ */

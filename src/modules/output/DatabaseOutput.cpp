@@ -47,7 +47,7 @@ bool DatabaseOutput::generateOutput(ShellcodeSample *sample)
 
     /* general sample data */
     QSqlQuery sample_query(DatabaseManager::instance()->database());
-    sample_query.prepare("INSERT INTO analyze_sample VALUES (?, ?, ?, ?, ?, ?, ?)");
+	sample_query.prepare("INSERT INTO analyze_sample VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
     sample_query.bindValue(0, id);
     sample_query.bindValue(1, info->name());
     sample_query.bindValue(2, info->extractedFrom());
@@ -55,6 +55,7 @@ bool DatabaseOutput::generateOutput(ShellcodeSample *sample)
     sample_query.bindValue(4, info->fileType());
     sample_query.bindValue(5, QString().setNum(info->size()));
     sample_query.bindValue(6, QString().setNum(info->codeOffset()));
+	sample_query.bindValue(7, "");
     if(!DatabaseManager::instance()->exec(&sample_query)) {
         SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
         LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());

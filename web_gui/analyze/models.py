@@ -8,6 +8,7 @@ class Sample(models.Model):
 	file_type = models.CharField(max_length = 20)
 	file_size = models.CharField(max_length = 10)
 	shellcode_offset = models.CharField(max_length = 10)
+	comment = models.CharField(max_length = 3000)
 	
 	def __unicode__(self):
 		return self.name
@@ -40,3 +41,21 @@ class Loop(models.Model):
 	
 	def __unicode__(self):
 		return self.hash
+
+# SampleGroup table
+class SampleGroup(models.Model):
+	leader = models.ForeignKey(Sample)
+	active = models.BooleanField()
+	comment = models.CharField(max_length = 3000)
+	
+	def __unicode__(self):
+		return self.name
+	
+# GroupAssignment table
+class GroupAssignment(models.Model):
+	group = models.ForeignKey(SampleGroup)
+	member = models.ForeignKey(Sample)
+	resemblence_rate = models.IntegerField()
+	
+	def __unicode__(self):
+		return self.name

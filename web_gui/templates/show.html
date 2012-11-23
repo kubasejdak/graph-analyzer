@@ -2,8 +2,26 @@
 
 {% block content %}
 <div class="row-fluid">
-	<div class="span4">{{ show_sample.name }}</div>
-	<div class="span8">{{ show_sample.name }}</div>
-	<div class="span12"><img src="{{ show_sample.graph_name }}"></img></div>
+	<div class="span1">
+		<b>Name: </b></br>
+		<b>Extracted from: </b></br>
+		<b>Graph name: </b></br>
+		<b>File type: </b></br>
+		<b>File size [bytes]: </b></br>
+		<b>Exploit offset [bytes]: </b></br>
+		<b>Comment: </b></br></br>
+	</div>
+	<div class="span4 offset1">
+		{{ show_sample.name }}</br>
+		{{ show_sample.extracted_from }}</br>
+		{{ show_sample.graph_name }}</br>
+		{{ show_sample.file_type }}</br>
+		{{ show_sample.file_size }}</br>
+		{{ show_sample.shellcode_offset }}</br>
+		{{ show_sample.comment }}</br></br>
+	</div>
+	<div class="span12">
+		--- HERE WILL BE GRAPH PICTURE ---
+	</div>
 </div>
 {% endblock %}

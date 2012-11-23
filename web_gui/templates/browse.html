@@ -9,6 +9,7 @@
 <table class="table table-striped">
 	<thead>
 		<tr>
+			<th>Index</th>
 			<th>Name</th>
 			<th>Extracted from</th>
 			<th>Graph name</th>
@@ -21,6 +22,7 @@
 	<tbody>
 		{% for sample in sample_list %}
 		<tr>
+			<td>{{ forloop.counter }}</td>
 			<td>{{ sample.name }}</td>
 			<td>{{ sample.extracted_from }}</td>
 			<td>{{ sample.graph_name }}</td>

@@ -35,7 +35,11 @@
 	Exploits number: <b>{{ exploits }}</b><br/>
 	Samples number: <b>{{ samples }}</b><br/><br/>
 
-	System status: <b>{{ status }}</b><br/>
-	System error: <b>{{ error }}</b>
+	<b>System status: </b><span class="label label-info">{{ status }}</span><br/>
+	{% if error == "no error" %}
+	<b>System error: </b><span class="label label-success">{{ error }}</span>
+	{% else %}
+	<b>System error: </b><span class="label label-important">{{ error }}</span>
+	{% endif %}
 </div>
 {% endblock %}

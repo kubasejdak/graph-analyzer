@@ -5,3 +5,4 @@ class OptionsForm(forms.Form):
     output_dest = forms.ChoiceField(choices = Option.OUTPUT_CHOICES)
     log_level = forms.ChoiceField(choices = Option.LOG_CHOICES)
     log_file = forms.CharField()
+    resemblence_level = forms.ChoiceField(choices = Option.RESEMBLENCE_CHOICES)

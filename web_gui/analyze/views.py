@@ -3,7 +3,7 @@
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.core.context_processors import csrf
-from subprocess import call, Popen
+from subprocess import Popen
 
 from analyze.forms import AnalyzeForm
 from options.models import Option, PendingFile, SystemInfo, RecentFile
@@ -16,6 +16,7 @@ def show_analyze(request):
 		options.output_dest = "DatabaseOutput"
 		options.log_level = 1
 		options.log_file = "/home/kuba/analyzer_log"
+		options.resemblence_level = 50
 		options.save()
 	else:
 		options = options_list[0]
@@ -54,7 +55,6 @@ def show_analyze(request):
 		# run analysis
 		if "analyze" in request.POST and PendingFile.objects.count() > 0:
 			Popen(["graph-analyzer", "--slave"])
-			#call(["graph-analyzer", "--slave"])
 
 		# run analysis
 		if "clear" in request.POST:

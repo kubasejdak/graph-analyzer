@@ -34,20 +34,23 @@ int CoreSystem::addFile(QString file)
     if(file.isEmpty())
         return 0;
 
+	int file_counter = 0;
     /* check if directory */
     if(QDir(file).exists()) {
-        QDirIterator it(file, QDirIterator::Subdirectories);
+		QDirIterator it(file, QDir::Files | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
         while(it.hasNext()) {
             QString entryName = it.next();
-            if(QDir(entryName).exists() || entryName == "." || entryName == "..")
-                continue;
-
             m_pendingFiles.push_back(entryName);
+			++file_counter;
         }
     }
-    else
+	else {
         m_pendingFiles.push_back(file);
+		++file_counter;
+	}
 
+	LOG("Added [%d] file(s) extracted from [%s]\n", file_counter, file.toStdString().c_str());
+	LOG("SUCCESS\n\n");
     return m_pendingFiles.size();
 }
 

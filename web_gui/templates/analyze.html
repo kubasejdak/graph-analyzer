@@ -3,11 +3,15 @@
 {% block content %}
 <div class="well">
 	<form action="" method="post">{% csrf_token %}
-		<table>{{ form.as_table }}</table>
-		<button class="btn" name="add">Add</button>
-		<button class="btn btn-danger" name="clear"><i class="icon-trash icon-white"></i> Clear</button>
-		<button class="btn btn-primary" name="analyze">Analyze</button>
-		<button class="btn" name="refresh"><i class="icon-refresh"></i> Refresh</button>
+		<div class="span4">
+			<table>{{ form.as_table }}</table>
+		</div>
+		<div class="span8">
+			<button class="btn" name="add">Add</button>
+			<button class="btn btn-danger" name="clear"><i class="icon-trash icon-white"></i> Clear</button>
+			<button class="btn btn-primary" name="analyze">Analyze</button>
+			<button class="btn" name="refresh"><i class="icon-refresh"></i> Refresh</button>
+		</div>
 	</form>
 </div>
   

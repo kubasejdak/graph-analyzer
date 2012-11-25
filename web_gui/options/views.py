@@ -27,7 +27,7 @@ def show_options(request):
         options = Option()
         options.output_dest = "DatabaseOutput"
         options.log_level = 1
-        options.log_file = "/home/kuba/nalyzer_log"
+        options.log_file = "/var/www/jsejdak/analyzer_log"
         options.resemblence_level = 50
         options.save()
     else:

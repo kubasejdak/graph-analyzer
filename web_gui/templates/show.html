@@ -2,26 +2,99 @@
 
 {% block content %}
 <div class="row-fluid">
-	<div class="span1">
-		<b>Name: </b></br>
-		<b>Extracted from: </b></br>
-		<b>Graph name: </b></br>
-		<b>File type: </b></br>
-		<b>File size [bytes]: </b></br>
-		<b>Exploit offset [bytes]: </b></br>
-		<b>Comment: </b></br></br>
-	</div>
-	<div class="span4 offset1">
-		{{ show_sample.name }}</br>
-		{{ show_sample.extracted_from }}</br>
-		{{ show_sample.graph_name }}</br>
-		{{ show_sample.file_type }}</br>
-		{{ show_sample.file_size }}</br>
-		{{ show_sample.shellcode_offset }}</br>
-		{{ show_sample.comment }}</br></br>
-	</div>
-	<div class="span12">
-		--- HERE WILL BE GRAPH PICTURE ---
+	<div class="tabbable tabs-left">
+		<ul class="nav nav-tabs">
+			<li class="active"><a href="#general_tab" data-toggle="tab">General</a></li>
+			<li><a href="#hash_tab" data-toggle="tab">Hash</a></li>
+			<li><a href="#loops_tab" data-toggle="tab">Loops</a></li>
+			<li><a href="#api_tab" data-toggle="tab">API</a></li>
+			<li><a href="#graph_tab" data-toggle="tab">Graph</a></li>
+		</ul>
+		<div class="tab-content">
+			<div class="tab-pane" id="hash_tab">
+				<p>
+					<div class="span4">
+						<b>Hash: </b>
+					</div>
+					<div class="span4 offset1">
+						{{ show_hash.hash }}
+					</div>
+				</p>
+			</div>
+			<div class="tab-pane active" id="general_tab">
+				<p>
+					<div class="span4">
+						<b>Name: </b></br>
+						<b>Extracted from: </b></br>
+						<b>Graph name: </b></br>
+						<b>File type: </b></br>
+						<b>File size [bytes]: </b></br>
+						<b>Exploit offset [bytes]: </b></br>
+						<b>Comment: </b></br></br>
+					</div>
+					<div class="span4 offset1">
+						{{ show_sample.name }}</br>
+						{{ show_sample.extracted_from }}</br>
+						{{ show_sample.graph_name }}</br>
+						{{ show_sample.file_type }}</br>
+						{{ show_sample.file_size }}</br>
+						{{ show_sample.shellcode_offset }}</br>
+						<form method="post" action="">{% csrf_token %}
+							<textarea name="comments" cols="75" rows="5">{{ show_sample.comment }}</textarea></br>
+							<button class="btn btn-primary" name="show" value={{ show_sample.id }}>Save</button>
+						</form>
+						</br></br>
+					</div>
+					{% if is_message %}
+					<div class="span11">
+						<div class="alert alert-success">
+							<button type="button" class="close" data-dismiss="alert">×</button>
+							<strong>Success!</strong> Comments saved.
+						</div>
+					</div>
+					{% endif %}
+				</p>
+			</div>
+			<div class="tab-pane" id="loops_tab">
+				{% for loop in show_loops %}
+				<p>
+					<div class="span4">
+						<b>Hash: </b></br>
+						<b>Iterations: </b></br>
+						<b>Size: </b></br>
+						<b>Start: </b></br>
+						<b>Vertexes: </b></br>
+					</div>
+					<div class="span4 offset1">
+						{{ loop.hash }}</br>
+						{{ loop.iterations }}</br>
+						{{ loop.size }}</br>
+						{{ loop.start }}</br>
+						{{ loop.vertexes }}</br></br></br>
+					</div>
+				</p>
+				{% endfor %}
+			</div>
+			<div class="tab-pane" id="api_tab">
+				{% for api in show_api %}
+				<p>
+					<div class="span4">
+						<b>Syscall: </b></br>
+						<b>DLL: </b></br>
+					</div>
+					<div class="span4 offset1">
+						{{ api.syscall }}</br>
+						{{ api.dll }}</br></br>
+					</div>
+				</p>
+				{% endfor %}
+			</div>
+			<div class="tab-pane" id="graph_tab">
+				<p>
+					<img src="{{ STATIC_URL }}tmp_graphs/{{ graph_file }}" />
+				</p>
+			</div>
+		</div>
 	</div>
 </div>
 {% endblock %}

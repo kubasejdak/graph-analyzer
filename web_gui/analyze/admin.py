@@ -1,5 +1,5 @@
 from django.contrib import admin
-from models import Sample, API, Hash, Loop
+from models import Sample, API, Hash, Loop, SampleGroup
 
 class SampleAdmin(admin.ModelAdmin):
 	list_display = ("name", "extracted_from", "graph_name")
@@ -25,7 +25,14 @@ class LoopAdmin(admin.ModelAdmin):
 	list_filter = ("sample", "hash")
 	ordering = ("-sample", "-hash")
 
+class SampleGroupAdmin(admin.ModelAdmin):
+	list_display = ("leader", "active", "comment")
+	search_fields = ("leader", "active", "comment")
+	list_filter = ("leader", "active")
+	ordering = ("-active", "-leader")
+
 admin.site.register(Sample, SampleAdmin)
 admin.site.register(API, APIAdmin)
 admin.site.register(Hash, HashAdmin)
 admin.site.register(Loop, LoopAdmin)
+admin.site.register(SampleGroup, SampleGroupAdmin)

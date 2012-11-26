@@ -49,7 +49,7 @@ class SampleGroup(models.Model):
 	comment = models.CharField(max_length = 3000)
 	
 	def __unicode__(self):
-		return self.name
+		return self.leader.name
 	
 # GroupAssignment table
 class GroupAssignment(models.Model):
@@ -58,4 +58,4 @@ class GroupAssignment(models.Model):
 	resemblence_rate = models.IntegerField()
 	
 	def __unicode__(self):
-		return self.name
+		return self.group.leader.name

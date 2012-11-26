@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<table class="table table-striped">
+	<thead>
+		<tr>
+			<th>Index</th>
+			<th>Group leader</th>
+			<th>More</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for group in group_list %}
+		<tr>
+			<td>{{ forloop.counter }}</td>
+			<td>{{ group.leader }}</td>
+			<td><form method="post">{% csrf_token %}<button class="btn" name="show" value={{ group.id }}>Show</button></form></td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+{% endblock %}

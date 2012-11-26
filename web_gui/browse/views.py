@@ -7,7 +7,7 @@ import os.path
 from stat import S_IRWXG, S_IRWXO, S_IRWXU
 
 from options.models import SystemInfo
-from analyze.models import Sample, Loop, API, Hash
+from analyze.models import Sample, Loop, API, Hash, SampleGroup, GroupAssignment
 
 def show_browse(request):
     # get system info (only one object should exists)
@@ -25,15 +25,14 @@ def show_browse(request):
     c.update(csrf(request))
     if request.method == "GET":
         if "search" in request.GET:
-            print request.GET
             filter_value = request.GET["filter"]
-            if filter_value == "name":
+            if filter_value == "Name":
                 search_list = Sample.objects.filter(name = request.GET["value"])
-            elif filter_value == "extracted from":
+            elif filter_value == "Extracted from":
                 search_list = Sample.objects.filter(extracted_from = request.GET["value"])
-            elif filter_value == "graph name":
+            elif filter_value == "Graph name":
                 search_list = Sample.objects.filter(graph_name = request.GET["value"])
-            elif filter_value == "file type":
+            elif filter_value == "File type":
                 search_list = Sample.objects.filter(file_type = request.GET["value"])
             
             c.update({"sample_list": search_list})
@@ -44,7 +43,6 @@ def show_browse(request):
             c.update({"sample_list": sample_list})
         return render_to_response("browse.html", c)
     if request.method == "POST":
-        print request.POST
         if "comments" in request.POST:
             is_message = True
             c.update({"is_message": is_message})
@@ -71,3 +69,39 @@ def show_browse(request):
             c.update({"graph_file": graph_file})
             c.update(csrf(request))
             return render_to_response("show.html", c)
+  
+def show_browse_groups(request):
+    # get system info (only one object should exists)
+    systemInfo_list = SystemInfo.objects.all()
+    if systemInfo_list.count() == 0:
+        info = SystemInfo()
+        info.version = "0.00"
+        info.status = "idle"
+        info.error = "no error"
+        info.save()
+    else:
+        info = systemInfo_list[0]
+    
+    c = RequestContext(request, {"version": info.version, "browse_groups": True})
+    c.update(csrf(request))
+    if request.method == "GET":
+        # get all available samples
+        group_list = SampleGroup.objects.filter(active = True)
+        c.update({"group_list": group_list})
+        return render_to_response("browse_groups.html", c)
+    
+    if request.method == "POST":
+        if "comments" in request.POST:
+            is_message = True
+            c.update({"is_message": is_message})
+            new_group = SampleGroup.objects.get(id = request.POST["show"])
+            new_group.comment = request.POST["comments"]
+            new_group.save()
+
+        if "show" in request.POST:
+            # get sample info
+            show_group = SampleGroup.objects.get(id = request.POST["show"])
+            show_members = GroupAssignment.objects.filter(group_id = request.POST["show"])
+            c.update({"show_group": show_group, "show_members": show_members})
+            c.update(csrf(request))
+            return render_to_response("show_group.html", c)

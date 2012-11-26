@@ -35,6 +35,7 @@ public:
 	/* basic sample operation */
     int addFile(QString file);
     int run();
+	void makeGroups(int resemblenceLevel);
 	void clear();
 
 	/* status and error */

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from models import Sample, API, Hash, Loop, SampleGroup
+from models import Sample, API, Hash, Loop, SampleGroup, GroupAssignment
 
 class SampleAdmin(admin.ModelAdmin):
 	list_display = ("name", "extracted_from", "graph_name")
@@ -31,8 +31,15 @@ class SampleGroupAdmin(admin.ModelAdmin):
 	list_filter = ("leader", "active")
 	ordering = ("-active", "-leader")
 
+class GroupAssignmentAdmin(admin.ModelAdmin):
+	list_display = ("group", "member", "resemblence_rate")
+	search_fields = ("group", "member", "resemblence_rate")
+	list_filter = ("group", "member", "resemblence_rate")
+	ordering = ("-resemblence_rate", "-group")
+
 admin.site.register(Sample, SampleAdmin)
 admin.site.register(API, APIAdmin)
 admin.site.register(Hash, HashAdmin)
 admin.site.register(Loop, LoopAdmin)
 admin.site.register(SampleGroup, SampleGroupAdmin)
+admin.site.register(GroupAssignment, GroupAssignmentAdmin)

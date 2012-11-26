@@ -119,6 +119,32 @@ int CoreSystem::run()
     return errorCounter;
 }
 
+void CoreSystem::makeGroups(int resemblenceLevel)
+{
+	SystemLogger::instance()->setStatus("making groups");
+	SystemLogger::instance()->clearError();
+
+	QList<QString>::iterator it;
+	bool ret = false;
+	for(it = m_outputMethods.begin(); it != m_outputMethods.end(); ++it) {
+		if((*m_outputMods)[*it]->moduleInfo()->m_name == "DatabaseOutput") {
+			DatabaseOutput *dbMod = dynamic_cast<DatabaseOutput *>((*m_outputMods)[*it]);
+			ret = dbMod->makeGroups(resemblenceLevel);
+			break;
+		}
+	}
+
+	SystemLogger::instance()->setStatus("idle");
+	if(!ret) {
+		SystemLogger::instance()->setError("making groups failed");
+		LOG_ERROR("making groups error\n");
+		LOG_ERROR("FAILURE\n\n");
+		return;
+	}
+
+	LOG("SUCCESS\n\n");
+}
+
 void CoreSystem::clear()
 {
     m_exploitCounter = 0;

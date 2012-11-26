@@ -31,6 +31,7 @@ struct Options {
     vector<string> input, output;
     string logFile;
     int logLevel;
+	int resemblenceLevel;
 } sysOptions;
 
 /* console printing */
@@ -177,8 +178,10 @@ int main(int argc, char *argv[])
         if(vm.count("slave"))
             dbUpdateSystemInfo(system.version(), system.status(), system.error(), (int) perc, system.exploitsNum(), system.samplesNum());
     }
-    if(vm.count("slave"))
+	if(vm.count("slave")) {
+		system.makeGroups(sysOptions.resemblenceLevel);
         dbUpdateSystemInfo(system.version(), system.status(), system.error(), (int) perc, system.exploitsNum(), system.samplesNum());
+	}
 
     int s_num = system.samplesNum();
     int e_num = system.exploitsNum();
@@ -327,6 +330,7 @@ bool dbGetOptions()
     sysOptions.logFile = options_query.record().value("log_file").toString().toStdString();
     sysOptions.logLevel = options_query.record().value("log_level").toInt();
     sysOptions.output.push_back(options_query.record().value("output_dest").toString().toStdString());
+	sysOptions.resemblenceLevel = atoi(options_query.record().value("resemblence_level").toString().toStdString().c_str());
 
     /* get pending files */
     QSqlQuery files_query(DatabaseManager::instance()->database());

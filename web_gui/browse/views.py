@@ -24,9 +24,24 @@ def show_browse(request):
     c = RequestContext(request, {"version": info.version, "browse": True})
     c.update(csrf(request))
     if request.method == "GET":
-        # get all available samples
-        sample_list = Sample.objects.all()
-        c.update({"sample_list": sample_list})
+        if "search" in request.GET:
+            print request.GET
+            filter_value = request.GET["filter"]
+            if filter_value == "name":
+                search_list = Sample.objects.filter(name = request.GET["value"])
+            elif filter_value == "extracted from":
+                search_list = Sample.objects.filter(extracted_from = request.GET["value"])
+            elif filter_value == "graph name":
+                search_list = Sample.objects.filter(graph_name = request.GET["value"])
+            elif filter_value == "file type":
+                search_list = Sample.objects.filter(file_type = request.GET["value"])
+            
+            c.update({"sample_list": search_list})
+            return render_to_response("browse.html", c)
+        else:
+            # get all available samples
+            sample_list = Sample.objects.all()
+            c.update({"sample_list": sample_list})
         return render_to_response("browse.html", c)
     if request.method == "POST":
         print request.POST

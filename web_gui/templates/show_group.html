@@ -3,18 +3,26 @@
 {% block content %}
 <div class="row-fluid">
 	<div class="span4">
-		<span class="badge badge-info"><b>Group leader: </b></span></br></br>
+		<b>Group leader: </b></br></br>
 		<b>Members: </b></br>
-		{% for member in show_members %}
+		{% if show_members %}
+			{% for member in show_members %}
+			</br>
+			{% endfor %}
+		{% else %}
 		</br>
-		{% endfor %}
+		{% endif %}
 		<b>Comments: </b></br>
 	</div>
 	<div class="span4 offset1">
-		<span class="badge badge-info">{{ show_group.leader }}</span></br></br>
-		{% for member in show_members %}
-		{{ member.member }}</br>
-		{% endfor %}
+		{{ show_group.leader }}</br></br>
+		{% if show_members %}
+			{% for member in show_members %}
+			{{ member.member }} <b>({{ member.resemblence_rate }} %)</b></br>
+			{% endfor %}
+		{% else %}
+		(none)</br>
+		{% endif %}
 		</br>
 		<form method="post" action="">{% csrf_token %}
 			<textarea name="comments" cols="75" rows="5">{{ show_group.comment }}</textarea></br>

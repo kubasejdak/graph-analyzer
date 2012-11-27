@@ -114,12 +114,24 @@ bool DatabaseOutput::makeGroups(int resemblenceLevel)
 {
 	LOG("resemblence level: [%d]\n", resemblenceLevel);
 
+	/* delete all group assignments */
+	QSqlQuery delete_query(DatabaseManager::instance()->database());
+	delete_query.prepare("DELETE FROM analyze_groupassignment");
+	if(!DatabaseManager::instance()->exec(&delete_query)) {
+		SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
+		LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
+		LOG_ERROR("FAILURE\n\n");
+		return false;
+	}
+	LOG("Successfully deleted all group assignments\n");
+
 	/* get all samples */
 	QSqlQuery samples_query(DatabaseManager::instance()->database());
 	samples_query.prepare("SELECT * FROM analyze_sample");
 	if(!DatabaseManager::instance()->exec(&samples_query)) {
 		SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
 		LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
+		LOG_ERROR("FAILURE\n\n");
 		return false;
 	}
 
@@ -134,6 +146,7 @@ bool DatabaseOutput::makeGroups(int resemblenceLevel)
 		if(!DatabaseManager::instance()->exec(&loops_query)) {
 			SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
 			LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
+			LOG_ERROR("FAILURE\n\n");
 			return false;
 		}
 		QVector<QString> loopsHashes;
@@ -209,6 +222,7 @@ QMap<int, int> DatabaseOutput::findMatchingGroups(int id, QVector<QString> loopH
 	if(!DatabaseManager::instance()->exec(&leaders_query)) {
 		SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
 		LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
+		LOG_ERROR("FAILURE\n\n");
 		return QMap<int, int>();
 	}
 
@@ -285,6 +299,7 @@ void DatabaseOutput::assignToGroup(int groupId, int memberId, int resemblenceRat
 	if(!DatabaseManager::instance()->exec(&check_query)) {
 		SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
 		LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
+		LOG_ERROR("FAILURE\n\n");
 		return;
 	}
 
@@ -302,6 +317,7 @@ void DatabaseOutput::assignToGroup(int groupId, int memberId, int resemblenceRat
 	if(!DatabaseManager::instance()->exec(&assign_query)) {
 		SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
 		LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
+		LOG_ERROR("FAILURE\n\n");
 		return;
 	}
 
@@ -435,7 +451,6 @@ bool DatabaseOutput::isDoubleConnected(int group1, int group2)
 			break;
 		}
 	}
-
 
 	LOG("SUCCESS\n\n");
 	return (connection1 && connection2);

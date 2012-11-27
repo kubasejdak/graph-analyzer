@@ -9,6 +9,7 @@
 			<li><a href="#loops_tab" data-toggle="tab">Loops</a></li>
 			<li><a href="#api_tab" data-toggle="tab">API</a></li>
 			<li><a href="#graph_tab" data-toggle="tab">Graph</a></li>
+			<li><a href="#groups_tab" data-toggle="tab">Groups</a></li>
 		</ul>
 		<div class="tab-content">
 			<div class="tab-pane" id="hash_tab">
@@ -92,6 +93,28 @@
 			<div class="tab-pane" id="graph_tab">
 				<p>
 					<img src="{{ STATIC_URL }}tmp_graphs/{{ graph_file }}" />
+				</p>
+			</div>
+			<div class="tab-pane" id="groups_tab">
+				<p>
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th>Index</th>
+								<th>Group leader</th>
+								<th>Resemblence rate</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for group in show_groups %}
+							<tr>
+								<td>{{ forloop.counter }}</td>
+								<td>{{ group.group }}</td>
+								<td>{{ group.resemblence_rate }} %</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
 				</p>
 			</div>
 		</div>

@@ -67,6 +67,7 @@ int main(int argc, char *argv[])
             ("update-db,u", "update database with system info")
             ("log-file", opt::value<string>(&sysOptions.logFile), "set file to save logs")
             ("log-level", opt::value<int>(&sysOptions.logLevel), "set logging level")
+			("regroup", "regroup samples")
             ;
 
     opt::positional_options_description p;
@@ -112,6 +113,16 @@ int main(int argc, char *argv[])
         bool ok = dbUpdateSystemInfo(system.version(), system.status(), system.error(), 0, 0, 0);
         return (ok) ? 0 : 1;
     }
+	/* regroup samples */
+	if(vm.count("regroup")) {
+		bool ok = dbGetOptions();
+		if(!ok)
+			return 1;
+
+		system.setOutput("DatabaseOutput");
+		system.makeGroups(sysOptions.resemblenceLevel);
+		return 0;
+	}
     /* run as GUI slave */
     if(vm.count("slave")) {
         bool ok = dbGetOptions();

@@ -56,7 +56,8 @@ def show_browse(request):
             show_loops = Loop.objects.filter(sample = request.POST["show"])
             show_api = API.objects.filter(sample = request.POST["show"])
             show_hash = Hash.objects.get(sample = request.POST["show"])
-            c.update({"show_sample": show_sample, "show_loops": show_loops, "show_api": show_api, "show_hash": show_hash})
+            show_groups = GroupAssignment.objects.filter(member = request.POST["show"])
+            c.update({"show_sample": show_sample, "show_loops": show_loops, "show_api": show_api, "show_hash": show_hash, "show_groups": show_groups})
             
             # get graph picture
             graph_source = show_sample.graph_name

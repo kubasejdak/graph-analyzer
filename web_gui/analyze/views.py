@@ -42,6 +42,9 @@ def show_analyze(request):
 	
 	# run system if "Analyze" clicked
 	if request.method == "POST":
+		# run group re-make
+		if "regroup" in request.POST:
+			Popen(["graph-analyzer", "--regroup"])
 		
 		# add filename to database
 		if "add" in request.POST:

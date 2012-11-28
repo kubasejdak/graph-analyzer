@@ -243,15 +243,21 @@ QMap<int, int> DatabaseOutput::findMatchingGroups(int id, QVector<QString> loopH
 		}
 
 		int resemblenceCounter = 0;
-		int overalCounter = 0;
+		int overallCounter = 0;
 		while(select_query.next()) {
-			++overalCounter;
+			++overallCounter;
 			if(loopHashes.contains(select_query.record().value("hash").toString()))
 				++resemblenceCounter;
 		}
 
+		/* prevent floating point exception */
+		if(overallCounter == 0) {
+			LOG("sample doesn't have any loops, skipping, leader_id: [%d]\n", leaderId);
+			continue;
+		}
+
 		/* compute resemlence rate */
-		int resemblenceRate = (resemblenceCounter * 100) / overalCounter;
+		int resemblenceRate = (resemblenceCounter * 100) / overallCounter;
 
 		/* assign */
 		if(resemblenceRate >= resemblenceLevel) {

@@ -16,6 +16,6 @@ set(CORE_SRC
 	Options.cpp
 	ConfigFile.cpp
 	DatabaseManager.cpp
-	Toolbox.cpp)
+    Toolbox.cpp)
 
 add_library(core ${CORE_SRC})

@@ -3,7 +3,7 @@ from django.template import RequestContext
 from django.core.context_processors import csrf
 
 from options.forms import OptionsForm
-from options.models import Option, SystemInfo
+from options.models import Option, SystemInfo, Feedback
 
 def show_home(request):
     # get system info (only one object should exists)
@@ -65,3 +65,36 @@ def show_options(request):
     
     c.update({"form": form})
     return render_to_response("options.html", c)
+
+def show_feedback(request):
+    # get system info (only one object should exists)
+    systemInfo_list = SystemInfo.objects.all()
+    if systemInfo_list.count() == 0:
+        info = SystemInfo()
+        info.version = "0.00"
+        info.status = "idle"
+        info.error = "no error"
+        info.save()
+    else:
+        info = systemInfo_list[0]
+    
+    c = RequestContext(request, {"version": info.version, "is_message": False, "feedback": True})
+    c.update(csrf(request))
+    
+    # save bug/feature in session if "Save" clicked
+    if request.method == "POST":
+        if "add" in request.POST:
+            print request.POST
+            issue = Feedback()
+            issue.type = request.POST["type"]
+            issue.description = request.POST["description"]
+            issue.status = "pending"
+            issue.save()
+            c.update({"is_message": True})
+    
+    # get all bugs and features
+    bug_list = Feedback.objects.filter(type = "bug").order_by("-status")
+    feature_list = Feedback.objects.filter(type = "feature").order_by("-status")
+    
+    c.update({"bug_list": bug_list, "feature_list": feature_list})
+    return render_to_response("feedback.html", c)

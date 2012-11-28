@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, include, url
 from analyze.views import show_analyze
 from browse.views import show_browse, show_browse_groups
-from options.views import show_home, show_options
+from options.views import show_home, show_options, show_feedback
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -24,4 +24,5 @@ urlpatterns = patterns('',
     url(r'browse/$', show_browse),
     url(r'browse_groups/$', show_browse_groups),
     url(r'options/$', show_options),
+    url(r'feedback/$', show_feedback),
 )

@@ -46,6 +46,7 @@ class Loop(models.Model):
 class SampleGroup(models.Model):
 	leader = models.ForeignKey(Sample)
 	active = models.BooleanField()
+	members_num = models.IntegerField()
 	comment = models.CharField(max_length = 3000)
 	
 	def __unicode__(self):

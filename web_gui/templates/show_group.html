@@ -3,7 +3,8 @@
 {% block content %}
 <div class="row-fluid">
 	<div class="span4">
-		<b>Group leader: </b></br></br>
+		<b>Group leader: </b></br>
+		<b>Number of members</b></br></br>
 		<b>Members: </b></br>
 		{% if show_members %}
 			{% for member in show_members %}
@@ -15,7 +16,8 @@
 		<b>Comments: </b></br>
 	</div>
 	<div class="span4 offset1">
-		{{ show_group.leader }}</br></br>
+		{{ show_group.leader }}</br>
+		{{ show_group.members_num }}</br></br>
 		{% if show_members %}
 			{% for member in show_members %}
 			{{ member.member }} <b>({{ member.resemblence_rate }} %)</b></br>

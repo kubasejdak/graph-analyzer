@@ -94,11 +94,12 @@ bool DatabaseOutput::generateOutput(ShellcodeSample *sample)
 
 	/* general samplegroup data */
 	QSqlQuery group_query(DatabaseManager::instance()->database());
-	group_query.prepare("INSERT INTO analyze_samplegroup VALUES (?, ?, ?, ?)");
+	group_query.prepare("INSERT INTO analyze_samplegroup VALUES (?, ?, ?, ?, ?)");
 	group_query.bindValue(0, groupId);
 	group_query.bindValue(1, sampleId);
 	group_query.bindValue(2, "false");
-	group_query.bindValue(3, "");
+	group_query.bindValue(3, 0);
+	group_query.bindValue(4, "");
 	if(!DatabaseManager::instance()->exec(&group_query)) {
 		SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
 		LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
@@ -164,6 +165,9 @@ bool DatabaseOutput::makeGroups(int resemblenceLevel)
 
 	/* find and deactivate duplicate groups */
 	activateUniqueGroups();
+
+	/* count members in each group */
+	countGroupMembers();
 
 	LOG("SUCCESS\n\n");
 	return true;
@@ -460,4 +464,49 @@ bool DatabaseOutput::isDoubleConnected(int group1, int group2)
 
 	LOG("SUCCESS\n\n");
 	return (connection1 && connection2);
+}
+
+void DatabaseOutput::countGroupMembers()
+{
+	/* get all groups */
+	QSqlQuery select_query(DatabaseManager::instance()->database());
+	select_query.prepare("SELECT * FROM analyze_samplegroup");
+	if(!DatabaseManager::instance()->exec(&select_query)) {
+		SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
+		LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
+		LOG_ERROR("FAILURE\n\n");
+		return;
+	}
+
+	/* for all groups */
+	while(select_query.next()) {
+		int groupId = select_query.record().value("id").toInt();
+
+		/* get number of members in this group */
+		QSqlQuery select2_query(DatabaseManager::instance()->database());
+		select2_query.prepare("SELECT * FROM analyze_groupassignment WHERE group_id = ?");
+		select2_query.addBindValue(groupId);
+		if(!DatabaseManager::instance()->exec(&select2_query)) {
+			SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
+			LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
+			LOG_ERROR("FAILURE\n\n");
+			return;
+		}
+		int membersNum = select2_query.size();
+		LOG("groupId: [%d], membersNum: [%d]\n", groupId, membersNum);
+
+		/* update number of members for this group */
+		QSqlQuery update_query(DatabaseManager::instance()->database());
+		update_query.prepare("UPDATE analyze_samplegroup SET members_num = ? WHERE id = ?");
+		update_query.addBindValue(membersNum);
+		update_query.addBindValue(groupId);
+		if(!DatabaseManager::instance()->exec(&update_query)) {
+			SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
+			LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
+			LOG_ERROR("FAILURE\n\n");
+			return;
+		}
+	}
+
+	LOG("SUCCESS\n\n");
 }

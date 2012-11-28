@@ -36,6 +36,7 @@ private:
 	void assignToGroup(int groupId, int memberId, int resemblenceRate);
 	void activateUniqueGroups();
 	bool isDoubleConnected(int group1, int group2);
+	void countGroupMembers();
 };
 
 #endif /* DATABASEOUTPUT_H_ */

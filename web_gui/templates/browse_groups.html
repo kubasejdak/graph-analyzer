@@ -6,6 +6,7 @@
 		<tr>
 			<th>Index</th>
 			<th>Group leader</th>
+			<th>Number of members</th>
 			<th>More</th>
 		</tr>
 	</thead>
@@ -14,6 +15,7 @@
 		<tr>
 			<td>{{ forloop.counter }}</td>
 			<td>{{ group.leader }}</td>
+			<td>{{ group.members_num }}</td>
 			<td><form method="post">{% csrf_token %}<button class="btn" name="show" value={{ group.id }}>Show</button></form></td>
 		</tr>
 		{% endfor %}

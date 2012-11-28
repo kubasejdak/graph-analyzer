@@ -87,7 +87,7 @@ def show_browse_groups(request):
     c.update(csrf(request))
     if request.method == "GET":
         # get all available samples
-        group_list = SampleGroup.objects.filter(active = True)
+        group_list = SampleGroup.objects.filter(active = True).order_by("-members_num")
         c.update({"group_list": group_list})
         return render_to_response("browse_groups.html", c)
     

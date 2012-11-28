@@ -26,10 +26,10 @@ class LoopAdmin(admin.ModelAdmin):
 	ordering = ("-sample", "-hash")
 
 class SampleGroupAdmin(admin.ModelAdmin):
-	list_display = ("leader", "active", "comment")
-	search_fields = ("leader", "active", "comment")
-	list_filter = ("leader", "active")
-	ordering = ("-active", "-leader")
+	list_display = ("leader", "members_num", "active", "comment")
+	search_fields = ("leader", "active", "comment", "members_num")
+	list_filter = ("leader", "active", "members_num")
+	ordering = ("-active", "-members_num", "-leader")
 
 class GroupAssignmentAdmin(admin.ModelAdmin):
 	list_display = ("group", "member", "resemblence_rate")

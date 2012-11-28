@@ -84,7 +84,6 @@ def show_feedback(request):
     # save bug/feature in session if "Save" clicked
     if request.method == "POST":
         if "add" in request.POST:
-            print request.POST
             issue = Feedback()
             issue.type = request.POST["type"]
             issue.description = request.POST["description"]

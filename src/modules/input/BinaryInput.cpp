@@ -22,8 +22,21 @@ bool BinaryInput::loadInput(QString filename, QList<ShellcodeSample *> *samples)
         return false;
     }
 
-    int size = file.size();
+	int size = file.size();
+
+	/* protect against bad or too big files */
+	if(PROTECT_AGAINST_BIG_FILES) {
+		if(size > MAX_INPUT_FILE_SIZE) {
+			LOG_ERROR("file [%s] is too big (> 50 MB), size: [%d]\n", filename.toStdString().c_str(), size);
+			LOG_ERROR("skipping\n");
+			LOG_ERROR("FAILURE\n\n");
+			return false;
+		}
+	}
+
 	char *buffer = new char[size];
+	LOG("allocating code buffer for sample, size: [%d]\n", size);
+
 	file.read(buffer, size);
 	file.close();
 

@@ -10,6 +10,7 @@
 #include <QFileInfo>
 
 #include "AbstractInput.h"
+#include <core/Options.h>
 
 class BinaryInput: public AbstractInput {
 public:

@@ -23,5 +23,7 @@ extern QString ANA_TABLE_PREFIX;
 extern QString OPT_TABLE_PREFIX;
 extern QString ID_SEQ_POSTFIX;
 extern bool SKIP_NONEXPLOIT_OUTPUT;
+extern bool PROTECT_AGAINST_BIG_FILES;
+extern int MAX_INPUT_FILE_SIZE;
 
 #endif /* OPTIONS_H_ */

@@ -262,6 +262,7 @@ QMap<int, int> DatabaseOutput::findMatchingGroups(int id, QVector<QString> loopH
 
 		/* compute resemlence rate */
 		int resemblenceRate = (resemblenceCounter * 100) / overallCounter;
+		LOG("resemblenceRate: [%d]\n", resemblenceRate);
 
 		/* assign */
 		if(resemblenceRate >= resemblenceLevel) {
@@ -492,7 +493,7 @@ void DatabaseOutput::countGroupMembers()
 			LOG_ERROR("FAILURE\n\n");
 			return;
 		}
-		int membersNum = select2_query.size();
+		int membersNum = select2_query.size() + 1;	// +1 because we count also the leader
 		LOG("groupId: [%d], membersNum: [%d]\n", groupId, membersNum);
 
 		/* update number of members for this group */

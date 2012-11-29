@@ -17,6 +17,12 @@ QString GRAPHS_DIR;
 /* delete sample's code after analysis (memory management issue) */
 bool DELETE_CODE_INSTANTLY;
 
+/* ===== Input Modules ===== */
+
+/* protection against too big files */
+bool PROTECT_AGAINST_BIG_FILES;
+int MAX_INPUT_FILE_SIZE;
+
 /* ===== DatabaseOutput ===== */
 
 /* info to connect with database */

@@ -14,6 +14,8 @@ void ConfigFile::read()
 		("EMULATION_STEPS", opt::value<int>(), "number of emulation steps for libemu")
         ("GRAPHS_DIR", opt::value<string>(), "directory to store generated graphs")
 		("DELETE_CODE_INSTANTLY", opt::value<bool>(), "should code be deleted right after analysis")
+		("PROTECT_AGAINST_BIG_FILES", opt::value<bool>(), "should program protect against too big input files")
+		("MAX_INPUT_FILE_SIZE", opt::value<int>(), "max input files size")
         ("DB_QT_DRIVER", opt::value<string>(), "Qt driver for database")
         ("DB_HOST", opt::value<string>(), "database host")
         ("DB_NAME", opt::value<string>(), "database name")
@@ -52,6 +54,22 @@ void ConfigFile::read()
     }
 	else {
         LOG_ERROR("DELETE_CODE_INSTANTLY not set in config file\n");
+		exit(1);
+	}
+	if(vm.count("PROTECT_AGAINST_BIG_FILES")) {
+		PROTECT_AGAINST_BIG_FILES = vm["PROTECT_AGAINST_BIG_FILES"].as<bool>();
+		LOG("PROTECT_AGAINST_BIG_FILES: [%s]\n", (PROTECT_AGAINST_BIG_FILES) ? "true" : "false");
+	}
+	else {
+		LOG_ERROR("PROTECT_AGAINST_BIG_FILES not set in config file\n");
+		exit(1);
+	}
+	if(vm.count("MAX_INPUT_FILE_SIZE")) {
+		MAX_INPUT_FILE_SIZE = vm["MAX_INPUT_FILE_SIZE"].as<int>();
+		LOG("MAX_INPUT_FILE_SIZE: [%d]\n", MAX_INPUT_FILE_SIZE);
+	}
+	else {
+		LOG_ERROR("MAX_INPUT_FILE_SIZE not set in config file\n");
 		exit(1);
 	}
     if(vm.count("DB_QT_DRIVER")) {

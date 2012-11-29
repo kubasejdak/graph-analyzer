@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="row-fluid">
-	<div class="span4">
+	<div class="span2">
 		<b>Group leader: </b></br>
 		<b>Number of members</b></br></br>
 		<b>Members: </b></br>
@@ -15,12 +15,12 @@
 		{% endif %}
 		<b>Comments: </b></br>
 	</div>
-	<div class="span4 offset1">
+	<div class="span4">
 		{{ show_group.leader }}</br>
 		{{ show_group.members_num }}</br></br>
 		{% if show_members %}
 			{% for member in show_members %}
-			{{ member.member }} <b>({{ member.resemblence_rate }} %)</b></br>
+			{{ member.member }} <b>({{ member.resemblence_rate }} %)</b></br></br>
 			{% endfor %}
 		{% else %}
 		(none)</br>
@@ -31,6 +31,19 @@
 			<button class="btn btn-primary" name="show" value={{ show_group.id }}>Save</button>
 		</form>
 		</br></br>
+	</div>
+	<div class="span2">
+		</br>
+		</br></br>
+		{% if show_members %}
+			{% for member in show_members %}
+			<form method="post">{% csrf_token %}
+				<button class="btn btn-mini" name="show_member" value={{ member.member_id }}>Show</button>
+			</form>
+			{% endfor %}
+		{% else %}
+		</br>
+		{% endif %}
 	</div>
 	{% if is_message %}
 	<div class="span11">

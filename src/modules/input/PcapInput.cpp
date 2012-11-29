@@ -53,10 +53,10 @@ bool PcapInput::loadInput(QString filename, QList<ShellcodeSample *> *samples)
 
     /* iterate through all flow files */
     ShellcodeSample *s;
-    QDirIterator it(".", QDirIterator::Subdirectories);
+	QDirIterator it(".", QDir::Files | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
     while(it.hasNext()) {
         QString entryName = it.next();
-        if(entryName == "." || entryName == ".." || entryName == "report.xml")
+		if(entryName == "report.xml")
             continue;
 
         /* read code */
@@ -67,7 +67,19 @@ bool PcapInput::loadInput(QString filename, QList<ShellcodeSample *> *samples)
             continue;
 
         int size = file.size();
+
+		/* protect against bad or too big files */
+		if(PROTECT_AGAINST_BIG_FILES) {
+			if(size > MAX_INPUT_FILE_SIZE) {
+				LOG_ERROR("file [%s] is too big (> 50 MB), size: [%d]\n", entryName.toStdString().c_str(), size);
+				LOG_ERROR("skipping\n");
+				LOG_ERROR("FAILURE\n\n");
+				return false;
+			}
+		}
+
         char *buffer = new char[size];
+		LOG("allocating code buffer for sample, size: [%d]\n", size);
 
         file.read(buffer, size);
         file.close();

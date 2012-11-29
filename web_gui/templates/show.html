@@ -14,17 +14,17 @@
 		<div class="tab-content">
 			<div class="tab-pane" id="hash_tab">
 				<p>
-					<div class="span4">
+					<div class="span2">
 						<b>Hash: </b>
 					</div>
-					<div class="span4 offset1">
+					<div class="span2">
 						{{ show_hash.hash }}
 					</div>
 				</p>
 			</div>
 			<div class="tab-pane active" id="general_tab">
 				<p>
-					<div class="span4">
+					<div class="span2">
 						<b>Name: </b></br>
 						<b>Extracted from: </b></br>
 						<b>Graph name: </b></br>
@@ -33,7 +33,7 @@
 						<b>Exploit offset [bytes]: </b></br>
 						<b>Comment: </b></br></br>
 					</div>
-					<div class="span4 offset1">
+					<div class="span4">
 						{{ show_sample.name }}</br>
 						{{ show_sample.extracted_from }}</br>
 						{{ show_sample.graph_name }}</br>
@@ -59,14 +59,14 @@
 			<div class="tab-pane" id="loops_tab">
 				{% for loop in show_loops %}
 				<p>
-					<div class="span4">
+					<div class="span2">
 						<b>Hash: </b></br>
 						<b>Iterations: </b></br>
 						<b>Size: </b></br>
 						<b>Start: </b></br>
 						<b>Vertexes: </b></br>
 					</div>
-					<div class="span4 offset1">
+					<div class="span8">
 						{{ loop.hash }}</br>
 						{{ loop.iterations }}</br>
 						{{ loop.size }}</br>
@@ -79,11 +79,11 @@
 			<div class="tab-pane" id="api_tab">
 				{% for api in show_api %}
 				<p>
-					<div class="span4">
+					<div class="span2">
 						<b>Syscall: </b></br>
 						<b>DLL: </b></br>
 					</div>
-					<div class="span4 offset1">
+					<div class="span8">
 						{{ api.syscall }}</br>
 						{{ api.dll }}</br></br>
 					</div>
@@ -103,6 +103,7 @@
 								<th>Index</th>
 								<th>Group leader</th>
 								<th>Resemblence rate</th>
+								<th>More</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -111,6 +112,7 @@
 								<td>{{ forloop.counter }}</td>
 								<td>{{ group.group }}</td>
 								<td>{{ group.resemblence_rate }} %</td>
+								<td><form method="post">{% csrf_token %}<button class="btn" name="show_group" value={{ group.group_id }}>Show</button></form></td>
 							</tr>
 							{% endfor %}
 						</tbody>

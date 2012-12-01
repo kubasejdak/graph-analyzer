@@ -71,10 +71,11 @@ bool PcapInput::loadInput(QString filename, QList<ShellcodeSample *> *samples)
 		/* protect against bad or too big files */
 		if(PROTECT_AGAINST_BIG_FILES) {
 			if(size > MAX_INPUT_FILE_SIZE) {
-				LOG_ERROR("file [%s] is too big (> 50 MB), size: [%d]\n", entryName.toStdString().c_str(), size);
-				LOG_ERROR("skipping\n");
-				LOG_ERROR("FAILURE\n\n");
-				return false;
+				LOG("file [%s] is too big (> 50 MB), size: [%d]\n", entryName.toStdString().c_str(), size);
+				LOG("skipping\n");
+				file.close();
+				file.remove();
+				continue;
 			}
 		}
 

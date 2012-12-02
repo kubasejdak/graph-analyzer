@@ -11,11 +11,6 @@ class SystemInfo(models.Model):
 
 # Options table
 class Option(models.Model):
-    OUTPUT_CHOICES = (
-        ("DatabaseOutput", "DatabaseOutput"),
-        ("ConsoleOutput", "ConsoleOutput"),
-    )
-    
     LOG_CHOICES = (
         (1, "Low"),
         (2, "Normal"),
@@ -36,11 +31,17 @@ class Option(models.Model):
         (100, "100 %"),
     )
     
-    output_dest = models.CharField(max_length = 20, choices = OUTPUT_CHOICES)
     log_level = models.IntegerField(choices = LOG_CHOICES)
-    log_level = models.IntegerField()
     log_file = models.CharField(max_length = 100)
+
     resemblence_level = models.IntegerField(choices = RESEMBLENCE_CHOICES)
+    emulation_steps = models.IntegerField()
+    graphs_dir = models.CharField(max_length = 100)
+    big_files_protection = models.BooleanField()
+    max_input_file_size = models.IntegerField()
+    skip_empty_samples = models.BooleanField()
+    skip_broken_samples = models.BooleanField()
+    broken_samples_size = models.IntegerField()
 
 # PendingFile table
 class PendingFile(models.Model):

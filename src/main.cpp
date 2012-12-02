@@ -23,27 +23,13 @@ using namespace std;
 #include <core/SystemLogger.h>
 #include <core/Options.h>
 #include <core/DatabaseManager.h>
-#include <modules/ModuleInfo.h>
 #include <modules/ModuleManager.h>
 
 /* global variables */
-struct Options {
-    vector<string> input, output;
-    string logFile;
-    int logLevel;
-	int resemblenceLevel;
-} sysOptions;
-
-/* console printing */
-void printIntro(QString version);
-void printModuleInfo(ModuleInfo *info);
-void listInputMods();
-void listAnalyzeMods();
-void listOutputMods();
+vector<string> input;
 
 /* database connections */
 bool dbUpdateSystemInfo(QString version, QString status, QString error, int progress, int exploits, int samples);
-bool dbGetOptions();
 bool dbRemoveFile(QString file);
 bool dbAddRecentFile(QString file);
 bool dbDropRecentFiles();
@@ -57,16 +43,10 @@ int main(int argc, char *argv[])
     opt::options_description options("Options");
     options.add_options()
             ("help,h", "print help message")
-            ("slave,s", "run program as GUI slave")
-            ("input,i", opt::value<vector<string> >(&sysOptions.input), "set input files")
-            ("output,o", opt::value<vector<string> >(&sysOptions.output), "set output destinations (default: DatabaseOutput)")
-            ("list-analyze", "list analyze modules")
-            ("list-input", "list input modules")
-            ("list-output", "list output modules")
+			("input,i", opt::value<vector<string> >(&input), "set input files")
+			("console,c", "add console to output destinations")
             ("version,v", "print version")
-            ("update-db,u", "update database with system info")
-            ("log-file", opt::value<string>(&sysOptions.logFile), "set file to save logs")
-            ("log-level", opt::value<int>(&sysOptions.logLevel), "set logging level")
+			("update-db,u", "update database with system info")
 			("regroup", "regroup samples")
             ;
 
@@ -77,29 +57,9 @@ int main(int argc, char *argv[])
     opt::store(opt::command_line_parser(argc, argv).options(options).positional(p).run(), vm);
     opt::notify(vm);
 
-    /* check any arguments */
-    if(vm.empty()) {
-        LOG_ERROR("no arguments\n");
-        return 1;
-    }
     /* help */
     if(vm.count("help")) {
         cout << options << endl;
-        return 0;
-    }
-    /* list-analyze */
-    if(vm.count("list-analyze")) {
-        listAnalyzeMods();
-        return 0;
-    }
-    /* list-input */
-    if(vm.count("list-input")) {
-        listInputMods();
-        return 0;
-    }
-    /* list-output */
-    if(vm.count("list-output")) {
-        listOutputMods();
         return 0;
     }
     /* version */
@@ -115,153 +75,52 @@ int main(int argc, char *argv[])
     }
 	/* regroup samples */
 	if(vm.count("regroup")) {
-		bool ok = dbGetOptions();
-		if(!ok)
-			return 1;
-
-		system.setOutput("DatabaseOutput");
-		system.makeGroups(sysOptions.resemblenceLevel);
+		system.makeGroups();
 		return 0;
 	}
-    /* run as GUI slave */
-    if(vm.count("slave")) {
-        bool ok = dbGetOptions();
-        if(!ok)
-            return 1;
+	/* console */
+	if(vm.count("console"))
+		system.setOutput("ConsoleOutput");
 
-        string logFile = sysOptions.logFile;
-        system.setLogFile(logFile.c_str());
-        LOG("using logFile: [%s]\n", logFile.c_str());
+	/* input from cmd */
+	if(vm.count("input")) {
+		while(!input.empty()) {
+			string f = input.back();
+			system.addFile(f.c_str());
+			input.pop_back();
+		}
+	}
 
-        int logLevel = sysOptions.logLevel;
-        system.setLogLevel(logLevel);
-        LOG("setting logLevel: [%d]\n", logLevel);
-        while(!sysOptions.output.empty()) {
-            string output = sysOptions.output.back();
-            system.setOutput(output.c_str());
-            sysOptions.output.pop_back();
-        }
-    }
-    /* run in normal mode */
-    else {
-        /* log-file */
-        if(vm.count("log-file"))
-            system.setLogFile(sysOptions.logFile.c_str());
-        /* log-level */
-        if(vm.count("log-level"))
-            system.setLogLevel(sysOptions.logLevel);
-        /* input */
-        if(!vm.count("input")) {
-            LOG_ERROR("no input files\n");
-            return 1;
-        }
-        /* output */
-        if(!vm.count("output")) {
-            LOG("no output destination, setting to DatabaseOutput\n");
-            system.setOutput("DatabaseOutput");
-        }
-        while(!sysOptions.output.empty()) {
-            system.setOutput(sysOptions.output.back().c_str());
-            sysOptions.output.pop_back();
-        }
-    }
+	/* ====== run ====== */
+	LOG("starting system\n");
 
-    /* run */
-    LOG("starting system\n");
-    int errorCounter = 0;
+	int errorCounter = 0;
+	double perc = 0.0;
+
     dbDropRecentFiles();
     dbUpdateSystemInfo(system.version(), system.status(), system.error(), 0, 0, 0);
-    int begSize = sysOptions.input.size();
-    printIntro(system.version());
-    double perc = 0.0;
-    while(!sysOptions.input.empty()) {
-        string file = sysOptions.input.back();
-        system.addFile(file.c_str());
-        if(vm.count("slave")) {
-            dbRemoveFile(file.c_str());
-            dbAddRecentFile(file.c_str());
-        }
-        LOG("passing to run(): [%s]\n", file.c_str());
-        errorCounter += system.run();
-        sysOptions.input.pop_back();
-        LOG("file processing completed\n");
-        perc = ((begSize - sysOptions.input.size()) / begSize) * 100;
-        if(vm.count("slave"))
-            dbUpdateSystemInfo(system.version(), system.status(), system.error(), (int) perc, system.exploitsNum(), system.samplesNum());
-    }
-	if(vm.count("slave")) {
-		system.makeGroups(sysOptions.resemblenceLevel);
-        dbUpdateSystemInfo(system.version(), system.status(), system.error(), (int) perc, system.exploitsNum(), system.samplesNum());
-	}
+
+	errorCounter = system.run();
+	perc = 100.0;
+	dbUpdateSystemInfo(system.version(), system.status(), system.error(), (int) perc, system.exploitsNum(), system.samplesNum());
+
+	system.makeGroups();
+	dbUpdateSystemInfo(system.version(), system.status(), system.error(), (int) perc, system.exploitsNum(), system.samplesNum());
+	/* ====== run finished  ====== */
 
     int s_num = system.samplesNum();
     int e_num = system.exploitsNum();
     string e = (e_num == 1) ? "exploit" : "exploits";
     string s = (s_num == 1) ? "sample" : "samples";
-    cout << "FINISHED: found " << dec << e_num << " " << e << " in " << s_num << " " << s << "!" << endl;
+
+	LOG("FINISHED: found %d %s in %d %s!\n", e_num, e.c_str(), s_num, s.c_str());
+
     if(errorCounter)
         LOG("program FINISHED with some ERRORS, errorCounter: [%d]\n", errorCounter);
     else
         LOG("program FINISHED without errors\n");
 
     return 0;
-}
-
-void printIntro(QString version)
-{
-    cout << "graph-analyzer " << version.toStdString() << endl;
-    cout << "Author: " << AUTHOR << endl;
-    cout << "Build date: " << __DATE__ << endl;
-    cout << endl;
-}
-
-void printModuleInfo(ModuleInfo *info)
-{
-    cout << "id: " << setw(6) << left << info->m_id << " ";
-    cout << "name: " << setw(17) << left << info->m_name.toStdString() << " ";
-    cout << "description: " << info->m_description.toStdString() << endl;
-}
-
-void listInputMods()
-{
-    QList<ModuleInfo *> mods = ModuleManager::instance()->listInput();
-    if(mods.size() == 0)
-        return;
-
-    QList<ModuleInfo *>::iterator it;
-    cout << "* List of available input modules:" << endl;
-    for(it = mods.begin(); it != mods.end(); ++it)
-        printModuleInfo(*it);
-
-    cout << endl;
-}
-
-void listAnalyzeMods()
-{
-    QList<ModuleInfo *> mods = ModuleManager::instance()->listAnalyze();
-    if(mods.size() == 0)
-        return;
-
-    QList<ModuleInfo *>::iterator it;
-    cout << "* List of available analyze modules:" << endl;
-    for(it = mods.begin(); it != mods.end(); ++it)
-        printModuleInfo(*it);
-
-    cout << endl;
-}
-
-void listOutputMods()
-{
-    QList<ModuleInfo *> mods = ModuleManager::instance()->listOutput();
-    if(mods.size() == 0)
-        return;
-
-    QList<ModuleInfo *>::iterator it;
-    cout << "* List of available output modules:" << endl;
-    for(it = mods.begin(); it != mods.end(); ++it)
-        printModuleInfo(*it);
-
-    cout << endl;
 }
 
 bool dbUpdateSystemInfo(QString version, QString status, QString error, int progress, int exploits, int samples)
@@ -322,38 +181,6 @@ bool dbUpdateSystemInfo(QString version, QString status, QString error, int prog
             return false;
         }
     } /* else */
-
-    return true;
-}
-
-bool dbGetOptions()
-{
-    /* get options */
-    QSqlQuery options_query(DatabaseManager::instance()->database());
-    options_query.prepare("SELECT * FROM options_option");
-    if(!DatabaseManager::instance()->exec(&options_query)) {
-        SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
-        LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
-        return false;
-    }
-
-    options_query.next();
-    sysOptions.logFile = options_query.record().value("log_file").toString().toStdString();
-    sysOptions.logLevel = options_query.record().value("log_level").toInt();
-    sysOptions.output.push_back(options_query.record().value("output_dest").toString().toStdString());
-	sysOptions.resemblenceLevel = atoi(options_query.record().value("resemblence_level").toString().toStdString().c_str());
-
-    /* get pending files */
-    QSqlQuery files_query(DatabaseManager::instance()->database());
-    files_query.prepare("SELECT * FROM options_pendingfile");
-    if(!DatabaseManager::instance()->exec(&files_query)) {
-        SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
-        LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
-        return false;
-    }
-
-    while(files_query.next())
-        sysOptions.input.push_back(files_query.record().value("name").toString().toStdString());
 
     return true;
 }

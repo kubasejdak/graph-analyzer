@@ -14,12 +14,6 @@ DatabaseOutput::DatabaseOutput()
 
 bool DatabaseOutput::generateOutput(ShellcodeSample *sample)
 {
-    if(!sample->info()->isShellcodePresent() && SKIP_NONEXPLOIT_OUTPUT) {
-        LOG("no exploit found, returning\n");
-        LOG("SUCCESS\n\n");
-        return true;
-    }
-
     ShellcodeInfo *info = sample->info();
 
     /* ensure that sample is not a duplicate */
@@ -69,7 +63,7 @@ bool DatabaseOutput::generateOutput(ShellcodeSample *sample)
     QSqlQuery mod_query(DatabaseManager::instance()->database());
     QString table;
     for(it = t->begin(); it != t->end(); ++it) {
-        table = ANA_TABLE_PREFIX;
+		table = Options::instance()->ANA_TABLE_PREFIX;
         table += it.key();
 
 		traitQuery(&mod_query, table, it.value(), sampleId);

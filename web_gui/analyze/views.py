@@ -6,34 +6,12 @@ from django.core.context_processors import csrf
 from subprocess import Popen
 
 from analyze.forms import AnalyzeForm
-from options.models import Option, PendingFile, SystemInfo, RecentFile
+from options.models import PendingFile, SystemInfo, RecentFile
 
 def show_analyze(request):
-	# get options (only one object should exists)
-	options_list = Option.objects.all()
-	if options_list.count() == 0:
-		options = Option()
-		options.output_dest = "DatabaseOutput"
-		options.log_level = 1
-		options.log_file = "/var/www/jsejdak/analyzer_log"
-		options.resemblence_level = 50
-		options.save()
-	else:
-		options = options_list[0]
-	
 	# get system info (only one object should exists)
 	systemInfo_list = SystemInfo.objects.all()
-	if systemInfo_list.count() == 0:
-		info = SystemInfo()
-		info.version = "0.00"
-		info.status = "idle"
-		info.error = "no error"
-		info.progress = 0
-		info.exploits_num = 0
-		info.samples_num = 0
-		info.save()
-	else:
-		info = systemInfo_list[0]
+	info = systemInfo_list[0]
 
 	# create form and update html content	
 	form = AnalyzeForm()
@@ -57,7 +35,7 @@ def show_analyze(request):
 		
 		# run analysis
 		if "analyze" in request.POST and PendingFile.objects.count() > 0:
-			Popen(["graph-analyzer", "--slave"])
+			Popen(["graph-analyzer"])
 
 		# run analysis
 		if "clear" in request.POST:

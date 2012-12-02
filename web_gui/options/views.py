@@ -8,14 +8,7 @@ from options.models import Option, SystemInfo, Feedback
 def show_home(request):
     # get system info (only one object should exists)
     systemInfo_list = SystemInfo.objects.all()
-    if systemInfo_list.count() == 0:
-        info = SystemInfo()
-        info.version = "0.00"
-        info.status = "idle"
-        info.error = "no error"
-        info.save()
-    else:
-        info = systemInfo_list[0]
+    info = systemInfo_list[0]
     
     c = RequestContext(request, {"version": info.version, "home": True})
     return render_to_response("home.html", c)
@@ -25,27 +18,35 @@ def show_options(request):
     options_list = Option.objects.all()
     if options_list.count() == 0:
         options = Option()
-        options.output_dest = "DatabaseOutput"
-        options.log_level = 1
+        options.log_level = 2
         options.log_file = "/var/www/jsejdak/analyzer_log"
         options.resemblence_level = 50
+        options.emulation_steps = 1000000
+        options.graphs_dir = "/var/www/jsejdak/graphs"
+        options.big_files_protection = True
+        options.max_input_file_size = 20971520
+        options.skip_empty_samples = True
+        options.skip_broken_samples = True
+        options.broken_samples_size = 30
         options.save()
     else:
         options = options_list[0]
         
     # get system info (only one object should exists)
     systemInfo_list = SystemInfo.objects.all()
-    if systemInfo_list.count() == 0:
-        info = SystemInfo()
-        info.version = "0.00"
-        info.status = "idle"
-        info.error = "no error"
-        info.save()
-    else:
-        info = systemInfo_list[0]
+    info = systemInfo_list[0]
     
     # create objects
-    form = OptionsForm(initial = {"output_dest": options.output_dest, "log_level": options.log_level, "log_file": options.log_file, "resemblence_level": options.resemblence_level})
+    form = OptionsForm(initial = {"log_level": options.log_level,
+								  "log_file": options.log_file,
+								  "resemblence_level": options.resemblence_level,
+								  "emulation_steps": options.emulation_steps,
+        						  "graphs_dir": options.graphs_dir,
+        			     		  "big_files_protection": options.big_files_protection,
+        					 	  "max_input_file_size": options.max_input_file_size,
+        				     	  "skip_empty_samples": options.skip_empty_samples,
+        						  "skip_broken_samples": options.skip_broken_samples,
+        			     		  "broken_samples_size": options.broken_samples_size})
     
     c = RequestContext(request, {"version": info.version, "is_message": False, "options": True})
     c.update(csrf(request))
@@ -55,10 +56,16 @@ def show_options(request):
         form = OptionsForm(request.POST)
         if form.is_valid():
             cd = form.cleaned_data
-            options.output_dest = cd["output_dest"]
             options.log_level = cd["log_level"]
             options.log_file = cd["log_file"]
             options.resemblence_level = cd["resemblence_level"]
+            options.emulation_steps = cd["emulation_steps"]
+            options.graphs_dir = cd["graphs_dir"]
+            options.big_files_protection = cd["big_files_protection"]
+            options.max_input_file_size = cd["max_input_file_size"]
+            options.skip_empty_samples = cd["skip_empty_samples"]
+            options.skip_broken_samples = cd["skip_broken_samples"]
+            options.broken_samples_size = cd["broken_samples_size"]
             options.save(force_update = True)
    
         c.update({"is_message": True})
@@ -69,14 +76,7 @@ def show_options(request):
 def show_feedback(request):
     # get system info (only one object should exists)
     systemInfo_list = SystemInfo.objects.all()
-    if systemInfo_list.count() == 0:
-        info = SystemInfo()
-        info.version = "0.00"
-        info.status = "idle"
-        info.error = "no error"
-        info.save()
-    else:
-        info = systemInfo_list[0]
+    info = systemInfo_list[0]
     
     c = RequestContext(request, {"version": info.version, "is_message": False, "feedback": True})
     c.update(csrf(request))

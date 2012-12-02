@@ -5,7 +5,7 @@ class SystemInfoAdmin(admin.ModelAdmin):
     list_display = ("version", "status", "error", "progress", "exploits_num", "samples_num")
 
 class OptionAdmin(admin.ModelAdmin):
-    list_display = ("output_dest", "log_level", "log_file")
+    list_display = ("log_level", "log_file")
 
 class PendingFileAdmin(admin.ModelAdmin):
     list_display = ("name",)

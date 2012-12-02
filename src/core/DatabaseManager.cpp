@@ -2,11 +2,11 @@
 
 DatabaseManager::DatabaseManager()
 {
-    m_db = QSqlDatabase::addDatabase(DB_QT_DRIVER, "graph_analyzer_conn");
-    m_db.setHostName(DB_HOST);
-    m_db.setDatabaseName(DB_NAME);
-    m_db.setUserName(DB_USER);
-    m_db.setPassword(DB_PASS);
+	m_db = QSqlDatabase::addDatabase(Options::instance()->DB_QT_DRIVER, "graph_analyzer_conn");
+	m_db.setHostName(Options::instance()->DB_HOST);
+	m_db.setDatabaseName(Options::instance()->DB_NAME);
+	m_db.setUserName(Options::instance()->DB_USER);
+	m_db.setPassword(Options::instance()->DB_PASS);
 
     m_lastError = "";
 

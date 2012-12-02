@@ -14,7 +14,6 @@
 #include <QDir>
 #include <QFile>
 
-#include <core/ConfigFile.h>
 #include <core/EmulationSystem.h>
 #include <core/AnalysisSystem.h>
 #include <core/ShellcodeSample.h>
@@ -35,7 +34,7 @@ public:
 	/* basic sample operation */
     int addFile(QString file);
     int run();
-	void makeGroups(int resemblenceLevel);
+	void makeGroups();
 	void clear();
 
 	/* status and error */
@@ -53,6 +52,7 @@ public:
 
 	/* utility */
     QString version();
+	bool readOptions();
 
 private:
 	/* function members */

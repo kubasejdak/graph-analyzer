@@ -18,6 +18,7 @@ ShellcodeInfo::ShellcodeInfo()
     m_shellcodePresent = false;
     m_traits = new QMultiMap<QString, QMap<QString, QString> *> ();
     m_querys = new QList<QSqlQuery> ();
+	m_broken = false;
 }
 
 ShellcodeInfo::~ShellcodeInfo()
@@ -104,6 +105,11 @@ QList<QSqlQuery> *ShellcodeInfo::querys()
     return m_querys;
 }
 
+bool ShellcodeInfo::isBroken()
+{
+	return m_broken;
+}
+
 void ShellcodeInfo::setName(QString name)
 {
     m_name = name;
@@ -156,4 +162,9 @@ void ShellcodeInfo::setTrait(QString name, QMap<QString, QString> *value)
 void ShellcodeInfo::setQuery(QSqlQuery q)
 {
     m_querys->push_back(q);
+}
+
+void ShellcodeInfo::setBroken(bool broken)
+{
+	m_broken = broken;
 }

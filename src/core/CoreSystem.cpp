@@ -8,10 +8,14 @@
 
 CoreSystem::CoreSystem()
 {
-    SystemLogger::instance()->setLogFile("/var/www/jsejdak/analyzer_log");
-    SystemLogger::instance()->setLogLevel(2);
+	if(!readOptions())
+		exit(1);
+	Options::instance()->listOptions();
 
-    ConfigFile::instance()->read();
+	/* add files to analyze from database */
+	for(int i = 0; i < Options::instance()->pendingFiles.size(); ++i)
+		addFile(Options::instance()->pendingFiles.at(i));
+
 	loadModules();
 
     SystemLogger::instance()->setStatus("idle");
@@ -19,6 +23,9 @@ CoreSystem::CoreSystem()
 
     m_exploitCounter = 0;
     m_sampleCounter = 0;
+
+	/* mandatory */
+	setOutput("DatabaseOutput");
 
     LOG("created CoreSystem instance, version: [%s]\n\n", VERSION);
 }
@@ -82,29 +89,35 @@ int CoreSystem::run()
             LOG("emulating\n");
 			if(!emulate(s)) {
                 LOG_ERROR("emulating [%s] -> [%s]\n", currentFile.toStdString().c_str(), error().toStdString().c_str());
-				delete s;
                 ++errorCounter;
-				continue;
+				goto cleanup;
 			}
 
 			/* analyze graph */
-            LOG("analyzing\n");
+			LOG("analyzing\n");
+			if(Options::instance()->SKIP_NONEXPLOIT_OUTPUT && !s->info()->isShellcodePresent()) {
+				LOG("no exploit found, skipping due to SKIP_NONEXPLOIT_OUTPUT: [true]\n");
+				goto cleanup;
+			}
 			if(!analyze(s)) {
                 LOG_ERROR("analyzing [%s] -> [%s]\n", currentFile.toStdString().c_str(), error().toStdString().c_str());
-				delete s;
                 ++errorCounter;
-				continue;
+				goto cleanup;
 			}
 
 			/* make output */
             LOG("generating output\n");
+			if(Options::instance()->SKIP_BROKEN_SAMPLES && s->info()->isBroken()) {
+				LOG("broken sample, skipping due to SKIP_BROKEN_SAMPLES: [true]\n");
+				goto cleanup;
+			}
 			if(!makeOutput(s)) {
                 LOG_ERROR("output for [%s] -> [%s]\n", currentFile.toStdString().c_str(), error().toStdString().c_str());
-				delete s;
                 ++errorCounter;
-				continue;
+				goto cleanup;
 			}
 
+cleanup:
 			/* clean up */
 			delete s;
             LOG("sample processing finished\n");
@@ -119,7 +132,7 @@ int CoreSystem::run()
     return errorCounter;
 }
 
-void CoreSystem::makeGroups(int resemblenceLevel)
+void CoreSystem::makeGroups()
 {
 	SystemLogger::instance()->setStatus("making groups");
 	SystemLogger::instance()->clearError();
@@ -129,7 +142,7 @@ void CoreSystem::makeGroups(int resemblenceLevel)
 	for(it = m_outputMethods.begin(); it != m_outputMethods.end(); ++it) {
 		if((*m_outputMods)[*it]->moduleInfo()->m_name == "DatabaseOutput") {
 			DatabaseOutput *dbMod = dynamic_cast<DatabaseOutput *>((*m_outputMods)[*it]);
-			ret = dbMod->makeGroups(resemblenceLevel);
+			ret = dbMod->makeGroups(Options::instance()->RESEMBLENCE_LEVEL);
 			break;
 		}
 	}
@@ -191,6 +204,17 @@ int CoreSystem::samplesNum()
 QString CoreSystem::version()
 {
     return VERSION;
+}
+
+bool CoreSystem::readOptions()
+{
+	if(!Options::instance()->readConfigFile())
+		return false;
+
+	if(!Options::instance()->readDatabaseOptions())
+		return false;
+
+	return true;
 }
 
 bool CoreSystem::load(QString file)

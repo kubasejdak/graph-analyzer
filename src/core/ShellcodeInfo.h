@@ -34,6 +34,7 @@ public:
 	bool isShellcodePresent();
     QMultiMap<QString, QMap<QString, QString> *> *traits();
     QList<QSqlQuery> *querys();
+	bool isBroken();
 
     void setName(QString name);
     void setExtractedFrom(QString name);
@@ -45,6 +46,7 @@ public:
 	void setShellcodePresent(bool shellcodePresent);
     void setTrait(QString name, QMap<QString, QString> *value);
 	void setQuery(QSqlQuery q);
+	void setBroken(bool broken);
 
 private:
     QString m_name;
@@ -57,6 +59,7 @@ private:
     bool m_shellcodePresent;
     QMultiMap<QString, QMap<QString, QString> *> *m_traits;
     QList<QSqlQuery> *m_querys;
+	bool m_broken;
 };
 
 #endif /* SHELLCODEINFO_H_ */

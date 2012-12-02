@@ -64,7 +64,7 @@ bool EmulationSystem::emulate()
 
 	/* emulation loop */
     LOG("entering emulation loop\n");
-	for(int i = 0; i < EMULATION_STEPS; ++i) {
+	for(int i = 0; i < Options::instance()->EMULATION_STEPS; ++i) {
 		if(!cpu->repeat_current_instr)
 			eipsave = emu_cpu_eip_get(cpu);
 
@@ -186,28 +186,37 @@ bool EmulationSystem::emulate()
 	m_sample->info()->setSize(m_sample->graph()->size());
 	LOG("vertexes inside sample: [%d]\n", m_sample->info()->size());
 
+	/* check if sample is broken */
+	if(m_sample->info()->size() < Options::instance()->BROKEN_SAMPLE_SIZE) {
+		m_sample->info()->setBroken(true);
+		LOG("sample is broken, skipping graph drawing\n");
+		LOG("emulation finished\n");
+		LOG("SUCCESS\n\n");
+		return true;
+	}
+
 	/* create .dot file */
     QString dotFile = "/tmp/graph.dot";
     LOG("dotFile: [%s]\n", dotFile.toStdString().c_str());
     graph_draw(graph->emuGraph(), dotFile);
 
 	/* draw graph using dot package and sample name */
-    if(!QDir(GRAPHS_DIR).exists()) {
-        bool success = QDir().mkdir(GRAPHS_DIR);
+	if(!QDir(Options::instance()->GRAPHS_DIR).exists()) {
+		bool success = QDir().mkdir(Options::instance()->GRAPHS_DIR);
         if(!success) {
-            LOG_ERROR("cannot create directory: [%s]\n", GRAPHS_DIR.toStdString().c_str());
+			LOG_ERROR("cannot create directory: [%s]\n", Options::instance()->GRAPHS_DIR.toStdString().c_str());
             LOG_ERROR("FAILURE\n\n");
 			return false;
 		}
 	}
-    LOG("using graphs directory: [%s]\n", GRAPHS_DIR.toStdString().c_str());
+	LOG("using graphs directory: [%s]\n", Options::instance()->GRAPHS_DIR.toStdString().c_str());
 
     QFileInfo graphFile(m_sample->info()->name());
     QString graphName;
     if(m_sample->info()->fileType() == "pcap")
-        graphName = QString("%1/%2.png").arg(GRAPHS_DIR).arg(Toolbox::pcapFlowBasename(m_sample->info()->name()));
+		graphName = QString("%1/%2.png").arg(Options::instance()->GRAPHS_DIR).arg(Toolbox::pcapFlowBasename(m_sample->info()->name()));
     else
-        graphName = QString("%1/%2.png").arg(GRAPHS_DIR).arg(graphFile.baseName());
+		graphName = QString("%1/%2.png").arg(Options::instance()->GRAPHS_DIR).arg(graphFile.baseName());
     LOG("graphName: [%s]\n", graphName.toStdString().c_str());
 
 	/* check for duplicates */
@@ -251,15 +260,13 @@ bool EmulationSystem::emulate()
         }
 	}
 
-	if(DELETE_CODE_INSTANTLY) {
-        delete m_sample->code();
-        m_sample->setCode(NULL);
-	}
+	/* delete code to release memory */
+	delete m_sample->code();
+	m_sample->setCode(NULL);
 
     m_sample->info()->setGraphName(graphName);
     m_sample = NULL;
     LOG("emulation finished\n");
     LOG("SUCCESS\n\n");
-
 	return true;
 }

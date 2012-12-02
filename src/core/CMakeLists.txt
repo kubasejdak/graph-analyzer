@@ -14,7 +14,6 @@ set(CORE_SRC
 	FileAnalyser.cpp
 	SystemLogger.cpp
 	Options.cpp
-	ConfigFile.cpp
 	DatabaseManager.cpp
     Toolbox.cpp)
 

@@ -32,10 +32,32 @@ def show_browse(request):
                 search_list = Sample.objects.filter(extracted_from = request.GET["value"]).order_by("name")
             elif filter_value == "Graph name":
                 search_list = Sample.objects.filter(graph_name = request.GET["value"]).order_by("name")
+            elif filter_value == "Size":
+                search_list = Sample.objects.filter(size = request.GET["value"]).order_by("name")
             elif filter_value == "File type":
                 search_list = Sample.objects.filter(file_type = request.GET["value"]).order_by("name")
+            elif filter_value == "File size":
+                search_list = Sample.objects.filter(file_size = request.GET["value"]).order_by("name")
             
             c.update({"sample_list": search_list})
+            return render_to_response("browse.html", c)
+        elif "sort" in request.GET:
+            sort_value = request.GET["filter"]
+            sort_list = Sample.objects.all().order_by(sort_value)
+            if sort_value == "Name":
+                sort_list = Sample.objects.all().order_by("name")
+            elif sort_value == "Extracted from":
+                sort_list = Sample.objects.all().order_by("extracted_from")
+            elif sort_value == "Graph name":
+                sort_list = Sample.objects.all().order_by("graph_name")
+            elif sort_value == "Size":
+                sort_list = Sample.objects.all().order_by("size")
+            elif sort_value == "File type":
+                sort_list = Sample.objects.all().order_by("file_type")
+            elif sort_value == "File size":
+                sort_list = Sample.objects.all().order_by("file_size")
+            
+            c.update({"sample_list": sort_list})
             return render_to_response("browse.html", c)
         else:
             # get all available samples

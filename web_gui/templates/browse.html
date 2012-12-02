@@ -3,13 +3,16 @@
 {% block content %}
 <form class="well form-search">
 	<input type="text" class="span3 search-query" name="value" placeholder="Search..."/>
-	<button class="btn" name="search">Search</button>
 	<select name="filter" size="1">
 		<option>Name</option>
 		<option>Extracted from</option>
 		<option>Graph name</option>
+		<option>Size</option>
 		<option>File type</option>
+		<option>File size</option>
 	</select>
+	<button class="btn" name="search">Search</button>
+	<button class="btn" name="sort">Sort by</button>
 </form>
 
 <table class="table table-striped">

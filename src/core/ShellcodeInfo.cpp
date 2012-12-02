@@ -11,8 +11,9 @@ ShellcodeInfo::ShellcodeInfo()
     m_name = "";
     m_extractedFrom = "";
     m_graphName = "";
+	m_size = 0;
     m_fileType = "unknown";
-    m_size = 0;
+	m_fileSize = 0;
     m_codeOffset = 0;
     m_shellcodePresent = false;
     m_traits = new QMultiMap<QString, QMap<QString, QString> *> ();
@@ -37,8 +38,9 @@ void ShellcodeInfo::printInfo()
     cout << "\t name : " << m_name.toStdString() << endl;
     cout << "\t extracted from: " << m_extractedFrom.toStdString() << endl;
     cout << "\t graph name: " << m_graphName.toStdString() << endl;
+	cout << "\t size : " << dec << m_size << endl;
     cout << "\t file type : " << m_fileType.toStdString() << endl;
-    cout << "\t file size : " << dec << m_size << endl;
+	cout << "\t file size : " << dec << m_fileSize << endl;
     cout << "\t shellcode present : " << (m_shellcodePresent ? "yes" : "no") << endl;
     if(m_shellcodePresent)
         cout << "\t shellcode offset : 0x" << hex << m_codeOffset << endl;
@@ -67,14 +69,19 @@ QString ShellcodeInfo::graphName()
     return m_graphName;
 }
 
+int ShellcodeInfo::size()
+{
+	return m_size;
+}
+
 QString ShellcodeInfo::fileType()
 {
     return m_fileType;
 }
 
-int32_t ShellcodeInfo::size()
+int ShellcodeInfo::fileSize()
 {
-    return m_size;
+	return m_fileSize;
 }
 
 int32_t ShellcodeInfo::codeOffset()
@@ -112,14 +119,19 @@ void ShellcodeInfo::setGraphName(QString name)
     m_graphName = name;
 }
 
+void ShellcodeInfo::setSize(int size)
+{
+	m_size = size;
+}
+
 void ShellcodeInfo::setFileType(QString fileType)
 {
     m_fileType = fileType;
 }
 
-void ShellcodeInfo::setSize(int size)
+void ShellcodeInfo::setFileSize(int fileSize)
 {
-    m_size = size;
+	m_fileSize = fileSize;
 }
 
 void ShellcodeInfo::setCodeOffset(int codeOffset)

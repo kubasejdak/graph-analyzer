@@ -57,6 +57,7 @@ public:
 	graph_iterator end();
 
     LoopContainer *detectLoop(graph_iterator from_it);
+	int size();
 
 private:
 	void clearVertColor(emu_vertex *from);

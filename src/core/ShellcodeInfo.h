@@ -27,8 +27,9 @@ public:
     QString name();
     QString extractedFrom();
     QString graphName();
+	int size();
     QString fileType();
-    int size();
+	int fileSize();
     int codeOffset();
 	bool isShellcodePresent();
     QMultiMap<QString, QMap<QString, QString> *> *traits();
@@ -37,8 +38,9 @@ public:
     void setName(QString name);
     void setExtractedFrom(QString name);
     void setGraphName(QString name);
-    void setFileType(QString fileType);
 	void setSize(int size);
+    void setFileType(QString fileType);
+	void setFileSize(int fileSize);
 	void setCodeOffset(int codeOffset);
 	void setShellcodePresent(bool shellcodePresent);
     void setTrait(QString name, QMap<QString, QString> *value);
@@ -48,9 +50,10 @@ private:
     QString m_name;
     QString m_extractedFrom;
     QString m_graphName;
+	int m_size;
     QString m_fileType;
-    int32_t m_size;
-    int32_t m_codeOffset;
+	int m_fileSize;
+	int m_codeOffset;
     bool m_shellcodePresent;
     QMultiMap<QString, QMap<QString, QString> *> *m_traits;
     QList<QSqlQuery> *m_querys;

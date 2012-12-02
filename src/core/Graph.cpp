@@ -210,3 +210,12 @@ void Graph::clearVertColor(emu_vertex *from)
 	for(graph_iterator it(this, from); it != end(); ++it)
 		it->color = white;
 }
+
+int Graph::size()
+{
+	int vertexes_num = 0;
+	for(graph_iterator it = begin(); it != end(); ++it)
+		++vertexes_num;
+
+	return vertexes_num;
+}

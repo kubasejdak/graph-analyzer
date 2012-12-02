@@ -32,7 +32,7 @@ bool EmulationSystem::emulate()
 
 	/* load code to emu unit */
 	int32_t codeOffset;
-    codeOffset = m_emuUnit->loadCode(m_sample->code(), m_sample->info()->size());
+	codeOffset = m_emuUnit->loadCode(m_sample->code(), m_sample->info()->fileSize());
     m_sample->info()->setCodeOffset(codeOffset);
     m_sample->info()->setShellcodePresent(codeOffset >= 0 ? true : false);
 
@@ -181,6 +181,10 @@ bool EmulationSystem::emulate()
 		}
 		last_vertex = ev;
 	} /* emulation loop */
+
+	/* get number of vertexes in sample */
+	m_sample->info()->setSize(m_sample->graph()->size());
+	LOG("vertexes inside sample: [%d]\n", m_sample->info()->size());
 
 	/* create .dot file */
     QString dotFile = "/tmp/graph.dot";

@@ -5,6 +5,7 @@ class Sample(models.Model):
 	name = models.CharField(max_length = 100)
 	extracted_from = models.CharField(max_length = 100)
 	graph_name = models.CharField(max_length = 100)
+	size = models.CharField(max_length = 10)
 	file_type = models.CharField(max_length = 20)
 	file_size = models.CharField(max_length = 10)
 	shellcode_offset = models.CharField(max_length = 10)

@@ -44,7 +44,7 @@ bool BinaryInput::loadInput(QString filename, QList<ShellcodeSample *> *samples)
     s->info()->setName(info.absoluteFilePath());
     s->info()->setExtractedFrom(info.absoluteFilePath());
     s->info()->setFileType(m_type);
-    s->info()->setSize(size);
+	s->info()->setFileSize(size);
 	s->setCode((byte_t *) buffer);
 	samples->push_back(s);
     LOG("SUCCESS\n\n");

@@ -39,6 +39,7 @@ bool DatabaseOutput::generateOutput(ShellcodeSample *sample)
 	int sampleId = seq_query.record().value("nextval").toInt();
 
     /* general sample data */
+	LOG("outputting sample info (general) to: [analyze_sample]\n");
     QSqlQuery sample_query(DatabaseManager::instance()->database());
 	sample_query.prepare("INSERT INTO analyze_sample VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 	sample_query.bindValue(0, sampleId);
@@ -66,6 +67,7 @@ bool DatabaseOutput::generateOutput(ShellcodeSample *sample)
 		table = Options::instance()->ANA_TABLE_PREFIX;
         table += it.key();
 
+		LOG("outputting sample info (modules) to: [%s]\n", table.toStdString().c_str());
 		traitQuery(&mod_query, table, it.value(), sampleId);
         if(!DatabaseManager::instance()->exec(&mod_query)) {
             SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
@@ -458,7 +460,6 @@ bool DatabaseOutput::isDoubleConnected(int group1, int group2)
 		}
 	}
 
-	LOG("SUCCESS\n\n");
 	return (connection1 && connection2);
 }
 

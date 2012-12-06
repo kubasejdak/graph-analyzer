@@ -8,6 +8,12 @@
 
 CoreSystem::CoreSystem()
 {
+	m_fileCounter = 0;
+	m_processedCounter = 0;
+	m_sampleCounter = 0;
+	m_exploitCounter = 0;
+	m_errorCounter = 0;
+
 	if(!readOptions())
 		exit(1);
 	Options::instance()->listOptions();
@@ -16,13 +22,13 @@ CoreSystem::CoreSystem()
 	for(int i = 0; i < Options::instance()->pendingFiles.size(); ++i)
 		addFile(Options::instance()->pendingFiles.at(i));
 
+	/* delete added files from database */
+	dbRemovePendingFiles();
+
 	loadModules();
 
     SystemLogger::instance()->setStatus("idle");
     SystemLogger::instance()->clearError();
-
-    m_exploitCounter = 0;
-    m_sampleCounter = 0;
 
 	/* mandatory */
 	setOutput("DatabaseOutput");
@@ -41,29 +47,31 @@ int CoreSystem::addFile(QString file)
     if(file.isEmpty())
         return 0;
 
-	int file_counter = 0;
+	int addCounter = 0;
     /* check if directory */
     if(QDir(file).exists()) {
 		QDirIterator it(file, QDir::Files | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
         while(it.hasNext()) {
             QString entryName = it.next();
             m_pendingFiles.push_back(entryName);
-			++file_counter;
+			++addCounter;
+			++m_fileCounter;
         }
     }
 	else {
         m_pendingFiles.push_back(file);
-		++file_counter;
+		++addCounter;
+		++m_fileCounter;
 	}
 
-	LOG("Added [%d] file(s) extracted from [%s]\n", file_counter, file.toStdString().c_str());
+	LOG("Added [%d] file(s) extracted from [%s]\n", addCounter, file.toStdString().c_str());
 	LOG("SUCCESS\n\n");
-    return m_pendingFiles.size();
+	return addCounter;
 }
 
 int CoreSystem::run()
 {
-    int errorCounter = 0;
+	SystemLogger::instance()->setStatus("running");
 
 	/* parse all input files */
     LOG("parsing input files\n");
@@ -76,7 +84,8 @@ int CoreSystem::run()
         LOG("loading\n");
         if(!load(currentFile)) {
             LOG_ERROR("loading file [%s] -> [%s]\n", currentFile.toStdString().c_str(), error().toStdString().c_str());
-            ++errorCounter;
+			++m_errorCounter;
+			++m_processedCounter;
 			continue;
 		}
 
@@ -84,12 +93,14 @@ int CoreSystem::run()
         while(!m_samples.isEmpty()) {
             s = m_samples.front();
             m_samples.pop_front();
+			++m_sampleCounter;
+			LOG("processing sample: [%s]\n", s->info()->name().toStdString().c_str());
 
 			/* emulate */
             LOG("emulating\n");
 			if(!emulate(s)) {
                 LOG_ERROR("emulating [%s] -> [%s]\n", currentFile.toStdString().c_str(), error().toStdString().c_str());
-                ++errorCounter;
+				++m_errorCounter;
 				goto cleanup;
 			}
 
@@ -101,7 +112,7 @@ int CoreSystem::run()
 			}
 			if(!analyze(s)) {
                 LOG_ERROR("analyzing [%s] -> [%s]\n", currentFile.toStdString().c_str(), error().toStdString().c_str());
-                ++errorCounter;
+				++m_errorCounter;
 				goto cleanup;
 			}
 
@@ -111,25 +122,32 @@ int CoreSystem::run()
 				LOG("broken sample, skipping due to SKIP_BROKEN_SAMPLES: [true]\n");
 				goto cleanup;
 			}
+			if(s->info()->isShellcodePresent())
+				++m_exploitCounter;
 			if(!makeOutput(s)) {
                 LOG_ERROR("output for [%s] -> [%s]\n", currentFile.toStdString().c_str(), error().toStdString().c_str());
-                ++errorCounter;
+				++m_errorCounter;
 				goto cleanup;
 			}
 
 cleanup:
 			/* clean up */
 			delete s;
+			++m_processedCounter;
             LOG("sample processing finished\n");
 		}
         LOG("file processing finished\n");
+		dbUpdateSystemInfo();
 	} /* while */
-    if(errorCounter)
-        LOG("some errors occured, errorCounter: [%d]", errorCounter);
+	if(m_errorCounter)
+		LOG("some errors occured, errorCounter: [%d]", m_errorCounter);
 
-    SystemLogger::instance()->setStatus("idle");
+	LOG("making groups\n");
+	makeGroups();
+	LOG("making groups finished\n");
+
     LOG("SUCCESS\n\n");
-    return errorCounter;
+	return m_errorCounter;
 }
 
 void CoreSystem::makeGroups()
@@ -147,7 +165,6 @@ void CoreSystem::makeGroups()
 		}
 	}
 
-	SystemLogger::instance()->setStatus("idle");
 	if(!ret) {
 		SystemLogger::instance()->setError("making groups failed");
 		LOG_ERROR("making groups error\n");
@@ -156,6 +173,7 @@ void CoreSystem::makeGroups()
 	}
 
 	LOG("SUCCESS\n\n");
+	SystemLogger::instance()->setStatus("idle");
 }
 
 void CoreSystem::clear()
@@ -176,6 +194,14 @@ QString CoreSystem::error()
     return SystemLogger::instance()->error();
 }
 
+int CoreSystem::progress()
+{
+	if(m_fileCounter == 0)
+		return 0;
+
+	return (m_processedCounter / m_fileCounter) * 100;
+}
+
 void CoreSystem::setLogFile(QString file)
 {
     SystemLogger::instance()->setLogFile(file);
@@ -191,6 +217,11 @@ void CoreSystem::setOutput(QString method)
     m_outputMethods.push_back(method);
 }
 
+int CoreSystem::filesNum()
+{
+	return m_fileCounter;
+}
+
 int CoreSystem::exploitsNum()
 {
     return m_exploitCounter;
@@ -199,6 +230,11 @@ int CoreSystem::exploitsNum()
 int CoreSystem::samplesNum()
 {
     return m_sampleCounter;
+}
+
+int CoreSystem::errorsNum()
+{
+	return m_errorCounter;
 }
 
 QString CoreSystem::version()
@@ -217,13 +253,66 @@ bool CoreSystem::readOptions()
 	return true;
 }
 
+bool CoreSystem::dbUpdateSystemInfo()
+{
+	QSqlQuery deleteQuery(DatabaseManager::instance()->database());
+	deleteQuery.prepare("DELETE FROM options_systeminfo");
+	if(!DatabaseManager::instance()->exec(&deleteQuery)) {
+		SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
+		LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
+		return false;
+	}
+
+	/* get next id number */
+	QSqlQuery seqQuery(DatabaseManager::instance()->database());
+	seqQuery.prepare("SELECT nextval('options_systeminfo_id_seq')");
+	if(!DatabaseManager::instance()->exec(&seqQuery)) {
+		SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
+		LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
+		return false;
+	}
+	seqQuery.next();
+	int id = seqQuery.record().value("nextval").toInt();
+
+	QSqlQuery insertQuery(DatabaseManager::instance()->database());
+	insertQuery.prepare("INSERT INTO options_systeminfo VALUES (?, ?, ?, ?, ?, ?, ?)");
+	insertQuery.addBindValue(id);
+	insertQuery.addBindValue(version().toStdString().c_str());
+	insertQuery.addBindValue(status().toStdString().c_str());
+	insertQuery.addBindValue(error().toStdString().c_str());
+	insertQuery.addBindValue(progress());
+	insertQuery.addBindValue(exploitsNum());
+	insertQuery.addBindValue(samplesNum());
+	if(!DatabaseManager::instance()->exec(&insertQuery)) {
+		SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
+		LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
+		return false;
+	}
+
+	return true;
+}
+
+bool CoreSystem::dbRemovePendingFiles()
+{
+	/* remove file */
+	QSqlQuery deleteQuery(DatabaseManager::instance()->database());
+	deleteQuery.prepare("DELETE FROM options_pendingfile");
+	if(!DatabaseManager::instance()->exec(&deleteQuery)) {
+		SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
+		LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
+		return false;
+	}
+
+	return true;
+}
+
 bool CoreSystem::load(QString file)
 {
-    SystemLogger::instance()->setStatus("loading");
     SystemLogger::instance()->clearError();
 
     QList<ShellcodeSample *> q;
 	ShellcodeSample *s;
+	bool moduleFound = false;
 
     FileAnalyser fileAnalyser;
     QString fileType = fileAnalyser.analyze(file);
@@ -232,6 +321,7 @@ bool CoreSystem::load(QString file)
     QMap<QString, AbstractInput *>::iterator it;
     for(it = m_inputMods->begin(); it != m_inputMods->end(); ++it) {
         if(fileType == it.value()->type()) {
+			moduleFound = true;
             bool ok = it.value()->loadInput(file, &q);
             if(!ok)
                 return false;
@@ -247,9 +337,7 @@ bool CoreSystem::load(QString file)
 		}
 	}
 
-    SystemLogger::instance()->setStatus("idle");
-    if(!m_samples.isEmpty()) {
-        ++m_sampleCounter;
+	if(moduleFound) {
         LOG("SUCCESS\n\n");
 		return true;
 	}
@@ -262,13 +350,11 @@ bool CoreSystem::load(QString file)
 
 bool CoreSystem::emulate(ShellcodeSample *s)
 {
-    SystemLogger::instance()->setStatus("emulating");
     SystemLogger::instance()->clearError();
 
     m_emuSystem.loadSample(s);
     bool ret = m_emuSystem.emulate();
 
-    SystemLogger::instance()->setStatus("idle");
 	if(!ret) {
         SystemLogger::instance()->setError("general emulation error");
         LOG_ERROR("general emulation error\n");
@@ -282,13 +368,11 @@ bool CoreSystem::emulate(ShellcodeSample *s)
 
 bool CoreSystem::analyze(ShellcodeSample *s)
 {
-    SystemLogger::instance()->setStatus("analyzing");
     SystemLogger::instance()->clearError();
 
     m_anaSystem.loadSample(s);
     bool ret = m_anaSystem.analyze();
 
-    SystemLogger::instance()->setStatus("idle");
 	if(!ret) {
         SystemLogger::instance()->setError("general analyzing error");
         LOG_ERROR("general analyzing error\n");
@@ -296,15 +380,12 @@ bool CoreSystem::analyze(ShellcodeSample *s)
 		return false;
 	}
 
-    if(s->info()->isShellcodePresent())
-        ++m_exploitCounter;
     LOG("SUCCESS\n\n");
 	return true;
 }
 
 bool CoreSystem::makeOutput(ShellcodeSample *s)
 {
-    SystemLogger::instance()->setStatus("generating output");
     SystemLogger::instance()->clearError();
 
     QList<QString>::iterator it;
@@ -318,7 +399,6 @@ bool CoreSystem::makeOutput(ShellcodeSample *s)
     for(it = m_outputMethods.begin(); it != m_outputMethods.end(); ++it) {
         ret = (*m_outputMods)[*it]->generateOutput(s);
 
-        SystemLogger::instance()->setStatus("idle");
 		if(!ret) {
             SystemLogger::instance()->setError("generating output failed");
             LOG_ERROR("generating output error\n");

@@ -10,29 +10,17 @@
 namespace opt = boost::program_options;
 
 #include <QString>
-#include <QtSql>
 #include <QList>
 #include <vector>
 #include <string>
 #include <iostream>
-#include <iomanip>
 using namespace std;
 
 #include <core/CoreSystem.h>
-#include <core/ShellcodeInfo.h>
 #include <core/SystemLogger.h>
-#include <core/Options.h>
-#include <core/DatabaseManager.h>
-#include <modules/ModuleManager.h>
 
 /* global variables */
 vector<string> input;
-
-/* database connections */
-bool dbUpdateSystemInfo(QString version, QString status, QString error, int progress, int exploits, int samples);
-bool dbRemoveFile(QString file);
-bool dbAddRecentFile(QString file);
-bool dbDropRecentFiles();
 
 int main(int argc, char *argv[])
 {
@@ -69,8 +57,7 @@ int main(int argc, char *argv[])
     }
     /* update database */
     if(vm.count("update-db")) {
-        dbDropRecentFiles();
-        bool ok = dbUpdateSystemInfo(system.version(), system.status(), system.error(), 0, 0, 0);
+		bool ok = system.dbUpdateSystemInfo();
         return (ok) ? 0 : 1;
     }
 	/* regroup samples */
@@ -93,151 +80,19 @@ int main(int argc, char *argv[])
 
 	/* ====== run ====== */
 	LOG("starting system\n");
+	system.dbUpdateSystemInfo();
 
-	int errorCounter = 0;
-	double perc = 0.0;
+	system.run();
 
-    dbDropRecentFiles();
-    dbUpdateSystemInfo(system.version(), system.status(), system.error(), 0, 0, 0);
-
-	errorCounter = system.run();
-	perc = 100.0;
-	dbUpdateSystemInfo(system.version(), system.status(), system.error(), (int) perc, system.exploitsNum(), system.samplesNum());
-
-	system.makeGroups();
-	dbUpdateSystemInfo(system.version(), system.status(), system.error(), (int) perc, system.exploitsNum(), system.samplesNum());
+	system.dbUpdateSystemInfo();
+	LOG("stopping system\n");
 	/* ====== run finished  ====== */
 
-    int s_num = system.samplesNum();
-    int e_num = system.exploitsNum();
-    string e = (e_num == 1) ? "exploit" : "exploits";
-    string s = (s_num == 1) ? "sample" : "samples";
-
-	LOG("FINISHED: found %d %s in %d %s!\n", e_num, e.c_str(), s_num, s.c_str());
-
-    if(errorCounter)
-        LOG("program FINISHED with some ERRORS, errorCounter: [%d]\n", errorCounter);
+	LOG("FINISHED: found %d exploit(s) in %d sample(s) extracted from %d file(s)!\n", system.exploitsNum(), system.samplesNum(), system.filesNum());
+	if(system.errorsNum())
+		LOG("some ERRORS occured, errorCounter: [%d]\n", system.errorsNum());
     else
-        LOG("program FINISHED without errors\n");
+		LOG("no errors occured\n");
 
     return 0;
-}
-
-bool dbUpdateSystemInfo(QString version, QString status, QString error, int progress, int exploits, int samples)
-{
-    QSqlQuery select_query(DatabaseManager::instance()->database());
-    select_query.prepare("SELECT * FROM options_systeminfo");
-    if(!DatabaseManager::instance()->exec(&select_query)) {
-        SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
-        LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
-        return false;
-    }
-    bool record_exists = select_query.next();
-
-    /* there is record in db, only update is necessary */
-    if(record_exists) {
-        int id = select_query.record().value("id").toInt();
-        QSqlQuery update_query(DatabaseManager::instance()->database());
-        update_query.prepare("UPDATE options_systeminfo SET id = ?, version = ?, status = ?, error = ?, progress = ?, exploits_num = ?, samples_num = ? WHERE id = ?");
-        update_query.addBindValue(id);
-        update_query.addBindValue(version);
-        update_query.addBindValue(status);
-        update_query.addBindValue(error);
-        update_query.addBindValue(progress);
-        update_query.addBindValue(exploits);
-        update_query.addBindValue(samples);
-        update_query.addBindValue(id);
-        if(!DatabaseManager::instance()->exec(&update_query)) {
-            SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
-            LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
-            return false;
-        }
-    }
-    /* no record in db, create a new one */
-    else {
-        /* get next id number */
-        QSqlQuery seq_query(DatabaseManager::instance()->database());
-        seq_query.prepare("SELECT nextval('options_systeminfo_id_seq')");
-        if(!DatabaseManager::instance()->exec(&seq_query)) {
-            SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
-            LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
-            return false;
-        }
-        seq_query.next();
-        int id = seq_query.record().value("nextval").toInt();
-
-        QSqlQuery insert_query(DatabaseManager::instance()->database());
-        insert_query.prepare("INSERT INTO options_systeminfo VALUES (?, ?, ?, ?, ?, ?, ?)");
-        insert_query.addBindValue(id);
-        insert_query.addBindValue(version.toStdString().c_str());
-        insert_query.addBindValue(status.toStdString().c_str());
-        insert_query.addBindValue(error.toStdString().c_str());
-        insert_query.addBindValue(progress);
-        insert_query.addBindValue(exploits);
-        insert_query.addBindValue(samples);
-        if(!DatabaseManager::instance()->exec(&insert_query)) {
-            SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
-            LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
-            return false;
-        }
-    } /* else */
-
-    return true;
-}
-
-bool dbRemoveFile(QString file)
-{
-    /* remove file */
-    QSqlQuery remove_query(DatabaseManager::instance()->database());
-    remove_query.prepare("DELETE FROM options_pendingfile WHERE name = ?");
-    remove_query.addBindValue(file);
-    if(!DatabaseManager::instance()->exec(&remove_query)) {
-        SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
-        LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
-        return false;
-    }
-
-    return true;
-}
-
-bool dbAddRecentFile(QString file)
-{
-    /* get next id number */
-    QSqlQuery seq_query(DatabaseManager::instance()->database());
-    seq_query.prepare("SELECT nextval('options_systeminfo_id_seq')");
-    if(!DatabaseManager::instance()->exec(&seq_query)) {
-        SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
-        LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
-        return false;
-    }
-
-    seq_query.next();
-    int id = seq_query.record().value("nextval").toInt();
-
-    /* add file */
-    QSqlQuery insert_query(DatabaseManager::instance()->database());
-    insert_query.prepare("INSERT INTO options_recentfile VALUES (?, ?)");
-    insert_query.addBindValue(id);
-    insert_query.addBindValue(file);
-    if(!DatabaseManager::instance()->exec(&insert_query)) {
-        SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
-        LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
-        return false;
-    }
-
-    return true;
-}
-
-bool dbDropRecentFiles()
-{
-    /* remove file */
-    QSqlQuery delete_query(DatabaseManager::instance()->database());
-    delete_query.prepare("DELETE FROM options_recentfile");
-    if(!DatabaseManager::instance()->exec(&delete_query)) {
-        SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
-        LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
-        return false;
-    }
-
-    return true;
 }

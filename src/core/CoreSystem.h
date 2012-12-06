@@ -40,19 +40,24 @@ public:
 	/* status and error */
     QString status();
     QString error();
+	int progress();
 
 	/* logging */
     void setLogFile(QString file);
 	void setLogLevel(int level);
 
 	/* results */
-    void setOutput(QString method);
+	int filesNum();
     int exploitsNum();
     int samplesNum();
+	int errorsNum();
 
 	/* utility */
+	void setOutput(QString method);
     QString version();
 	bool readOptions();
+	bool dbUpdateSystemInfo();
+	bool dbRemovePendingFiles();
 
 private:
 	/* function members */
@@ -74,8 +79,11 @@ private:
     QList<QString> m_pendingFiles;
     QList<QString> m_outputMethods;
 
-    int m_exploitCounter;
-    int m_sampleCounter;
+	int m_fileCounter;			/* number of files extracted to analyze */
+	int m_processedCounter;		/* number of processed files */
+	int m_sampleCounter;		/* number of files that were loaded */
+	int m_exploitCounter;		/* number of detected exploits */
+	int m_errorCounter;			/* number od errors */
 };
 
 #endif /* CORESYSTEM_H_ */

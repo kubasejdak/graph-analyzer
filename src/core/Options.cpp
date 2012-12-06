@@ -151,7 +151,7 @@ void Options::listOptions()
 	LOG("ID_SEQ_POSTFIX: [%s]\n", ID_SEQ_POSTFIX.toStdString().c_str());
 
 	/* system settings */
-	LOG("system settings\n");
+	LOG("system settings:\n");
 	LOG("RESEMBLENCE_LEVEL: [%d]\n", RESEMBLENCE_LEVEL);
 	LOG("EMULATION_STEPS: [%d]\n", EMULATION_STEPS);
 	LOG("GRAPHS_DIR: [%s]\n", GRAPHS_DIR.toStdString().c_str());
@@ -162,7 +162,7 @@ void Options::listOptions()
 	LOG("BROKEN_SAMPLE_SIZE: [%d]\n", BROKEN_SAMPLE_SIZE);
 
 	/* pending files */
-	LOG("pending files (from database)\n");
+	LOG("pending files (from database):\n");
 	for(int i = 0; i < pendingFiles.size(); ++i)
 		LOG("file: [%s]\n", pendingFiles.at(i).toStdString().c_str());
 }

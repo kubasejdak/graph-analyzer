@@ -13,7 +13,7 @@
 #include <QQueue>
 
 #include <modules/AbstractModule.h>
-#include <core/ShellcodeSample.h>
+#include <core/ExploitSample.h>
 
 class AbstractInput: public AbstractModule {
 public:
@@ -26,7 +26,7 @@ public:
 	}
 
     QString type();
-    virtual bool loadInput(QString filename, QList<ShellcodeSample *> *samples) = 0;
+    virtual bool loadInput(QString filename, QList<ExploitSample *> *samples) = 0;
 
 protected:
     static int m_nextID;

@@ -2,9 +2,9 @@ from django.db import models
 
 # ShellcodeSample table
 class Sample(models.Model):
-	name = models.CharField(max_length = 100)
-	extracted_from = models.CharField(max_length = 100)
-	graph_name = models.CharField(max_length = 100)
+	name = models.CharField(max_length = 200)
+	extracted_from = models.CharField(max_length = 200)
+	graph_name = models.CharField(max_length = 200)
 	size = models.CharField(max_length = 10)
 	file_type = models.CharField(max_length = 20)
 	file_size = models.CharField(max_length = 10)

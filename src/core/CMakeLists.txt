@@ -6,8 +6,8 @@ set(CORE_SRC
 	EmulationSystem.cpp
 	AnalysisSystem.cpp
 	EmulationUnit.cpp
-	ShellcodeSample.cpp
-	ShellcodeInfo.cpp
+    ExploitSample.cpp
+    ExploitInfo.cpp
 	Graph.cpp
 	Dot.cpp
 	InstructionSplitter.cpp

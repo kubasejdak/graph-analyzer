@@ -10,7 +10,7 @@
 #include <QMap>
 
 #include <modules/AbstractModule.h>
-#include <core/ShellcodeSample.h>
+#include <core/ExploitSample.h>
 
 class AbstractAnalyze: public AbstractModule {
 public:
@@ -22,7 +22,7 @@ public:
         return m_nextID++;
 	}
 
-	virtual bool perform(ShellcodeSample *sample) = 0;
+	virtual bool perform(ExploitSample *sample) = 0;
 
 protected:
     static int m_nextID;

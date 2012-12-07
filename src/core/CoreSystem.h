@@ -16,8 +16,8 @@
 
 #include <core/EmulationSystem.h>
 #include <core/AnalysisSystem.h>
-#include <core/ShellcodeSample.h>
-#include <core/ShellcodeInfo.h>
+#include <core/ExploitSample.h>
+#include <core/ExploitInfo.h>
 #include <core/FileAnalyser.h>
 #include <core/SystemLogger.h>
 #include <core/version.h>
@@ -62,9 +62,9 @@ public:
 private:
 	/* function members */
     bool load(QString file);
-	bool emulate(ShellcodeSample *s);
-	bool analyze(ShellcodeSample *s);
-	bool makeOutput(ShellcodeSample *s);
+	bool emulate(ExploitSample *s);
+	bool analyze(ExploitSample *s);
+	bool makeOutput(ExploitSample *s);
 
 	void loadModules();
 	void clearSamples();
@@ -75,7 +75,7 @@ private:
     QMap<QString, AbstractInput *> *m_inputMods;
     QMap<QString, AbstractOutput *> *m_outputMods;
 
-    QList<ShellcodeSample *> m_samples;
+    QList<ExploitSample *> m_samples;
     QList<QString> m_pendingFiles;
     QList<QString> m_outputMethods;
 

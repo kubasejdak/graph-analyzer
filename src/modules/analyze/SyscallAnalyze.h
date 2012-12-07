@@ -16,7 +16,7 @@ public:
 	SyscallAnalyze();
     virtual ~SyscallAnalyze() {}
 
-	virtual bool perform(ShellcodeSample *sample);
+	virtual bool perform(ExploitSample *sample);
 };
 
 #endif /* SYSCALLANALYZE_H_ */

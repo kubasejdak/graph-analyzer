@@ -13,7 +13,7 @@ LoopDetector::LoopDetector()
     m_traitName = "loop";
 }
 
-bool LoopDetector::perform(ShellcodeSample *sample)
+bool LoopDetector::perform(ExploitSample *sample)
 {
     Graph *g = sample->graph();
 	Graph::graph_iterator it;

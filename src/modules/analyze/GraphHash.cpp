@@ -13,7 +13,7 @@ GraphHash::GraphHash()
     m_traitName = "hash";
 }
 
-bool GraphHash::perform(ShellcodeSample *sample)
+bool GraphHash::perform(ExploitSample *sample)
 {
     Graph *g = sample->graph();
 	Graph::graph_iterator it;

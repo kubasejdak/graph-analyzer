@@ -127,3 +127,14 @@ void SystemLogger::clearError()
 {
     m_error = "no error";
 }
+
+void SystemLogger::checkFileSize()
+{
+	QFile f(m_logFile);
+
+	/* if size is greater than 1GB */
+	if(f.size() > 1024*1024*1024) {
+		f.resize(0);
+		LOG("log file is too big: [%lld], truncating to 0\n", f.size());
+	}
+}

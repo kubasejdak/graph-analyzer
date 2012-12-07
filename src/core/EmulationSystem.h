@@ -27,7 +27,7 @@ extern "C" {
 }
 
 #include <core/EmulationUnit.h>
-#include <core/ShellcodeSample.h>
+#include <core/ExploitSample.h>
 #include <core/SystemLogger.h>
 #include <core/Dot.h>
 #include <core/Options.h>
@@ -37,12 +37,12 @@ public:
 	EmulationSystem();
 	virtual ~EmulationSystem();
 
-	void loadSample(ShellcodeSample *sample);
+	void loadSample(ExploitSample *sample);
 	bool emulate();
 
 private:
     EmulationUnit *m_emuUnit;
-    ShellcodeSample *m_sample;
+    ExploitSample *m_sample;
 };
 
 #endif /* EMULATIONSYSTEM_H_ */

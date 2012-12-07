@@ -6,7 +6,7 @@ from django.core.context_processors import csrf
 from subprocess import Popen
 
 from analyze.forms import AnalyzeForm
-from options.models import PendingFile, SystemInfo, RecentFile
+from options.models import PendingFile, SystemInfo
 
 def show_analyze(request):
 	# get system info (only one object should exists)
@@ -40,7 +40,6 @@ def show_analyze(request):
 		# run analysis
 		if "clear" in request.POST:
 			PendingFile.objects.all().delete()
-			RecentFile.objects.all().delete()
 			systemInfo_list = SystemInfo.objects.all()
 			info = systemInfo_list[0]
 			info.exploits_num = 0
@@ -51,9 +50,8 @@ def show_analyze(request):
 			info.save()
 	
 	pending_files = PendingFile.objects.all()
-	recent_files = RecentFile.objects.all()
 	systemInfo_list = SystemInfo.objects.all()
 	info = systemInfo_list[0]
-	c.update({"error": info.error, "status": info.status, "pending_files": pending_files, "recent_files": recent_files})
+	c.update({"error": info.error, "status": info.status, "pending_files": pending_files})
 	c.update({"progress": info.progress, "exploits": info.exploits_num, "samples": info.samples_num})
 	return render_to_response("analyze.html", c)

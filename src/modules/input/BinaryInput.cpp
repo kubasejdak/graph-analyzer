@@ -10,10 +10,10 @@ BinaryInput::BinaryInput()
 {
     m_name = "BinaryInput";
     m_type = "binary";
-    m_description = "Loads shellcode from binary files.";
+	m_description = "Loads exploit from binary files.";
 }
 
-bool BinaryInput::loadInput(QString filename, QList<ShellcodeSample *> *samples)
+bool BinaryInput::loadInput(QString filename, QList<ExploitSample *> *samples)
 {
     QFile file(filename);
     file.open(QIODevice::ReadOnly);
@@ -40,7 +40,7 @@ bool BinaryInput::loadInput(QString filename, QList<ShellcodeSample *> *samples)
 	file.read(buffer, size);
 	file.close();
 
-	ShellcodeSample *s = new ShellcodeSample();
+	ExploitSample *s = new ExploitSample();
     QFileInfo info(filename);
     s->info()->setName(info.absoluteFilePath());
     s->info()->setExtractedFrom(info.absoluteFilePath());

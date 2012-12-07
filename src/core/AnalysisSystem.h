@@ -9,7 +9,7 @@
 
 #include <QMap>
 
-#include <core/ShellcodeSample.h>
+#include <core/ExploitSample.h>
 #include <modules/analyze/AbstractAnalyze.h>
 #include <modules/ModuleManager.h>
 
@@ -18,13 +18,13 @@ public:
 	AnalysisSystem();
 	virtual ~AnalysisSystem();
 
-	void loadSample(ShellcodeSample *sample);
+	void loadSample(ExploitSample *sample);
 	bool analyze();
 
 private:
 	void loadModules();
 
-    ShellcodeSample *m_sample;
+    ExploitSample *m_sample;
     QMap<QString, AbstractAnalyze *> *m_analyzeModules;
 };
 

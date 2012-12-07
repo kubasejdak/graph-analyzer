@@ -8,7 +8,7 @@
 #define ABSTRACTOUTPUT_H_
 
 #include <modules/AbstractModule.h>
-#include <core/ShellcodeSample.h>
+#include <core/ExploitSample.h>
 
 class AbstractOutput: public AbstractModule {
 public:
@@ -20,7 +20,7 @@ public:
         return m_nextID++;
 	}
 
-	virtual bool generateOutput(ShellcodeSample *sample) = 0;
+	virtual bool generateOutput(ExploitSample *sample) = 0;
 
 protected:
     static int m_nextID;

@@ -21,7 +21,7 @@ public:
 	PcapInput();
     virtual ~PcapInput() {}
 
-    virtual bool loadInput(QString filename, QList<ShellcodeSample *> *samples);
+    virtual bool loadInput(QString filename, QList<ExploitSample *> *samples);
 };
 
 #endif /* PCAPINPUT_H_ */

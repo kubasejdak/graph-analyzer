@@ -41,6 +41,9 @@ public:
     void log(QString file, QString func, int line, QString msg);
     void logError(QString file, QString func, int line, QString msg);
 
+	/* utility */
+	void checkFileSize();
+
 private:
 	SystemLogger();
 

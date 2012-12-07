@@ -1,5 +1,5 @@
 from django.contrib import admin
-from options.models import Option, PendingFile, SystemInfo, RecentFile, Feedback
+from options.models import Option, PendingFile, SystemInfo, Feedback
 
 class SystemInfoAdmin(admin.ModelAdmin):
     list_display = ("version", "status", "error", "progress", "exploits_num", "samples_num")
@@ -10,9 +10,6 @@ class OptionAdmin(admin.ModelAdmin):
 class PendingFileAdmin(admin.ModelAdmin):
     list_display = ("name",)
 
-class RecentFileAdmin(admin.ModelAdmin):
-    list_display = ("name",)
-
 class FeedbackAdmin(admin.ModelAdmin):
     list_display = ("type", "description", "status")
     ordering = ("-type", "-status")
@@ -20,5 +17,4 @@ class FeedbackAdmin(admin.ModelAdmin):
 admin.site.register(SystemInfo, SystemInfoAdmin)
 admin.site.register(Option, OptionAdmin)
 admin.site.register(PendingFile, PendingFileAdmin)
-admin.site.register(RecentFile, RecentFileAdmin)
 admin.site.register(Feedback, FeedbackAdmin)

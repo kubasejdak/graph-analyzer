@@ -23,13 +23,13 @@ public:
 	DatabaseOutput();
     virtual ~DatabaseOutput() {}
 
-	virtual bool generateOutput(ShellcodeSample *sample);
+	virtual bool generateOutput(ExploitSample *sample);
 
 	bool makeGroups(int resemblenceLevel);
 
 private:
     void traitQuery(QSqlQuery *query, QString table, QMap<QString, QString> *v, int sample_id);
-    bool checkDuplicate(ShellcodeInfo *info);
+    bool checkDuplicate(ExploitInfo *info);
 
 	/* group, resemblence rate */
 	QMap<int, int> findMatchingGroups(int id, QVector<QString> loopHashes, int resemblenceLevel);

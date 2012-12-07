@@ -17,7 +17,7 @@ public:
 	ConsoleOutput();
     virtual ~ConsoleOutput() {}
 
-	virtual bool generateOutput(ShellcodeSample *sample);
+	virtual bool generateOutput(ExploitSample *sample);
 };
 
 #endif /* CONSOLEOUTPUT_H_ */

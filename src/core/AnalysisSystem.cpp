@@ -16,7 +16,7 @@ AnalysisSystem::~AnalysisSystem()
 {
 }
 
-void AnalysisSystem::loadSample(ShellcodeSample *sample)
+void AnalysisSystem::loadSample(ExploitSample *sample)
 {
     m_sample = sample;
 }
@@ -29,7 +29,7 @@ bool AnalysisSystem::analyze()
 		return false;
     }
 
-    if(!m_sample->info()->isShellcodePresent()) {
+	if(!m_sample->info()->isExploitPresent()) {
         m_sample = NULL;
         LOG("no exploit found, nothing to analyze, returning\n");
         LOG("SUCCESS\n\n");

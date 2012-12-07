@@ -12,7 +12,7 @@ ConsoleOutput::ConsoleOutput()
     m_description = "Prints info about samples in console.";
 }
 
-bool ConsoleOutput::generateOutput(ShellcodeSample *sample)
+bool ConsoleOutput::generateOutput(ExploitSample *sample)
 {
 	cout << "Results for sample:" << endl;
     sample->info()->printInfo();

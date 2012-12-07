@@ -12,9 +12,9 @@ DatabaseOutput::DatabaseOutput()
     m_description = "Inserts info about samples into database.";
 }
 
-bool DatabaseOutput::generateOutput(ShellcodeSample *sample)
+bool DatabaseOutput::generateOutput(ExploitSample *sample)
 {
-    ShellcodeInfo *info = sample->info();
+    ExploitInfo *info = sample->info();
 
     /* ensure that sample is not a duplicate */
     bool duplicate = checkDuplicate(info);
@@ -193,7 +193,7 @@ void DatabaseOutput::traitQuery(QSqlQuery *query, QString table, QMap<QString, Q
 	}
 }
 
-bool DatabaseOutput::checkDuplicate(ShellcodeInfo *info)
+bool DatabaseOutput::checkDuplicate(ExploitInfo *info)
 {
     /* check sample */
     QSqlQuery select_query(DatabaseManager::instance()->database());

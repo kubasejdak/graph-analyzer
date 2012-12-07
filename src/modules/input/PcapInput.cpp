@@ -10,10 +10,10 @@ PcapInput::PcapInput()
 {
     m_name = "PcapInput";
     m_type = "pcap";
-    m_description = "Loads shellcode from pcap files.";
+	m_description = "Loads exploit from pcap files.";
 }
 
-bool PcapInput::loadInput(QString filename, QList<ShellcodeSample *> *samples)
+bool PcapInput::loadInput(QString filename, QList<ExploitSample *> *samples)
 {
     int success;
 
@@ -52,7 +52,7 @@ bool PcapInput::loadInput(QString filename, QList<ShellcodeSample *> *samples)
 	}
 
     /* iterate through all flow files */
-    ShellcodeSample *s;
+    ExploitSample *s;
 	QDirIterator it(".", QDir::Files | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
     while(it.hasNext()) {
         QString entryName = it.next();
@@ -86,7 +86,7 @@ bool PcapInput::loadInput(QString filename, QList<ShellcodeSample *> *samples)
         file.close();
 
         /* create new sample */
-        s = new ShellcodeSample();
+        s = new ExploitSample();
         QFileInfo info(filename);
         s->info()->setName(Toolbox::pcapFlowBasename(entryName));
         s->info()->setExtractedFrom(info.absoluteFilePath());

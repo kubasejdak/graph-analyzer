@@ -17,7 +17,7 @@ public:
 	BinaryInput();
     virtual ~BinaryInput() {}
 
-    virtual bool loadInput(QString filename, QList<ShellcodeSample *> *samples);
+    virtual bool loadInput(QString filename, QList<ExploitSample *> *samples);
 };
 
 #endif /* BINARYINPUT_H_ */

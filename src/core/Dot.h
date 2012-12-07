@@ -45,6 +45,6 @@ struct instr_vertex *instr_vertex_copy(struct instr_vertex *from);
 
 void instr_vertex_destructor(void *data);
 
-void graph_draw(struct emu_graph *graph, QString dot_file);
+bool graph_draw(struct emu_graph *graph, QString dot_file);
 
 #endif /* DOT_H_ */

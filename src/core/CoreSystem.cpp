@@ -18,6 +18,9 @@ CoreSystem::CoreSystem()
 		exit(1);
 	Options::instance()->listOptions();
 
+	/* ensure that log file is not too big */
+	SystemLogger::instance()->checkFileSize();
+
 	/* add files to analyze from database */
 	for(int i = 0; i < Options::instance()->pendingFiles.size(); ++i)
 		addFile(Options::instance()->pendingFiles.at(i));
@@ -89,7 +92,7 @@ int CoreSystem::run()
 			continue;
 		}
 
-		ShellcodeSample *s;
+		ExploitSample *s;
         while(!m_samples.isEmpty()) {
             s = m_samples.front();
             m_samples.pop_front();
@@ -106,7 +109,7 @@ int CoreSystem::run()
 
 			/* analyze graph */
 			LOG("analyzing\n");
-			if(Options::instance()->SKIP_NONEXPLOIT_OUTPUT && !s->info()->isShellcodePresent()) {
+			if(Options::instance()->SKIP_NONEXPLOIT_OUTPUT && !s->info()->isExploitPresent()) {
 				LOG("no exploit found, skipping due to SKIP_NONEXPLOIT_OUTPUT: [true]\n");
 				goto cleanup;
 			}
@@ -122,7 +125,7 @@ int CoreSystem::run()
 				LOG("broken sample, skipping due to SKIP_BROKEN_SAMPLES: [true]\n");
 				goto cleanup;
 			}
-			if(s->info()->isShellcodePresent())
+			if(s->info()->isExploitPresent())
 				++m_exploitCounter;
 			if(!makeOutput(s)) {
                 LOG_ERROR("output for [%s] -> [%s]\n", currentFile.toStdString().c_str(), error().toStdString().c_str());
@@ -143,18 +146,19 @@ cleanup:
 		LOG("some errors occured, errorCounter: [%d]", m_errorCounter);
 
 	LOG("making groups\n");
+	SystemLogger::instance()->setStatus("making groups");
+	dbUpdateSystemInfo();
 	makeGroups();
 	LOG("making groups finished\n");
 
     LOG("SUCCESS\n\n");
+	SystemLogger::instance()->setStatus("idle");
+	dbUpdateSystemInfo();
 	return m_errorCounter;
 }
 
 void CoreSystem::makeGroups()
 {
-	SystemLogger::instance()->setStatus("making groups");
-	SystemLogger::instance()->clearError();
-
 	QList<QString>::iterator it;
 	bool ret = false;
 	for(it = m_outputMethods.begin(); it != m_outputMethods.end(); ++it) {
@@ -173,7 +177,6 @@ void CoreSystem::makeGroups()
 	}
 
 	LOG("SUCCESS\n\n");
-	SystemLogger::instance()->setStatus("idle");
 }
 
 void CoreSystem::clear()
@@ -199,7 +202,7 @@ int CoreSystem::progress()
 	if(m_fileCounter == 0)
 		return 0;
 
-	return (m_processedCounter / m_fileCounter) * 100;
+	return (m_processedCounter * 100) / m_fileCounter;
 }
 
 void CoreSystem::setLogFile(QString file)
@@ -308,10 +311,8 @@ bool CoreSystem::dbRemovePendingFiles()
 
 bool CoreSystem::load(QString file)
 {
-    SystemLogger::instance()->clearError();
-
-    QList<ShellcodeSample *> q;
-	ShellcodeSample *s;
+    QList<ExploitSample *> q;
+	ExploitSample *s;
 	bool moduleFound = false;
 
     FileAnalyser fileAnalyser;
@@ -348,10 +349,8 @@ bool CoreSystem::load(QString file)
 	return false;
 }
 
-bool CoreSystem::emulate(ShellcodeSample *s)
+bool CoreSystem::emulate(ExploitSample *s)
 {
-    SystemLogger::instance()->clearError();
-
     m_emuSystem.loadSample(s);
     bool ret = m_emuSystem.emulate();
 
@@ -366,10 +365,8 @@ bool CoreSystem::emulate(ShellcodeSample *s)
 	return true;
 }
 
-bool CoreSystem::analyze(ShellcodeSample *s)
+bool CoreSystem::analyze(ExploitSample *s)
 {
-    SystemLogger::instance()->clearError();
-
     m_anaSystem.loadSample(s);
     bool ret = m_anaSystem.analyze();
 
@@ -384,12 +381,10 @@ bool CoreSystem::analyze(ShellcodeSample *s)
 	return true;
 }
 
-bool CoreSystem::makeOutput(ShellcodeSample *s)
+bool CoreSystem::makeOutput(ExploitSample *s)
 {
-    SystemLogger::instance()->clearError();
-
     QList<QString>::iterator it;
-    if(!s->info()->isShellcodePresent()) {
+    if(!s->info()->isExploitPresent()) {
         LOG("no exploit found, returning\n");
         LOG("SUCCESS\n\n");
 		return true;
@@ -419,7 +414,7 @@ void CoreSystem::loadModules()
 
 void CoreSystem::clearSamples()
 {
-    QList<ShellcodeSample *>::iterator it = m_samples.begin();
+    QList<ExploitSample *>::iterator it = m_samples.begin();
     while(it != m_samples.end()) {
         delete *it;
         it = m_samples.erase(it);

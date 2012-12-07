@@ -2,23 +2,31 @@
 
 {% block content %}
 <form class="well form-search">
-	<input type="text" class="span3 search-query" name="value" placeholder="Search..."/>
-	<select name="filter" size="1">
-		<option>Name</option>
-		<option>Extracted from</option>
-		<option>Graph name</option>
-		<option>Size</option>
-		<option>File type</option>
-		<option>File size</option>
-	</select>
-	<button class="btn" name="search">Search</button>
-	<button class="btn" name="sort">Sort by</button>
+	<div class="row-fluid">
+		<div class="span8">
+			<input type="text" style="width:100%" class="span3 search-query" name="value" placeholder="Search..."/>
+		</div>
+		<div class="span4" align="right">
+			<select name="filter" size="1">
+				<option>Id</option>
+				<option>Name</option>
+				<option>Extracted from</option>
+				<option>Graph name</option>
+				<option>Size</option>
+				<option>File type</option>
+				<option>File size</option>
+			</select>
+			<button class="btn" name="search_sample">Search</button>
+			<button class="btn" name="sort_sample">Sort by</button>
+		</div>
+	</div>
 </form>
 
 <table class="table table-striped">
 	<thead>
 		<tr>
 			<th>Index</th>
+			<th>Id</th>
 			<th>Name</th>
 			<th>Extracted from</th>
 			<th>Graph name</th>
@@ -33,6 +41,7 @@
 		{% for sample in sample_list %}
 		<tr>
 			<td>{{ forloop.counter }}</td>
+			<td>{{ sample.id }}</td>
 			<td>{{ sample.name }}</td>
 			<td>{{ sample.extracted_from }}</td>
 			<td>{{ sample.graph_name }}</td>
@@ -40,7 +49,7 @@
 			<td>{{ sample.file_type }}</td>
 			<td>{{ sample.file_size }}</td>
 			<td>{{ sample.shellcode_offset }}</td>
-			<td><form method="post">{% csrf_token %}<button class="btn" name="show" value={{ sample.id }}>Show</button></form></td>
+			<td><form method="post">{% csrf_token %}<button class="btn" name="show_sample" value={{ sample.id }}>Show</button></form></td>
 		</tr>
 		{% endfor %}
 	</tbody>

@@ -17,7 +17,7 @@ EmulationSystem::~EmulationSystem()
     delete m_emuUnit;
 }
 
-void EmulationSystem::loadSample(ShellcodeSample *sample)
+void EmulationSystem::loadSample(ExploitSample *sample)
 {
     m_sample = sample;
 }
@@ -34,10 +34,10 @@ bool EmulationSystem::emulate()
 	int32_t codeOffset;
 	codeOffset = m_emuUnit->loadCode(m_sample->code(), m_sample->info()->fileSize());
     m_sample->info()->setCodeOffset(codeOffset);
-    m_sample->info()->setShellcodePresent(codeOffset >= 0 ? true : false);
+    m_sample->info()->setExploitPresent(codeOffset >= 0 ? true : false);
 
 	/* if exploit not detected return */
-    if(!m_sample->info()->isShellcodePresent()) {
+    if(!m_sample->info()->isExploitPresent()) {
         LOG("exploit not detected, returning\n");
         LOG("SUCCESS\n\n");
         m_sample = NULL;
@@ -198,7 +198,13 @@ bool EmulationSystem::emulate()
 	/* create .dot file */
     QString dotFile = "/tmp/graph.dot";
     LOG("dotFile: [%s]\n", dotFile.toStdString().c_str());
-    graph_draw(graph->emuGraph(), dotFile);
+	bool drawOk = graph_draw(graph->emuGraph(), dotFile);
+	if(!drawOk) {
+		SystemLogger::instance()->setError("drawing graph failed");
+		LOG_ERROR("FAILURE\n\n");
+		m_sample = NULL;
+		return false;
+	}
 
 	/* draw graph using dot package and sample name */
 	if(!QDir(Options::instance()->GRAPHS_DIR).exists()) {

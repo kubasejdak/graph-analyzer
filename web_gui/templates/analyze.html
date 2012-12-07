@@ -3,15 +3,17 @@
 {% block content %}
 <div class="well">
 	<form action="" method="post">{% csrf_token %}
-		<div class="span4">
-			<table>{{ form.as_table }}</table>
-		</div>
-		<div class="span8">
-			<button class="btn" name="add">Add</button>
-			<button class="btn btn-danger" name="clear"><i class="icon-trash icon-white"></i> Clear</button>
-			<button class="btn btn-primary" name="analyze">Analyze</button>
-			<button class="btn" name="refresh"><i class="icon-refresh"></i> Refresh</button>
-			<button class="btn btn-warning" name="regroup">Re-make groups</button>
+		<div class="row-fluid">
+			<div class="span4">
+				<table>{{ form.as_table }}</table>
+			</div>
+			<div class="span8" align="right">
+				<button class="btn" name="add">Add</button>
+				<button class="btn btn-danger" name="clear"><i class="icon-trash icon-white"></i> Clear</button>
+				<button class="btn btn-primary" name="analyze">Analyze</button>
+				<button class="btn btn-warning" name="regroup">Re-make groups</button>
+				<button class="btn" name="refresh"><i class="icon-refresh"></i> Refresh</button>
+			</div>
 		</div>
 	</form>
 </div>
@@ -24,27 +26,31 @@
 	</ul>
 </p>
   
-<p class="RecentFiles"><b>Recently analyzed:</b>
-	<ul>
-		{% for file in recent_files %}
-			<li>{{ file.name }}</li>
-		{% endfor %}
-	</ul>
-</p>
-  
 <div class="well">
 	Overal progress:<br/>
 	<div class="progress progress-striped active">
 		<div class="bar" style="width: {{ progress }}%;">{{ progress }} %</div>
    </div>
-	Exploits number: <b>{{ exploits }}</b><br/>
-	Samples number: <b>{{ samples }}</b><br/><br/>
+   <div class="row-fluid">
+		<div class="span1">
+			Exploits number:</br>
+			Samples number:</br></br>
+			
+			<b>Status: </b></br>
+			<b>Last error: </b>
+		</div>
 
-	<b>Status: </b><span class="label label-info">{{ status }}</span><br/>
-	{% if error == "no error" %}
-	<b>Last error: </b><span class="label label-success">{{ error }}</span>
-	{% else %}
-	<b>Last error: </b><span class="label label-important">{{ error }}</span>
+		<div class="span4">
+			<b>{{ exploits }}</b></br>
+			<b>{{ samples }}</b></br></br>
+			
+			<span class="label label-info">{{ status }}</span></br>
+			{% if error == "no error" %}
+			<span class="label label-success">{{ error }}</span>
+			{% else %}
+			<span class="label label-important">{{ error }}</span>
 	{% endif %}
+		</div>
+	</div>
 </div>
 {% endblock %}

@@ -47,10 +47,6 @@ class Option(models.Model):
 class PendingFile(models.Model):
     name = models.CharField(max_length = 100)
 
-# RecentFile table
-class RecentFile(models.Model):
-    name = models.CharField(max_length = 100)
-
 # Feedback table
 class Feedback(models.Model):
     TYPE_CHOICES = (

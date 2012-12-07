@@ -13,7 +13,7 @@ SyscallAnalyze::SyscallAnalyze()
     m_traitName = "api";
 }
 
-bool SyscallAnalyze::perform(ShellcodeSample *sample)
+bool SyscallAnalyze::perform(ExploitSample *sample)
 {
     Graph *g = sample->graph();
 	struct instr_vertex *instr_vert;

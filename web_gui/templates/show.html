@@ -25,26 +25,28 @@
 			<div class="tab-pane active" id="general_tab">
 				<p>
 					<div class="span2">
+						<b>Id: </b></br>
 						<b>Name: </b></br>
 						<b>Extracted from: </b></br>
 						<b>Graph name: </b></br>
 						<b>Size [vertexes]: </b></br>
 						<b>File type: </b></br>
 						<b>File size [bytes]: </b></br>
-						<b>Exploit offset [bytes]: </b></br>
+						<b>Exploit offset [bytes]: </b></br></br>
 						<b>Comment: </b></br></br>
 					</div>
-					<div class="span4">
+					<div class="span8">
+						{{ show_sample.id }}</br>
 						{{ show_sample.name }}</br>
 						{{ show_sample.extracted_from }}</br>
 						{{ show_sample.graph_name }}</br>
 						{{ show_sample.size }}</br>
 						{{ show_sample.file_type }}</br>
 						{{ show_sample.file_size }}</br>
-						{{ show_sample.shellcode_offset }}</br>
+						{{ show_sample.shellcode_offset }}</br></br>
 						<form method="post" action="">{% csrf_token %}
-							<textarea name="comments" cols="75" rows="5">{{ show_sample.comment }}</textarea></br>
-							<button class="btn btn-primary" name="show" value={{ show_sample.id }}>Save</button>
+							<textarea name="comments" style="width:100%" rows="5">{{ show_sample.comment }}</textarea></br>
+							<button class="btn btn-primary" name="show_sample" value={{ show_sample.id }}>Save</button>
 						</form>
 						</br></br>
 					</div>
@@ -52,14 +54,14 @@
 					<div class="span11">
 						<div class="alert alert-success">
 							<button type="button" class="close" data-dismiss="alert">×</button>
-							<strong>Success!</strong> Comments saved.
+							<strong>Success!</strong> Comments have been saved.
 						</div>
 					</div>
 					{% endif %}
 				</p>
 			</div>
 			<div class="tab-pane" id="loops_tab">
-				{% for loop in show_loops %}
+				{% for loop in show_loop %}
 				<p>
 					<div class="span2">
 						<b>Hash: </b></br>
@@ -103,18 +105,20 @@
 						<thead>
 							<tr>
 								<th>Index</th>
+								<th>Id</th>
 								<th>Group leader</th>
 								<th>Resemblence rate</th>
 								<th>More</th>
 							</tr>
 						</thead>
 						<tbody>
-							{% for group in show_groups %}
+							{% for groupassignment in show_groupassignment %}
 							<tr>
 								<td>{{ forloop.counter }}</td>
-								<td>{{ group.group }}</td>
-								<td>{{ group.resemblence_rate }} %</td>
-								<td><form method="post">{% csrf_token %}<button class="btn" name="show_group" value={{ group.group_id }}>Show</button></form></td>
+								<td>{{ groupassignment.group.id }}</td>
+								<td>{{ groupassignment.group.leader.name }}</td>
+								<td>{{ groupassignment.resemblence_rate }} %</td>
+								<td><form method="post">{% csrf_token %}<button class="btn" name="show_group" value={{ groupassignment.group.id }}>Show</button></form></td>
 							</tr>
 							{% endfor %}
 						</tbody>

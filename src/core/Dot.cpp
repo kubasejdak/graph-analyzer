@@ -41,7 +41,7 @@ void instr_vertex_destructor(void *data)
 	instr_vertex_free((struct instr_vertex *) data);
 }
 
-void graph_draw(struct emu_graph *graph, QString dot_file)
+bool graph_draw(struct emu_graph *graph, QString dot_file)
 {
 	struct emu_vertex *ev;
 	struct instr_vertex *iv;
@@ -49,7 +49,7 @@ void graph_draw(struct emu_graph *graph, QString dot_file)
     FILE *f = fopen(dot_file.toStdString().c_str(), "w+");
 	if(f == NULL) {
         LOG_ERROR("cannot open temporary file [%s]\n", dot_file.toStdString().c_str());
-		exit(1);
+		return false;
 	}
 
 	struct emu_graph *sgraph = emu_graph_new();
@@ -181,4 +181,5 @@ void graph_draw(struct emu_graph *graph, QString dot_file)
 	emu_graph_free(sgraph);
 
     LOG("SUCCESS\n\n");
+	return true;
 }

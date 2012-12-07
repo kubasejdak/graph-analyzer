@@ -3,55 +3,61 @@
 {% block content %}
 <div class="row-fluid">
 	<div class="span2">
+		<b>Id: </b></br>
 		<b>Group leader: </b></br>
 		<b>Number of members</b></br></br>
-		<b>Members: </b></br>
-		{% if show_members %}
-			{% for member in show_members %}
-			</br>
-			{% endfor %}
-		{% else %}
-		</br>
-		{% endif %}
 		<b>Comments: </b></br>
 	</div>
-	<div class="span4">
-		{{ show_group.leader }}</br>
+	<div class="span8">
+		{{ show_group.id }}</br>
+		{{ show_group.leader.name }}</br>
 		{{ show_group.members_num }}</br></br>
-		{% if show_members %}
-			{% for member in show_members %}
-			{{ member.member }} <b>({{ member.resemblence_rate }} %)</b></br></br>
-			{% endfor %}
-		{% else %}
-		(leader only)</br>
-		{% endif %}
-		</br>
 		<form method="post" action="">{% csrf_token %}
-			<textarea name="comments" cols="75" rows="5">{{ show_group.comment }}</textarea></br>
-			<button class="btn btn-primary" name="show" value={{ show_group.id }}>Save</button>
+			<textarea style="width:100%" rows="5" name="comments" lang="pl">{{ show_group.comment }}</textarea></br>
+			<button class="btn btn-primary" name="show_group" value={{ show_group.id }}>Save</button>
 		</form>
 		</br></br>
-	</div>
-	<div class="span2">
-		</br>
-		</br></br>
-		{% if show_members %}
-			{% for member in show_members %}
-			<form method="post">{% csrf_token %}
-				<button class="btn btn-mini" name="show_member" value={{ member.member_id }}>Show</button>
-			</form>
-			{% endfor %}
-		{% else %}
-		</br>
-		{% endif %}
 	</div>
 	{% if is_message %}
 	<div class="span11">
 		<div class="alert alert-success">
 			<button type="button" class="close" data-dismiss="alert">×</button>
-			<strong>Success!</strong> Comments saved.
+			<strong>Success!</strong> Comments have been saved.
 		</div>
 	</div>
 	{% endif %}
+	<div class="span11">
+		<h2><p align="center">Members</p></h2>
+	</div>
 </div>
+
+<table class="table table-striped">
+	<thead>
+		<tr>
+			<th>Index</th>
+			<th>Id</th>
+			<th>Name</th>
+			<th>Resemblence level</th>
+			<th>Link</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td><font color="green"><b>LEADER</b></font></td>
+			<td><font color="green"><b>{{ show_group.leader.id }}</b></font></td>
+			<td><font color="green"><b>{{ show_group.leader.name }}</b></font></td>
+			<td><font color="green"><b>---</b></font></td>
+			<td><form method="post">{% csrf_token %}<button class="btn" name="show_sample" value={{ show_group.leader.id }}>Show</button></form></td>
+		</tr>
+		{% for groupassignment in show_groupassignment %}
+		<tr>
+			<td>{{ forloop.counter }}</td>
+			<td>{{ groupassignment.member.id }}</td>
+			<td>{{ groupassignment.member.name }}</td>
+			<td>{{ groupassignment.resemblence_rate }}</td>
+			<td><form method="post">{% csrf_token %}<button class="btn" name="show_sample" value={{ groupassignment.member.id }}>Show</button></form></td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
 {% endblock %}

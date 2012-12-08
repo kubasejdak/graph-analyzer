@@ -1,6 +1,12 @@
 {% extends "base.html" %}
 
 {% block content %}
+{% if is_message %}
+<div class="alert alert-success">
+	<button type="button" class="close" data-dismiss="alert">×</button>
+	<strong>Success!</strong> Comments have been saved.
+</div>
+{% endif %}
 <div class="row-fluid">
 	<div class="span2">
 		<b>Id: </b></br>
@@ -18,14 +24,6 @@
 		</form>
 		</br></br>
 	</div>
-	{% if is_message %}
-	<div class="span11">
-		<div class="alert alert-success">
-			<button type="button" class="close" data-dismiss="alert">×</button>
-			<strong>Success!</strong> Comments have been saved.
-		</div>
-	</div>
-	{% endif %}
 	<div class="span11">
 		<h2><p align="center">Members</p></h2>
 	</div>

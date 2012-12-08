@@ -12,7 +12,7 @@
 			<li><a href="#groups_tab" data-toggle="tab">Groups</a></li>
 		</ul>
 		<div class="tab-content">
-			<div class="tab-pane" id="hash_tab">
+			<div class="tab-pane {{ hash_tab }}" id="hash_tab">
 				<p>
 					<div class="span2">
 						<b>Hash: </b>
@@ -22,7 +22,15 @@
 					</div>
 				</p>
 			</div>
-			<div class="tab-pane active" id="general_tab">
+			<div class="tab-pane {{ general_tab }}" id="general_tab">
+				{% if is_message %}
+				<div class="span11">
+					<div class="alert alert-success">
+						<button type="button" class="close" data-dismiss="alert">×</button>
+						<strong>Success!</strong> Comments have been saved.
+					</div>
+				</div>
+				{% endif %}
 				<p>
 					<div class="span2">
 						<b>Id: </b></br>
@@ -50,17 +58,17 @@
 						</form>
 						</br></br>
 					</div>
-					{% if is_message %}
-					<div class="span11">
-						<div class="alert alert-success">
-							<button type="button" class="close" data-dismiss="alert">×</button>
-							<strong>Success!</strong> Comments have been saved.
-						</div>
-					</div>
-					{% endif %}
 				</p>
 			</div>
-			<div class="tab-pane" id="loops_tab">
+			<div class="tab-pane {{ loops_tab }}" id="loops_tab">
+				{% if is_loopmessage %}
+				<div class="span11">
+					<div class="alert alert-success">
+						<button type="button" class="close" data-dismiss="alert">×</button>
+						<strong>Success!</strong> Comments for loop have been saved.
+					</div>
+				</div>
+				{% endif %}
 				{% for loopassignment in show_loopassignment %}
 				<p>
 					<div class="span2">
@@ -75,12 +83,17 @@
 						{{ loopassignment.loop.iterations }}</br>
 						{{ loopassignment.loop.size }}</br>
 						{{ loopassignment.loop.start }}</br>
-						{{ loopassignment.loop.vertexes }}</br></br></br>
+						{{ loopassignment.loop.vertexes }}</br></br>
+						<form method="post" action="">{% csrf_token %}
+							<textarea name="loop_comments" style="width:100%" rows="5">{{ loopassignment.loop.comment }}</textarea></br>
+							<button class="btn btn-primary" name="save_loop" value={{ loopassignment.id }}>Save</button>
+						</form>
+						</br>
 					</div>
 				</p>
 				{% endfor %}
 			</div>
-			<div class="tab-pane" id="api_tab">
+			<div class="tab-pane {{ api_tab }}" id="api_tab">
 				{% for apiassignment in show_apiassignment %}
 				<p>
 					<div class="span2">
@@ -94,12 +107,12 @@
 				</p>
 				{% endfor %}
 			</div>
-			<div class="tab-pane" id="graph_tab">
+			<div class="tab-pane {{ graph_tab }}" id="graph_tab">
 				<p>
 					<img src="{{ STATIC_URL }}tmp_graphs/{{ graph_file }}" />
 				</p>
 			</div>
-			<div class="tab-pane" id="groups_tab">
+			<div class="tab-pane {{ groups_tab }}" id="groups_tab">
 				<p>
 					<table class="table table-striped">
 						<thead>

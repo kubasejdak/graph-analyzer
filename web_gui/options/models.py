@@ -3,11 +3,12 @@ from django.db import models
 # SystemInfo table
 class SystemInfo(models.Model):
     version = models.CharField(max_length = 10)
-    status = models.CharField(max_length = 50)
-    error = models.CharField(max_length = 50)
+    status = models.CharField(max_length = 100)
+    error = models.CharField(max_length = 100)
     progress = models.IntegerField()
     exploits_num = models.IntegerField()
     samples_num = models.IntegerField()
+    files_num = models.IntegerField()
 
 # Options table
 class Option(models.Model):

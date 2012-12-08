@@ -16,32 +16,54 @@ class Sample(models.Model):
 
 # SyscallAnalyzer table
 class API(models.Model):
-	sample = models.ForeignKey(Sample)
 	dll = models.CharField(max_length = 20)
 	syscall = models.CharField(max_length = 20)
 
 	def __unicode__(self):
 		return self.syscall
 
+# APIAssignment table
+class APIAssignment(models.Model):
+	api = models.ForeignKey(API)
+	sample = models.ForeignKey(Sample)
+	
+	def __unicode__(self):
+		return self.api.syscall
+
 # GraphHash table
 class Hash(models.Model):
-	sample = models.ForeignKey(Sample)
 	hash = models.CharField(max_length = 10)
 
 	def __unicode__(self):
 		return self.hash
 
+# HashAssignment table
+class HashAssignment(models.Model):
+	hash = models.ForeignKey(Hash)
+	sample = models.ForeignKey(Sample)
+	
+	def __unicode__(self):
+		return self.hash.hash
+
 # LoopDetector table
 class Loop(models.Model):
-	sample = models.ForeignKey(Sample)
 	hash = models.CharField(max_length = 10)
 	iterations = models.CharField(max_length = 10)
 	size = models.CharField(max_length = 10)
 	start = models.CharField(max_length = 10)
 	vertexes = models.CharField(max_length = 2000)
+	comment = models.CharField(max_length = 3000)
 	
 	def __unicode__(self):
 		return self.hash
+
+# LoopAssignment table
+class LoopAssignment(models.Model):
+	loop = models.ForeignKey(Loop)
+	sample = models.ForeignKey(Sample)
+	
+	def __unicode__(self):
+		return self.loop.hash
 
 # SampleGroup table
 class SampleGroup(models.Model):

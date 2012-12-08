@@ -101,10 +101,8 @@ bool Options::readDatabaseOptions()
 	/* get options */
 	QSqlQuery options_query(DatabaseManager::instance()->database());
 	options_query.prepare("SELECT * FROM options_option");
-	if(!DatabaseManager::instance()->exec(&options_query)) {
-		SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
+	if(!DatabaseManager::instance()->exec(&options_query))
 		return false;
-	}
 
 	if(!options_query.next())
 		return false;
@@ -126,10 +124,8 @@ bool Options::readDatabaseOptions()
 	/* get pending files */
 	QSqlQuery files_query(DatabaseManager::instance()->database());
 	files_query.prepare("SELECT * FROM options_pendingfile");
-	if(!DatabaseManager::instance()->exec(&files_query)) {
-		SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
+	if(!DatabaseManager::instance()->exec(&files_query))
 		return false;
-	}
 
 	while(files_query.next())
 		pendingFiles.push_back(files_query.record().value("name").toString());

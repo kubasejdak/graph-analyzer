@@ -17,6 +17,7 @@ public:
     virtual ~LoopDetector() {}
 
 	virtual bool perform(ExploitSample *sample);
+	virtual bool exportToDatabase(ExploitSample *sample, int sampleId);
 };
 
 #endif /* LOOPDETECTOR_H_ */

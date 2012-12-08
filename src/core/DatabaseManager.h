@@ -17,7 +17,12 @@ public:
         return &obj;
     }
 
+	/* general */
     bool exec(QSqlQuery *query);
+	bool clearTable(QString table);
+	int sequenceValue(QString table);
+
+	/* utility */
     QSqlDatabase &database();
     QString lastError();
 

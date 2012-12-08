@@ -7,7 +7,7 @@ import os.path
 from stat import S_IRWXG, S_IRWXO, S_IRWXU
 
 from options.models import SystemInfo
-from analyze.models import Sample, Loop, API, Hash, SampleGroup, GroupAssignment
+from analyze.models import Sample, SampleGroup, GroupAssignment, LoopAssignment, APIAssignment, HashAssignment
 
 def show_browse(request):
     # get system info (only one object should exists)
@@ -76,9 +76,9 @@ def show_browse(request):
         if "show_sample" in request.POST:
             # get sample info
             show_sample = Sample.objects.get(id = request.POST["show_sample"])
-            show_loop = Loop.objects.filter(sample = request.POST["show_sample"])
-            show_api = API.objects.filter(sample = request.POST["show_sample"])
-            show_hash = Hash.objects.get(sample = request.POST["show_sample"])
+            show_loopassignment = LoopAssignment.objects.filter(sample = request.POST["show_sample"])
+            show_apiassignment = APIAssignment.objects.filter(sample = request.POST["show_sample"])
+            show_hashassignment = HashAssignment.objects.get(sample = request.POST["show_sample"])
             show_groupassignment = GroupAssignment.objects.filter(member = request.POST["show_sample"]).order_by("-resemblence_rate")
             
             # get graph picture
@@ -90,9 +90,9 @@ def show_browse(request):
                 os.chmod(graph_dir + graph_file, S_IRWXU | S_IRWXG | S_IRWXO)
 
             c.update({"show_sample": show_sample,
-					  "show_loop": show_loop,
-					  "show_api": show_api,
-					  "show_hash": show_hash,
+					  "show_loopassignment": show_loopassignment,
+					  "show_apiassignment": show_apiassignment,
+					  "show_hashassignment": show_hashassignment,
 					  "show_groupassignment": show_groupassignment,
 					  "graph_file": graph_file})
             return render_to_response("show.html", c)
@@ -143,17 +143,10 @@ def show_browse_groups(request):
         if "show_sample" in request.POST:
             # get sample info
             show_sample = Sample.objects.get(id = request.POST["show_sample"])
-            show_loops = Loop.objects.filter(sample = request.POST["show_sample"])
-            show_api = API.objects.filter(sample = request.POST["show_sample"])
-            show_hash = Hash.objects.get(sample = request.POST["show_sample"])
-            show_groupassignment = GroupAssignment.objects.filter(member = request.POST["show_sample"])
-            c.update({"show_sample": show_sample,
-					  "show_loops": show_loops,
-					  "show_api": show_api,
-					  "show_hash": show_hash,
-					  "show_groupassignment": show_groupassignment,
-					  "browse_groups": False,
-					  "browse": True})
+            show_loopassignment = LoopAssignment.objects.filter(sample = request.POST["show_sample"])
+            show_apiassignment = APIAssignment.objects.filter(sample = request.POST["show_sample"])
+            show_hashassignment = HashAssignment.objects.get(sample = request.POST["show_sample"])
+            show_groupassignment = GroupAssignment.objects.filter(member = request.POST["show_sample"]).order_by("-resemblence_rate")
             
             # get graph picture
             graph_source = show_sample.graph_name
@@ -163,6 +156,10 @@ def show_browse_groups(request):
                 shutil.copy(graph_source, STATICFILES_DIRS[0] + "tmp_graphs")
                 os.chmod(graph_dir + graph_file, S_IRWXU | S_IRWXG | S_IRWXO)
 
-            c.update({"graph_file": graph_file})
-            c.update(csrf(request))
+            c.update({"show_sample": show_sample,
+					  "show_loopassignment": show_loopassignment,
+					  "show_apiassignment": show_apiassignment,
+					  "show_hashassignment": show_hashassignment,
+					  "show_groupassignment": show_groupassignment,
+					  "graph_file": graph_file})
             return render_to_response("show.html", c)

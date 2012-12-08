@@ -54,19 +54,19 @@ void ModuleManager::loadAnalyze()
     m_analyzeModules[loopDetector->name()] = loopDetector;
 }
 
-QMap<QString, AbstractInput *> *ModuleManager::input()
+InputMap *ModuleManager::input()
 {
 	loadInput();
     return &m_inputModules;
 }
 
-QMap<QString, AbstractOutput *> *ModuleManager::output()
+OutputMap *ModuleManager::output()
 {
 	loadOutput();
     return &m_outputModules;
 }
 
-QMap<QString, AbstractAnalyze *> *ModuleManager::analyze()
+AnalyzeMap *ModuleManager::analyze()
 {
 	loadAnalyze();
     return &m_analyzeModules;

@@ -136,9 +136,9 @@ int CoreSystem::run()
 cleanup:
 			/* clean up */
 			delete s;
-			++m_processedCounter;
             LOG("sample processing finished\n");
 		}
+		++m_processedCounter;
         LOG("file processing finished\n");
 		dbUpdateSystemInfo();
 	} /* while */
@@ -159,6 +159,9 @@ cleanup:
 
 void CoreSystem::makeGroups()
 {
+	SystemLogger::instance()->setStatus("making groups");
+	dbUpdateSystemInfo();
+
 	QList<QString>::iterator it;
 	bool ret = false;
 	for(it = m_outputMethods.begin(); it != m_outputMethods.end(); ++it) {
@@ -175,7 +178,8 @@ void CoreSystem::makeGroups()
 		LOG_ERROR("FAILURE\n\n");
 		return;
 	}
-
+	SystemLogger::instance()->setStatus("idle");
+	dbUpdateSystemInfo();
 	LOG("SUCCESS\n\n");
 }
 
@@ -258,53 +262,33 @@ bool CoreSystem::readOptions()
 
 bool CoreSystem::dbUpdateSystemInfo()
 {
-	QSqlQuery deleteQuery(DatabaseManager::instance()->database());
-	deleteQuery.prepare("DELETE FROM options_systeminfo");
-	if(!DatabaseManager::instance()->exec(&deleteQuery)) {
-		SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
-		LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
+	if(!DatabaseManager::instance()->clearTable("options_systeminfo"))
 		return false;
-	}
 
 	/* get next id number */
-	QSqlQuery seqQuery(DatabaseManager::instance()->database());
-	seqQuery.prepare("SELECT nextval('options_systeminfo_id_seq')");
-	if(!DatabaseManager::instance()->exec(&seqQuery)) {
-		SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
-		LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
-		return false;
-	}
-	seqQuery.next();
-	int id = seqQuery.record().value("nextval").toInt();
+	int id = DatabaseManager::instance()->sequenceValue("options_systeminfo_id_seq");
 
 	QSqlQuery insertQuery(DatabaseManager::instance()->database());
-	insertQuery.prepare("INSERT INTO options_systeminfo VALUES (?, ?, ?, ?, ?, ?, ?)");
+	insertQuery.prepare("INSERT INTO options_systeminfo VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 	insertQuery.addBindValue(id);
-	insertQuery.addBindValue(version().toStdString().c_str());
-	insertQuery.addBindValue(status().toStdString().c_str());
-	insertQuery.addBindValue(error().toStdString().c_str());
+	insertQuery.addBindValue(version());
+	insertQuery.addBindValue(status());
+	insertQuery.addBindValue(error());
 	insertQuery.addBindValue(progress());
 	insertQuery.addBindValue(exploitsNum());
 	insertQuery.addBindValue(samplesNum());
-	if(!DatabaseManager::instance()->exec(&insertQuery)) {
-		SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
-		LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
+	insertQuery.addBindValue(filesNum());
+	if(!DatabaseManager::instance()->exec(&insertQuery))
 		return false;
-	}
 
 	return true;
 }
 
 bool CoreSystem::dbRemovePendingFiles()
 {
-	/* remove file */
-	QSqlQuery deleteQuery(DatabaseManager::instance()->database());
-	deleteQuery.prepare("DELETE FROM options_pendingfile");
-	if(!DatabaseManager::instance()->exec(&deleteQuery)) {
-		SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
-		LOG_ERROR("%s\n", DatabaseManager::instance()->lastError().toStdString().c_str());
+	/* remove all files */
+	if(!DatabaseManager::instance()->clearTable("options_pendingfile"))
 		return false;
-	}
 
 	return true;
 }
@@ -319,7 +303,7 @@ bool CoreSystem::load(QString file)
     QString fileType = fileAnalyser.analyze(file);
     LOG("fileType: [%s]\n", fileType.toStdString().c_str());
 
-    QMap<QString, AbstractInput *>::iterator it;
+	InputMap::iterator it;
     for(it = m_inputMods->begin(); it != m_inputMods->end(); ++it) {
         if(fileType == it.value()->type()) {
 			moduleFound = true;

@@ -8,9 +8,12 @@
 #define ABSTRACTANALYZE_H_
 
 #include <QMap>
+#include <QtSql>
 
 #include <modules/AbstractModule.h>
 #include <core/ExploitSample.h>
+#include <core/ExploitInfo.h>
+#include <core/DatabaseManager.h>
 
 class AbstractAnalyze: public AbstractModule {
 public:
@@ -23,6 +26,7 @@ public:
 	}
 
 	virtual bool perform(ExploitSample *sample) = 0;
+	virtual bool exportToDatabase(ExploitSample *sample, int sampleId) = 0;
 
 protected:
     static int m_nextID;

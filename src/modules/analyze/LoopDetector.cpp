@@ -20,7 +20,7 @@ bool LoopDetector::perform(ExploitSample *sample)
     LoopContainer *loops;
     LoopVec *vec;
 	instr_vertex *iv;
-    QMap<QString, QString> *m;
+	TraitsEntry *m;
 	InstructionSplitter splitter;
     QString vertexes;
 	for(it = g->begin(); it != g->end(); ++it) {
@@ -33,7 +33,7 @@ bool LoopDetector::perform(ExploitSample *sample)
         for(int i = 0; i < loops->size(); ++i) {
 			vec = (*loops)[i];
 			iv = (instr_vertex *) vec->front()->data;
-            m = new QMap<QString, QString>();
+			m = new TraitsEntry();
 
 			/* start address */
             (*m)["start"] = Toolbox::itos(iv->eip, 16);
@@ -92,5 +92,60 @@ bool LoopDetector::perform(ExploitSample *sample)
 	}
 
     LOG("SUCCESS\n\n");
+	return true;
+}
+
+bool LoopDetector::exportToDatabase(ExploitSample *sample, int sampleId)
+{
+	/* get sample traits */
+	TraitsMap *traits = sample->info()->traits();
+	TraitsMap::iterator it;;
+
+	/* for all api traits in sample*/
+	for(it = traits->find(m_traitName); it != traits->end() && it.key() == m_traitName; ++it) {
+		/* check if syscall/DLL is unique */
+		QString start = it.value()->value("start");
+		QString size = it.value()->value("size");
+		QString vertexes = it.value()->value("vertexes");
+		QString iterations = it.value()->value("iterations");
+		QString hash = it.value()->value("hash");
+		QSqlQuery selectQuery(DatabaseManager::instance()->database());
+		selectQuery.prepare("SELECT * FROM analyze_loop WHERE hash = ?");
+		selectQuery.addBindValue(hash);
+		if(!DatabaseManager::instance()->exec(&selectQuery))
+			return false;
+
+		int loopId;
+		/* if entry in database exists */
+		if(selectQuery.next())
+			loopId = selectQuery.record().value("id").toInt();
+		else {
+			/* get next api_id number */
+			loopId = DatabaseManager::instance()->sequenceValue("analyze_loop_id_seq");
+
+			/* insert data */
+			QSqlQuery insertQuery(DatabaseManager::instance()->database());
+			insertQuery.prepare("INSERT INTO analyze_loop VALUES (?, ?, ?, ?, ?, ?, ?)");
+			insertQuery.addBindValue(loopId);
+			insertQuery.addBindValue(hash);
+			insertQuery.addBindValue(iterations);
+			insertQuery.addBindValue(size);
+			insertQuery.addBindValue(start);
+			insertQuery.addBindValue(vertexes);
+			insertQuery.addBindValue("");
+			if(!DatabaseManager::instance()->exec(&insertQuery))
+				return false;
+		}
+
+		/* add assignment to sample */
+		QSqlQuery insert2Query(DatabaseManager::instance()->database());
+		insert2Query.prepare("INSERT INTO analyze_loopassignment VALUES (DEFAULT, ?, ?)");
+		insert2Query.addBindValue(loopId);
+		insert2Query.addBindValue(sampleId);
+		if(!DatabaseManager::instance()->exec(&insert2Query))
+			return false;
+	}
+
+	LOG("SUCCESS\n\n");
 	return true;
 }

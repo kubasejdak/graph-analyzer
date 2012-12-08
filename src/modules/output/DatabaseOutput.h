@@ -14,6 +14,7 @@
 
 #include "AbstractOutput.h"
 #include <core/SystemLogger.h>
+#include <core/ExploitInfo.h>
 #include <core/Options.h>
 #include <core/DatabaseManager.h>
 #include <modules/ModuleManager.h>
@@ -24,11 +25,9 @@ public:
     virtual ~DatabaseOutput() {}
 
 	virtual bool generateOutput(ExploitSample *sample);
-
 	bool makeGroups(int resemblenceLevel);
 
 private:
-    void traitQuery(QSqlQuery *query, QString table, QMap<QString, QString> *v, int sample_id);
     bool checkDuplicate(ExploitInfo *info);
 
 	/* group, resemblence rate */

@@ -18,7 +18,7 @@
 						<b>Hash: </b>
 					</div>
 					<div class="span2">
-						{{ show_hash.hash }}
+						{{ show_hashassignment.hash.hash }}
 					</div>
 				</p>
 			</div>
@@ -61,7 +61,7 @@
 				</p>
 			</div>
 			<div class="tab-pane" id="loops_tab">
-				{% for loop in show_loop %}
+				{% for loopassignment in show_loopassignment %}
 				<p>
 					<div class="span2">
 						<b>Hash: </b></br>
@@ -71,25 +71,25 @@
 						<b>Vertexes: </b></br>
 					</div>
 					<div class="span8">
-						{{ loop.hash }}</br>
-						{{ loop.iterations }}</br>
-						{{ loop.size }}</br>
-						{{ loop.start }}</br>
-						{{ loop.vertexes }}</br></br></br>
+						{{ loopassignment.loop.hash }}</br>
+						{{ loopassignment.loop.iterations }}</br>
+						{{ loopassignment.loop.size }}</br>
+						{{ loopassignment.loop.start }}</br>
+						{{ loopassignment.loop.vertexes }}</br></br></br>
 					</div>
 				</p>
 				{% endfor %}
 			</div>
 			<div class="tab-pane" id="api_tab">
-				{% for api in show_api %}
+				{% for apiassignment in show_apiassignment %}
 				<p>
 					<div class="span2">
 						<b>Syscall: </b></br>
 						<b>DLL: </b></br>
 					</div>
 					<div class="span8">
-						{{ api.syscall }}</br>
-						{{ api.dll }}</br></br>
+						{{ apiassignment.api.syscall }}</br>
+						{{ apiassignment.api.dll }}</br></br>
 					</div>
 				</p>
 				{% endfor %}

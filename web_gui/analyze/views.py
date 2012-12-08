@@ -52,6 +52,11 @@ def show_analyze(request):
 	pending_files = PendingFile.objects.all()
 	systemInfo_list = SystemInfo.objects.all()
 	info = systemInfo_list[0]
-	c.update({"error": info.error, "status": info.status, "pending_files": pending_files})
-	c.update({"progress": info.progress, "exploits": info.exploits_num, "samples": info.samples_num})
+	c.update({"error": info.error,
+			  "status": info.status,
+			  "pending_files": pending_files,
+			  "progress": info.progress,
+			  "exploits": info.exploits_num,
+			  "samples": info.samples_num,
+			  "files": info.files_num})
 	return render_to_response("analyze.html", c)

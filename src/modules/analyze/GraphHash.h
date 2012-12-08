@@ -18,6 +18,7 @@ public:
     virtual ~GraphHash() {}
 
 	virtual bool perform(ExploitSample *sample);
+	virtual bool exportToDatabase(ExploitSample *sample, int sampleId);
 };
 
 #endif /* GRAPHHASH_H_ */

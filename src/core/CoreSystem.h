@@ -72,8 +72,8 @@ private:
 	/* data members */
     EmulationSystem m_emuSystem;
     AnalysisSystem m_anaSystem;
-    QMap<QString, AbstractInput *> *m_inputMods;
-    QMap<QString, AbstractOutput *> *m_outputMods;
+	InputMap *m_inputMods;
+	OutputMap *m_outputMods;
 
     QList<ExploitSample *> m_samples;
     QList<QString> m_pendingFiles;

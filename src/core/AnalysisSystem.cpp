@@ -37,7 +37,7 @@ bool AnalysisSystem::analyze()
 	}
 
 	bool status;
-    QMap<QString, AbstractAnalyze *>::iterator it;
+	AnalyzeMap::iterator it;
     for(it = m_analyzeModules->begin(); it != m_analyzeModules->end(); ++it) {
         status = it.value()->perform(m_sample);
         if(!status) {

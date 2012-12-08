@@ -26,13 +26,49 @@ DatabaseManager::~DatabaseManager()
 
 bool DatabaseManager::exec(QSqlQuery *query) {
     if(!query->exec()) {
-        m_lastError = QString("error while executing query: %s").arg(query->lastError().databaseText());
+		m_lastError = QString("error while executing query: %1").arg(query->lastError().databaseText());
+		SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
+		LOG_ERROR("query: [%s]\n", query->executedQuery().toStdString().c_str());
         LOG_ERROR("executing query failed: [%s]\n", query->lastError().databaseText().toStdString().c_str());
         LOG_ERROR("FAILURE\n\n");
         return false;
     }
 
     return true;
+}
+
+bool DatabaseManager::clearTable(QString table)
+{
+	LOG("clearing table: [%s]\n", table.toStdString().c_str());
+
+	/* delete all group assignments */
+	QSqlQuery deleteQuery(DatabaseManager::instance()->database());
+	QString q = QString("DELETE FROM %1").arg(table);
+	deleteQuery.prepare(q);
+	if(!DatabaseManager::instance()->exec(&deleteQuery)) {
+		LOG_ERROR("FAILURE\n\n");
+		return false;
+	}
+
+	return true;
+}
+
+int DatabaseManager::sequenceValue(QString table)
+{
+	LOG("getting next sequence value for table: [%s]\n", table.toStdString().c_str());
+
+	/* get next sample_id number */
+	QSqlQuery seqQuery(DatabaseManager::instance()->database());
+	seqQuery.prepare("SELECT nextval(?)");
+	seqQuery.addBindValue(table);
+	if(!DatabaseManager::instance()->exec(&seqQuery)) {
+		LOG_ERROR("FAILURE\n\n");
+		return -1;
+	}
+	seqQuery.next();
+	int seqValue = seqQuery.record().value("nextval").toInt();
+
+	return seqValue;
 }
 
 QSqlDatabase &DatabaseManager::database()

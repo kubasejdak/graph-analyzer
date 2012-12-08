@@ -17,7 +17,7 @@ bool GraphHash::perform(ExploitSample *sample)
 {
     Graph *g = sample->graph();
 	Graph::graph_iterator it;
-    QMap<QString, QString> *m = new QMap<QString, QString>();
+	TraitsEntry *m = new TraitsEntry();
     QString graphString = "";
 	InstructionSplitter splitter;
 	instr_vertex *iv;
@@ -38,5 +38,52 @@ bool GraphHash::perform(ExploitSample *sample)
     sample->info()->setTrait(m_traitName, m);
 
     LOG("SUCCESS\n\n");
+	return true;
+}
+
+bool GraphHash::exportToDatabase(ExploitSample *sample, int sampleId)
+{
+	/* get sample traits */
+	TraitsMap *traits = sample->info()->traits();
+	TraitsMap::iterator it;
+
+	/* for all api traits in sample*/
+	for(it = traits->find(m_traitName); it != traits->end() && it.key() == m_traitName; ++it) {
+		/* check if syscall/DLL is unique */
+		QString hash = it.value()->value("hash");
+		QSqlQuery selectQuery(DatabaseManager::instance()->database());
+		selectQuery.prepare("SELECT * FROM analyze_hash WHERE hash = ?");
+		selectQuery.addBindValue(hash);
+		if(!DatabaseManager::instance()->exec(&selectQuery))
+			return false;
+
+		int hashId;
+		/* if entry in database exists */
+		if(selectQuery.next())
+			hashId = selectQuery.record().value("id").toInt();
+		else {
+			/* get next api_id number */
+			hashId = DatabaseManager::instance()->sequenceValue("analyze_hash_id_seq");
+
+			/* insert data */
+			QSqlQuery insertQuery(DatabaseManager::instance()->database());
+			insertQuery.prepare("INSERT INTO analyze_hash VALUES (?, ?)");
+			insertQuery.addBindValue(hashId);
+			insertQuery.addBindValue(hash);
+			if(!DatabaseManager::instance()->exec(&insertQuery))
+				return false;
+		}
+
+		/* add assignment to sample */
+		QSqlQuery insert2Query(DatabaseManager::instance()->database());
+		insert2Query.prepare("INSERT INTO analyze_hashassignment VALUES (DEFAULT, ?, ?)");
+		insert2Query.addBindValue(hashId);
+		insert2Query.addBindValue(sampleId);
+		if(!DatabaseManager::instance()->exec(&insert2Query))
+			SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
+			return false;
+	}
+
+	LOG("SUCCESS\n\n");
 	return true;
 }

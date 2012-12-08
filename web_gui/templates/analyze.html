@@ -27,14 +27,15 @@
 </p>
   
 <div class="well">
-	Overal progress:<br/>
+	Analysis progress:<br/>
 	<div class="progress progress-striped active">
 		<div class="bar" style="width: {{ progress }}%;">{{ progress }} %</div>
    </div>
    <div class="row-fluid">
 		<div class="span1">
 			Exploits number:</br>
-			Samples number:</br></br>
+			Samples number:</br>
+			Loaded files:</br></br>
 			
 			<b>Status: </b></br>
 			<b>Last error: </b>
@@ -42,14 +43,15 @@
 
 		<div class="span4">
 			<b>{{ exploits }}</b></br>
-			<b>{{ samples }}</b></br></br>
+			<b>{{ samples }}</b></br>
+			<b>{{ files }}</b></br></br>
 			
 			<span class="label label-info">{{ status }}</span></br>
 			{% if error == "no error" %}
 			<span class="label label-success">{{ error }}</span>
 			{% else %}
 			<span class="label label-important">{{ error }}</span>
-	{% endif %}
+			{% endif %}
 		</div>
 	</div>
 </div>

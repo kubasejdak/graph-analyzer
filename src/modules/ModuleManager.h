@@ -22,6 +22,10 @@
 #include <modules/analyze/LoopDetector.h>
 #include <modules/analyze/GraphHash.h>
 
+typedef QMap<QString, AbstractInput *> InputMap;
+typedef QMap<QString, AbstractOutput *> OutputMap;
+typedef QMap<QString, AbstractAnalyze *> AnalyzeMap;
+
 class ModuleManager {
 public:
 	virtual ~ModuleManager();
@@ -31,9 +35,9 @@ public:
         return &obj;
 	}
 
-    QMap<QString, AbstractInput *> *input();
-    QMap<QString, AbstractOutput *> *output();
-    QMap<QString, AbstractAnalyze *> *analyze();
+	InputMap *input();
+	OutputMap *output();
+	AnalyzeMap *analyze();
 
     QList<ModuleInfo *> listInput();
     QList<ModuleInfo *> listOutput();
@@ -50,9 +54,9 @@ private:
 	void removeOutput();
 	void removeAnalyze();
 
-    QMap<QString, AbstractInput *> m_inputModules;
-    QMap<QString, AbstractOutput *> m_outputModules;
-    QMap<QString, AbstractAnalyze *> m_analyzeModules;
+	InputMap m_inputModules;
+	OutputMap m_outputModules;
+	AnalyzeMap m_analyzeModules;
 };
 
 #endif /* MODULEMANAGER_H_ */

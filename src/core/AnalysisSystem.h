@@ -25,7 +25,7 @@ private:
 	void loadModules();
 
     ExploitSample *m_sample;
-    QMap<QString, AbstractAnalyze *> *m_analyzeModules;
+	AnalyzeMap *m_analyzeModules;
 };
 
 #endif /* ANALYSISSYSTEM_H_ */

@@ -17,6 +17,7 @@ public:
     virtual ~SyscallAnalyze() {}
 
 	virtual bool perform(ExploitSample *sample);
+	virtual bool exportToDatabase(ExploitSample *sample, int sampleId);
 };
 
 #endif /* SYSCALLANALYZE_H_ */

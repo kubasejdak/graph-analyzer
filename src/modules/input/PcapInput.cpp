@@ -9,7 +9,7 @@
 PcapInput::PcapInput()
 {
     m_name = "PcapInput";
-    m_type = "pcap";
+	m_type = "application/vnd.tcpdump.pcap";
 	m_description = "Loads exploit from pcap files.";
 }
 

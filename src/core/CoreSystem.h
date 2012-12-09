@@ -22,6 +22,7 @@
 #include <core/SystemLogger.h>
 #include <core/version.h>
 #include <core/Toolbox.h>
+#include <core/GroupManager.h>
 #include <modules/input/AbstractInput.h>
 #include <modules/output/AbstractOutput.h>
 #include <modules/ModuleManager.h>
@@ -34,7 +35,7 @@ public:
 	/* basic sample operation */
     int addFile(QString file);
     int run();
-	void makeGroups();
+	void remakeGroups();
 	void clear();
 
 	/* status and error */
@@ -61,10 +62,11 @@ public:
 
 private:
 	/* function members */
-    bool load(QString file);
+	int load(QString file);
 	bool emulate(ExploitSample *s);
 	bool analyze(ExploitSample *s);
 	bool makeOutput(ExploitSample *s);
+	void processGroup(ExploitSample *s);
 
 	void loadModules();
 	void clearSamples();
@@ -84,6 +86,8 @@ private:
 	int m_sampleCounter;		/* number of files that were loaded */
 	int m_exploitCounter;		/* number of detected exploits */
 	int m_errorCounter;			/* number od errors */
+
+	GroupManager m_groupManager;
 };
 
 #endif /* CORESYSTEM_H_ */

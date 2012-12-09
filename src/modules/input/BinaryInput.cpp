@@ -9,7 +9,7 @@
 BinaryInput::BinaryInput()
 {
     m_name = "BinaryInput";
-    m_type = "binary";
+	m_type = "application/octet-stream";
 	m_description = "Loads exploit from binary files.";
 }
 

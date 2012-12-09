@@ -15,6 +15,7 @@ set(CORE_SRC
 	SystemLogger.cpp
 	Options.cpp
 	DatabaseManager.cpp
-    Toolbox.cpp)
+    Toolbox.cpp
+    GroupManager.cpp)
 
 add_library(core ${CORE_SRC})

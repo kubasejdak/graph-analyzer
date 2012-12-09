@@ -4,10 +4,12 @@
 <div class="well">
 	<form action="" method="post">{% csrf_token %}
 		<div class="row-fluid">
-			<div class="span4">
-				<table>{{ form.as_table }}</table>
+			<div class="span8">
+				<form method="post" action="">{% csrf_token %}
+					<input class="span3" style="width:100%" name="file" lang="pl" placeholder="Type file or directory..."></input>
+				</form>
 			</div>
-			<div class="span8" align="right">
+			<div class="span4">
 				<button class="btn" name="add">Add</button>
 				<button class="btn btn-danger" name="clear"><i class="icon-trash icon-white"></i> Clear</button>
 				<button class="btn btn-primary" name="analyze">Analyze</button>

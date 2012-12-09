@@ -5,17 +5,13 @@ from django.template import RequestContext
 from django.core.context_processors import csrf
 from subprocess import Popen
 
-from analyze.forms import AnalyzeForm
 from options.models import PendingFile, SystemInfo
 
 def show_analyze(request):
 	# get system info (only one object should exists)
 	systemInfo_list = SystemInfo.objects.all()
 	info = systemInfo_list[0]
-
-	# create form and update html content	
-	form = AnalyzeForm()
-	c = RequestContext(request, {"version": info.version, "form": form, "analyze": True})
+	c = RequestContext(request, {"version": info.version, "analyze": True})
 	c.update(csrf(request))
 	
 	# run system if "Analyze" clicked
@@ -26,12 +22,9 @@ def show_analyze(request):
 		
 		# add filename to database
 		if "add" in request.POST:
-			form = AnalyzeForm(request.POST)
-			if form.is_valid():
-				cd = form.cleaned_data
-				filename = PendingFile()
-				filename.name = cd["file"]
-				filename.save()
+			filename = PendingFile()
+			filename.name = request.POST["file"]
+			filename.save()
 		
 		# run analysis
 		if "analyze" in request.POST and PendingFile.objects.count() > 0:

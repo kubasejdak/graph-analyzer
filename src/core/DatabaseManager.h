@@ -7,6 +7,7 @@
 
 #include <core/Options.h>
 #include <core/SystemLogger.h>
+#include <core/ExploitSample.h>
 
 class DatabaseManager {
 public:
@@ -21,6 +22,8 @@ public:
     bool exec(QSqlQuery *query);
 	bool clearTable(QString table);
 	int sequenceValue(QString table);
+	int sampleId(ExploitSample *s);
+	int groupId(ExploitSample *s);
 
 	/* utility */
     QSqlDatabase &database();

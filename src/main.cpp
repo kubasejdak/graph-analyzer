@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
     }
 	/* regroup samples */
 	if(vm.count("regroup")) {
-		system.makeGroups();
+		system.remakeGroups();
 		return 0;
 	}
 	/* console */

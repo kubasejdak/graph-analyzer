@@ -71,6 +71,32 @@ int DatabaseManager::sequenceValue(QString table)
 	return seqValue;
 }
 
+int DatabaseManager::sampleId(ExploitSample *s)
+{
+	QSqlQuery idQuery(DatabaseManager::instance()->database());
+	idQuery.prepare("SELECT * FROM analyze_sample WHERE graph_name = ?");
+	idQuery.addBindValue(s->info()->graphName());
+	if(!DatabaseManager::instance()->exec(&idQuery))
+		return -1;
+
+	idQuery.next();
+	int id = idQuery.record().value("id").toInt();
+	return id;
+}
+
+int DatabaseManager::groupId(ExploitSample *s)
+{
+	QSqlQuery idQuery(DatabaseManager::instance()->database());
+	idQuery.prepare("SELECT * FROM analyze_samplegroup WHERE leader_id = ?");
+	idQuery.addBindValue(sampleId(s));
+	if(!DatabaseManager::instance()->exec(&idQuery))
+		return -1;
+
+	idQuery.next();
+	int id = idQuery.record().value("id").toInt();
+	return id;
+}
+
 QSqlDatabase &DatabaseManager::database()
 {
     return m_db;

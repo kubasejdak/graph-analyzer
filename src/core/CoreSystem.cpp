@@ -85,9 +85,15 @@ int CoreSystem::run()
 
 		/* load */
         LOG("loading\n");
-        if(!load(currentFile)) {
-            LOG_ERROR("loading file [%s] -> [%s]\n", currentFile.toStdString().c_str(), error().toStdString().c_str());
-			++m_errorCounter;
+		int loadError = load(currentFile);
+		if(loadError) {
+			if(loadError == -1) {
+				LOG_ERROR("loading file [%s] -> [%s]\n", currentFile.toStdString().c_str(), error().toStdString().c_str());
+				++m_errorCounter;
+			}
+			else
+				LOG_ERROR("loading file [%s] -> [no appropriate input module]\n", currentFile.toStdString().c_str());
+
 			++m_processedCounter;
 			continue;
 		}
@@ -133,6 +139,8 @@ int CoreSystem::run()
 				goto cleanup;
 			}
 
+			m_groupManager.processOneSampleGroup(DatabaseManager::instance()->sampleId(s), DatabaseManager::instance()->groupId(s), Options::instance()->RESEMBLENCE_LEVEL);
+
 cleanup:
 			/* clean up */
 			delete s;
@@ -145,41 +153,31 @@ cleanup:
 	if(m_errorCounter)
 		LOG("some errors occured, errorCounter: [%d]", m_errorCounter);
 
-	LOG("making groups\n");
-	SystemLogger::instance()->setStatus("making groups");
+	SystemLogger::instance()->setStatus("processing groups");
 	dbUpdateSystemInfo();
-	makeGroups();
-	LOG("making groups finished\n");
 
-    LOG("SUCCESS\n\n");
+	m_groupManager.countGroupsMembers();
+	m_groupManager.activateUniqueGroups();
+
 	SystemLogger::instance()->setStatus("idle");
 	dbUpdateSystemInfo();
+
+	LOG("SUCCESS\n\n");
 	return m_errorCounter;
 }
 
-void CoreSystem::makeGroups()
+void CoreSystem::remakeGroups()
 {
 	SystemLogger::instance()->setStatus("making groups");
 	dbUpdateSystemInfo();
 
-	QList<QString>::iterator it;
-	bool ret = false;
-	for(it = m_outputMethods.begin(); it != m_outputMethods.end(); ++it) {
-		if((*m_outputMods)[*it]->moduleInfo()->m_name == "DatabaseOutput") {
-			DatabaseOutput *dbMod = dynamic_cast<DatabaseOutput *>((*m_outputMods)[*it]);
-			ret = dbMod->makeGroups(Options::instance()->RESEMBLENCE_LEVEL);
-			break;
-		}
-	}
+	m_groupManager.processAllSampleGroups(Options::instance()->RESEMBLENCE_LEVEL);
+	m_groupManager.countGroupsMembers();
+	m_groupManager.activateUniqueGroups();
 
-	if(!ret) {
-		SystemLogger::instance()->setError("making groups failed");
-		LOG_ERROR("making groups error\n");
-		LOG_ERROR("FAILURE\n\n");
-		return;
-	}
 	SystemLogger::instance()->setStatus("idle");
 	dbUpdateSystemInfo();
+
 	LOG("SUCCESS\n\n");
 }
 
@@ -293,7 +291,7 @@ bool CoreSystem::dbRemovePendingFiles()
 	return true;
 }
 
-bool CoreSystem::load(QString file)
+int CoreSystem::load(QString file)
 {
     QList<ExploitSample *> q;
 	ExploitSample *s;
@@ -308,8 +306,10 @@ bool CoreSystem::load(QString file)
         if(fileType == it.value()->type()) {
 			moduleFound = true;
             bool ok = it.value()->loadInput(file, &q);
-            if(!ok)
-                return false;
+			if(!ok) {
+				SystemLogger::instance()->setError("loading file failed");
+				return -1;
+			}
 
 			/* process all returned samples */
             while(!q.isEmpty()) {
@@ -324,13 +324,12 @@ bool CoreSystem::load(QString file)
 
 	if(moduleFound) {
         LOG("SUCCESS\n\n");
-		return true;
+		return 0;
 	}
 
-    SystemLogger::instance()->setError("no appropriate input module");
     LOG_ERROR("no appropriate input module\n");
     LOG_ERROR("FAILUR\n\n");
-	return false;
+	return 1;
 }
 
 bool CoreSystem::emulate(ExploitSample *s)

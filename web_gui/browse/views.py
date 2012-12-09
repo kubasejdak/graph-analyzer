@@ -17,7 +17,7 @@ def show_browse(request):
     c = RequestContext(request, {"version": info.version, "browse": True})
     c.update(csrf(request))
 
-    # ===================================== GEZT =====================================
+    # ===================================== GET =====================================
 
     if request.method == "GET":
         if "search_sample" in request.GET:
@@ -112,6 +112,7 @@ def show_browse(request):
             show_apiassignment = APIAssignment.objects.filter(sample = request.POST["show_sample"])
             show_hashassignment = HashAssignment.objects.get(sample = request.POST["show_sample"])
             show_groupassignment = GroupAssignment.objects.filter(member = request.POST["show_sample"]).order_by("-resemblence_rate")
+            show_group = SampleGroup.objects.get(leader = request.POST["show_sample"])
             
             # get graph picture
             graph_source = show_sample.graph_name
@@ -127,7 +128,8 @@ def show_browse(request):
 					  "show_hashassignment": show_hashassignment,
 					  "show_groupassignment": show_groupassignment,
 					  "graph_file": graph_file,
-					  "general_tab": "active"})
+					  "general_tab": "active",
+					  "show_group": show_group})
             return render_to_response("show.html", c)
         
         if "show_group" in request.POST:
@@ -227,5 +229,7 @@ def show_browse_groups(request):
 					  "show_hashassignment": show_hashassignment,
 					  "show_groupassignment": show_groupassignment,
 					  "graph_file": graph_file,
-					  "general_tab": "active"})
+					  "general_tab": "active",
+					  "browse_groups": False,
+					  "browse": True})
             return render_to_response("show.html", c)

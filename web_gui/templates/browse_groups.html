@@ -18,7 +18,7 @@
 			<td>{{ group.id }}</td>
 			<td>{{ group.leader.name }}</td>
 			<td>{{ group.members_num }}</td>
-			<td><form method="post">{% csrf_token %}<button class="btn" name="show_group" value={{ group.id }}>Show</button></form></td>
+			<td><a href="/group/?groupId={{ group.id }}"><span class="label label-info">Show</span></a></td>
 		</tr>
 		{% endfor %}
 	</tbody>

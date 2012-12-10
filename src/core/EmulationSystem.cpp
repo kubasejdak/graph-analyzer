@@ -219,7 +219,7 @@ bool EmulationSystem::emulate()
 
     QFileInfo graphFile(m_sample->info()->name());
     QString graphName;
-    if(m_sample->info()->fileType() == "pcap")
+	if(m_sample->info()->fileType() == "application/vnd.tcpdump.pcap")
 		graphName = QString("%1/%2.png").arg(Options::instance()->GRAPHS_DIR).arg(Toolbox::pcapFlowBasename(m_sample->info()->name()));
     else
 		graphName = QString("%1/%2.png").arg(Options::instance()->GRAPHS_DIR).arg(graphFile.baseName());

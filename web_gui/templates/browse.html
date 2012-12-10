@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<form class="well form-search">
+<form method="post" class="well form-search">{% csrf_token %}
 	<div class="row-fluid">
 		<div class="span8">
 			<input type="text" style="width:100%" class="span3 search-query" name="value" placeholder="Search..."/>
@@ -16,8 +16,8 @@
 				<option>File type</option>
 				<option>File size</option>
 			</select>
-			<button class="btn" name="search_sample">Search</button>
-			<button class="btn" name="sort_sample">Sort by</button>
+			<button class="btn" name="search">Search</button>
+			<button class="btn" name="sort">Sort by</button>
 		</div>
 	</div>
 </form>
@@ -49,7 +49,7 @@
 			<td>{{ sample.file_type }}</td>
 			<td>{{ sample.file_size }}</td>
 			<td>{{ sample.shellcode_offset }}</td>
-			<td><form method="post">{% csrf_token %}<button class="btn" name="show_sample" value={{ sample.id }}>Show</button></form></td>
+			<td><a href="/sample/?sampleId={{ sample.id }}"><span class="label label-info">Show</span></a></td>
 		</tr>
 		{% endfor %}
 	</tbody>

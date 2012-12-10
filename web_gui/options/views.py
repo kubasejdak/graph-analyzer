@@ -5,7 +5,7 @@ from django.core.context_processors import csrf
 from options.forms import OptionsForm
 from options.models import Option, SystemInfo, Feedback
 
-def show_home(request):
+def render_home(request):
     # get system info (only one object should exists)
     systemInfo_list = SystemInfo.objects.all()
     info = systemInfo_list[0]

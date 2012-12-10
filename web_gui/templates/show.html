@@ -13,6 +13,14 @@
 			<li><a href="#compare_tab" data-toggle="tab">Compare</a></li>
 		</ul>
 		<div class="tab-content">
+			{% if dataSaved %}
+			<div class="span11">
+				<div class="alert alert-success">
+					<button type="button" class="close" data-dismiss="alert">×</button>
+					<strong>Success!</strong> Comments have been saved.
+				</div>
+			</div>
+			{% endif %}
 			<div class="tab-pane {{ hash_tab }}" id="hash_tab">
 				<p>
 					<div class="span2">
@@ -24,14 +32,6 @@
 				</p>
 			</div>
 			<div class="tab-pane {{ general_tab }}" id="general_tab">
-				{% if is_message %}
-				<div class="span11">
-					<div class="alert alert-success">
-						<button type="button" class="close" data-dismiss="alert">×</button>
-						<strong>Success!</strong> Comments have been saved.
-					</div>
-				</div>
-				{% endif %}
 				<p>
 					<div class="span2">
 						<b>Id: </b></br>
@@ -54,22 +54,14 @@
 						{{ show_sample.file_size }}</br>
 						{{ show_sample.shellcode_offset }}</br></br>
 						<form method="post" action="">{% csrf_token %}
-							<textarea name="comments" style="width:100%" rows="5">{{ show_sample.comment }}</textarea></br>
-							<button class="btn btn-primary" name="show_sample" value={{ show_sample.id }}>Save</button>
+							<textarea name="comment" style="width:100%" rows="5">{{ show_sample.comment }}</textarea></br>
+							<button class="btn btn-primary" name="saveSample" value={{ show_sample.id }}>Save</button>
 						</form>
 						</br></br>
 					</div>
 				</p>
 			</div>
 			<div class="tab-pane {{ loops_tab }}" id="loops_tab">
-				{% if is_loopmessage %}
-				<div class="span11">
-					<div class="alert alert-success">
-						<button type="button" class="close" data-dismiss="alert">×</button>
-						<strong>Success!</strong> Comments for loop have been saved.
-					</div>
-				</div>
-				{% endif %}
 				{% for loopassignment in show_loopassignment %}
 				<p>
 					<div class="span2">
@@ -86,8 +78,8 @@
 						{{ loopassignment.loop.start }}</br>
 						{{ loopassignment.loop.vertexes }}</br></br>
 						<form method="post" action="">{% csrf_token %}
-							<textarea name="loop_comments" style="width:100%" rows="5">{{ loopassignment.loop.comment }}</textarea></br>
-							<button class="btn btn-primary" name="save_loop" value={{ loopassignment.id }}>Save</button>
+							<textarea name="comment" style="width:100%" rows="5">{{ loopassignment.loop.comment }}</textarea></br>
+							<button class="btn btn-primary" name="saveLoop" value={{ loopassignment.loop.id }}>Save</button>
 						</form>
 						</br>
 					</div>
@@ -133,7 +125,7 @@
 								<td><font color="green"><b>{{ show_group.leader.name }}</b></font></td>
 								<td><font color="green"><b>---</b></font></td>
 								<td><font color="green"><b>{{ show_group.active }}</b></font></td>
-								<td><form method="post">{% csrf_token %}<button class="btn" name="show_group" value={{ show_group.id }}>Show</button></form></td>
+								<td><a href="/sample/?sampleId={{ show_group.id }}"><span class="label label-info">Show</span></a></td>
 							</tr>
 							{% for groupassignment in show_groupassignment %}
 							<tr>
@@ -142,7 +134,7 @@
 								<td>{{ groupassignment.group.leader.name }}</td>
 								<td>{{ groupassignment.resemblence_rate }} %</td>
 								<td>{{ groupassignment.group.active }}</td>
-								<td><form method="post">{% csrf_token %}<button class="btn" name="show_group" value={{ groupassignment.group.id }}>Show</button></form></td>
+								<td><a href="/sample/?sampleId={{ groupassignment.group.id }}"><span class="label label-info">Show</span></a></td>
 							</tr>
 							{% endfor %}
 						</tbody>
@@ -152,26 +144,16 @@
 			<div class="tab-pane {{ compare_tab }}" id="compare_tab">
 				<p>
 					<div class="span1">
-						<b>Compare with: </b></br>
+						<b>Compare with: </b>
 					</div>
-					<div class="span2">
-						<form method="post" action="">{% csrf_token %}
-							<select name="filter" size="1">
-								<option>Id</option>
-								<option>Name</option>
-							</select>
-						</form>
-					</div>
-					<div class="span7">
-						<form method="post" action="">{% csrf_token %}
-							<input class="span3" style="width:100%" name="compare_sample" lang="pl" placeholder="Type here..."></input>
-						</form>
-					</div>
-					<div class="span1">
-						<form method="post" action="">{% csrf_token %}
+					<form method="post" action="">{% csrf_token %}
+						<div class="span2">
+							<input class="span3" style="width:100%" name="compareWith" lang="pl" placeholder="Type sample Id here..."></input>
+						</div>
+						<div class="span1">
 							<button class="btn btn-primary" name="compare" value={{ show_sample.id }}>Compare</button>
-						</form>
-					</div>
+						</div>
+					</form>
 				</p>
 			</div>
 		</div>

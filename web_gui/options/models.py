@@ -9,6 +9,7 @@ class SystemInfo(models.Model):
     exploits_num = models.IntegerField()
     samples_num = models.IntegerField()
     files_num = models.IntegerField()
+    errors_num = models.IntegerField()
 
 # Options table
 class Option(models.Model):

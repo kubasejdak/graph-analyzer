@@ -260,24 +260,48 @@ bool CoreSystem::readOptions()
 
 bool CoreSystem::dbUpdateSystemInfo()
 {
-	if(!DatabaseManager::instance()->clearTable("options_systeminfo"))
+	/* check for info */
+	QSqlQuery checkQuery(DatabaseManager::instance()->database());
+	checkQuery.prepare("SELECT * FROM options_systeminfo");
+	if(!DatabaseManager::instance()->exec(&checkQuery))
 		return false;
 
-	/* get next id number */
-	int id = DatabaseManager::instance()->sequenceValue("options_systeminfo_id_seq");
+	/* there is system info record in database */
+	if(checkQuery.next()) {
+		int id = checkQuery.record().value("id").toInt();
 
-	QSqlQuery insertQuery(DatabaseManager::instance()->database());
-	insertQuery.prepare("INSERT INTO options_systeminfo VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-	insertQuery.addBindValue(id);
-	insertQuery.addBindValue(version());
-	insertQuery.addBindValue(status());
-	insertQuery.addBindValue(error());
-	insertQuery.addBindValue(progress());
-	insertQuery.addBindValue(exploitsNum());
-	insertQuery.addBindValue(samplesNum());
-	insertQuery.addBindValue(filesNum());
-	if(!DatabaseManager::instance()->exec(&insertQuery))
-		return false;
+		QSqlQuery updateQuery(DatabaseManager::instance()->database());
+		updateQuery.prepare("UPDATE options_systeminfo SET version = ?, status = ?, error = ?, progress = ?, exploits_num = ?, samples_num = ?, files_num = ?, errors_num = ? WHERE id = ?");
+		updateQuery.addBindValue(version());
+		updateQuery.addBindValue(status());
+		updateQuery.addBindValue(error());
+		updateQuery.addBindValue(progress());
+		updateQuery.addBindValue(exploitsNum());
+		updateQuery.addBindValue(samplesNum());
+		updateQuery.addBindValue(filesNum());
+		updateQuery.addBindValue(errorsNum());
+		updateQuery.addBindValue(id);
+		if(!DatabaseManager::instance()->exec(&updateQuery))
+			return false;
+	}
+	/* there is no system info in database */
+	else {
+		int id = DatabaseManager::instance()->sequenceValue("options_systeminfo_id_seq");
+
+		QSqlQuery insertQuery(DatabaseManager::instance()->database());
+		insertQuery.prepare("INSERT INTO options_systeminfo VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		insertQuery.addBindValue(id);
+		insertQuery.addBindValue(version());
+		insertQuery.addBindValue(status());
+		insertQuery.addBindValue(error());
+		insertQuery.addBindValue(progress());
+		insertQuery.addBindValue(exploitsNum());
+		insertQuery.addBindValue(samplesNum());
+		insertQuery.addBindValue(filesNum());
+		insertQuery.addBindValue(errorsNum());
+		if(!DatabaseManager::instance()->exec(&insertQuery))
+			return false;
+	}
 
 	return true;
 }
@@ -378,7 +402,7 @@ bool CoreSystem::makeOutput(ExploitSample *s)
         ret = (*m_outputMods)[*it]->generateOutput(s);
 
 		if(!ret) {
-            SystemLogger::instance()->setError("generating output failed");
+			SystemLogger::instance()->setError("generating output failed");
             LOG_ERROR("generating output error\n");
             LOG_ERROR("FAILURE\n\n");
 			return false;

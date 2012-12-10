@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% if is_message %}
+{% if dataSaved %}
 <div class="alert alert-success">
 	<button type="button" class="close" data-dismiss="alert">×</button>
 	<strong>Success!</strong> Comments have been saved.
@@ -12,15 +12,15 @@
 		<b>Id: </b></br>
 		<b>Group leader: </b></br>
 		<b>Number of members</b></br></br>
-		<b>Comments: </b></br>
+		<b>Comment: </b></br>
 	</div>
 	<div class="span8">
 		{{ show_group.id }}</br>
 		{{ show_group.leader.name }}</br>
 		{{ show_group.members_num }}</br></br>
 		<form method="post" action="">{% csrf_token %}
-			<textarea style="width:100%" rows="5" name="comments" lang="pl">{{ show_group.comment }}</textarea></br>
-			<button class="btn btn-primary" name="show_group" value={{ show_group.id }}>Save</button>
+			<textarea style="width:100%" rows="5" name="comment" lang="pl">{{ show_group.comment }}</textarea></br>
+			<button class="btn btn-primary" name="saveGroup" value={{ show_group.id }}>Save</button>
 		</form>
 		</br></br>
 	</div>
@@ -45,7 +45,7 @@
 			<td><font color="green"><b>{{ show_group.leader.id }}</b></font></td>
 			<td><font color="green"><b>{{ show_group.leader.name }}</b></font></td>
 			<td><font color="green"><b>---</b></font></td>
-			<td><form method="post">{% csrf_token %}<button class="btn" name="show_sample" value={{ show_group.leader.id }}>Show</button></form></td>
+			<td><a href="/sample/?sampleId={{ show_group.leader.id }}"><span class="label label-info">Show</span></a></td>
 		</tr>
 		{% for groupassignment in show_groupassignment %}
 		<tr>
@@ -53,7 +53,7 @@
 			<td>{{ groupassignment.member.id }}</td>
 			<td>{{ groupassignment.member.name }}</td>
 			<td>{{ groupassignment.resemblence_rate }}</td>
-			<td><form method="post">{% csrf_token %}<button class="btn" name="show_sample" value={{ groupassignment.member.id }}>Show</button></form></td>
+			<td><a href="/sample/?sampleId={{ groupassignment.member.id }}"><span class="label label-info">Show</span></a></td>
 		</tr>
 		{% endfor %}
 	</tbody>

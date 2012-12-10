@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, include, url
-from analyze.views import show_analyze
-from browse.views import show_browse, show_browse_groups
-from options.views import show_home, show_options, show_feedback
+from analyze.views import render_analyze
+from browse.views import render_browseSamples, render_browseGroups, render_compareSamples, render_showSample, render_showGroup
+from options.views import render_home, show_options, show_feedback
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -19,10 +19,13 @@ urlpatterns = patterns('',
     url(r'^jsejdak/admin/', include(admin.site.urls)),
     
     # Main pages:
-    url(r'^jsejdak/$', show_home),
-    url(r'analyze/$', show_analyze),
-    url(r'browse/$', show_browse),
-    url(r'browse_groups/$', show_browse_groups),
+    url(r'home/$', render_home),
+    url(r'analyze/$', render_analyze),
+    url(r'browse_samples/$', render_browseSamples),
+    url(r'browse_groups/$', render_browseGroups),
     url(r'options/$', show_options),
     url(r'feedback/$', show_feedback),
+    url(r'compare/', render_compareSamples),
+    url(r'sample/', render_showSample),
+    url(r'group/', render_showGroup),
 )

@@ -125,7 +125,7 @@
 								<td><font color="green"><b>{{ show_group.leader.name }}</b></font></td>
 								<td><font color="green"><b>---</b></font></td>
 								<td><font color="green"><b>{{ show_group.active }}</b></font></td>
-								<td><a href="/group/?groupId={{ show_group.id }}"><span class="label label-info">Show</span></a></td>
+								<td><a href="/jsejdak/group/?groupId={{ show_group.id }}"><span class="label label-info">Show</span></a></td>
 							</tr>
 							{% for groupassignment in show_groupassignment %}
 							<tr>
@@ -134,7 +134,7 @@
 								<td>{{ groupassignment.group.leader.name }}</td>
 								<td>{{ groupassignment.resemblence_rate }} %</td>
 								<td>{{ groupassignment.group.active }}</td>
-								<td><a href="/group/?groupId={{ groupassignment.group.id }}"><span class="label label-info">Show</span></a></td>
+								<td><a href="/jsejdak/group/?groupId={{ groupassignment.group.id }}"><span class="label label-info">Show</span></a></td>
 							</tr>
 							{% endfor %}
 						</tbody>

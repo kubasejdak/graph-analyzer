@@ -60,4 +60,5 @@ def render_analyze(request):
 			  "samples": info.samples_num,
 			  "files": info.files_num,
 			  "errors": info.errors_num})
+
 	return render_to_response("analyze.html", c)

@@ -16,16 +16,16 @@ urlpatterns = patterns('',
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Admin:
-    url(r'^jsejdak/admin/', include(admin.site.urls)),
+    url(r'^jsejdakadmin/', include(admin.site.urls)),
     
     # Main pages:
-    url(r'home/$', render_home),
-    url(r'analyze/$', render_analyze),
-    url(r'browse_samples/$', render_browseSamples),
-    url(r'browse_groups/$', render_browseGroups),
-    url(r'options/$', show_options),
-    url(r'feedback/$', show_feedback),
-    url(r'compare/', render_compareSamples),
-    url(r'sample/', render_showSample),
-    url(r'group/', render_showGroup),
+    url(r'^jsejdak/home/$', render_home),
+    url(r'^jsejdak/analyze/$', render_analyze),
+    url(r'^jsejdak/browse_samples/$', render_browseSamples),
+    url(r'^jsejdak/browse_groups/$', render_browseGroups),
+    url(r'^jsejdak/options/$', show_options),
+    url(r'^jsejdak/feedback/$', show_feedback),
+    url(r'^jsejdak/compare/', render_compareSamples),
+    url(r'^jsejdak/sample/', render_showSample),
+    url(r'^jsejdak/group/', render_showGroup),
 )

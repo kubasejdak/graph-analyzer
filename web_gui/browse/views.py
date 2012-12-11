@@ -29,7 +29,7 @@ def render_browseSamples(request):
 
     if request.method == "POST":
         if "showSample" in request.POST:
-            site = "/sample/?sampleId=%s" % request.POST["showSample"]
+            site = "/jsejdak/sample/?sampleId=%s" % request.POST["showSample"]
             return redirect_to(request, url=site)
 
         if "search" in request.POST:
@@ -92,7 +92,7 @@ def render_browseGroups(request):
 
     if request.method == "POST":
         if "showGroup" in request.POST:
-            site = "/group/?groupId=%s" % request.POST["showGroup"]
+            site = "/jsejdak/group/?groupId=%s" % request.POST["showGroup"]
             return redirect_to(request, url=site)
 
 def render_showSample(request):
@@ -143,7 +143,7 @@ def render_showSample(request):
         if "compare" in request.POST:
             sample1_id = request.POST["compare"]
             sample2_id = request.POST["compareWith"]
-            site = "/compare/?sample1Id=%s&sample2Id=%s" % (sample1_id, sample2_id)
+            site = "/jsejdak/compare/?sample1Id=%s&sample2Id=%s" % (sample1_id, sample2_id)
             return redirect_to(request, url=site)
 
         if "saveLoop" in request.POST:
@@ -161,7 +161,7 @@ def render_showSample(request):
             return redirect_to(request, url=site)
 
         if "showGroup" in request.POST:
-            site = "/group/?groupId=%s" % request.POST["showGroup"]
+            site = "/jsejdak/group/?groupId=%s" % request.POST["showGroup"]
             return redirect_to(request, url=site)
 
 def render_showGroup(request):
@@ -196,7 +196,7 @@ def render_showGroup(request):
             return redirect_to(request, url=site)
 
         if "showSample" in request.POST:
-            site = "/sample/?sampleId=%s" % request.POST["showSample"]
+            site = "/jsejdak/sample/?sampleId=%s" % request.POST["showSample"]
             return redirect_to(request, url=site)
 
 def render_compareSamples(request):

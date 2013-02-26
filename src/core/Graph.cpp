@@ -135,6 +135,7 @@ LoopContainer *Graph::detectLoop(Graph::graph_iterator from_it)
 		clearVertColor(v);
 
 		/* all vertexes in possible loop path */
+		// while(true) {
 		while(v != NULL) {
 			/* save actual path */
 			*tmp = *((*loops)[i]);
@@ -175,6 +176,11 @@ LoopContainer *Graph::detectLoop(Graph::graph_iterator from_it)
 					}
 				}
 			}
+
+			/*
+			if(!continuation || !has_edges || emu_vertexes_istail(v))
+				break;
+			*/
 
 			if(!continuation || !has_edges)
 				v = NULL;

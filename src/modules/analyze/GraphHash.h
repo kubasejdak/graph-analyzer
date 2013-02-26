@@ -8,9 +8,9 @@
 #define GRAPHHASH_H_
 
 #include "AbstractAnalyze.h"
-#include <core/Toolbox.h>
+#include <utils/Toolbox.h>
 #include <core/Graph.h>
-#include <core/InstructionSplitter.h>
+#include <utils/InstructionSplitter.h>
 
 class GraphHash: public AbstractAnalyze {
 public:

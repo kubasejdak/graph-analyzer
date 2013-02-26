@@ -9,7 +9,7 @@
 
 #include "AbstractAnalyze.h"
 #include <core/Graph.h>
-#include <core/Toolbox.h>
+#include <utils/Toolbox.h>
 
 class LoopDetector: public AbstractAnalyze {
 public:

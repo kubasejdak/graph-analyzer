@@ -1,6 +1,8 @@
 # source paths
 add_subdirectory(core)
 add_subdirectory(modules)
+add_subdirectory(utils)
+add_subdirectory(grouping)
 
 # output settings
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_HOME_DIRECTORY}/bin)
@@ -15,9 +17,13 @@ set_target_properties(GraphAnalyzerCpp PROPERTIES PREFIX "")
 # link with modules 
 target_link_libraries(graph-analyzer core)
 target_link_libraries(graph-analyzer modules)
+target_link_libraries(graph-analyzer utils)
+target_link_libraries(graph-analyzer grouping)
 
 target_link_libraries(GraphAnalyzerCpp core)
 target_link_libraries(GraphAnalyzerCpp modules)
+target_link_libraries(GraphAnalyzerCpp utils)
+target_link_libraries(GraphAnalyzerCpp grouping)
 
 # link with external libraries
 target_link_libraries(graph-analyzer ${QT_LIBRARIES})

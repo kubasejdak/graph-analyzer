@@ -6,10 +6,6 @@
 
 #include "ModuleManager.h"
 
-ModuleManager::ModuleManager()
-{
-}
-
 ModuleManager::~ModuleManager()
 {
 	removeInput();
@@ -70,36 +66,6 @@ AnalyzeMap *ModuleManager::analyze()
 {
 	loadAnalyze();
     return &m_analyzeModules;
-}
-
-QList<ModuleInfo *> ModuleManager::listInput()
-{
-    QList<ModuleInfo *> modList;
-    QMap<QString, AbstractInput *>::iterator it;
-    for(it = m_inputModules.begin(); it != m_inputModules.end(); ++it)
-        modList.push_back(it.value()->moduleInfo());
-
-	return modList;
-}
-
-QList<ModuleInfo *> ModuleManager::listOutput()
-{
-    QList<ModuleInfo *> modList;
-    QMap<QString, AbstractOutput *>::iterator it;
-    for(it = m_outputModules.begin(); it != m_outputModules.end(); ++it)
-        modList.push_back(it.value()->moduleInfo());
-
-	return modList;
-}
-
-QList<ModuleInfo *> ModuleManager::listAnalyze()
-{
-    QList<ModuleInfo *> modList;
-    QMap<QString, AbstractAnalyze *>::iterator it;
-    for(it = m_analyzeModules.begin(); it != m_analyzeModules.end(); ++it)
-        modList.push_back(it.value()->moduleInfo());
-
-	return modList;
 }
 
 void ModuleManager::removeInput()

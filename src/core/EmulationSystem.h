@@ -28,7 +28,7 @@ extern "C" {
 
 #include <core/EmulationUnit.h>
 #include <core/ExploitSample.h>
-#include <core/SystemLogger.h>
+#include <utils/SystemLogger.h>
 #include <core/Dot.h>
 #include <core/Options.h>
 

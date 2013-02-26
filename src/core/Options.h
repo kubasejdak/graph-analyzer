@@ -17,7 +17,7 @@
 namespace opt = boost::program_options;
 using namespace std;
 
-#include <core/SystemLogger.h>
+#include <utils/SystemLogger.h>
 
 #define CONFIG_FILE         "/var/www/jsejdak/analyzer.conf"
 
@@ -26,8 +26,8 @@ public:
 	virtual ~Options() {}
 	static Options *instance()
 	{
-		static Options obj;
-		return &obj;
+		static Options m_instance;
+		return &m_instance;
 	}
 
 	/* read options */

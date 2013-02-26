@@ -7,8 +7,7 @@ add_subdirectory(output)
 
 # ModuleManager
 set(MODULES_MANAGER_SRC
-	ModuleManager.cpp
-	AbstractModule.cpp)
+	ModuleManager.cpp)
 
 add_library(modules ${MODULES_MANAGER_SRC})
 

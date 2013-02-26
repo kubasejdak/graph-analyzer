@@ -13,7 +13,7 @@
 #include <modules/AbstractModule.h>
 #include <core/ExploitSample.h>
 #include <core/ExploitInfo.h>
-#include <core/DatabaseManager.h>
+#include <utils/DatabaseManager.h>
 
 class AbstractAnalyze: public AbstractModule {
 public:

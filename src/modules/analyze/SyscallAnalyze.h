@@ -9,7 +9,7 @@
 
 #include "AbstractAnalyze.h"
 #include <core/Graph.h>
-#include <core/InstructionSplitter.h>
+#include <utils/InstructionSplitter.h>
 
 class SyscallAnalyze: public AbstractAnalyze {
 public:

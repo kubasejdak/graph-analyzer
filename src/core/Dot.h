@@ -27,7 +27,7 @@ extern "C" {
 	#include <emu/environment/linux/env_linux_syscall_hooks.h>
 }
 
-#include <core/SystemLogger.h>
+#include <utils/SystemLogger.h>
 //#include <core/Options.h>
 
 struct instr_vertex {

@@ -12,9 +12,9 @@
 #include <QFileInfo>
 
 #include "AbstractInput.h"
-#include <core/SystemLogger.h>
+#include <utils/SystemLogger.h>
 #include <core/Options.h>
-#include <core/Toolbox.h>
+#include <utils/Toolbox.h>
 
 class PcapInput: public AbstractInput {
 public:

@@ -20,8 +20,8 @@ extern "C" {
 
 #include <stdint.h>
 
-#include <core/Toolbox.h>
-#include <core/SystemLogger.h>
+#include <utils/Toolbox.h>
+#include <utils/SystemLogger.h>
 #if 0
 #include <core/UserHooks.h>
 #endif

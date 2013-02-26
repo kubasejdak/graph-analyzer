@@ -13,10 +13,10 @@
 #include <QFile>
 
 #include "AbstractOutput.h"
-#include <core/SystemLogger.h>
+#include <utils/SystemLogger.h>
 #include <core/ExploitInfo.h>
 #include <core/Options.h>
-#include <core/DatabaseManager.h>
+#include <utils/DatabaseManager.h>
 #include <modules/ModuleManager.h>
 
 class DatabaseOutput: public AbstractOutput {

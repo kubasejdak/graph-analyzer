@@ -18,11 +18,11 @@
 #include <core/AnalysisSystem.h>
 #include <core/ExploitSample.h>
 #include <core/ExploitInfo.h>
-#include <core/FileAnalyser.h>
-#include <core/SystemLogger.h>
+#include <utils/FileTypeAnalyzer.h>
+#include <utils/SystemLogger.h>
 #include <core/version.h>
-#include <core/Toolbox.h>
-#include <core/GroupManager.h>
+#include <utils/Toolbox.h>
+#include <grouping/GroupManager.h>
 #include <modules/input/AbstractInput.h>
 #include <modules/output/AbstractOutput.h>
 #include <modules/ModuleManager.h>

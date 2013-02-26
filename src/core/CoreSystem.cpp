@@ -321,8 +321,8 @@ int CoreSystem::load(QString file)
 	ExploitSample *s;
 	bool moduleFound = false;
 
-    FileAnalyser fileAnalyser;
-    QString fileType = fileAnalyser.analyze(file);
+	FileTypeAnalyzer fileAnalyzer;
+	QString fileType = fileAnalyzer.analyze(file);
     LOG("fileType: [%s]\n", fileType.toStdString().c_str());
 
 	InputMap::iterator it;

@@ -19,7 +19,7 @@ extern "C" {
 
 /* project headers */
 #include <core/Dot.h>
-#include <core/InstructionSplitter.h>
+#include <utils/InstructionSplitter.h>
 
 typedef QVector<emu_vertex *> LoopVec;
 typedef QVector<LoopVec *> LoopContainer;

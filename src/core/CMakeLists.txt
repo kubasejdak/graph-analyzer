@@ -10,12 +10,6 @@ set(CORE_SRC
     ExploitInfo.cpp
 	Graph.cpp
 	Dot.cpp
-	InstructionSplitter.cpp
-	FileAnalyser.cpp
-	SystemLogger.cpp
-	Options.cpp
-	DatabaseManager.cpp
-    Toolbox.cpp
-    GroupManager.cpp)
+	Options.cpp)
 
 add_library(core ${CORE_SRC})

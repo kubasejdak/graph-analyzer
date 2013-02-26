@@ -17,7 +17,7 @@ namespace opt = boost::program_options;
 using namespace std;
 
 #include <core/CoreSystem.h>
-#include <core/SystemLogger.h>
+#include <utils/SystemLogger.h>
 
 /* global variables */
 vector<string> input;

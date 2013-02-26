@@ -13,23 +13,19 @@
 
 #include <QString>
 
-#include <modules/ModuleInfo.h>
-
 class AbstractModule {
 public:
     AbstractModule() {}
     virtual ~AbstractModule() {}
 
-    int id();
-    QString name();
-    QString description();
-    ModuleInfo *moduleInfo();
+	int id() { return m_id; }
+	QString name() { return m_name; }
+	QString description() { return m_description; }
 
 protected:
     int m_id;
     QString m_name;
     QString m_description;
-    ModuleInfo m_info;
 };
 
 #endif /* ABSTRACTMODULE_H_ */

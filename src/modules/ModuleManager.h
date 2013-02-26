@@ -13,7 +13,6 @@
 #include <modules/input/AbstractInput.h>
 #include <modules/output/AbstractOutput.h>
 #include <modules/analyze/AbstractAnalyze.h>
-#include <modules/ModuleInfo.h>
 #include <modules/input/BinaryInput.h>
 #include <modules/input/PcapInput.h>
 #include <modules/output/DatabaseOutput.h>
@@ -31,20 +30,16 @@ public:
 	virtual ~ModuleManager();
     static ModuleManager *instance()
 	{
-        static ModuleManager obj;
-        return &obj;
+		static ModuleManager m_instance;
+		return &m_instance;
 	}
 
 	InputMap *input();
 	OutputMap *output();
 	AnalyzeMap *analyze();
 
-    QList<ModuleInfo *> listInput();
-    QList<ModuleInfo *> listOutput();
-    QList<ModuleInfo *> listAnalyze();
-
 private:
-	ModuleManager();
+	ModuleManager() {}
 
 	void loadInput();
 	void loadOutput();

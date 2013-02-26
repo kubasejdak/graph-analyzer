@@ -5,6 +5,6 @@ set(ANALYZE_SRC
 	SyscallAnalyze.cpp
 	GraphHash.cpp
 	LoopDetector.cpp
-	../../core/InstructionSplitter.cpp)
+	../../utils/InstructionSplitter.cpp)
 
 add_library(analyze ${ANALYZE_SRC})

@@ -5,7 +5,7 @@
  */
 
 #include <core/Options.h>
-#include <core/DatabaseManager.h>
+#include <utils/DatabaseManager.h>
 
 Options::Options()
 {

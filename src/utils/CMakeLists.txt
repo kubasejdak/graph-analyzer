@@ -6,6 +6,7 @@ set(UTILS_SRC
     FileTypeAnalyzer.cpp
 	SystemLogger.cpp
 	DatabaseManager.cpp
-    Toolbox.cpp)
+    Toolbox.cpp
+	XMLParser.cpp)
 
 add_library(utils ${UTILS_SRC})

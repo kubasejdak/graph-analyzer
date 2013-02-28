@@ -6,10 +6,11 @@
 #include <QtSql>
 
 #include <core/Options.h>
-#include <utils/SystemLogger.h>
 #include <core/ExploitSample.h>
+#include <utils/SystemLogger.h>
+#include <utils/XMLParser.h>
 
-class DatabaseManager {
+class DatabaseManager : public XMLParser {
 public:
     virtual ~DatabaseManager();
     static DatabaseManager *instance()
@@ -31,9 +32,17 @@ public:
 
 private:
     DatabaseManager();
+	bool readConfigXML();
+	void listOptions();
 
     QSqlDatabase m_db;
     QString m_lastError;
+
+	QString m_driver;
+	QString m_host;
+	QString m_name;
+	QString m_user;
+	QString m_pass;
 };
 
 #endif /* DATABASEMANAGER_H_ */

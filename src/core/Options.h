@@ -18,10 +18,11 @@ namespace opt = boost::program_options;
 using namespace std;
 
 #include <utils/SystemLogger.h>
+#include <utils/XMLParser.h>
 
-#define CONFIG_FILE         "/var/www/jsejdak/analyzer.conf"
+#define CONFIG_FILE         "/var/www/jsejdak/GraphAnalyzerConf.xml"
 
-class Options {
+class Options : public XMLParser {
 public:
 	virtual ~Options() {}
 	static Options *instance()
@@ -31,31 +32,22 @@ public:
 	}
 
 	/* read options */
-	bool readConfigFile();
-	bool readDatabaseOptions();
+	bool readConfigXML();
 
 	/* list options */
 	void listOptions();
 
-	/* database options (taken from config file */
-	QString DB_QT_DRIVER;
-	QString DB_HOST;
-	QString DB_NAME;
-	QString DB_USER;
-	QString DB_PASS;
-	QString ANA_TABLE_PREFIX;
-	QString OPT_TABLE_PREFIX;
-	QString ID_SEQ_POSTFIX;
-
-	/* emulation options */
-	int EMULATION_STEPS;
-	int MAX_INPUT_FILE_SIZE;
-	int RESEMBLENCE_LEVEL;
-	bool SKIP_NONEXPLOIT_OUTPUT;
-	bool PROTECT_AGAINST_BIG_FILES;
-	bool SKIP_BROKEN_SAMPLES;
-	int BROKEN_SAMPLE_SIZE;
-	QString GRAPHS_DIR;
+	/* options */
+	int logLevel;
+	QString logFile;
+	QString graphsDir;
+	int emulationSteps;
+	bool skipBigFiles;
+	int bigFileSize;
+	bool skipBrokenSamples;
+	int brokenSampleSize;
+	bool skipEmptySamples;
+	int resemblenceLevel;
 
 	/* pending files */
 	QList<QString> pendingFiles;

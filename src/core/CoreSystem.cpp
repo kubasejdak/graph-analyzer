@@ -16,7 +16,6 @@ CoreSystem::CoreSystem()
 
 	if(!readOptions())
 		exit(1);
-	Options::instance()->listOptions();
 
 	/* ensure that log file is not too big */
 	SystemLogger::instance()->checkFileSize();
@@ -115,8 +114,8 @@ int CoreSystem::run()
 
 			/* analyze graph */
 			LOG("analyzing\n");
-			if(Options::instance()->SKIP_NONEXPLOIT_OUTPUT && !s->info()->isExploitPresent()) {
-				LOG("no exploit found, skipping due to SKIP_NONEXPLOIT_OUTPUT: [true]\n");
+			if(Options::instance()->skipEmptySamples && !s->info()->isExploitPresent()) {
+				LOG("no exploit found, skipping due to skipEmptySamples: [true]\n");
 				goto cleanup;
 			}
 			if(!analyze(s)) {
@@ -127,8 +126,8 @@ int CoreSystem::run()
 
 			/* make output */
             LOG("generating output\n");
-			if(Options::instance()->SKIP_BROKEN_SAMPLES && s->info()->isBroken()) {
-				LOG("broken sample, skipping due to SKIP_BROKEN_SAMPLES: [true]\n");
+			if(Options::instance()->skipBrokenSamples && s->info()->isBroken()) {
+				LOG("broken sample, skipping due to skipBrokenSamples: [true]\n");
 				goto cleanup;
 			}
 			if(s->info()->isExploitPresent())
@@ -139,7 +138,7 @@ int CoreSystem::run()
 				goto cleanup;
 			}
 
-			m_groupManager.processOneSampleGroup(DatabaseManager::instance()->sampleId(s), DatabaseManager::instance()->groupId(s), Options::instance()->RESEMBLENCE_LEVEL);
+			m_groupManager.processOneSampleGroup(DatabaseManager::instance()->sampleId(s), DatabaseManager::instance()->groupId(s), Options::instance()->resemblenceLevel);
 
 cleanup:
 			/* clean up */
@@ -171,7 +170,7 @@ void CoreSystem::remakeGroups()
 	SystemLogger::instance()->setStatus("making groups");
 	dbUpdateSystemInfo();
 
-	m_groupManager.processAllSampleGroups(Options::instance()->RESEMBLENCE_LEVEL);
+	m_groupManager.processAllSampleGroups(Options::instance()->resemblenceLevel);
 	m_groupManager.countGroupsMembers();
 	m_groupManager.activateUniqueGroups();
 
@@ -249,12 +248,16 @@ QString CoreSystem::version()
 
 bool CoreSystem::readOptions()
 {
-	if(!Options::instance()->readConfigFile())
+	if(!Options::instance()->readConfigXML()) {
+		LOG_ERROR("failed to read XML configuration");
 		return false;
+	}
 
-	if(!Options::instance()->readDatabaseOptions())
-		return false;
+	/* logging */
+	SystemLogger::instance()->setLogLevel(Options::instance()->logLevel);
+	SystemLogger::instance()->setLogFile(Options::instance()->logFile);
 
+	Options::instance()->listOptions();
 	return true;
 }
 

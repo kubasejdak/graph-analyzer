@@ -2,11 +2,23 @@
 
 DatabaseManager::DatabaseManager()
 {
-	m_db = QSqlDatabase::addDatabase(Options::instance()->DB_QT_DRIVER, "graph_analyzer_conn");
-	m_db.setHostName(Options::instance()->DB_HOST);
-	m_db.setDatabaseName(Options::instance()->DB_NAME);
-	m_db.setUserName(Options::instance()->DB_USER);
-	m_db.setPassword(Options::instance()->DB_PASS);
+	/* initial configuration */
+	m_driver = "QPSQL";
+	m_host = "localhost";
+	m_name = "graph_analyzer_db";
+	m_user = "jsejdak";
+	m_pass = "poliritiper";
+
+	if(!readConfigXML())
+		LOG_ERROR("failed to read XML configuration, using default options\n");
+
+	listOptions();
+
+	m_db = QSqlDatabase::addDatabase(m_driver, "graph_analyzer_conn");
+	m_db.setHostName(m_host);
+	m_db.setDatabaseName(m_name);
+	m_db.setUserName(m_user);
+	m_db.setPassword(m_pass);
 
     m_lastError = "";
 
@@ -22,6 +34,52 @@ DatabaseManager::DatabaseManager()
 DatabaseManager::~DatabaseManager()
 {
     m_db.close();
+}
+
+bool DatabaseManager::readConfigXML()
+{
+	bool stat = false;
+	if(!init(CONFIG_FILE))
+		return stat;
+
+	/* parse root nodes */
+	for(int i = 0; i < m_roots.size(); ++i) {
+		QDomElement rootNode = m_roots.at(i).toElement();
+		/* database options */
+		if(rootNode.tagName() == "Database") {
+			QDomNodeList options = rootNode.childNodes();
+			stat = true;
+
+			for(int i = 0; i < options.count(); ++i) {
+				QDomElement e = options.at(i).toElement();
+				QString node = e.tagName();
+
+				if(node == "DBDriver")
+					m_driver = e.attribute("val");
+				else if(node == "DBHost")
+					m_host = e.attribute("val");
+				else if(node == "DBName")
+					m_name = e.attribute("val");
+				else if(node == "DBUser")
+					m_user = e.attribute("val");
+				else if(node == "DBPass")
+					m_pass = e.attribute("val");
+			}
+		} /* CoreOptions */
+	}
+
+	return stat;
+}
+
+void DatabaseManager::listOptions()
+{
+	/* database settings */
+	LOG("database settings:\n");
+	LOG("m_driver: [%s]\n", m_driver.toStdString().c_str());
+	LOG("m_host: [%s]\n", m_host.toStdString().c_str());
+	LOG("m_name: [%s]\n", m_name.toStdString().c_str());
+	LOG("m_user: [%s]\n", m_user.toStdString().c_str());
+	LOG("m_pass: [%s]\n", m_pass.toStdString().c_str());
 }
 
 bool DatabaseManager::exec(QSqlQuery *query) {

@@ -69,8 +69,8 @@ bool PcapInput::loadInput(QString filename, QList<ExploitSample *> *samples)
         int size = file.size();
 
 		/* protect against bad or too big files */
-		if(Options::instance()->PROTECT_AGAINST_BIG_FILES) {
-			if(size > Options::instance()->MAX_INPUT_FILE_SIZE) {
+		if(Options::instance()->skipBigFiles) {
+			if(size > Options::instance()->bigFileSize) {
 				LOG("file [%s] is too big, size: [%d]\n", entryName.toStdString().c_str(), size);
 				LOG("skipping\n");
 				file.close();

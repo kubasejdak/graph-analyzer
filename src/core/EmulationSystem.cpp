@@ -198,8 +198,8 @@ bool EmulationSystem::emulate()
 	/* create .dot file */
     QString dotFile = "/tmp/graph.dot";
     LOG("dotFile: [%s]\n", dotFile.toStdString().c_str());
-	bool drawOk = graph_draw(graph->emuGraph(), dotFile);
-	if(!drawOk) {
+	bool exportStat = graph->exportGraph(DOT_FILE, dotFile);
+	if(!exportStat) {
 		SystemLogger::instance()->setError("drawing graph failed");
 		LOG_ERROR("FAILURE\n\n");
 		m_sample = NULL;

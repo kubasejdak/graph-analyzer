@@ -2,6 +2,7 @@
 
 # core library
 set(CORE_SRC
+    version.h
 	CoreSystem.cpp
 	EmulationSystem.cpp
 	AnalysisSystem.cpp
@@ -9,7 +10,7 @@ set(CORE_SRC
     ExploitSample.cpp
     ExploitInfo.cpp
 	Graph.cpp
-	Dot.cpp
-	Options.cpp)
+    Options.cpp
+    Experiment.cpp)
 
 add_library(core ${CORE_SRC})

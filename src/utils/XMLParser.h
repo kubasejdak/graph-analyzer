@@ -11,8 +11,7 @@
 #include <QtXml/QDomElement>
 #include <QFile>
 
-class XMLParser
-{
+class XMLParser {
 public:
 	XMLParser();
 	virtual ~XMLParser();

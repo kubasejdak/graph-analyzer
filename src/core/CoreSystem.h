@@ -57,8 +57,8 @@ public:
 	void setOutput(QString method);
     QString version();
 	bool readOptions();
+	bool readPendingFiles();
 	bool dbUpdateSystemInfo();
-	bool dbRemovePendingFiles();
 
 private:
 	/* function members */

@@ -10,7 +10,7 @@
 #include <utils/SystemLogger.h>
 #include <utils/XMLParser.h>
 
-class DatabaseManager : public XMLParser {
+class DatabaseManager {
 public:
     virtual ~DatabaseManager();
     static DatabaseManager *instance()
@@ -43,6 +43,8 @@ private:
 	QString m_name;
 	QString m_user;
 	QString m_pass;
+
+	XMLParser m_xmlParser;
 };
 
 #endif /* DATABASEMANAGER_H_ */

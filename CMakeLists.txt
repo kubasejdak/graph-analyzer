@@ -11,7 +11,6 @@ add_definitions(-g -Wall -fPIC)
 
 # Qt4
 find_package(Qt4 COMPONENTS QtCore QtXml QtSql REQUIRED)
-#set(QT_USE_QTSQL TRUE)
 include(${QT_USE_FILE})
 add_definitions(${QT_DEFINITIONS})
 

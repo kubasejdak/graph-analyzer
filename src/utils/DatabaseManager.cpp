@@ -38,37 +38,23 @@ DatabaseManager::~DatabaseManager()
 
 bool DatabaseManager::readConfigXML()
 {
-	bool stat = false;
-	if(!init(CONFIG_FILE))
-		return stat;
+	if(!m_xmlParser.open(CONFIG_FILE))
+		return false;
 
-	/* parse root nodes */
-	for(int i = 0; i < m_roots.size(); ++i) {
-		QDomElement rootNode = m_roots.at(i).toElement();
-		/* database options */
-		if(rootNode.tagName() == "Database") {
-			QDomNodeList options = rootNode.childNodes();
-			stat = true;
-
-			for(int i = 0; i < options.count(); ++i) {
-				QDomElement e = options.at(i).toElement();
-				QString node = e.tagName();
-
-				if(node == "DBDriver")
-					m_driver = e.attribute("val");
-				else if(node == "DBHost")
-					m_host = e.attribute("val");
-				else if(node == "DBName")
-					m_name = e.attribute("val");
-				else if(node == "DBUser")
-					m_user = e.attribute("val");
-				else if(node == "DBPass")
-					m_pass = e.attribute("val");
-			}
-		} /* CoreOptions */
+	if(!m_xmlParser.hasRoot("Database")) {
+		m_xmlParser.close();
+		return false;
 	}
 
-	return stat;
+	QDomElement options = m_xmlParser.root("Database");
+	m_driver = m_xmlParser.child(options, "DBDriver").attribute("val");
+	m_host = m_xmlParser.child(options, "DBHost").attribute("val");
+	m_name = m_xmlParser.child(options, "DBName").attribute("val");
+	m_user = m_xmlParser.child(options, "DBUser").attribute("val");
+	m_pass = m_xmlParser.child(options, "DBPass").attribute("val");
+
+	m_xmlParser.close();
+	return true;
 }
 
 void DatabaseManager::listOptions()

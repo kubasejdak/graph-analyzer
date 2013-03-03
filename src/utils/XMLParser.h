@@ -17,12 +17,33 @@ public:
 	XMLParser();
 	virtual ~XMLParser();
 
-protected:
-	bool init(QString file);
+	bool open(QString filename);
+	void close();
 
-	 QDomDocument *m_doc;
-	 QDomElement m_docElem;
-	 QDomNodeList m_roots;
+	bool hasRoot(QString rootName);
+	bool hasChild(QDomElement rootNode, QString childNode);
+
+	QDomElement root(QString rootName);
+	QDomElement child(QDomElement rootNode, QString childNode);
+
+	QString text(QDomElement node);
+	QString attribute(QDomElement node, QString attrName);
+
+	void removeRoot(QDomElement rootNode);
+	void removeChild(QDomElement rootNode, QDomElement childNode);
+
+	QDomElement createRoot(QString rootName);
+	QDomElement createChild(QDomElement rootNode, QString childName);
+
+	void setText(QDomElement node, QString txt);
+	void setAttribute(QDomElement node, QString attrName, QString attrValue);
+
+private:
+	void save();
+
+	QFile *m_file;
+	QDomDocument *m_doc;
+	QDomElement m_docRoot;
 };
 
 #endif // XMLPARSER_H

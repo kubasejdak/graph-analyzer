@@ -14,18 +14,13 @@ CoreSystem::CoreSystem()
 	m_exploitCounter = 0;
 	m_errorCounter = 0;
 
+
+	/* read options */
 	if(!readOptions())
 		exit(1);
 
 	/* ensure that log file is not too big */
 	SystemLogger::instance()->checkFileSize();
-
-	/* add files to analyze from database */
-	for(int i = 0; i < Options::instance()->pendingFiles.size(); ++i)
-		addFile(Options::instance()->pendingFiles.at(i));
-
-	/* delete added files from database */
-	dbRemovePendingFiles();
 
 	loadModules();
 
@@ -74,6 +69,9 @@ int CoreSystem::addFile(QString file)
 int CoreSystem::run()
 {
 	SystemLogger::instance()->setStatus("running");
+
+	/* read pending files */
+	readPendingFiles();
 
 	/* parse all input files */
     LOG("parsing input files\n");
@@ -138,7 +136,7 @@ int CoreSystem::run()
 				goto cleanup;
 			}
 
-			m_groupManager.processOneSampleGroup(DatabaseManager::instance()->sampleId(s), DatabaseManager::instance()->groupId(s), Options::instance()->resemblenceLevel);
+			//m_groupManager.processOneSampleGroup(DatabaseManager::instance()->sampleId(s), DatabaseManager::instance()->groupId(s), Options::instance()->resemblenceLevel);
 
 cleanup:
 			/* clean up */
@@ -152,14 +150,13 @@ cleanup:
 	if(m_errorCounter)
 		LOG("some errors occured, errorCounter: [%d]", m_errorCounter);
 
-	SystemLogger::instance()->setStatus("processing groups");
 	dbUpdateSystemInfo();
 
-	m_groupManager.countGroupsMembers();
-	m_groupManager.activateUniqueGroups();
+	//m_groupManager.countGroupsMembers();
+	//m_groupManager.activateUniqueGroups();
 
 	SystemLogger::instance()->setStatus("idle");
-	dbUpdateSystemInfo();
+	//dbUpdateSystemInfo();
 
 	LOG("SUCCESS\n\n");
 	return m_errorCounter;
@@ -249,7 +246,7 @@ QString CoreSystem::version()
 bool CoreSystem::readOptions()
 {
 	if(!Options::instance()->readConfigXML()) {
-		LOG_ERROR("failed to read XML configuration");
+		LOG_ERROR("failed to read XML configuration\n");
 		return false;
 	}
 
@@ -258,6 +255,21 @@ bool CoreSystem::readOptions()
 	SystemLogger::instance()->setLogFile(Options::instance()->logFile);
 
 	Options::instance()->listOptions();
+	return true;
+}
+
+bool CoreSystem::readPendingFiles()
+{
+	if(!Options::instance()->readPendingFilesXML()) {
+		LOG_ERROR("failed to read pending files\n");
+		return false;
+	}
+
+	/* add files to analyze */
+	for(int i = 0; i < Options::instance()->pendingFiles.size(); ++i)
+		addFile(Options::instance()->pendingFiles.at(i));
+
+	Options::instance()->listPendingFiles();
 	return true;
 }
 
@@ -305,15 +317,6 @@ bool CoreSystem::dbUpdateSystemInfo()
 		if(!DatabaseManager::instance()->exec(&insertQuery))
 			return false;
 	}
-
-	return true;
-}
-
-bool CoreSystem::dbRemovePendingFiles()
-{
-	/* remove all files */
-	if(!DatabaseManager::instance()->clearTable("options_pendingfile"))
-		return false;
 
 	return true;
 }

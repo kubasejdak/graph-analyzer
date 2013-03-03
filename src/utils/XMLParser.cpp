@@ -8,28 +8,140 @@
 
 XMLParser::XMLParser()
 {
-	 m_doc = new QDomDocument("conf");
+	 m_doc = NULL;
+	 m_file = NULL;
 }
 
 XMLParser::~XMLParser()
 {
-	delete m_doc;
+	close();
 }
 
-bool XMLParser::init(QString filename)
+bool XMLParser::open(QString filename)
 {
-	QFile file(filename);
-	if(!file.open(QIODevice::ReadOnly))
-		return false;
-	
-	if(!m_doc->setContent(&file)) {
-		file.close();
+	m_file = new QFile(filename);
+	if(!m_file->open(QIODevice::ReadWrite)) {
+		delete m_file;
+		m_file = NULL;
 		return false;
 	}
-	file.close();
 
-	m_docElem = m_doc->documentElement();
-	m_roots = m_docElem.childNodes();
+	m_doc = new QDomDocument("conf");
+	if(!m_doc->setContent(m_file)) {
+		close();
+		return false;
+	}
 
+	m_docRoot = m_doc->documentElement();
 	return true;
+}
+
+void XMLParser::close()
+{
+	if(m_file) {
+		save();
+		m_file->close();
+		delete m_file;
+		m_file = NULL;
+	}
+
+	if(m_doc) {
+		delete m_doc;
+		m_doc = NULL;
+	}
+}
+
+bool XMLParser::hasRoot(QString rootName)
+{
+	QDomNodeList roots = m_docRoot.childNodes();
+	for(int i = 0; i < roots.size(); ++i) {
+		if(roots.at(i).toElement().tagName() == rootName)
+			return true;
+	}
+
+	return false;
+}
+
+bool XMLParser::hasChild(QDomElement rootNode, QString childNode)
+{
+	QDomNodeList childList = rootNode.childNodes();
+	for(int i = 0; i < childList.size(); ++i) {
+		if(childList.at(i).toElement().tagName() == childNode)
+			return true;
+	}
+
+	return false;
+}
+
+QDomElement XMLParser::root(QString rootName)
+{
+	QDomNodeList roots = m_docRoot.childNodes();
+	for(int i = 0; i < roots.size(); ++i) {
+		if(roots.at(i).toElement().tagName() == rootName)
+			return roots.at(i).toElement();
+	}
+
+	return QDomElement();
+}
+
+QDomElement XMLParser::child(QDomElement rootNode, QString childNode)
+{
+	QDomNodeList childList = rootNode.childNodes();
+	for(int i = 0; i < childList.size(); ++i) {
+		if(childList.at(i).toElement().tagName() == childNode)
+			return childList.at(i).toElement();
+	}
+
+	return QDomElement();
+}
+
+QString XMLParser::text(QDomElement node)
+{
+	return node.text();
+}
+
+QString XMLParser::attribute(QDomElement node, QString attrName)
+{
+	return node.attribute(attrName);
+}
+
+void XMLParser::removeRoot(QDomElement rootNode)
+{
+	m_docRoot.removeChild(rootNode);
+}
+
+void XMLParser::removeChild(QDomElement rootNode, QDomElement childNode)
+{
+	rootNode.removeChild(childNode);
+}
+
+QDomElement XMLParser::createRoot(QString rootName)
+{
+	QDomElement newRoot = m_doc->createElement(rootName);
+	m_docRoot.appendChild(newRoot);
+	return newRoot;
+}
+
+QDomElement XMLParser::createChild(QDomElement rootNode, QString childName)
+{
+	QDomElement newChild = m_doc->createElement(childName);
+	rootNode.appendChild(newChild);
+	return newChild;
+}
+
+void XMLParser::setText(QDomElement node, QString txt)
+{
+	QDomText newTxt = m_doc->createTextNode(txt);
+	node.appendChild(newTxt);
+}
+
+void XMLParser::setAttribute(QDomElement node, QString attrName, QString attrValue)
+{
+	node.setAttribute(attrName, attrValue);
+}
+
+void XMLParser::save()
+{
+	m_file->resize(0);
+	m_file->write(m_doc->toByteArray(4));
 }

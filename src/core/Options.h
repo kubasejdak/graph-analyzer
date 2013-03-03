@@ -22,7 +22,7 @@ using namespace std;
 
 #define CONFIG_FILE         "/var/www/jsejdak/GraphAnalyzerConf.xml"
 
-class Options : public XMLParser {
+class Options {
 public:
 	virtual ~Options() {}
 	static Options *instance()
@@ -33,9 +33,11 @@ public:
 
 	/* read options */
 	bool readConfigXML();
+	bool readPendingFilesXML();
 
 	/* list options */
 	void listOptions();
+	void listPendingFiles();
 
 	/* options */
 	int logLevel;
@@ -54,6 +56,8 @@ public:
 
 private:
 	Options();
+
+	XMLParser m_xmlParser;
 };
 
 #endif /* OPTIONS_H_ */

@@ -55,29 +55,6 @@ bool Options::readConfigXML()
 	return true;
 }
 
-bool Options::readPendingFilesXML()
-{
-	if(!m_xmlParser.open(CONFIG_FILE))
-		return false;
-
-	if(!m_xmlParser.hasRoot("PendingFiles")) {
-		m_xmlParser.close();
-		return false;
-	}
-
-	QDomElement files = m_xmlParser.root("PendingFiles");
-
-	while(m_xmlParser.hasChild(files, "File")) {
-		QDomElement f = m_xmlParser.child(files, "File");
-		pendingFiles.push_back(f.text());
-		m_xmlParser.removeChild(files, f);
-	}
-	m_xmlParser.removeRoot(files);
-
-	m_xmlParser.close();
-	return true;
-}
-
 void Options::listOptions()
 {
 	/* core settings */
@@ -92,12 +69,4 @@ void Options::listOptions()
 	LOG("brokenSampleSize: [%d]\n", brokenSampleSize);
 	LOG("skipEmptySamples: [%s]\n", skipEmptySamples ? "true" : "false");
 	LOG("resemblenceLevel: [%d]\n", resemblenceLevel);
-}
-
-void Options::listPendingFiles()
-{
-	/* pending files */
-	LOG("pending files:\n");
-	for(int i = 0; i < pendingFiles.size(); ++i)
-		LOG("file: [%s]\n", pendingFiles.at(i).toStdString().c_str());
 }

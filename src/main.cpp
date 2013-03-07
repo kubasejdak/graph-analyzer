@@ -17,6 +17,7 @@ namespace opt = boost::program_options;
 using namespace std;
 
 #include <core/CoreSystem.h>
+#include <core/RPCTagResolver.h>
 #include <utils/SystemLogger.h>
 
 /* global variables */
@@ -24,75 +25,51 @@ vector<string> input;
 
 int main(int argc, char *argv[])
 {
-    /* create main system */
-    CoreSystem system;
+	/* create main system */
+	CoreSystem system;
 
-    /* parse cmd line arguments */
-    opt::options_description options("Options");
-    options.add_options()
-            ("help,h", "print help message")
-			("input,i", opt::value<vector<string> >(&input), "set input files")
-			("console,c", "add console to output destinations")
-            ("version,v", "print version")
-			("update-db,u", "update database with system info")
-			("regroup", "regroup samples")
-            ;
+	/* parse cmd line arguments */
+	opt::options_description options("Options");
+	string rpcFunc;
+	options.add_options()
+			("help,h", "print help message")
+			("version,v", "print version")
+			("rpc,r",opt::value<string>(&rpcFunc), "call system function" )
+			("list-rpc,l", "print all available system functions")
+			;
 
-    opt::positional_options_description p;
-    p.add("input", -1);
+	opt::variables_map vm;
+	opt::store(opt::parse_command_line(argc, argv, options), vm);
+	opt::notify(vm);
 
-    opt::variables_map vm;
-    opt::store(opt::command_line_parser(argc, argv).options(options).positional(p).run(), vm);
-    opt::notify(vm);
-
-    /* help */
-    if(vm.count("help")) {
-        cout << options << endl;
-        return 0;
-    }
-    /* version */
-    if(vm.count("version")) {
-        cout << system.version().toStdString() << endl;
-        return 0;
-    }
-    /* update database */
-    if(vm.count("update-db")) {
-		bool ok = system.dbUpdateSystemInfo();
-        return (ok) ? 0 : 1;
-    }
-	/* regroup samples */
-	if(vm.count("regroup")) {
-		system.remakeGroups();
+	/* help */
+	if(vm.count("help")) {
+		cout << options << endl;
 		return 0;
 	}
-	/* console */
-	if(vm.count("console"))
-		system.setOutput("ConsoleOutput");
+	/* version */
+	if(vm.count("version")) {
+		cout << system.version().toStdString() << endl;
+		return 0;
+	}
+	/* list rpc functions */
+	if(vm.count("list-rpc")) {
+		RPCTagResolver rpcResolver;
+		QList<QString> calls = rpcResolver.availableCalls();
+		for(int i = 0; i < calls.size(); ++i)
+			cout << calls.at(i).toStdString().c_str() << endl;
 
-	/* input from cmd */
-	if(vm.count("input")) {
-		while(!input.empty()) {
-			string f = input.back();
-			system.addFile(f.c_str());
-			input.pop_back();
+		return 0;
+	}
+	/* call rpc function */
+	if(vm.count("rpc")) {
+		bool stat = system.execute(rpcFunc.c_str());
+
+		if(stat == false) {
+			LOG("RPC function call failed: [%s]\n", rpcFunc.c_str());
+			return 1;
 		}
 	}
-
-	/* ====== run ====== */
-	LOG("starting system\n");
-	system.dbUpdateSystemInfo();
-
-	system.run();
-
-	system.dbUpdateSystemInfo();
-	LOG("stopping system\n");
-	/* ====== run finished  ====== */
-
-	LOG("FINISHED: found %d exploit(s) in %d sample(s) extracted from %d file(s)!\n", system.exploitsNum(), system.samplesNum(), system.filesNum());
-	if(system.errorsNum())
-		LOG("some ERRORS occured, errorCounter: [%d]\n", system.errorsNum());
-    else
-		LOG("no errors occured\n");
 
     return 0;
 }

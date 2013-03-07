@@ -14,12 +14,14 @@
 #include <QDir>
 #include <QFile>
 
+#include <core/RPCTagResolver.h>
 #include <core/EmulationSystem.h>
 #include <core/AnalysisSystem.h>
 #include <core/ExploitSample.h>
 #include <core/ExploitInfo.h>
 #include <utils/FileTypeAnalyzer.h>
 #include <utils/SystemLogger.h>
+#include <utils/XMLParser.h>
 #include <core/version.h>
 #include <utils/Toolbox.h>
 #include <grouping/GroupManager.h>
@@ -27,67 +29,59 @@
 #include <modules/output/AbstractOutput.h>
 #include <modules/ModuleManager.h>
 
+#define TASKS_FILE		"/var/www/jsejdak/GraphAnalyzerTasks.xml"
+
 class CoreSystem {
 public:
 	CoreSystem();
 	virtual ~CoreSystem();
 
-	/* basic sample operation */
-    int addFile(QString file);
-    int run();
-	void remakeGroups();
-	void clear();
+	/* system interface */
+	bool execute(QString funcName);
 
 	/* status and error */
-    QString status();
-    QString error();
-	int progress();
+	QString status();
+	QString lastError();
+	QString version();
 
-	/* logging */
-    void setLogFile(QString file);
-	void setLogLevel(int level);
-
-	/* results */
-	int filesNum();
-    int exploitsNum();
-    int samplesNum();
-	int errorsNum();
-
-	/* utility */
-	void setOutput(QString method);
-    QString version();
-	bool readOptions();
-	bool readPendingFiles();
-	bool dbUpdateSystemInfo();
+//--------------------------------------------------------------
+	//bool dbUpdateSystemInfo();
+//--------------------------------------------------------------
 
 private:
-	/* function members */
-	int load(QString file);
+	/* RPC functions */
+	bool rpcAnalyze();
+	bool rpcExperiment();
+	bool rpcExportVersion();
+
+	/* core operations */
+	int load(QString filename);
 	bool emulate(ExploitSample *s);
 	bool analyze(ExploitSample *s);
-	bool makeOutput(ExploitSample *s);
-	void processGroup(ExploitSample *s);
+	bool exportResults(ExploitSample *s);
 
+	/* utility */
+	bool readOptions();
+	bool readAnalyzeTaskXML();
+	void listScheduledFiles();
+	int addScheduledFiles();
+	int addFile(QString filename);
 	void loadModules();
 	void clearSamples();
 
 	/* data members */
+	RPCTagResolver m_tagResolver;
+	QList<QString> m_scheduledFiles;
+	QList<QString> m_taskFiles;
+
     EmulationSystem m_emuSystem;
     AnalysisSystem m_anaSystem;
 	InputMap *m_inputMods;
 	OutputMap *m_outputMods;
-
-    QList<ExploitSample *> m_samples;
-    QList<QString> m_pendingFiles;
+	SampleContainer m_samples;
     QList<QString> m_outputMethods;
-
-	int m_fileCounter;			/* number of files extracted to analyze */
-	int m_processedCounter;		/* number of processed files */
-	int m_sampleCounter;		/* number of files that were loaded */
-	int m_exploitCounter;		/* number of detected exploits */
-	int m_errorCounter;			/* number od errors */
-
 	GroupManager m_groupManager;
+	XMLParser m_xmlParser;
 };
 
 #endif /* CORESYSTEM_H_ */

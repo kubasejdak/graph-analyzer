@@ -8,13 +8,6 @@
 
 CoreSystem::CoreSystem()
 {
-	m_fileCounter = 0;
-	m_processedCounter = 0;
-	m_sampleCounter = 0;
-	m_exploitCounter = 0;
-	m_errorCounter = 0;
-
-
 	/* read options */
 	if(!readOptions())
 		exit(1);
@@ -27,9 +20,6 @@ CoreSystem::CoreSystem()
     SystemLogger::instance()->setStatus("idle");
     SystemLogger::instance()->clearError();
 
-	/* mandatory */
-	setOutput("DatabaseOutput");
-
     LOG("created CoreSystem instance, version: [%s]\n\n", VERSION);
 }
 
@@ -39,74 +29,101 @@ CoreSystem::~CoreSystem()
 	clearSamples();
 }
 
-int CoreSystem::addFile(QString file)
+bool CoreSystem::execute(QString funcName)
 {
-    if(file.isEmpty())
-        return 0;
+	RPCTag func = m_tagResolver.tag(funcName);
+	bool stat = false;
+	LOG("Calling RPC function: [%s]\n", funcName.toStdString().c_str());
 
-	int addCounter = 0;
-    /* check if directory */
-    if(QDir(file).exists()) {
-		QDirIterator it(file, QDir::Files | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
-        while(it.hasNext()) {
-            QString entryName = it.next();
-            m_pendingFiles.push_back(entryName);
-			++addCounter;
-			++m_fileCounter;
-        }
-    }
-	else {
-        m_pendingFiles.push_back(file);
-		++addCounter;
-		++m_fileCounter;
+	switch(func) {
+	case ANALYZE_TAG:
+		stat = rpcAnalyze();
+		break;
+	case EXPERIMENT_TAG:
+		stat = rpcExperiment();
+		break;
+	case EXPORT_VERSION_TAG:
+		stat = rpcExportVersion();
+		break;
+	case NULL_TAG:
+		LOG_ERROR("Function [%s] is not supported\n", funcName.toStdString().c_str());
+		break;
 	}
 
-	LOG("Added [%d] file(s) extracted from [%s]\n", addCounter, file.toStdString().c_str());
-	LOG("SUCCESS\n\n");
-	return addCounter;
+	return stat;
 }
 
-int CoreSystem::run()
+QString CoreSystem::status()
 {
-	SystemLogger::instance()->setStatus("running");
+	return SystemLogger::instance()->status();
+}
 
-	/* read pending files */
-	readPendingFiles();
+QString CoreSystem::lastError()
+{
+	return SystemLogger::instance()->error();
+}
 
-	/* parse all input files */
-    LOG("parsing input files\n");
-    while(!m_pendingFiles.isEmpty()) {
-        QString currentFile = m_pendingFiles.front();
-        m_pendingFiles.pop_front();
-        LOG("processing file: [%s]\n", currentFile.toStdString().c_str());
+QString CoreSystem::version()
+{
+	return VERSION;
+}
+
+bool CoreSystem::rpcAnalyze()
+{
+	SystemLogger::instance()->setStatus("analyze");
+
+	/* read files to analyze */
+	if(readAnalyzeTaskXML() == false) {
+		SystemLogger::instance()->setError("cannot parse tasks file");
+		SystemLogger::instance()->setStatus("idle");
+		LOG_ERROR("cannot parse tasks file\n");
+		LOG_ERROR("FAILUR\n\n");
+		return false;
+	}
+
+	int fileCounter;			/* number of files extracted to analyze */
+	int processedCounter;		/* number of processed files */
+	int sampleCounter;			/* number of files that were loaded */
+	int exploitCounter;			/* number of detected exploits */
+	int errorCounter;			/* number od errors */
+
+	/* scan scheduled files for folders */
+	fileCounter = addScheduledFiles();
+
+	/* analyze all task files */
+	LOG("analyzing task files\n");
+	while(!m_taskFiles.isEmpty()) {
+		QString currentFile = m_taskFiles.front();
+		m_taskFiles.pop_front();
+		LOG("processing file: [%s]\n", currentFile.toStdString().c_str());
 
 		/* load */
-        LOG("loading\n");
+		LOG("loading\n");
 		int loadError = load(currentFile);
 		if(loadError) {
 			if(loadError == -1) {
-				LOG_ERROR("loading file [%s] -> [%s]\n", currentFile.toStdString().c_str(), error().toStdString().c_str());
-				++m_errorCounter;
+				LOG_ERROR("loading file [%s] -> [%s]\n", currentFile.toStdString().c_str(), lastError().toStdString().c_str());
+				++errorCounter;
 			}
 			else
 				LOG_ERROR("loading file [%s] -> [no appropriate input module]\n", currentFile.toStdString().c_str());
 
-			++m_processedCounter;
+			++processedCounter;
 			continue;
 		}
 
 		ExploitSample *s;
-        while(!m_samples.isEmpty()) {
-            s = m_samples.front();
-            m_samples.pop_front();
-			++m_sampleCounter;
+		while(!m_samples.isEmpty()) {
+			s = m_samples.front();
+			m_samples.pop_front();
+			++sampleCounter;
 			LOG("processing sample: [%s]\n", s->info()->name().toStdString().c_str());
 
 			/* emulate */
-            LOG("emulating\n");
-			if(!emulate(s)) {
-                LOG_ERROR("emulating [%s] -> [%s]\n", currentFile.toStdString().c_str(), error().toStdString().c_str());
-				++m_errorCounter;
+			LOG("emulating\n");
+			if(emulate(s) == false) {
+				LOG_ERROR("emulating [%s] -> [%s]\n", currentFile.toStdString().c_str(), lastError().toStdString().c_str());
+				++errorCounter;
 				goto cleanup;
 			}
 
@@ -116,131 +133,166 @@ int CoreSystem::run()
 				LOG("no exploit found, skipping due to skipEmptySamples: [true]\n");
 				goto cleanup;
 			}
-			if(!analyze(s)) {
-                LOG_ERROR("analyzing [%s] -> [%s]\n", currentFile.toStdString().c_str(), error().toStdString().c_str());
-				++m_errorCounter;
+			if(analyze(s) == false) {
+				LOG_ERROR("analyzing [%s] -> [%s]\n", currentFile.toStdString().c_str(), lastError().toStdString().c_str());
+				++errorCounter;
 				goto cleanup;
 			}
 
-			/* make output */
-            LOG("generating output\n");
+			/* export results */
+			LOG("exporting results\n");
 			if(Options::instance()->skipBrokenSamples && s->info()->isBroken()) {
 				LOG("broken sample, skipping due to skipBrokenSamples: [true]\n");
 				goto cleanup;
 			}
 			if(s->info()->isExploitPresent())
-				++m_exploitCounter;
-			if(!makeOutput(s)) {
-                LOG_ERROR("output for [%s] -> [%s]\n", currentFile.toStdString().c_str(), error().toStdString().c_str());
-				++m_errorCounter;
+				++exploitCounter;
+			if(exportResults(s) == false) {
+				LOG_ERROR("output for [%s] -> [%s]\n", currentFile.toStdString().c_str(), lastError().toStdString().c_str());
+				++errorCounter;
 				goto cleanup;
 			}
-
-			//m_groupManager.processOneSampleGroup(DatabaseManager::instance()->sampleId(s), DatabaseManager::instance()->groupId(s), Options::instance()->resemblenceLevel);
 
 cleanup:
 			/* clean up */
 			delete s;
-            LOG("sample processing finished\n");
+			LOG("sample analyzing finished\n");
+			++sampleCounter;
 		}
-		++m_processedCounter;
-        LOG("file processing finished\n");
-		dbUpdateSystemInfo();
+		++processedCounter;
+		LOG("file analyzing finished\n");
 	} /* while */
-	if(m_errorCounter)
-		LOG("some errors occured, errorCounter: [%d]", m_errorCounter);
 
-	dbUpdateSystemInfo();
-
-	//m_groupManager.countGroupsMembers();
-	//m_groupManager.activateUniqueGroups();
-
-	SystemLogger::instance()->setStatus("idle");
-	//dbUpdateSystemInfo();
-
-	LOG("SUCCESS\n\n");
-	return m_errorCounter;
-}
-
-void CoreSystem::remakeGroups()
-{
-	SystemLogger::instance()->setStatus("making groups");
-	dbUpdateSystemInfo();
-
-	m_groupManager.processAllSampleGroups(Options::instance()->resemblenceLevel);
-	m_groupManager.countGroupsMembers();
-	m_groupManager.activateUniqueGroups();
+	/* summarize */
+	LOG("FINISHED: found %d exploit(s) in %d sample(s) extracted from %d file(s)!\n", exploitCounter, sampleCounter, fileCounter);
+	if(errorCounter)
+		LOG("some ERRORS occured, errorCounter: [%d]\n", errorCounter);
+	else
+		LOG("no errors occured\n");
 
 	SystemLogger::instance()->setStatus("idle");
-	dbUpdateSystemInfo();
-
 	LOG("SUCCESS\n\n");
+	return true;
 }
 
-void CoreSystem::clear()
+bool CoreSystem::rpcExperiment()
 {
-    m_exploitCounter = 0;
-    m_sampleCounter = 0;
+	SystemLogger::instance()->setStatus("experiment");
 
-	clearSamples();
+	// TODO: implement
+
+	SystemLogger::instance()->setStatus("idle");
+	LOG("SUCCESS\n\n");
+	return true;
 }
 
-QString CoreSystem::status()
+bool CoreSystem::rpcExportVersion()
 {
-    return SystemLogger::instance()->status();
+	SystemLogger::instance()->setStatus("export version");
+
+	// TODO: implement
+
+	SystemLogger::instance()->setStatus("idle");
+	LOG("SUCCESS\n\n");
+	return true;
 }
 
-QString CoreSystem::error()
+int CoreSystem::load(QString filename)
 {
-    return SystemLogger::instance()->error();
-}
+	QList<ExploitSample *> q;
+	ExploitSample *s;
+	bool moduleFound = false;
 
-int CoreSystem::progress()
-{
-	if(m_fileCounter == 0)
+	FileTypeAnalyzer fileAnalyzer;
+	QString fileType = fileAnalyzer.analyze(filename);
+	LOG("fileType: [%s]\n", fileType.toStdString().c_str());
+
+	InputMap::iterator it;
+	for(it = m_inputMods->begin(); it != m_inputMods->end(); ++it) {
+		if(fileType == it.value()->type()) {
+			moduleFound = true;
+			bool ok = it.value()->loadInput(filename, &q);
+			if(!ok) {
+				SystemLogger::instance()->setError("loading file failed");
+				return -1;
+			}
+
+			/* process all returned samples */
+			while(!q.isEmpty()) {
+				s = q.front();
+				q.pop_front();
+				m_samples.push_back(s);
+			}
+
+			break;
+		}
+	}
+
+	if(moduleFound) {
+		LOG("SUCCESS\n\n");
 		return 0;
+	}
 
-	return (m_processedCounter * 100) / m_fileCounter;
+	LOG_ERROR("no appropriate input module\n");
+	LOG_ERROR("FAILUR\n\n");
+	return 1;
 }
 
-void CoreSystem::setLogFile(QString file)
+bool CoreSystem::emulate(ExploitSample *s)
 {
-    SystemLogger::instance()->setLogFile(file);
+	m_emuSystem.loadSample(s);
+	bool ret = m_emuSystem.emulate();
+
+	if(!ret) {
+		SystemLogger::instance()->setError("general emulation error");
+		LOG_ERROR("general emulation error\n");
+		LOG_ERROR("FAILURE\n\n");
+		return false;
+	}
+
+	LOG("SUCCESS\n\n");
+	return true;
 }
 
-void CoreSystem::setLogLevel(int level)
+bool CoreSystem::analyze(ExploitSample *s)
 {
-    SystemLogger::instance()->setLogLevel(level);
+	m_anaSystem.loadSample(s);
+	bool ret = m_anaSystem.analyze();
+
+	if(!ret) {
+		SystemLogger::instance()->setError("general analyzing error");
+		LOG_ERROR("general analyzing error\n");
+		LOG_ERROR("FAILURE\n\n");
+		return false;
+	}
+
+	LOG("SUCCESS\n\n");
+	return true;
 }
 
-void CoreSystem::setOutput(QString method)
+bool CoreSystem::exportResults(ExploitSample *s)
 {
-    m_outputMethods.push_back(method);
-}
+	QList<QString>::iterator it;
+	if(!s->info()->isExploitPresent()) {
+		LOG("no exploit found, returning\n");
+		LOG("SUCCESS\n\n");
+		return true;
+	}
 
-int CoreSystem::filesNum()
-{
-	return m_fileCounter;
-}
+	bool ret;
+	for(it = m_outputMethods.begin(); it != m_outputMethods.end(); ++it) {
+		ret = (*m_outputMods)[*it]->generateOutput(s);
 
-int CoreSystem::exploitsNum()
-{
-    return m_exploitCounter;
-}
+		if(!ret) {
+			SystemLogger::instance()->setError("generating output failed");
+			LOG_ERROR("generating output error\n");
+			LOG_ERROR("FAILURE\n\n");
+			return false;
+		}
+	}
 
-int CoreSystem::samplesNum()
-{
-    return m_sampleCounter;
-}
-
-int CoreSystem::errorsNum()
-{
-	return m_errorCounter;
-}
-
-QString CoreSystem::version()
-{
-    return VERSION;
+	LOG("SUCCESS\n\n");
+	return true;
 }
 
 bool CoreSystem::readOptions()
@@ -258,21 +310,90 @@ bool CoreSystem::readOptions()
 	return true;
 }
 
-bool CoreSystem::readPendingFiles()
+bool CoreSystem::readAnalyzeTaskXML()
 {
-	if(!Options::instance()->readPendingFilesXML()) {
-		LOG_ERROR("failed to read pending files\n");
+	if(!m_xmlParser.open(TASKS_FILE))
+		return false;
+
+	if(!m_xmlParser.hasRoot("Analyze")) {
+		m_xmlParser.close();
 		return false;
 	}
 
-	/* add files to analyze */
-	for(int i = 0; i < Options::instance()->pendingFiles.size(); ++i)
-		addFile(Options::instance()->pendingFiles.at(i));
+	QDomElement analyze = m_xmlParser.root("Analyze");
 
-	Options::instance()->listPendingFiles();
+	while(m_xmlParser.hasChild(analyze, "File")) {
+		QDomElement f = m_xmlParser.child(analyze, "File");
+		m_scheduledFiles.push_back(f.text());
+		m_xmlParser.removeChild(analyze, f);
+	}
+	m_xmlParser.removeRoot(analyze);
+
+	m_xmlParser.close();
+	listScheduledFiles();
 	return true;
 }
 
+void CoreSystem::listScheduledFiles()
+{
+	LOG("scheduled files:\n");
+	for(int i = 0; i < m_scheduledFiles.size(); ++i)
+		LOG("file: [%s]\n", m_scheduledFiles.at(i).toStdString().c_str());
+}
+
+int CoreSystem::addScheduledFiles()
+{
+	int fileCounter = 0;
+	for(int i = 0; i < m_scheduledFiles.size(); ++i)
+		fileCounter += addFile(m_scheduledFiles.at(i));
+
+	return fileCounter;
+}
+
+int CoreSystem::addFile(QString filename)
+{
+	if(filename.isEmpty())
+		make_pair<int, int>(0, 0);
+
+	int addCounter = 0;
+	int fileCounter = 0;
+	/* check if directory */
+	if(QDir(filename).exists()) {
+		QDirIterator it(filename, QDir::Files | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
+		while(it.hasNext()) {
+			QString entryName = it.next();
+			m_taskFiles.push_back(entryName);
+			++addCounter;
+			++fileCounter;
+		}
+	}
+	else {
+		m_taskFiles.push_back(filename);
+		++addCounter;
+		++fileCounter;
+	}
+
+	LOG("Added [%d] file(s) extracted from [%s]\n", addCounter, filename.toStdString().c_str());
+	LOG("SUCCESS\n\n");
+	return addCounter;
+}
+
+void CoreSystem::loadModules()
+{
+	m_inputMods = ModuleManager::instance()->input();
+	m_outputMods = ModuleManager::instance()->output();
+}
+
+void CoreSystem::clearSamples()
+{
+	SampleContainer::iterator it = m_samples.begin();
+	while(it != m_samples.end()) {
+		delete *it;
+		it = m_samples.erase(it);
+	}
+}
+
+#if 0
 bool CoreSystem::dbUpdateSystemInfo()
 {
 	/* check for info */
@@ -289,7 +410,7 @@ bool CoreSystem::dbUpdateSystemInfo()
 		updateQuery.prepare("UPDATE options_systeminfo SET version = ?, status = ?, error = ?, progress = ?, exploits_num = ?, samples_num = ?, files_num = ?, errors_num = ? WHERE id = ?");
 		updateQuery.addBindValue(version());
 		updateQuery.addBindValue(status());
-		updateQuery.addBindValue(error());
+		updateQuery.addBindValue(lastError());
 		updateQuery.addBindValue(progress());
 		updateQuery.addBindValue(exploitsNum());
 		updateQuery.addBindValue(samplesNum());
@@ -320,116 +441,4 @@ bool CoreSystem::dbUpdateSystemInfo()
 
 	return true;
 }
-
-int CoreSystem::load(QString file)
-{
-    QList<ExploitSample *> q;
-	ExploitSample *s;
-	bool moduleFound = false;
-
-	FileTypeAnalyzer fileAnalyzer;
-	QString fileType = fileAnalyzer.analyze(file);
-    LOG("fileType: [%s]\n", fileType.toStdString().c_str());
-
-	InputMap::iterator it;
-    for(it = m_inputMods->begin(); it != m_inputMods->end(); ++it) {
-        if(fileType == it.value()->type()) {
-			moduleFound = true;
-            bool ok = it.value()->loadInput(file, &q);
-			if(!ok) {
-				SystemLogger::instance()->setError("loading file failed");
-				return -1;
-			}
-
-			/* process all returned samples */
-            while(!q.isEmpty()) {
-				s = q.front();
-				q.pop_front();
-                m_samples.push_back(s);
-			}
-
-			break;
-		}
-	}
-
-	if(moduleFound) {
-        LOG("SUCCESS\n\n");
-		return 0;
-	}
-
-    LOG_ERROR("no appropriate input module\n");
-    LOG_ERROR("FAILUR\n\n");
-	return 1;
-}
-
-bool CoreSystem::emulate(ExploitSample *s)
-{
-    m_emuSystem.loadSample(s);
-    bool ret = m_emuSystem.emulate();
-
-	if(!ret) {
-        SystemLogger::instance()->setError("general emulation error");
-        LOG_ERROR("general emulation error\n");
-        LOG_ERROR("FAILURE\n\n");
-		return false;
-	}
-
-    LOG("SUCCESS\n\n");
-	return true;
-}
-
-bool CoreSystem::analyze(ExploitSample *s)
-{
-    m_anaSystem.loadSample(s);
-    bool ret = m_anaSystem.analyze();
-
-	if(!ret) {
-        SystemLogger::instance()->setError("general analyzing error");
-        LOG_ERROR("general analyzing error\n");
-        LOG_ERROR("FAILURE\n\n");
-		return false;
-	}
-
-    LOG("SUCCESS\n\n");
-	return true;
-}
-
-bool CoreSystem::makeOutput(ExploitSample *s)
-{
-    QList<QString>::iterator it;
-    if(!s->info()->isExploitPresent()) {
-        LOG("no exploit found, returning\n");
-        LOG("SUCCESS\n\n");
-		return true;
-    }
-
-	bool ret;
-    for(it = m_outputMethods.begin(); it != m_outputMethods.end(); ++it) {
-        ret = (*m_outputMods)[*it]->generateOutput(s);
-
-		if(!ret) {
-			SystemLogger::instance()->setError("generating output failed");
-            LOG_ERROR("generating output error\n");
-            LOG_ERROR("FAILURE\n\n");
-			return false;
-		}
-	}
-
-    LOG("SUCCESS\n\n");
-	return true;
-}
-
-void CoreSystem::loadModules()
-{
-    m_inputMods = ModuleManager::instance()->input();
-    m_outputMods = ModuleManager::instance()->output();
-}
-
-void CoreSystem::clearSamples()
-{
-    QList<ExploitSample *>::iterator it = m_samples.begin();
-    while(it != m_samples.end()) {
-        delete *it;
-        it = m_samples.erase(it);
-	}
-}
+#endif

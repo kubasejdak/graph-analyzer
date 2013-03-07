@@ -20,7 +20,7 @@ using namespace std;
 #include <utils/SystemLogger.h>
 #include <utils/XMLParser.h>
 
-#define CONFIG_FILE         "/var/www/jsejdak/GraphAnalyzer.conf"
+#define CONFIG_FILE		"/var/www/jsejdak/GraphAnalyzer.conf"
 
 class Options {
 public:
@@ -33,7 +33,6 @@ public:
 
 	/* read options */
 	bool readConfigXML();
-	bool readPendingFilesXML();
 
 	/* list options */
 	void listOptions();

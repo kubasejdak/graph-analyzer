@@ -11,6 +11,7 @@ set(CORE_SRC
     ExploitInfo.cpp
 	Graph.cpp
     Options.cpp
-    Experiment.cpp)
+    Experiment.cpp
+    RPCTagResolver.cpp)
 
 add_library(core ${CORE_SRC})

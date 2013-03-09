@@ -19,8 +19,7 @@ using namespace std;
 
 #include <utils/SystemLogger.h>
 #include <utils/XMLParser.h>
-
-#define CONFIG_FILE		"/var/www/jsejdak/GraphAnalyzer.conf"
+#include <utils/IOptionsReader.h>
 
 class Options {
 public:
@@ -39,8 +38,6 @@ public:
 	void listPendingFiles();
 
 	/* options */
-	int logLevel;
-	QString logFile;
 	QString graphsDir;
 	int emulationSteps;
 	bool skipBigFiles;

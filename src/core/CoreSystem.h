@@ -61,7 +61,6 @@ private:
 	bool exportResults(ExploitSample *s);
 
 	/* utility */
-	bool readOptions();
 	bool readAnalyzeTaskXML();
 	void listScheduledFiles();
 	int addScheduledFiles();

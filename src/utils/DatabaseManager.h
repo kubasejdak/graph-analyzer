@@ -5,12 +5,11 @@
 #include <QMap>
 #include <QtSql>
 
-#include <core/Options.h>
 #include <core/ExploitSample.h>
 #include <utils/SystemLogger.h>
-#include <utils/XMLParser.h>
+#include <utils/IOptionsReader.h>
 
-class DatabaseManager {
+class DatabaseManager : public IOptionsReader {
 public:
     virtual ~DatabaseManager();
     static DatabaseManager *instance()
@@ -43,8 +42,6 @@ private:
 	QString m_name;
 	QString m_user;
 	QString m_pass;
-
-	XMLParser m_xmlParser;
 };
 
 #endif /* DATABASEMANAGER_H_ */

@@ -8,13 +8,6 @@
 
 CoreSystem::CoreSystem()
 {
-	/* read options */
-	if(!readOptions())
-		exit(1);
-
-	/* ensure that log file is not too big */
-	SystemLogger::instance()->checkFileSize();
-
 	loadModules();
 
     SystemLogger::instance()->setStatus("idle");
@@ -33,7 +26,7 @@ bool CoreSystem::execute(QString funcName)
 {
 	RPCTag func = m_tagResolver.tag(funcName);
 	bool stat = false;
-	LOG("Calling RPC function: [%s]\n", funcName.toStdString().c_str());
+	LOG("calling RPC function: [%s]\n", funcName.toStdString().c_str());
 
 	switch(func) {
 	case ANALYZE_TAG:
@@ -46,7 +39,7 @@ bool CoreSystem::execute(QString funcName)
 		stat = rpcExportVersion();
 		break;
 	case NULL_TAG:
-		LOG_ERROR("Function [%s] is not supported\n", funcName.toStdString().c_str());
+		LOG_ERROR("function [%s] is not supported\n", funcName.toStdString().c_str());
 		break;
 	}
 
@@ -292,21 +285,6 @@ bool CoreSystem::exportResults(ExploitSample *s)
 	}
 
 	LOG("SUCCESS\n\n");
-	return true;
-}
-
-bool CoreSystem::readOptions()
-{
-	if(!Options::instance()->readConfigXML()) {
-		LOG_ERROR("failed to read XML configuration\n");
-		return false;
-	}
-
-	/* logging */
-	SystemLogger::instance()->setLogLevel(Options::instance()->logLevel);
-	SystemLogger::instance()->setLogFile(Options::instance()->logFile);
-
-	Options::instance()->listOptions();
 	return true;
 }
 

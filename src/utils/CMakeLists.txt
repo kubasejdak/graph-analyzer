@@ -7,6 +7,8 @@ set(UTILS_SRC
 	SystemLogger.cpp
 	DatabaseManager.cpp
     Toolbox.cpp
-	XMLParser.cpp)
+    XMLParser.cpp
+    IOptionsReader.h
+    LoggingStrategy.cpp)
 
 add_library(utils ${UTILS_SRC})

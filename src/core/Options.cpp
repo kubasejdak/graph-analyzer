@@ -10,8 +10,6 @@
 Options::Options()
 {
 	/* initial configuration */
-	logLevel = 2;
-	logFile = "/var/www/jsejdak/GraphAnalyzer.log";
 	graphsDir = "/var/www/jsejdak/graphs";
 	emulationSteps = 1000000;
 	skipBigFiles = true;
@@ -20,6 +18,11 @@ Options::Options()
 	brokenSampleSize = 50;
 	skipEmptySamples = true;
 	resemblenceLevel = 50;
+
+	if(!readConfigXML())
+		LOG_ERROR("failed to read XML configuration, using default options\n");
+
+	listOptions();
 }
 
 bool Options::readConfigXML()
@@ -33,9 +36,6 @@ bool Options::readConfigXML()
 	}
 
 	QDomElement options = m_xmlParser.root("CoreOptions");
-
-	logLevel = m_xmlParser.child(options, "Logging").attribute("level").toInt();
-	logFile = m_xmlParser.child(options, "Logging").attribute("file");
 
 	graphsDir = m_xmlParser.child(options, "GraphsDir").attribute("path");
 
@@ -59,8 +59,6 @@ void Options::listOptions()
 {
 	/* core settings */
 	LOG("core settings:\n");
-	LOG("logLevel: [%d]\n", logLevel);
-	LOG("logFile: [%s]\n", logFile.toStdString().c_str());
 	LOG("graphsDir: [%s]\n", graphsDir.toStdString().c_str());
 	LOG("emulationSteps: [%d]\n", emulationSteps);
 	LOG("skipBigFiles: [%s]\n", skipBigFiles ? "true" : "false");

@@ -6,12 +6,71 @@
 
 #include "SystemLogger.h"
 
+#define LOG_INTERNAL(fmt, args...)			log(__FILE__, BOOST_CURRENT_FUNCTION, __LINE__, QString().sprintf(fmt, ##args))
+#define LOG_INTERNAL_ERROR(fmt, args...)	logError(__FILE__, BOOST_CURRENT_FUNCTION, __LINE__, QString().sprintf(fmt, ##args))
+
 SystemLogger::SystemLogger()
 {
     m_status = "idle";
     m_error = "no error";
     m_logLevel = 0;
-    m_logFile = "";
+
+	if(!readConfigXML()) {
+		m_strategies.push_back(new ConsoleLoggingStrategy);
+		LOG_INTERNAL_ERROR("failed to read XML configuration, using default options\n");
+	}
+
+	listOptions();
+
+}
+
+SystemLogger::~SystemLogger()
+{
+	QList<ILoggingStrategy *>::iterator it;
+	for(it = m_strategies.begin(); it != m_strategies.end(); ++it)
+		delete (*it);
+}
+
+bool SystemLogger::readConfigXML()
+{
+	if(!m_xmlParser.open(CONFIG_FILE))
+		return false;
+
+	if(!m_xmlParser.hasRoot("Logging")) {
+		m_xmlParser.close();
+		return false;
+	}
+
+	QDomElement options = m_xmlParser.root("Logging");
+
+	m_logLevel = m_xmlParser.child(options, "Level").text().toInt();
+
+	if(m_xmlParser.hasChild(options, "Strategy")) {
+		QDomElement f = m_xmlParser.child(options, "Strategy");
+		while(!f.isNull()) {
+
+			if(f.attribute("type") == "file") {
+				QString filename = f.text();
+				m_strategies.push_back(new FileLoggingStrategy(filename));
+			}
+			else if(f.attribute("type") == "console")
+				m_strategies.push_back(new ConsoleLoggingStrategy);
+
+			f = f.nextSiblingElement("Strategy");
+		}
+	}
+
+	m_xmlParser.close();
+	return true;
+}
+
+void SystemLogger::listOptions()
+{
+	LOG_INTERNAL("logging settings:\n");
+	LOG_INTERNAL("m_logLevel: [%d]\n", m_logLevel);
+	QList<ILoggingStrategy *>::iterator it;
+	for(it = m_strategies.begin(); it != m_strategies.end(); ++it)
+		LOG_INTERNAL("m_strategy: [%s]\n", (*it)->description().toStdString().c_str());
 
 }
 
@@ -33,16 +92,6 @@ QString SystemLogger::status()
 QString SystemLogger::error()
 {
     return m_error;
-}
-
-void SystemLogger::setLogLevel(int level)
-{
-    m_logLevel = level;
-}
-
-void SystemLogger::setLogFile(QString filename)
-{
-    m_logFile = filename;
 }
 
 void SystemLogger::log(QString file, QString func, int line, QString msg)
@@ -69,19 +118,9 @@ void SystemLogger::log(QString file, QString func, int line, QString msg)
         break;
     }
 
-    /* print to console */
-    clog << m.toStdString();
-
-    /* print to file */
-    if(m_logFile != "") {
-        QFile f(m_logFile);
-        f.open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Append);
-        if(!f.isOpen())
-            return;
-
-        f.write(m.toUtf8());
-        f.close();
-    }
+	QList<ILoggingStrategy *>::iterator it;
+	for(it = m_strategies.begin(); it != m_strategies.end(); ++it)
+		(*it)->log(m);
 }
 
 void SystemLogger::logError(QString file, QString func, int line, QString msg)
@@ -108,33 +147,10 @@ void SystemLogger::logError(QString file, QString func, int line, QString msg)
         break;
     }
 
-    /* print to console */
-    clog << m.toStdString();
 
-    /* print to file */
-    if(m_logFile != "") {
-        QFile f(m_logFile);
-        f.open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Append);
-        if(!f.isOpen())
-            return;
-
-        f.write(m.toUtf8());
-        f.close();
-    }
 }
 
 void SystemLogger::clearError()
 {
     m_error = "no error";
-}
-
-void SystemLogger::checkFileSize()
-{
-	QFile f(m_logFile);
-
-	/* if size is greater than 1GB */
-	if(f.size() > 1024*1024*1024) {
-		f.resize(0);
-		LOG("log file is too big: [%lld], truncating to 0\n", f.size());
-	}
 }

@@ -24,4 +24,4 @@ private:
 	QMap<QString, RPCTag> m_tagMap;
 };
 
-#endif // RPCTAGRESOLVER_H
+#endif /* RPCTAGRESOLVER_H */

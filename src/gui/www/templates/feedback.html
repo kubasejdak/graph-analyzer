@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="well">
+	<form action="" method="post">{% csrf_token %}
+		<div class="row-fluid">
+			<div class="span2">
+				<select name="type" size="1">
+					<option>bug</option>
+					<option>feature</option>
+				</select>
+			</div>
+			<div class="span9">
+				<input class="span3" style="width:100%" name="description" lang="pl" placeholder="Type feedback here..."></input>
+			</div>
+			<div class="span1">
+				<button class="btn btn-primary" name="add">Add</button>
+			</div>
+		</div>
+	</form>
+</div>
+
+{% if is_message %}
+<div class="alert alert-success">
+	<button type="button" class="close" data-dismiss="alert">×</button>
+	<strong>Success!</strong>Thank You! Your feedback has been saved.
+</div>
+{% endif %}
+
+<div class="row-fluid">
+	<div class="tabbable tabs-left">
+		<ul class="nav nav-tabs">
+			<li class="active"><a href="#bug_tab" data-toggle="tab">Bugs</a></li>
+			<li><a href="#feature_tab" data-toggle="tab">Features</a></li>
+		</ul>
+		<div class="tab-content">
+			<div class="tab-pane active" id="bug_tab">
+				<p>
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th>Index</th>
+								<th>Type</th>
+								<th>Description</th>
+								<th>Status</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for bug in bug_list %}
+							<tr>
+								<td>{{ forloop.counter }}</td>
+								<td>{{ bug.type }}</td>
+								<td>{{ bug.description }}</td>
+								{% if bug.status == "pending" %}
+								<td><b><font color="red">{{ bug.status }}</font></b></td>
+								{% else %}
+								<td><b><font color="green">{{ bug.status }}</font></b></td>
+								{% endif %}
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</p>
+			</div>
+			<div class="tab-pane" id="feature_tab">
+				<p>
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th>Index</th>
+								<th>Type</th>
+								<th>Description</th>
+								<th>Status</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for feature in feature_list %}
+							<tr>
+								<td>{{ forloop.counter }}</td>
+								<td>{{ feature.type }}</td>
+								<td>{{ feature.description }}</td>
+								{% if feature.status == "pending" %}
+								<td><b><font color="red">{{ feature.status }}</font></b></td>
+								{% else %}
+								<td><b><font color="green">{{ feature.status }}</font></b></td>
+								{% endif %}
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</p>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

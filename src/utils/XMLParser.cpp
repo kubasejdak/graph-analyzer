@@ -140,6 +140,11 @@ void XMLParser::setAttribute(QDomElement node, QString attrName, QString attrVal
 	node.setAttribute(attrName, attrValue);
 }
 
+QDomElement XMLParser::nextSibling(QDomElement node)
+{
+	return node.nextSiblingElement();
+}
+
 void XMLParser::save()
 {
 	m_file->resize(0);

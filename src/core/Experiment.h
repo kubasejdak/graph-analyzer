@@ -30,4 +30,4 @@ private:
 	QList<ExploitSample *> m_samples;
 };
 
-#endif // EXPERIMENT_H
+#endif /* EXPERIMENT_H */

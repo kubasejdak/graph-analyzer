@@ -37,6 +37,8 @@ public:
 	void setText(QDomElement node, QString txt);
 	void setAttribute(QDomElement node, QString attrName, QString attrValue);
 
+	QDomElement nextSibling(QDomElement node);
+
 private:
 	void save();
 

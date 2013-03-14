@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row-fluid">
+	<div class="tabbable tabs-left">
+		<ul class="nav nav-tabs">
+			<li class="active"><a href="#general_tab" data-toggle="tab">General</a></li>
+			<li><a href="#hash_tab" data-toggle="tab">Hash</a></li>
+			<li><a href="#loops_tab" data-toggle="tab">Loops</a></li>
+			<li><a href="#api_tab" data-toggle="tab">API</a></li>
+			<li><a href="#graph_tab" data-toggle="tab">Graph</a></li>
+			<li><a href="#groups_tab" data-toggle="tab">Groups</a></li>
+			<li><a href="#compare_tab" data-toggle="tab">Compare</a></li>
+		</ul>
+		<div class="tab-content">
+			{% if dataSaved %}
+			<div class="span11">
+				<div class="alert alert-success">
+					<button type="button" class="close" data-dismiss="alert">×</button>
+					<strong>Success!</strong> Comments have been saved.
+				</div>
+			</div>
+			{% endif %}
+			<div class="tab-pane {{ hash_tab }}" id="hash_tab">
+				<p>
+					<div class="span2">
+						<b>Hash: </b>
+					</div>
+					<div class="span2">
+						{{ show_hashassignment.hash.hash }}
+					</div>
+				</p>
+			</div>
+			<div class="tab-pane {{ general_tab }}" id="general_tab">
+				<p>
+					<div class="span2">
+						<b>Id: </b></br>
+						<b>Name: </b></br>
+						<b>Extracted from: </b></br>
+						<b>Graph name: </b></br>
+						<b>Size [vertexes]: </b></br>
+						<b>File type: </b></br>
+						<b>File size [bytes]: </b></br>
+						<b>Exploit offset [bytes]: </b></br></br>
+						<b>Comment: </b></br></br>
+					</div>
+					<div class="span8">
+						{{ show_sample.id }}</br>
+						{{ show_sample.name }}</br>
+						{{ show_sample.extracted_from }}</br>
+						{{ show_sample.graph_name }}</br>
+						{{ show_sample.size }}</br>
+						{{ show_sample.file_type }}</br>
+						{{ show_sample.file_size }}</br>
+						{{ show_sample.shellcode_offset }}</br></br>
+						<form method="post" action="">{% csrf_token %}
+							<textarea name="comment" style="width:100%" rows="5">{{ show_sample.comment }}</textarea></br>
+							<button class="btn btn-primary" name="saveSample" value={{ show_sample.id }}>Save</button>
+						</form>
+						</br></br>
+					</div>
+				</p>
+			</div>
+			<div class="tab-pane {{ loops_tab }}" id="loops_tab">
+				{% for loopassignment in show_loopassignment %}
+				<p>
+					<div class="span2">
+						<b>Hash: </b></br>
+						<b>Iterations: </b></br>
+						<b>Size: </b></br>
+						<b>Start: </b></br>
+						<b>Vertexes: </b></br>
+					</div>
+					<div class="span8">
+						{{ loopassignment.loop.hash }}</br>
+						{{ loopassignment.loop.iterations }}</br>
+						{{ loopassignment.loop.size }}</br>
+						{{ loopassignment.loop.start }}</br>
+						{{ loopassignment.loop.vertexes }}</br></br>
+						<form method="post" action="">{% csrf_token %}
+							<textarea name="comment" style="width:100%" rows="5">{{ loopassignment.loop.comment }}</textarea></br>
+							<button class="btn btn-primary" name="saveLoop" value={{ loopassignment.loop.id }}>Save</button>
+						</form>
+						</br>
+					</div>
+				</p>
+				{% endfor %}
+			</div>
+			<div class="tab-pane {{ api_tab }}" id="api_tab">
+				{% for apiassignment in show_apiassignment %}
+				<p>
+					<div class="span2">
+						<b>Syscall: </b></br>
+						<b>DLL: </b></br>
+					</div>
+					<div class="span8">
+						{{ apiassignment.api.syscall }}</br>
+						{{ apiassignment.api.dll }}</br></br>
+					</div>
+				</p>
+				{% endfor %}
+			</div>
+			<div class="tab-pane {{ graph_tab }}" id="graph_tab">
+				<p>
+					<img src="{{ STATIC_URL }}tmp_graphs/{{ graph_file }}" />
+				</p>
+			</div>
+			<div class="tab-pane {{ groups_tab }}" id="groups_tab">
+				<p>
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th>Index</th>
+								<th>Id</th>
+								<th>Group leader</th>
+								<th>Resemblence rate</th>
+								<th>Active</th>
+								<th>More</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td><font color="green"><b>LEADER</b></font></td>
+								<td><font color="green"><b>{{ show_group.id }}</b></font></td>
+								<td><font color="green"><b>{{ show_group.leader.name }}</b></font></td>
+								<td><font color="green"><b>---</b></font></td>
+								<td><font color="green"><b>{{ show_group.active }}</b></font></td>
+								<td><a href="/jsejdak/group/?groupId={{ show_group.id }}"><span class="label label-info">Show</span></a></td>
+							</tr>
+							{% for groupassignment in show_groupassignment %}
+							<tr>
+								<td>{{ forloop.counter }}</td>
+								<td>{{ groupassignment.group.id }}</td>
+								<td>{{ groupassignment.group.leader.name }}</td>
+								<td>{{ groupassignment.resemblence_rate }} %</td>
+								<td>{{ groupassignment.group.active }}</td>
+								<td><a href="/jsejdak/group/?groupId={{ groupassignment.group.id }}"><span class="label label-info">Show</span></a></td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</p>
+			</div>
+			<div class="tab-pane {{ compare_tab }}" id="compare_tab">
+				<p>
+					<div class="span1">
+						<b>Compare with: </b>
+					</div>
+					<form method="post" action="">{% csrf_token %}
+						<div class="span2">
+							<input class="span3" style="width:100%" name="compareWith" lang="pl" placeholder="Type sample Id here..."></input>
+						</div>
+						<div class="span1">
+							<button class="btn btn-primary" name="compare" value={{ show_sample.id }}>Compare</button>
+						</div>
+					</form>
+				</p>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

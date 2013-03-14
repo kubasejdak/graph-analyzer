@@ -1,6 +1,7 @@
 # source paths
 add_subdirectory(core)
 add_subdirectory(modules)
+add_subdirectory(tasks)
 add_subdirectory(utils)
 add_subdirectory(grouping)
 

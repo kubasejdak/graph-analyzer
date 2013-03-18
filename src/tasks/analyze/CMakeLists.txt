@@ -1,10 +1,14 @@
-# === ANALYZE TASK ===
+#=== ANALYZE TASK ===
 
-# analyze-task library
+add_subdirectory(modules)
+
 set(ANALYZE_TASK_SRC
-    AnalyzeTask.cpp
+    EmulationUnit.cpp
 	EmulationSystem.cpp
-	AnalysisSystem.cpp
-	EmulationUnit.cpp)
+	AnalyzeTask.cpp
+    AnalysisSystem.cpp
+)
 
 add_library(analyze-task ${ANALYZE_TASK_SRC})
+
+target_link_libraries(analyze-task analyze-modules)

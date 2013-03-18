@@ -1,36 +1,30 @@
 /*
- *  Filename	: AbstractAnalyze.h
+ *  Filename	: IAnalyze.h
  *  Author		: Kuba Sejdak
  *  Created on	: 07-05-2012
  */
 
-#ifndef ABSTRACTANALYZE_H_
-#define ABSTRACTANALYZE_H_
+#ifndef IANALYZE_H_
+#define IANALYZE_H_
 
 #include <QMap>
 #include <QtSql>
 
-#include <modules/AbstractModule.h>
+#include <tasks/analyze/modules/IModule.h>
 #include <core/ExploitSample.h>
 #include <core/ExploitInfo.h>
 #include <utils/DatabaseManager.h>
 
-class AbstractAnalyze: public AbstractModule {
+class IAnalyze: public IModule {
 public:
-    AbstractAnalyze();
-    virtual ~AbstractAnalyze() {}
-
-    static int nextID()
-	{
-        return m_nextID++;
-	}
+	IAnalyze() {}
+	virtual ~IAnalyze() {}
 
 	virtual bool perform(ExploitSample *sample) = 0;
 	virtual bool exportToDatabase(ExploitSample *sample, int sampleId) = 0;
 
 protected:
-    static int m_nextID;
     QString m_traitName;
 };
 
-#endif /* ABSTRACTANALYZE_H_ */
+#endif /* IANALYZE_H_ */

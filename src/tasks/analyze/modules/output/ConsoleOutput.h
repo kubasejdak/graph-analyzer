@@ -10,9 +10,9 @@
 #include <iostream>
 using namespace std;
 
-#include "AbstractOutput.h"
+#include <tasks/analyze/modules/output/IOutput.h>
 
-class ConsoleOutput: public AbstractOutput {
+class ConsoleOutput: public IOutput {
 public:
 	ConsoleOutput();
     virtual ~ConsoleOutput() {}

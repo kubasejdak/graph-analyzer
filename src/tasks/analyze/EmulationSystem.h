@@ -26,11 +26,10 @@ extern "C" {
 	#include <emu/environment/linux/env_linux_syscall_hooks.h>
 }
 
-#include <core/EmulationUnit.h>
+#include <tasks/analyze/EmulationUnit.h>
 #include <core/ExploitSample.h>
-#include <utils/SystemLogger.h>
-//#include <core/Dot.h>
 #include <core/Options.h>
+#include <utils/SystemLogger.h>
 
 class EmulationSystem {
 public:

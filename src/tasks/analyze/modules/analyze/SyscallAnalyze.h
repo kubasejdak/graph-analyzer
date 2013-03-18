@@ -7,11 +7,11 @@
 #ifndef SYSCALLANALYZE_H_
 #define SYSCALLANALYZE_H_
 
-#include "AbstractAnalyze.h"
+#include <tasks/analyze/modules/analyze/IAnalyze.h>
 #include <core/Graph.h>
 #include <utils/InstructionSplitter.h>
 
-class SyscallAnalyze: public AbstractAnalyze {
+class SyscallAnalyze: public IAnalyze {
 public:
 	SyscallAnalyze();
     virtual ~SyscallAnalyze() {}

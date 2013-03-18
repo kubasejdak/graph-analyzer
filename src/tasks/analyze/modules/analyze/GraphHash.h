@@ -7,12 +7,12 @@
 #ifndef GRAPHHASH_H_
 #define GRAPHHASH_H_
 
-#include "AbstractAnalyze.h"
-#include <utils/Toolbox.h>
+#include <tasks/analyze/modules/analyze/IAnalyze.h>
 #include <core/Graph.h>
 #include <utils/InstructionSplitter.h>
+#include <utils/Toolbox.h>
 
-class GraphHash: public AbstractAnalyze {
+class GraphHash: public IAnalyze {
 public:
 	GraphHash();
     virtual ~GraphHash() {}

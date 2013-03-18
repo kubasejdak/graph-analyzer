@@ -1,17 +1,16 @@
 #=== TASKS ===
 
-# specialized tasks source path
 add_subdirectory(analyze)
 add_subdirectory(group)
 
-# Tasks
-set(TASK_MANAGER_SRC
+set(TASKS_SRC
     ITask.h
 	TaskManager.cpp
 	TaskResolver.cpp
-	TaskQueue.cpp)
+    TaskQueue.cpp
+)
 
-add_library(tasks ${TASK_MANAGER_SRC})
+add_library(tasks ${TASKS_SRC})
 
-target_link_libraries(tasks analyze)
-target_link_libraries(tasks group)
+target_link_libraries(tasks analyze-task)
+target_link_libraries(tasks group-task)

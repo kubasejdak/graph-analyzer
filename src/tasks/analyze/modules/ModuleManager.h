@@ -10,20 +10,20 @@
 #include <QMap>
 #include <QList>
 
-#include <modules/input/AbstractInput.h>
-#include <modules/output/AbstractOutput.h>
-#include <modules/analyze/AbstractAnalyze.h>
-#include <modules/input/BinaryInput.h>
-#include <modules/input/PcapInput.h>
-#include <modules/output/DatabaseOutput.h>
-#include <modules/output/ConsoleOutput.h>
-#include <modules/analyze/SyscallAnalyze.h>
-#include <modules/analyze/LoopDetector.h>
-#include <modules/analyze/GraphHash.h>
+#include <tasks/analyze/modules/input/IInput.h>
+#include <tasks/analyze/modules/output/IOutput.h>
+#include <tasks/analyze/modules/analyze/IAnalyze.h>
+#include <tasks/analyze/modules/input/BinaryInput.h>
+#include <tasks/analyze/modules/input/PcapInput.h>
+#include <tasks/analyze/modules/output/DatabaseOutput.h>
+#include <tasks/analyze/modules/output/ConsoleOutput.h>
+#include <tasks/analyze/modules/analyze/SyscallAnalyze.h>
+#include <tasks/analyze/modules/analyze/LoopDetector.h>
+#include <tasks/analyze/modules/analyze/GraphHash.h>
 
-typedef QMap<QString, AbstractInput *> InputMap;
-typedef QMap<QString, AbstractOutput *> OutputMap;
-typedef QMap<QString, AbstractAnalyze *> AnalyzeMap;
+typedef QMap<QString, IInput *> InputMap;
+typedef QMap<QString, IOutput *> OutputMap;
+typedef QMap<QString, IAnalyze *> AnalyzeMap;
 
 class ModuleManager {
 public:

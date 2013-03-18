@@ -12,14 +12,14 @@
 #include <QMap>
 #include <QFile>
 
-#include "AbstractOutput.h"
-#include <utils/SystemLogger.h>
+#include <tasks/analyze/modules/output/IOutput.h>
 #include <core/ExploitInfo.h>
 #include <core/Options.h>
+#include <utils/SystemLogger.h>
 #include <utils/DatabaseManager.h>
-#include <modules/ModuleManager.h>
+#include <tasks/analyze/modules/ModuleManager.h>
 
-class DatabaseOutput: public AbstractOutput {
+class DatabaseOutput: public IOutput {
 public:
 	DatabaseOutput();
     virtual ~DatabaseOutput() {}

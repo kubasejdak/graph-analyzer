@@ -11,12 +11,12 @@
 #include <QDir>
 #include <QFileInfo>
 
-#include "AbstractInput.h"
+#include <tasks/analyze/modules/input/IInput.h>
 #include <utils/SystemLogger.h>
 #include <core/Options.h>
 #include <utils/Toolbox.h>
 
-class PcapInput: public AbstractInput {
+class PcapInput: public IInput {
 public:
 	PcapInput();
     virtual ~PcapInput() {}

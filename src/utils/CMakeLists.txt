@@ -1,6 +1,5 @@
 # === UTILS ===
 
-# utils library
 set(UTILS_SRC
 	InstructionSplitter.cpp
     FileTypeAnalyzer.cpp
@@ -9,6 +8,7 @@ set(UTILS_SRC
     Toolbox.cpp
     XMLParser.cpp
     IOptionsReader.h
-    LoggingStrategy.cpp)
+    LoggingStrategy.cpp
+)
 
 add_library(utils ${UTILS_SRC})

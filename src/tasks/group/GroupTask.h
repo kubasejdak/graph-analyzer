@@ -1,9 +1,15 @@
 #ifndef GROUPTASK_H
 #define GROUPTASK_H
 
-class GroupTask {
+#include <tasks/ITask.h>
+
+class GroupTask : public ITask {
 public:
-	GroupTask();
+	GroupTask(int id);
+	virtual ~GroupTask() {}
+
+private:
+	virtual bool perform();
 };
 
 #endif /* GROUPTASK_H */

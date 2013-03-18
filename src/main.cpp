@@ -17,7 +17,6 @@ namespace opt = boost::program_options;
 using namespace std;
 
 #include <core/CoreSystem.h>
-#include <core/RPCTagResolver.h>
 #include <utils/SystemLogger.h>
 
 /* global variables */
@@ -30,12 +29,10 @@ int main(int argc, char *argv[])
 
 	/* parse cmd line arguments */
 	opt::options_description options("Options");
-	string rpcFunc;
 	options.add_options()
 			("help,h", "print help message")
 			("version,v", "print version")
-			("rpc,r",opt::value<string>(&rpcFunc), "call system function" )
-			("list-rpc,l", "print all available system functions")
+			("task,t", "execute system tasks" )
 			;
 
 	opt::variables_map vm;
@@ -52,21 +49,12 @@ int main(int argc, char *argv[])
 		cout << system.version().toStdString() << endl;
 		return 0;
 	}
-	/* list rpc functions */
-	if(vm.count("list-rpc")) {
-		RPCTagResolver rpcResolver;
-		QList<QString> calls = rpcResolver.availableCalls();
-		for(int i = 0; i < calls.size(); ++i)
-			cout << calls.at(i).toStdString().c_str() << endl;
-
-		return 0;
-	}
 	/* call rpc function */
 	if(vm.count("rpc")) {
-		bool stat = system.execute(rpcFunc.c_str());
+		bool stat = system.executeTasks();
 
 		if(stat == false) {
-			LOG("RPC function call failed: [%s]\n", rpcFunc.c_str());
+			LOG("Executing tasks failed\n");
 			return 1;
 		}
 	}

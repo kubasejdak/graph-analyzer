@@ -7,11 +7,11 @@
 #ifndef LOOPDETECTOR_H_
 #define LOOPDETECTOR_H_
 
-#include "AbstractAnalyze.h"
+#include <tasks/analyze/modules/analyze/IAnalyze.h>
 #include <core/Graph.h>
 #include <utils/Toolbox.h>
 
-class LoopDetector: public AbstractAnalyze {
+class LoopDetector: public IAnalyze {
 public:
 	LoopDetector();
     virtual ~LoopDetector() {}

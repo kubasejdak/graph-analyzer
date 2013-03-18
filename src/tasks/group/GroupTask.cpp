@@ -1,5 +1,10 @@
 #include "GroupTask.h"
 
-GroupTask::GroupTask()
+GroupTask::GroupTask(int id) : ITask(id)
 {
+}
+
+bool GroupTask::perform()
+{
+	return true;
 }

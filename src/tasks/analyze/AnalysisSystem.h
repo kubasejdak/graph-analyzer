@@ -10,8 +10,8 @@
 #include <QMap>
 
 #include <core/ExploitSample.h>
-#include <modules/analyze/AbstractAnalyze.h>
-#include <modules/ModuleManager.h>
+#include <tasks/analyze/modules/analyze/IAnalyze.h>
+#include <tasks/analyze/modules/ModuleManager.h>
 
 class AnalysisSystem {
 public:

@@ -70,7 +70,7 @@ AnalyzeMap *ModuleManager::analyze()
 
 void ModuleManager::removeInput()
 {
-    QMap<QString, AbstractInput *>::iterator it;
+	InputMap::iterator it;
     for(it = m_inputModules.begin(); it != m_inputModules.end(); ++it)
         delete it.value();
 
@@ -79,7 +79,7 @@ void ModuleManager::removeInput()
 
 void ModuleManager::removeOutput()
 {
-    QMap<QString, AbstractOutput *>::iterator it;
+	OutputMap::iterator it;
     for(it = m_outputModules.begin(); it != m_outputModules.end(); ++it)
         delete it.value();
 
@@ -88,7 +88,7 @@ void ModuleManager::removeOutput()
 
 void ModuleManager::removeAnalyze()
 {
-    QMap<QString, AbstractAnalyze *>::iterator it;
+	AnalyzeMap::iterator it;
     for(it = m_analyzeModules.begin(); it != m_analyzeModules.end(); ++it)
         delete it.value();
 

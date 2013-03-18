@@ -45,7 +45,6 @@ public:
 	bool skipBrokenSamples;
 	int brokenSampleSize;
 	bool skipEmptySamples;
-	int resemblenceLevel;
 
 	/* pending files */
 	QList<QString> pendingFiles;

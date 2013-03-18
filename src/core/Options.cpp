@@ -17,7 +17,6 @@ Options::Options()
 	skipBrokenSamples = true;
 	brokenSampleSize = 50;
 	skipEmptySamples = true;
-	resemblenceLevel = 50;
 
 	if(!readConfigXML())
 		LOG_ERROR("failed to read XML configuration, using default options\n");
@@ -49,8 +48,6 @@ bool Options::readConfigXML()
 
 	skipEmptySamples = m_xmlParser.child(options, "SkipEmptySamples").attribute("val") == "true" ? true : false;
 
-	resemblenceLevel = m_xmlParser.child(options, "ResemblenceLevel").attribute("val").toInt();
-
 	m_xmlParser.close();
 	return true;
 }
@@ -66,5 +63,4 @@ void Options::listOptions()
 	LOG("skipBrokenSamples: [%s]\n", skipBrokenSamples ? "true" : "false");
 	LOG("brokenSampleSize: [%d]\n", brokenSampleSize);
 	LOG("skipEmptySamples: [%s]\n", skipEmptySamples ? "true" : "false");
-	LOG("resemblenceLevel: [%d]\n", resemblenceLevel);
 }

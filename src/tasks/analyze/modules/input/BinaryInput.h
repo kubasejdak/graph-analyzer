@@ -9,10 +9,10 @@
 
 #include <QFileInfo>
 
-#include "AbstractInput.h"
+#include <tasks/analyze/modules/input/IInput.h>
 #include <core/Options.h>
 
-class BinaryInput: public AbstractInput {
+class BinaryInput: public IInput {
 public:
 	BinaryInput();
     virtual ~BinaryInput() {}

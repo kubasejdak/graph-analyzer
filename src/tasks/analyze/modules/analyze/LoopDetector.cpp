@@ -5,6 +5,8 @@
  */
 
 #include "LoopDetector.h"
+#include <core/Graph.h>
+#include <utils/Toolbox.h>
 
 LoopDetector::LoopDetector()
 {

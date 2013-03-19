@@ -1,5 +1,9 @@
 #include "LoggingStrategy.h"
 
+#include <QFile>
+#include <iostream>
+using namespace std;
+
 FileLoggingStrategy::FileLoggingStrategy(QString filename) : m_logFile(filename)
 {
 }
@@ -28,7 +32,7 @@ QString FileLoggingStrategy::description()
 
 void ConsoleLoggingStrategy::log(QString message)
 {
-	cout << message.toStdString() << endl;
+	cout << message.toStdString();
 }
 
 QString ConsoleLoggingStrategy::description()

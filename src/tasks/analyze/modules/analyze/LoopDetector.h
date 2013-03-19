@@ -8,8 +8,6 @@
 #define LOOPDETECTOR_H_
 
 #include <tasks/analyze/modules/analyze/IAnalyze.h>
-#include <core/Graph.h>
-#include <utils/Toolbox.h>
 
 class LoopDetector: public IAnalyze {
 public:

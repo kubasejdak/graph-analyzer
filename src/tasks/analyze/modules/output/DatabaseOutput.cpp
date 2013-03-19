@@ -5,14 +5,21 @@
  */
 
 #include "DatabaseOutput.h"
+#include <core/Options.h>
+#include <utils/SystemLogger.h>
+#include <utils/DatabaseManager.h>
+#include <tasks/analyze/modules/ModuleManager.h>
+
+#include <QtCore>
+#include <QtSql>
 
 DatabaseOutput::DatabaseOutput()
 {
-    m_name = "DatabaseOutput";
+	m_name = "database";
     m_description = "Inserts info about samples into database.";
 }
 
-bool DatabaseOutput::generateOutput(ExploitSample *sample)
+bool DatabaseOutput::exportOutput(ExploitSample *sample)
 {
     ExploitInfo *info = sample->info();
 

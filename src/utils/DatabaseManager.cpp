@@ -1,4 +1,5 @@
 #include "DatabaseManager.h"
+#include <core/Options.h>
 
 DatabaseManager::DatabaseManager()
 {

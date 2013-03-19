@@ -8,13 +8,7 @@
 #define TOOLBOX_H_
 
 #include <QString>
-#include <QFileInfo>
-#include <QDir>
 #include <stdint.h>
-#include <string>
-using namespace std;
-
-#include <utils/SystemLogger.h>
 
 typedef uint8_t byte_t;
 

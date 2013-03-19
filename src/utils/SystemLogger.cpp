@@ -5,6 +5,12 @@
  */
 
 #include "SystemLogger.h"
+#include <core/Options.h>
+
+#include <QDate>
+#include <QTime>
+#include <iostream>
+using namespace std;
 
 #define LOG_INTERNAL(fmt, args...)			log(__FILE__, BOOST_CURRENT_FUNCTION, __LINE__, QString().sprintf(fmt, ##args))
 #define LOG_INTERNAL_ERROR(fmt, args...)	logError(__FILE__, BOOST_CURRENT_FUNCTION, __LINE__, QString().sprintf(fmt, ##args))

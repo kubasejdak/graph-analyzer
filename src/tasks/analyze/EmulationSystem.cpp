@@ -5,6 +5,11 @@
  */
 
 #include "EmulationSystem.h"
+#include <core/Options.h>
+#include <utils/SystemLogger.h>
+
+#include <QString>
+#include <QDir>
 
 EmulationSystem::EmulationSystem()
 {

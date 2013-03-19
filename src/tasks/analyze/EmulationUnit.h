@@ -17,14 +17,9 @@ extern "C" {
 	#include <emu/environment/emu_env.h>
 	#include <emu/environment/emu_profile.h>
 }
-
 #include <stdint.h>
 
 #include <utils/Toolbox.h>
-#include <utils/SystemLogger.h>
-#if 0
-#include <core/UserHooks.h>
-#endif
 
 class EmulationUnit {
 public:

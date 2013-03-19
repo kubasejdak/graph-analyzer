@@ -13,13 +13,6 @@
 #include <tasks/analyze/modules/input/IInput.h>
 #include <tasks/analyze/modules/output/IOutput.h>
 #include <tasks/analyze/modules/analyze/IAnalyze.h>
-#include <tasks/analyze/modules/input/BinaryInput.h>
-#include <tasks/analyze/modules/input/PcapInput.h>
-#include <tasks/analyze/modules/output/DatabaseOutput.h>
-#include <tasks/analyze/modules/output/ConsoleOutput.h>
-#include <tasks/analyze/modules/analyze/SyscallAnalyze.h>
-#include <tasks/analyze/modules/analyze/LoopDetector.h>
-#include <tasks/analyze/modules/analyze/GraphHash.h>
 
 typedef QMap<QString, IInput *> InputMap;
 typedef QMap<QString, IOutput *> OutputMap;

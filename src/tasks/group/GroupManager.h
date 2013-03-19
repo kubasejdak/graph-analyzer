@@ -7,18 +7,13 @@
 #ifndef GROUPMANAGER_H_
 #define GROUPMANAGER_H_
 
-#include <QtSql>
 #include <QVector>
 #include <QString>
 #include <QMap>
 
-#include <utils/SystemLogger.h>
-#include <core/ExploitSample.h>
-#include <utils/DatabaseManager.h>
-
 class GroupManager {
 public:
-	GroupManager();
+	GroupManager() {}
 	virtual ~GroupManager() {}
 
 	void processOneSampleGroup(int sampleId, int groupId, int resemblenceLevel);

@@ -5,10 +5,11 @@
  */
 
 #include "GroupManager.h"
+#include <core/ExploitSample.h>
+#include <utils/DatabaseManager.h>
+#include <utils/SystemLogger.h>
 
-GroupManager::GroupManager()
-{
-}
+#include <QtSql>
 
 void GroupManager::processOneSampleGroup(int sampleId, int groupId, int resemblenceLevel)
 {

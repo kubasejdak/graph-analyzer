@@ -3,6 +3,7 @@
 
 #include <tasks/TaskQueue.h>
 #include <tasks/TaskResolver.h>
+#include <utils/XMLParser.h>
 
 class TaskManager {
 public:
@@ -15,6 +16,7 @@ public:
 private:
 	TaskQueue m_queue;
 	TaskResolver m_resolver;
+	XMLParser m_xmlParser;
 };
 
 #endif /* TASKMANAGER_H */

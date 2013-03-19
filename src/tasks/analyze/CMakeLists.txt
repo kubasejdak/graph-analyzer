@@ -12,3 +12,5 @@ set(ANALYZE_TASK_SRC
 add_library(analyze-task ${ANALYZE_TASK_SRC})
 
 target_link_libraries(analyze-task analyze-modules)
+target_link_libraries(analyze-task core)
+target_link_libraries(analyze-task utils)

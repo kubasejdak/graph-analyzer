@@ -8,9 +8,6 @@
 #define GRAPHHASH_H_
 
 #include <tasks/analyze/modules/analyze/IAnalyze.h>
-#include <core/Graph.h>
-#include <utils/InstructionSplitter.h>
-#include <utils/Toolbox.h>
 
 class GraphHash: public IAnalyze {
 public:

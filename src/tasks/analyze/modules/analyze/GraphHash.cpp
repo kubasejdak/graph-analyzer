@@ -5,6 +5,9 @@
  */
 
 #include "GraphHash.h"
+#include <core/Graph.h>
+#include <utils/InstructionSplitter.h>
+#include <utils/Toolbox.h>
 
 GraphHash::GraphHash()
 {

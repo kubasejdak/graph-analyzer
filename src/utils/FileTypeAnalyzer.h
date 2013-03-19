@@ -8,9 +8,6 @@
 #define FILETYPEANALYZER_H_
 
 #include <QString>
-#include <magic.h>
-
-#include <utils/Toolbox.h>
 
 /// @brief Provides method to determine MIME type of a given file using libmagic library.
 class FileTypeAnalyzer {

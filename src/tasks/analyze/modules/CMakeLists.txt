@@ -11,4 +11,6 @@ set(ANALYZE_MODULES_SRC
 
 add_library(analyze-modules ${ANALYZE_MODULES_SRC} )
 
-target_link_libraries(analyze-modules)
+target_link_libraries(analyze-modules analyze-submodules)
+target_link_libraries(analyze-modules input-submodules)
+target_link_libraries(analyze-modules output-submodules)

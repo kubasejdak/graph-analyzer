@@ -10,9 +10,7 @@
 #include <QString>
 #include <vector>
 #include <string>
-#include <boost/algorithm/string.hpp>
 using namespace std;
-using namespace boost;
 
 class InstructionSplitter {
 public:

@@ -5,6 +5,13 @@
  */
 
 #include "ModuleManager.h"
+#include <tasks/analyze/modules/input/BinaryInput.h>
+#include <tasks/analyze/modules/input/PcapInput.h>
+#include <tasks/analyze/modules/output/DatabaseOutput.h>
+#include <tasks/analyze/modules/output/ConsoleOutput.h>
+#include <tasks/analyze/modules/analyze/SyscallAnalyze.h>
+#include <tasks/analyze/modules/analyze/LoopDetector.h>
+#include <tasks/analyze/modules/analyze/GraphHash.h>
 
 ModuleManager::~ModuleManager()
 {

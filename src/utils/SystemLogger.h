@@ -8,21 +8,16 @@
 #define SYSTEMLOGGER_H_
 
 #include <QString>
-#include <QDate>
-#include <QTime>
-#include <QFile>
 #include <QList>
 #include <boost/current_function.hpp>
-#include <iostream>
-using namespace std;
 
-#include <utils/IOptionsReader.h>
 #include <utils/LoggingStrategy.h>
+#include <utils/XMLParser.h>
 
 #define	LOG(fmt, args...)           SystemLogger::instance()->log(__FILE__, BOOST_CURRENT_FUNCTION, __LINE__, QString().sprintf(fmt, ##args))
 #define	LOG_ERROR(fmt, args...)     SystemLogger::instance()->logError(__FILE__, BOOST_CURRENT_FUNCTION, __LINE__, QString().sprintf(fmt, ##args))
 
-class SystemLogger : public IOptionsReader {
+class SystemLogger {
 public:
 	~SystemLogger();
     static SystemLogger *instance()
@@ -51,6 +46,8 @@ private:
 
     int m_logLevel;
 	QList<ILoggingStrategy *> m_strategies;
+
+	XMLParser m_xmlParser;
 };
 
 #endif /* SYSTEMLOGGER_H_ */

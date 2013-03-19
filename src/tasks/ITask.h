@@ -18,7 +18,7 @@
 
 class ITask {
 public:
-	ITask(int id) : m_id(id) {}
+	ITask(int id) : m_id(id) { m_errors = 0; }
 	virtual ~ITask() {}
 
 	virtual bool perform() = 0;

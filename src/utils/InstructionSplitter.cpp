@@ -6,6 +6,9 @@
 
 #include "InstructionSplitter.h"
 
+#include <boost/algorithm/string.hpp>
+using namespace boost;
+
 QString InstructionSplitter::address()
 {
     if(m_holder.size() < 1)

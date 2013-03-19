@@ -22,6 +22,7 @@ public:
 	virtual ~AnalyzeTask() {}
 
 private:
+	void loadModules();
 	virtual bool perform();
 	bool readConfigXML();
 	void addScheduledFile(QString filename);
@@ -29,6 +30,7 @@ private:
 	int load(QString filename);
 	bool emulate(ExploitSample *s);
 	bool analyze(ExploitSample *s);
+	bool exportResults(ExploitSample *s);
 
 	EmulationSystem m_emulationSystem;
 	AnalysisSystem m_analysisSystem;
@@ -41,6 +43,10 @@ private:
 	int m_loadedFiles;
 	int m_analyzedSamples;
 	int m_detectedExploits;
+
+	InputMap *m_inputMods;
+	AnalyzeMap *m_analyzeMods;
+	OutputMap *m_outputMods;
 };
 
 #endif /* ANALYZETASK_H */

@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
 	options.add_options()
 			("help,h", "print help message")
 			("version,v", "print version")
-			("task,t", "execute system tasks" )
+			("tasks,t", "execute system tasks" )
 			;
 
 	opt::variables_map vm;
@@ -50,11 +50,11 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 	/* call rpc function */
-	if(vm.count("rpc")) {
+	if(vm.count("tasks")) {
 		bool stat = system.executeTasks();
 
 		if(stat == false) {
-			LOG("Executing tasks failed\n");
+			LOG("executing tasks failed\n");
 			return 1;
 		}
 	}

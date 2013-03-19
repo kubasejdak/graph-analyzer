@@ -4,8 +4,7 @@
  * Created on	: 16-09-2012
  */
 
-#include <core/Options.h>
-#include <utils/DatabaseManager.h>
+#include "Options.h"
 
 Options::Options()
 {

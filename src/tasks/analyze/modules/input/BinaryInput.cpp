@@ -5,6 +5,9 @@
  */
 
 #include "BinaryInput.h"
+#include <core/Options.h>
+
+#include <QFileInfo>
 
 BinaryInput::BinaryInput()
 {

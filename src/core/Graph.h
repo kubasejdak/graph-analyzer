@@ -32,7 +32,6 @@ extern "C" {
 	#include <emu/environment/linux/env_linux_syscall_hooks.h>
 }
 
-/* project headers */
 #include <utils/InstructionSplitter.h>
 #include <utils/SystemLogger.h>
 

@@ -8,8 +8,6 @@
 #define SYSCALLANALYZE_H_
 
 #include <tasks/analyze/modules/analyze/IAnalyze.h>
-#include <core/Graph.h>
-#include <utils/InstructionSplitter.h>
 
 class SyscallAnalyze: public IAnalyze {
 public:

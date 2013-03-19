@@ -7,15 +7,9 @@
 #ifndef CORESYSTEM_H_
 #define CORESYSTEM_H_
 
-#include <QList>
 #include <QString>
-#include <QDir>
-#include <QFile>
 
-#include <core/ExploitSample.h>
-#include <core/ExploitInfo.h>
 #include <utils/XMLParser.h>
-#include <utils/Toolbox.h>
 
 class CoreSystem {
 public:
@@ -31,8 +25,6 @@ public:
 	QString version();
 
 private:
-	//void loadModules();
-
 	/* data members */
 	XMLParser m_xmlParser;
 };

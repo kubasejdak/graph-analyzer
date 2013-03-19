@@ -5,7 +5,8 @@ set(ANALYZE_SUBMODULES_SRC
 	SyscallAnalyze.cpp
 	GraphHash.cpp
 	LoopDetector.cpp
-    ../../../../utils/InstructionSplitter.cpp
 )
 
 add_library(analyze-submodules ${ANALYZE_SUBMODULES_SRC})
+
+target_link_libraries(analyze-submodules utils)

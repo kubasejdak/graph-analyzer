@@ -2,9 +2,6 @@
 #define LOGGINGSTRATEGY_H
 
 #include <QString>
-#include <QFile>
-#include <iostream>
-using namespace std;
 
 class ILoggingStrategy {
 public:

@@ -7,9 +7,6 @@
 #ifndef EMULATIONSYSTEM_H_
 #define EMULATIONSYSTEM_H_
 
-#include <QString>
-#include <QDir>
-
 extern "C" {
 	#include <emu/emu.h>
 	#include <emu/emu_cpu_data.h>
@@ -28,8 +25,6 @@ extern "C" {
 
 #include <tasks/analyze/EmulationUnit.h>
 #include <core/ExploitSample.h>
-#include <core/Options.h>
-#include <utils/SystemLogger.h>
 
 class EmulationSystem {
 public:

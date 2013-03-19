@@ -5,6 +5,10 @@
  */
 
 #include "EmulationUnit.h"
+#include <utils/SystemLogger.h>
+#if 0
+#include <core/UserHooks.h>
+#endif
 
 EmulationUnit::EmulationUnit()
 {

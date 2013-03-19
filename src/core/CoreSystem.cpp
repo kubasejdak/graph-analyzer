@@ -52,14 +52,6 @@ QString CoreSystem::version()
 	return VERSION;
 }
 
-/*
-void CoreSystem::loadModules()
-{
-	m_inputMods = ModuleManager::instance()->input();
-	m_outputMods = ModuleManager::instance()->output();
-}
-*/
-
 #if 0
 bool CoreSystem::dbUpdateSystemInfo()
 {

@@ -17,7 +17,7 @@
 
 class IInput: public IModule {
 public:
-	IInput();
+	IInput() {}
 	virtual ~IInput() {}
 
 	QString type() { return m_type; }

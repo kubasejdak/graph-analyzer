@@ -7,9 +7,6 @@
 #ifndef CONSOLEOUTPUT_H_
 #define CONSOLEOUTPUT_H_
 
-#include <iostream>
-using namespace std;
-
 #include <tasks/analyze/modules/output/IOutput.h>
 
 class ConsoleOutput: public IOutput {
@@ -17,7 +14,7 @@ public:
 	ConsoleOutput();
     virtual ~ConsoleOutput() {}
 
-	virtual bool generateOutput(ExploitSample *sample);
+	virtual bool exportOutput(ExploitSample *sample);
 };
 
 #endif /* CONSOLEOUTPUT_H_ */

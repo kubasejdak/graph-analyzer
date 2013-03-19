@@ -6,6 +6,12 @@
 
 #include "Toolbox.h"
 
+#include <QFileInfo>
+#include <QDir>
+#include <stdint.h>
+#include <string>
+using namespace std;
+
 QString Toolbox::itos(int n, int base)
 {
     QString s;

@@ -16,7 +16,7 @@
 class AnalysisSystem {
 public:
 	AnalysisSystem();
-	virtual ~AnalysisSystem();
+	virtual ~AnalysisSystem() {}
 
 	void loadSample(ExploitSample *sample);
 	bool analyze();
@@ -25,7 +25,7 @@ private:
 	void loadModules();
 
     ExploitSample *m_sample;
-	AnalyzeMap *m_analyzeModules;
+	AnalyzeMap *m_analyzeMods;
 };
 
 #endif /* ANALYSISSYSTEM_H_ */

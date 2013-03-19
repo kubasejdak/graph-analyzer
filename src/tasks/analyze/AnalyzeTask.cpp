@@ -6,6 +6,8 @@
 
 #include "AnalyzeTask.h"
 #include <utils/FileTypeAnalyzer.h>
+#include <utils/SystemLogger.h>
+#include <core/Options.h>
 
 AnalyzeTask::AnalyzeTask(int id) : ITask(id)
 {
@@ -14,11 +16,20 @@ AnalyzeTask::AnalyzeTask(int id) : ITask(id)
 	m_loadedFiles = 0;
 	m_analyzedSamples = 0;
 	m_detectedExploits = 0;
+
+	loadModules();
+}
+
+void AnalyzeTask::loadModules()
+{
+	m_inputMods = ModuleManager::instance()->input();
+	m_outputMods = ModuleManager::instance()->output();
 }
 
 bool AnalyzeTask::perform()
 {
 	SystemLogger::instance()->setStatus("analyze task");
+	LOG("starting task: [analyze], m_id: [%d]\n", m_id);
 
 	/* read files to analyze */
 	if(readConfigXML() == false) {
@@ -47,7 +58,6 @@ bool AnalyzeTask::perform()
 			else
 				LOG_ERROR("loading file [%s] -> [no appropriate input module]\n", currentFile.toStdString().c_str());
 
-			//++processedCounter;
 			continue;
 		}
 
@@ -55,7 +65,6 @@ bool AnalyzeTask::perform()
 		while(!m_samples.isEmpty()) {
 			s = m_samples.front();
 			m_samples.pop_front();
-			++m_analyzedSamples;
 			LOG("processing sample: [%s]\n", s->info()->name().toStdString().c_str());
 
 			/* emulate */
@@ -86,24 +95,23 @@ bool AnalyzeTask::perform()
 			}
 			if(s->info()->isExploitPresent())
 				++m_detectedExploits;;
-			/*if(exportResults(s) == false) {
+			if(exportResults(s) == false) {
 				LOG_ERROR("output for [%s] -> [%s]\n", currentFile.toStdString().c_str(), SystemLogger::instance()->error().toStdString().c_str());
 				++m_errors;
 				goto cleanup;
-			}*/
+			}
 
 cleanup:
 			/* clean up */
 			delete s;
 			LOG("sample analyzing finished\n");
-			//++sampleCounter;
+			++m_analyzedSamples;
 		}
-		//++processedCounter;
 		LOG("file analyzing finished\n");
 	} /* while */
 
 	/* summarize */
-	//LOG("FINISHED: found %d exploit(s) in %d sample(s) extracted from %d file(s)!\n", exploitCounter, sampleCounter, fileCounter);
+	LOG("FINISHED: found %d exploit(s) in %d sample(s) extracted from %d file(s)!\n", m_detectedExploits, m_analyzedSamples, m_loadedFiles);
 	if(m_errors)
 		LOG("some ERRORS occured, errorCounter: [%d]\n", m_errors);
 	else
@@ -124,25 +132,19 @@ bool AnalyzeTask::readConfigXML()
 		return false;
 	}
 
-	QDomElement task = m_xmlParser.root(ROOT_NODE);;
-	int taskId = 1;
-	do {
-		if(task.attribute("type") != "analyze") {
-			task.nextSiblingElement(ROOT_NODE);
-		}
-		else if(taskId != m_id) {
-			task.nextSiblingElement(ROOT_NODE);
-			++taskId;
-		}
+	QDomElement taskElement = m_xmlParser.root(ROOT_NODE);
+	int taskId = 0;
+	while(taskId != m_id) {
+		taskElement = taskElement.nextSiblingElement(ROOT_NODE);
+		++taskId;
 	}
-	while(taskId != m_id);
 
-	m_override = m_xmlParser.child(task, "Override").attribute("val") == "true" ? true : false;
+	m_override = m_xmlParser.child(taskElement, "Override").attribute("val") == "true" ? true : false;
 
 	/* files */
 	LOG("collecting files to analyze\n");
-	while(m_xmlParser.hasChild(task, "File")) {
-		QDomElement file = m_xmlParser.child(task, "File");
+	while(m_xmlParser.hasChild(taskElement, "File")) {
+		QDomElement file = m_xmlParser.child(taskElement, "File");
 		if(file.attribute("source") == "local") {
 			addScheduledFile(file.text());
 			LOG("[local]: %s\n", file.text().toStdString().c_str());
@@ -153,17 +155,17 @@ bool AnalyzeTask::readConfigXML()
 		}
 
 		++m_scheduledFiles;
-		m_xmlParser.removeChild(task, file);
+		m_xmlParser.removeChild(taskElement, file);
 	}
 
 	/* output stratefies */
-	while(m_xmlParser.hasChild(task, "Output")) {
-		QDomElement out = m_xmlParser.child(task, "Output");
+	while(m_xmlParser.hasChild(taskElement, "Output")) {
+		QDomElement out = m_xmlParser.child(taskElement, "Output");
 		m_outStrategies.push_back(out.attribute("val"));
-		m_xmlParser.removeChild(task, out);
+		LOG("added output strategy: [%s]\n", out.attribute("val").toStdString().c_str());
+		m_xmlParser.removeChild(taskElement, out);
 	}
 
-	m_xmlParser.removeRoot(task);
 	m_xmlParser.close();
 	return true;
 }
@@ -190,7 +192,7 @@ void AnalyzeTask::addScheduledFile(QString filename)
 		++addCounter;
 	}
 
-	LOG("Added [%d] file(s) extracted from [%s]\n", addCounter, filename.toStdString().c_str());
+	LOG("added [%d] file(s) extracted from [%s]\n", addCounter, filename.toStdString().c_str());
 	LOG("SUCCESS\n\n");
 }
 
@@ -204,7 +206,6 @@ int AnalyzeTask::load(QString filename)
 	QString fileType = fileAnalyzer.analyze(filename);
 	LOG("fileType: [%s]\n", fileType.toStdString().c_str());
 
-#if 0
 	InputMap::iterator it;
 	for(it = m_inputMods->begin(); it != m_inputMods->end(); ++it) {
 		if(fileType == it.value()->type()) {
@@ -225,7 +226,6 @@ int AnalyzeTask::load(QString filename)
 			break;
 		}
 	}
-#endif
 
 	if(moduleFound) {
 		LOG("SUCCESS\n\n");
@@ -263,6 +263,28 @@ bool AnalyzeTask::analyze(ExploitSample *s)
 		LOG_ERROR("general analyzing error\n");
 		LOG_ERROR("FAILURE\n\n");
 		return false;
+	}
+
+	LOG("SUCCESS\n\n");
+	return true;
+}
+
+bool AnalyzeTask::exportResults(ExploitSample *s)
+{
+	for(int i = 0; i < m_outStrategies.size(); ++i) {
+		QString exportStrategy = m_outStrategies.at(i);
+		LOG("exporting using strategy: [%s]\n", exportStrategy.toStdString().c_str());
+		if(!m_outputMods->contains(exportStrategy)) {
+			LOG_ERROR("output strategy not supported: [%s]", exportStrategy.toStdString().c_str());
+			++m_errors;
+			continue;
+		}
+
+		bool status = (*m_outputMods)[exportStrategy]->exportOutput(s);
+		if(status == false) {
+			LOG_ERROR("failed to export sample [%s] with strategy: [%s]", s->info()->name().toStdString().c_str(), exportStrategy.toStdString().c_str());
+			++m_errors;
+		}
 	}
 
 	LOG("SUCCESS\n\n");

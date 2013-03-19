@@ -5,6 +5,10 @@
  */
 
 #include "FileTypeAnalyzer.h"
+#include <utils/Toolbox.h>
+#include <utils/SystemLogger.h>
+
+#include <magic.h>
 
 QString FileTypeAnalyzer::analyze(QString filename)
 {

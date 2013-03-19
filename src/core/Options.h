@@ -7,19 +7,13 @@
 #ifndef OPTIONS_H_
 #define OPTIONS_H_
 
-#include <stdint.h>
-#include <string>
 #include <QString>
-#include <QFile>
-#include <QtSql>
 #include <QList>
-#include <boost/program_options.hpp>
-namespace opt = boost::program_options;
-using namespace std;
 
 #include <utils/SystemLogger.h>
 #include <utils/XMLParser.h>
-#include <utils/IOptionsReader.h>
+
+#define CONFIG_FILE		"/var/www/jsejdak/GraphAnalyzer.conf"
 
 class Options {
 public:
@@ -29,9 +23,6 @@ public:
 		static Options m_instance;
 		return &m_instance;
 	}
-
-	/* read options */
-	bool readConfigXML();
 
 	/* list options */
 	void listOptions();
@@ -51,6 +42,7 @@ public:
 
 private:
 	Options();
+	bool readConfigXML();
 
 	XMLParser m_xmlParser;
 };

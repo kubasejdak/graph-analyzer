@@ -5,6 +5,8 @@
  */
 
 #include "SyscallAnalyze.h"
+#include <core/Graph.h>
+#include <utils/InstructionSplitter.h>
 
 SyscallAnalyze::SyscallAnalyze()
 {

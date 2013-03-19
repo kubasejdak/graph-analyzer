@@ -7,7 +7,6 @@ set(UTILS_SRC
 	DatabaseManager.cpp
     Toolbox.cpp
     XMLParser.cpp
-    IOptionsReader.h
     LoggingStrategy.cpp
 )
 

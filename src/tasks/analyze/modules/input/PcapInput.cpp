@@ -5,6 +5,12 @@
  */
 
 #include "PcapInput.h"
+#include <core/Options.h>
+#include <utils/Toolbox.h>
+#include <utils/SystemLogger.h>
+
+#include <QDir>
+#include <QFileInfo>
 
 PcapInput::PcapInput()
 {

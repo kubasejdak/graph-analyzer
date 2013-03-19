@@ -5,6 +5,7 @@
  */
 
 #include "AnalysisSystem.h"
+#include <utils/SystemLogger.h>
 
 AnalysisSystem::AnalysisSystem()
 {
@@ -12,8 +13,9 @@ AnalysisSystem::AnalysisSystem()
 	loadModules();
 }
 
-AnalysisSystem::~AnalysisSystem()
+void AnalysisSystem::loadModules()
 {
+	m_analyzeMods = ModuleManager::instance()->analyze();
 }
 
 void AnalysisSystem::loadSample(ExploitSample *sample)
@@ -38,7 +40,7 @@ bool AnalysisSystem::analyze()
 
 	bool status;
 	AnalyzeMap::iterator it;
-    for(it = m_analyzeModules->begin(); it != m_analyzeModules->end(); ++it) {
+	for(it = m_analyzeMods->begin(); it != m_analyzeMods->end(); ++it) {
         status = it.value()->perform(m_sample);
         if(!status) {
             LOG_ERROR("analyze module failed: [%s]\n", it.key().toStdString().c_str());
@@ -50,9 +52,4 @@ bool AnalysisSystem::analyze()
     m_sample = NULL;
     LOG("SUCCESS\n\n");
 	return true;
-}
-
-void AnalysisSystem::loadModules()
-{
-    m_analyzeModules = ModuleManager::instance()->analyze();
 }

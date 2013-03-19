@@ -5,6 +5,8 @@
  */
 
 #include "Graph.h"
+#include <utils/InstructionSplitter.h>
+#include <utils/SystemLogger.h>
 
 //====================================================================================================================================
 
@@ -261,12 +263,15 @@ bool Graph::exportGraph(GraphExportStrategy strategy, QString filename)
 
 	switch(strategy) {
 	case DOT_FILE:
+		LOG("exporting graph, using strategy: [DOT]\n");
 		stat = dotExportStrategy(filename);
 		break;
 	case XML_FILE:
+		LOG("exporting graph, using strategy: [XML]\n");
 		break;
 	}
 
+	LOG("SUCCESS\n\n");
 	return stat;
 }
 
@@ -278,6 +283,7 @@ bool Graph::dotExportStrategy(QString filename)
 	FILE *f = fopen(filename.toStdString().c_str(), "w+");
 	if(f == NULL) {
 		LOG_ERROR("cannot open temporary file [%s]\n", filename.toStdString().c_str());
+		LOG_ERROR("FAILURE\n\n");
 		return false;
 	}
 

@@ -55,6 +55,7 @@ bool DatabaseManager::readConfigXML()
 	m_pass = m_xmlParser.child(options, "DBPass").attribute("val");
 
 	m_xmlParser.close();
+	LOG("SUCCESS\n\n");
 	return true;
 }
 
@@ -67,6 +68,7 @@ void DatabaseManager::listOptions()
 	LOG("m_name: [%s]\n", m_name.toStdString().c_str());
 	LOG("m_user: [%s]\n", m_user.toStdString().c_str());
 	LOG("m_pass: [%s]\n", m_pass.toStdString().c_str());
+	LOG("SUCCESS\n\n");
 }
 
 bool DatabaseManager::exec(QSqlQuery *query) {

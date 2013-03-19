@@ -18,5 +18,6 @@ QString FileTypeAnalyzer::analyze(QString filename)
 	magic_close(myt);
 
 	LOG("recognized file: [%s] as [%s] type\n", filename.toStdString().c_str(), fileType.toStdString().c_str());
+	LOG("SUCCESS\n\n");
 	return fileType;
 }

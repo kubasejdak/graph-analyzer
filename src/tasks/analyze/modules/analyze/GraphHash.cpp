@@ -57,8 +57,10 @@ bool GraphHash::exportToDatabase(ExploitSample *sample, int sampleId)
 		QSqlQuery selectQuery(DatabaseManager::instance()->database());
 		selectQuery.prepare("SELECT * FROM analyze_hash WHERE hash = ?");
 		selectQuery.addBindValue(hash);
-		if(!DatabaseManager::instance()->exec(&selectQuery))
+		if(!DatabaseManager::instance()->exec(&selectQuery)) {
+			LOG_ERROR("FAILURE\n\n");
 			return false;
+		}
 
 		int hashId;
 		/* if entry in database exists */
@@ -73,8 +75,10 @@ bool GraphHash::exportToDatabase(ExploitSample *sample, int sampleId)
 			insertQuery.prepare("INSERT INTO analyze_hash VALUES (?, ?)");
 			insertQuery.addBindValue(hashId);
 			insertQuery.addBindValue(hash);
-			if(!DatabaseManager::instance()->exec(&insertQuery))
+			if(!DatabaseManager::instance()->exec(&insertQuery)) {
+				LOG_ERROR("FAILURE\n\n");
 				return false;
+			}
 		}
 
 		/* add assignment to sample */
@@ -82,9 +86,11 @@ bool GraphHash::exportToDatabase(ExploitSample *sample, int sampleId)
 		insert2Query.prepare("INSERT INTO analyze_hashassignment VALUES (DEFAULT, ?, ?)");
 		insert2Query.addBindValue(hashId);
 		insert2Query.addBindValue(sampleId);
-		if(!DatabaseManager::instance()->exec(&insert2Query))
+		if(!DatabaseManager::instance()->exec(&insert2Query)) {
 			SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
+			LOG_ERROR("FAILURE\n\n");
 			return false;
+		}
 	}
 
 	LOG("SUCCESS\n\n");

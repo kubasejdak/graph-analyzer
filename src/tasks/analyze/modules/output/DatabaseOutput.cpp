@@ -49,8 +49,10 @@ bool DatabaseOutput::exportOutput(ExploitSample *sample)
 	sampleQuery.addBindValue(QString().setNum(info->fileSize()));
 	sampleQuery.addBindValue(QString().setNum(info->codeOffset()));
 	sampleQuery.addBindValue("");
-	if(!DatabaseManager::instance()->exec(&sampleQuery))
+	if(!DatabaseManager::instance()->exec(&sampleQuery)) {
+		LOG_ERROR("FAILURE\n\n");
         return false;
+	}
 
     /* analyze modules specific data */
 	AnalyzeMap *anaMods = ModuleManager::instance()->analyze();
@@ -71,8 +73,10 @@ bool DatabaseOutput::exportOutput(ExploitSample *sample)
 	groupQuery.addBindValue("false");
 	groupQuery.addBindValue(0);
 	groupQuery.addBindValue("");
-	if(!DatabaseManager::instance()->exec(&groupQuery))
+	if(!DatabaseManager::instance()->exec(&groupQuery)) {
+		LOG_ERROR("FAILURE\n\n");
 		return false;
+	}
 
     LOG("SUCCESS\n\n");
 	return true;
@@ -87,8 +91,10 @@ bool DatabaseOutput::checkDuplicate(ExploitInfo *info)
 	selectQuery.addBindValue(info->extractedFrom());
 	selectQuery.addBindValue(info->size());
 	selectQuery.addBindValue(info->codeOffset());
-	if(!DatabaseManager::instance()->exec(&selectQuery))
+	if(!DatabaseManager::instance()->exec(&selectQuery)) {
+		LOG_ERROR("FAILURE\n\n");
         return false;
+	}
 
     LOG("SUCCESS\n\n");
 	return selectQuery.next();

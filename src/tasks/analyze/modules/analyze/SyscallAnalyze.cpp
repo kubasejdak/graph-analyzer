@@ -59,8 +59,10 @@ bool SyscallAnalyze::exportToDatabase(ExploitSample *sample, int sampleId)
 		selectQuery.prepare("SELECT * FROM analyze_api WHERE syscall = ? AND dll = ?");
 		selectQuery.addBindValue(syscall);
 		selectQuery.addBindValue(dll);
-		if(!DatabaseManager::instance()->exec(&selectQuery))
+		if(!DatabaseManager::instance()->exec(&selectQuery)) {
+			LOG_ERROR("FAILURE\n\n");
 			return false;
+		}
 
 		int apiId;
 		/* if entry in database exists */
@@ -76,8 +78,10 @@ bool SyscallAnalyze::exportToDatabase(ExploitSample *sample, int sampleId)
 			insertQuery.addBindValue(apiId);
 			insertQuery.addBindValue(dll);
 			insertQuery.addBindValue(syscall);
-			if(!DatabaseManager::instance()->exec(&insertQuery))
+			if(!DatabaseManager::instance()->exec(&insertQuery)) {
+				LOG_ERROR("FAILURE\n\n");
 				return false;
+			}
 		}
 
 		/* add assignment to sample */
@@ -85,8 +89,10 @@ bool SyscallAnalyze::exportToDatabase(ExploitSample *sample, int sampleId)
 		insert2Query.prepare("INSERT INTO analyze_apiassignment VALUES (DEFAULT, ?, ?)");
 		insert2Query.addBindValue(apiId);
 		insert2Query.addBindValue(sampleId);
-		if(!DatabaseManager::instance()->exec(&insert2Query))
+		if(!DatabaseManager::instance()->exec(&insert2Query)) {
+			LOG_ERROR("FAILURE\n\n");
 			return false;
+		}
 	}
 
 	LOG("SUCCESS\n\n");

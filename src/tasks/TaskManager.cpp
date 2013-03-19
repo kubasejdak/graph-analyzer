@@ -5,8 +5,10 @@
 
 bool TaskManager::collectTasks()
 {
-	if(!m_xmlParser.open(TASKS_FILE))
+	if(!m_xmlParser.open(TASKS_FILE)) {
+		LOG_ERROR("FAILURE\n\n");
 		return false;
+	}
 
 	QDomElement taskElement = m_xmlParser.root(ROOT_NODE);
 	int taskId = 0;
@@ -21,6 +23,7 @@ bool TaskManager::collectTasks()
 	}
 
 	m_xmlParser.close();
+	LOG("SUCCESS\n\n");
 	return true;
 }
 
@@ -36,5 +39,6 @@ bool TaskManager::executeTasks()
 	}
 
 	QFile(TASKS_FILE).remove();
+	LOG("SUCCESS\n\n");
 	return true;
 }

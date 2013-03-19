@@ -21,15 +21,19 @@ Options::Options()
 		LOG_ERROR("failed to read XML configuration, using default options\n");
 
 	listOptions();
+	LOG("SUCCESS\n\n");
 }
 
 bool Options::readConfigXML()
 {
-	if(!m_xmlParser.open(CONFIG_FILE))
+	if(!m_xmlParser.open(CONFIG_FILE)) {
+		LOG_ERROR("FAILURE\n\n");
 		return false;
+	}
 
 	if(!m_xmlParser.hasRoot("CoreOptions")) {
 		m_xmlParser.close();
+		LOG_ERROR("FAILURE\n\n");
 		return false;
 	}
 
@@ -48,6 +52,7 @@ bool Options::readConfigXML()
 	skipEmptySamples = m_xmlParser.child(options, "SkipEmptySamples").attribute("val") == "true" ? true : false;
 
 	m_xmlParser.close();
+	LOG("SUCCESS\n\n");
 	return true;
 }
 
@@ -62,4 +67,5 @@ void Options::listOptions()
 	LOG("skipBrokenSamples: [%s]\n", skipBrokenSamples ? "true" : "false");
 	LOG("brokenSampleSize: [%d]\n", brokenSampleSize);
 	LOG("skipEmptySamples: [%s]\n", skipEmptySamples ? "true" : "false");
+	LOG("SUCCESS\n\n");
 }

@@ -124,11 +124,14 @@ cleanup:
 
 bool AnalyzeTask::readConfigXML()
 {
-	if(!m_xmlParser.open(TASKS_FILE))
+	if(!m_xmlParser.open(TASKS_FILE)) {
+		LOG_ERROR("FAILURE\n\n");
 		return false;
+	}
 
 	if(!m_xmlParser.hasRoot(ROOT_NODE)) {
 		m_xmlParser.close();
+		LOG_ERROR("FAILURE\n\n");
 		return false;
 	}
 
@@ -167,6 +170,7 @@ bool AnalyzeTask::readConfigXML()
 	}
 
 	m_xmlParser.close();
+	LOG("SUCCESS\n\n");
 	return true;
 }
 
@@ -213,6 +217,7 @@ int AnalyzeTask::load(QString filename)
 			bool ok = it.value()->loadInput(filename, &q);
 			if(!ok) {
 				SystemLogger::instance()->setError("loading file failed");
+				LOG_ERROR("FAILURE\n\n");
 				return -1;
 			}
 
@@ -233,7 +238,7 @@ int AnalyzeTask::load(QString filename)
 	}
 
 	LOG_ERROR("no appropriate input module\n");
-	LOG_ERROR("FAILUR\n\n");
+	LOG_ERROR("FAILURE\n\n");
 	return 1;
 }
 

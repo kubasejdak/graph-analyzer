@@ -38,6 +38,7 @@ bool PcapInput::loadInput(QString filename, QList<ExploitSample *> *samples)
     if(!success) {
         LOG_ERROR("cannot change directory to /tmp/pcap_dir");
         Toolbox::removeDirectory("tmp/pcap_tmp");
+		LOG_ERROR("FAILURE\n\n");
         return false;
 	}
 

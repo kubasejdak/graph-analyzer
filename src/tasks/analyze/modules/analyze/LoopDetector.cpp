@@ -6,6 +6,7 @@
 
 #include "LoopDetector.h"
 #include <core/Graph.h>
+#include <utils/InstructionSplitter.h>
 #include <utils/Toolbox.h>
 
 LoopDetector::LoopDetector()
@@ -114,8 +115,10 @@ bool LoopDetector::exportToDatabase(ExploitSample *sample, int sampleId)
 		QSqlQuery selectQuery(DatabaseManager::instance()->database());
 		selectQuery.prepare("SELECT * FROM analyze_loop WHERE hash = ?");
 		selectQuery.addBindValue(hash);
-		if(!DatabaseManager::instance()->exec(&selectQuery))
+		if(!DatabaseManager::instance()->exec(&selectQuery)) {
+			LOG_ERROR("FAILURE\n\n");
 			return false;
+		}
 
 		int loopId;
 		/* if entry in database exists */
@@ -135,8 +138,10 @@ bool LoopDetector::exportToDatabase(ExploitSample *sample, int sampleId)
 			insertQuery.addBindValue(start);
 			insertQuery.addBindValue(vertexes);
 			insertQuery.addBindValue("");
-			if(!DatabaseManager::instance()->exec(&insertQuery))
+			if(!DatabaseManager::instance()->exec(&insertQuery)) {
+				LOG_ERROR("FAILURE\n\n");
 				return false;
+			}
 		}
 
 		/* add assignment to sample */
@@ -144,8 +149,10 @@ bool LoopDetector::exportToDatabase(ExploitSample *sample, int sampleId)
 		insert2Query.prepare("INSERT INTO analyze_loopassignment VALUES (DEFAULT, ?, ?)");
 		insert2Query.addBindValue(loopId);
 		insert2Query.addBindValue(sampleId);
-		if(!DatabaseManager::instance()->exec(&insert2Query))
+		if(!DatabaseManager::instance()->exec(&insert2Query)) {
+			LOG_ERROR("FAILURE\n\n");
 			return false;
+		}
 	}
 
 	LOG("SUCCESS\n\n");

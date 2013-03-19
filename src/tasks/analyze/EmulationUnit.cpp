@@ -90,6 +90,7 @@ int32_t EmulationUnit::loadCode(byte_t *code, int32_t size)
     emu_cpu_reg32_set(m_cpu, esp, STATIC_CODE_OFFSET - 50); //0x0012fe98);
     emu_memory_write_dword(m_mem, 0x7df7b0bb, 0x00000000); //UrldownloadToFile
 
+	LOG("SUCCESS\n\n");
     return m_codeOffset;
 }
 
@@ -177,6 +178,7 @@ void EmulationUnit::exportWin32Hooks()
     emu_env_w32_export_hook(m_env, "URLDownloadToFileA", userHook_URLDownloadToFile, NULL);
     LOG("loaded: [urlmon.dll]\n");
     LOG("Win32Hooks loaded\n");
+	LOG("SUCCESS\n\n");
 #endif
 }
 
@@ -186,5 +188,6 @@ void EmulationUnit::exportLinuxHooks()
     emu_env_linux_syscall_hook(m_env, "exit", userHook_exit, NULL);
     emu_env_linux_syscall_hook(m_env, "socket", userHook_socket, NULL);
     LOG("LinuxHooks loaded\n");
+	LOG("SUCCESS\n\n");
 #endif
 }

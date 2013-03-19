@@ -32,9 +32,6 @@ extern "C" {
 	#include <emu/environment/linux/env_linux_syscall_hooks.h>
 }
 
-#include <utils/InstructionSplitter.h>
-#include <utils/SystemLogger.h>
-
 //====================================================================================================================================
 
 struct instr_vertex {

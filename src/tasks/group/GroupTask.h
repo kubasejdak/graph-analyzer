@@ -1,3 +1,9 @@
+/*
+ *  Filename	: GroupTask.h
+ *  Author		: Kuba Sejdak
+ *  Created on	: 20-03-2013
+ */
+
 #ifndef GROUPTASK_H
 #define GROUPTASK_H
 

@@ -7,6 +7,8 @@
 #ifndef EMULATIONSYSTEM_H_
 #define EMULATIONSYSTEM_H_
 
+#define DOT_FILENAME	"/tmp/graph.dot"
+
 extern "C" {
 	#include <emu/emu.h>
 	#include <emu/emu_cpu_data.h>
@@ -25,6 +27,7 @@ extern "C" {
 
 #include <tasks/analyze/EmulationUnit.h>
 #include <core/ExploitSample.h>
+#include <core/Graph.h>
 
 class EmulationSystem {
 public:
@@ -35,8 +38,12 @@ public:
 	bool emulate();
 
 private:
+	bool drawGraph(Graph *graph);
+
     EmulationUnit *m_emuUnit;
     ExploitSample *m_sample;
+
+	QString m_graphsDir;
 };
 
 #endif /* EMULATIONSYSTEM_H_ */

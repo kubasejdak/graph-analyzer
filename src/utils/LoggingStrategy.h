@@ -1,3 +1,9 @@
+/*
+ *  Filename	: LoggingStrategy.h
+ *  Author		: Kuba Sejdak
+ *  Created on	: 20-03-2013
+ */
+
 #ifndef LOGGINGSTRATEGY_H
 #define LOGGINGSTRATEGY_H
 

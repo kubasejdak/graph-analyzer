@@ -27,8 +27,7 @@ bool DatabaseOutput::exportOutput(ExploitSample *sample)
     bool duplicate = checkDuplicate(info);
     if(duplicate) {
         LOG("duplicate sample: skipping and removing duplicated graph file\n");
-        QFile file(info->graphName());
-        file.remove();
+		QFile(info->graphName()).remove();
         LOG("SUCCESS\n\n");
         return true;
     }
@@ -36,22 +35,10 @@ bool DatabaseOutput::exportOutput(ExploitSample *sample)
 	/* get next sample_id number */
 	int sampleId = DatabaseManager::instance()->sequenceValue("analyze_sample_id_seq");
 
-    /* general sample data */
-	LOG("exporting sample info [general] to database\n");
-	QSqlQuery sampleQuery(DatabaseManager::instance()->database());
-	sampleQuery.prepare("INSERT INTO analyze_sample VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-	sampleQuery.addBindValue(sampleId);
-	sampleQuery.addBindValue(info->name());
-	sampleQuery.addBindValue(info->extractedFrom());
-	sampleQuery.addBindValue(info->graphName());
-	sampleQuery.addBindValue(QString().setNum(info->size()));
-	sampleQuery.addBindValue(info->fileType());
-	sampleQuery.addBindValue(QString().setNum(info->fileSize()));
-	sampleQuery.addBindValue(QString().setNum(info->codeOffset()));
-	sampleQuery.addBindValue("");
-	if(!DatabaseManager::instance()->exec(&sampleQuery)) {
+	/* general sample data */
+	if(exportGeneralData(info, sampleId) == false) {
 		LOG_ERROR("FAILURE\n\n");
-        return false;
+		return false;
 	}
 
     /* analyze modules specific data */
@@ -62,29 +49,12 @@ bool DatabaseOutput::exportOutput(ExploitSample *sample)
 		anaIt.value()->exportToDatabase(sample, sampleId);
 	}
 
-	/* get next samplegroup_id number */
-	int groupId = DatabaseManager::instance()->sequenceValue("analyze_samplegroup_id_seq");
-
-	/* general samplegroup data */
-	QSqlQuery groupQuery(DatabaseManager::instance()->database());
-	groupQuery.prepare("INSERT INTO analyze_samplegroup VALUES (?, ?, ?, ?, ?)");
-	groupQuery.addBindValue(groupId);
-	groupQuery.addBindValue(sampleId);
-	groupQuery.addBindValue("false");
-	groupQuery.addBindValue(0);
-	groupQuery.addBindValue("");
-	if(!DatabaseManager::instance()->exec(&groupQuery)) {
-		LOG_ERROR("FAILURE\n\n");
-		return false;
-	}
-
     LOG("SUCCESS\n\n");
 	return true;
 }
 
 bool DatabaseOutput::checkDuplicate(ExploitInfo *info)
 {
-    /* check sample */
 	QSqlQuery selectQuery(DatabaseManager::instance()->database());
 	selectQuery.prepare("SELECT * FROM analyze_sample WHERE name = ? AND extracted_from = ? AND file_size = ? AND shellcode_offset = ?");
 	selectQuery.addBindValue(info->name());
@@ -98,4 +68,59 @@ bool DatabaseOutput::checkDuplicate(ExploitInfo *info)
 
     LOG("SUCCESS\n\n");
 	return selectQuery.next();
+}
+
+bool DatabaseOutput::exportGeneralData(ExploitInfo *info, int id)
+{
+	LOG("exporting sample info [general] to database\n");
+	QSqlQuery sampleQuery(DatabaseManager::instance()->database());
+	sampleQuery.prepare("INSERT INTO analyze_sample VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+	sampleQuery.addBindValue(id);
+	sampleQuery.addBindValue(info->name());
+	sampleQuery.addBindValue(info->extractedFrom());
+	sampleQuery.addBindValue(info->graphName());
+	sampleQuery.addBindValue(info->captureDate().toString("yyyy-MM-dd"));
+	sampleQuery.addBindValue(QString().setNum(info->size()));
+	sampleQuery.addBindValue(info->fileType());
+	sampleQuery.addBindValue(QString().setNum(info->fileSize()));
+	sampleQuery.addBindValue(QString().setNum(info->codeOffset()));
+	sampleQuery.addBindValue("");
+	if(!DatabaseManager::instance()->exec(&sampleQuery)) {
+		LOG_ERROR("FAILURE\n\n");
+		return false;
+	}
+
+	LOG("SUCCESS\n\n");
+	return true;
+}
+
+bool DatabaseOutput::exportAnalyzeData(ExploitInfo *info, int id)
+{
+	TraitsMap::iterator tableIt;
+	TraitsEntry::iterator colIt;
+
+	for(tableIt = info->traits()->begin(); tableIt != info->traits()->end(); ++tableIt) {
+		QString tableName = ANALYZE_PREFIX + tableIt.key();
+
+		/* get next sample_id number */
+		int recordId = DatabaseManager::instance()->sequenceValue(ANALYZE_PREFIX + "_id_seq");
+
+		/* prepare query */
+		QString queryTemplate = "INSERT INTO ? VALUES (?";
+		int columns = tableIt.value()->size();
+		for(int i = 0; i < columns; ++i)
+			queryTemplate += ", ?";
+		queryTemplate += ")";
+
+		QSqlQuery analyzeDataQuery(DatabaseManager::instance()->database());
+		analyzeDataQuery.prepare(queryTemplate);
+		analyzeDataQuery.addBindValue(tableName);
+		analyzeDataQuery.addBindValue(recordId);
+
+		for(colIt = tableIt.value()->begin(); colIt != tableIt.value()->end(); ++colIt)
+			analyzeDataQuery.addBindValue(colIt.value());
+	}
+
+	LOG("SUCCESS\n\n");
+	return true;
 }

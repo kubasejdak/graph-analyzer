@@ -1,3 +1,9 @@
+/*
+ *  Filename	: DatabaseManager.h
+ *  Author		: Kuba Sejdak
+ *  Created on	: 20-03-2013
+ */
+
 #ifndef DATABASEMANAGER_H_
 #define DATABASEMANAGER_H_
 

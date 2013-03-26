@@ -15,7 +15,6 @@ Options::Options()
 	bigFileSize = 20971520;
 	skipBrokenSamples = true;
 	brokenSampleSize = 50;
-	skipEmptySamples = true;
 
 	if(!readConfigXML())
 		LOG_ERROR("failed to read XML configuration, using default options\n");
@@ -49,8 +48,6 @@ bool Options::readConfigXML()
 	skipBrokenSamples = m_xmlParser.child(options, "SkipBrokenSamples").attribute("val") == "true" ? true : false;
 	brokenSampleSize = m_xmlParser.child(options, "SkipBrokenSamples").attribute("size").toInt();
 
-	skipEmptySamples = m_xmlParser.child(options, "SkipEmptySamples").attribute("val") == "true" ? true : false;
-
 	m_xmlParser.close();
 	LOG("SUCCESS\n\n");
 	return true;
@@ -66,6 +63,5 @@ void Options::listOptions()
 	LOG("bigFileSize: [%d]\n", bigFileSize);
 	LOG("skipBrokenSamples: [%s]\n", skipBrokenSamples ? "true" : "false");
 	LOG("brokenSampleSize: [%d]\n", brokenSampleSize);
-	LOG("skipEmptySamples: [%s]\n", skipEmptySamples ? "true" : "false");
 	LOG("SUCCESS\n\n");
 }

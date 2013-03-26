@@ -11,3 +11,5 @@ set(CORE_SRC
 )
 
 add_library(core ${CORE_SRC})
+
+target_link_libraries(core utils)

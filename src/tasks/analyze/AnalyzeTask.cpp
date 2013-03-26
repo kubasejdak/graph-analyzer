@@ -75,12 +75,17 @@ bool AnalyzeTask::perform()
 				goto cleanup;
 			}
 
-			/* analyze graph */
-			LOG("analyzing\n");
-			if(Options::instance()->skipEmptySamples && !s->info()->isExploitPresent()) {
-				LOG("no exploit found, skipping due to skipEmptySamples: [true]\n");
+			if(s->info()->isExploitPresent() == false) {
+				LOG("no exploit found, skipping\n");
 				goto cleanup;
 			}
+			if(s->info()->isBroken()) {
+				LOG("broken sample, skipping due to skipBrokenSamples: [true]\n");
+				goto cleanup;
+			}
+
+			/* analyze graph */
+			LOG("analyzing\n");
 			if(analyze(s) == false) {
 				LOG_ERROR("analyzing [%s] -> [%s]\n", currentFile.toStdString().c_str(), SystemLogger::instance()->error().toStdString().c_str());
 				++m_errors;
@@ -89,17 +94,13 @@ bool AnalyzeTask::perform()
 
 			/* export results */
 			LOG("exporting results\n");
-			if(Options::instance()->skipBrokenSamples && s->info()->isBroken()) {
-				LOG("broken sample, skipping due to skipBrokenSamples: [true]\n");
-				goto cleanup;
-			}
-			if(s->info()->isExploitPresent())
-				++m_detectedExploits;;
 			if(exportResults(s) == false) {
 				LOG_ERROR("output for [%s] -> [%s]\n", currentFile.toStdString().c_str(), SystemLogger::instance()->error().toStdString().c_str());
 				++m_errors;
 				goto cleanup;
 			}
+
+			++m_detectedExploits;
 
 cleanup:
 			/* clean up */

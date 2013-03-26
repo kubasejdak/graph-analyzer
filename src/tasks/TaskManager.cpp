@@ -1,3 +1,9 @@
+/*
+ *  Filename	: TaskManager.cpp
+ *  Author		: Kuba Sejdak
+ *  Created on	: 20-03-2013
+ */
+
 #include "TaskManager.h"
 #include <utils/SystemLogger.h>
 

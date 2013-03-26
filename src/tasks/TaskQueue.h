@@ -1,3 +1,9 @@
+/*
+ *  Filename	: TaskQueue.h
+ *  Author		: Kuba Sejdak
+ *  Created on	: 20-03-2013
+ */
+
 #ifndef TASKQUEUE_H
 #define TASKQUEUE_H
 

@@ -1,3 +1,9 @@
+/*
+ *  Filename	: TaskManager.h
+ *  Author		: Kuba Sejdak
+ *  Created on	: 20-03-2013
+ */
+
 #ifndef TASKMANAGER_H
 #define TASKMANAGER_H
 

@@ -24,12 +24,13 @@ bool ConsoleOutput::exportOutput(ExploitSample *sample)
 	cout << "\t name : " << info->name().toStdString() << endl;
 	cout << "\t extracted from: " << info->extractedFrom().toStdString() << endl;
 	cout << "\t graph name: " << info->graphName().toStdString() << endl;
+	cout << "\t capture date: " << info->captureDate().toString("yyyy-MM-dd").toStdString() << endl;
 	cout << "\t size : " << dec << info->size() << endl;
 	cout << "\t file type : " << info->fileType().toStdString() << endl;
 	cout << "\t file size : " << dec << info->fileSize() << endl;
 	cout << "\t exploit present : " << (info->isExploitPresent() ? "yes" : "no") << endl;
-	if(info->isExploitPresent())
-		cout << "\t exploit offset : 0x" << hex << info->codeOffset() << endl;
+	cout << "\t exploit offset : 0x" << hex << info->codeOffset() << endl;
+
 	TraitsMap::iterator it;
 	TraitsEntry::iterator it2;
 	for(it = info->traits()->begin(); it != info->traits()->end(); ++it) {

@@ -35,7 +35,6 @@ public:
 	int bigFileSize;
 	bool skipBrokenSamples;
 	int brokenSampleSize;
-	bool skipEmptySamples;
 
 	/* pending files */
 	QList<QString> pendingFiles;

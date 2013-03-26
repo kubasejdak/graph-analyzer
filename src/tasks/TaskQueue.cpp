@@ -1,3 +1,9 @@
+/*
+ *  Filename	: TaskQueue.cpp
+ *  Author		: Kuba Sejdak
+ *  Created on	: 20-03-2013
+ */
+
 #include "TaskQueue.h"
 
 TaskQueue::~TaskQueue()

@@ -1,3 +1,9 @@
+/*
+ *  Filename	: DatabaseManager.cpp
+ *  Author		: Kuba Sejdak
+ *  Created on	: 20-03-2013
+ */
+
 #include "DatabaseManager.h"
 #include <core/Options.h>
 

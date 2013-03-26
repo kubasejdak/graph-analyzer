@@ -14,7 +14,10 @@ CoreSystem::CoreSystem()
     SystemLogger::instance()->setStatus("idle");
     SystemLogger::instance()->clearError();
 
-    LOG("created CoreSystem instance, version: [%s]\n\n", VERSION);
+	LOG("==================================================================================================================\n");
+	LOG("=                                              SYSTEM STARTED                                                     \n");
+	LOG("=                                 created CoreSystem instance, version: [%s]                                      \n", VERSION);
+	LOG("==================================================================================================================\n");
 	LOG("SUCCESS\n\n");
 }
 

@@ -1,7 +1,7 @@
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.core.context_processors import csrf
-from web_gui.settings import STATICFILES_DIRS
+from www.settings import STATICFILES_DIRS
 import shutil
 import os.path
 from stat import S_IRWXG, S_IRWXO, S_IRWXU

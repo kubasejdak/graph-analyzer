@@ -78,7 +78,7 @@ void DatabaseManager::listOptions()
 }
 
 bool DatabaseManager::exec(QSqlQuery *query) {
-    if(!query->exec()) {
+	if(query->exec() == false) {
 		m_lastError = QString("error while executing query: %1").arg(query->lastError().databaseText());
 		SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
 		LOG_ERROR("query: [%s]\n", query->executedQuery().toStdString().c_str());

@@ -49,8 +49,10 @@ bool SystemLogger::readConfigXML()
 
 	QDomElement options = m_xmlParser.root("Logging");
 
+	/* level */
 	m_logLevel = m_xmlParser.child(options, "Level").text().toInt();
 
+	/* logging strategy */
 	if(m_xmlParser.hasChild(options, "Strategy")) {
 		QDomElement f = m_xmlParser.child(options, "Strategy");
 		while(!f.isNull()) {

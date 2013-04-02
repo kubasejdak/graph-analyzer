@@ -9,18 +9,11 @@
 
 #include <QString>
 
-/// @brief Provides method to determine MIME type of a given file using libmagic library.
 class FileTypeAnalyzer {
 public:
-	/// @brief Default constructor.
 	FileTypeAnalyzer() {}
-
-	/// @brief Destructor.
 	virtual ~FileTypeAnalyzer() {}
 
-	/// @brief Determines MIME type of a given file.
-	/// @param filename Name of the file to be analyzed.
-	/// @return MIME type.
     QString analyze(QString filename);
 };
 

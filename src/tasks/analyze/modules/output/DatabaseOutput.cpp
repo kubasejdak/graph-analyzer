@@ -8,6 +8,7 @@
 #include <core/Options.h>
 #include <utils/SystemLogger.h>
 #include <utils/DatabaseManager.h>
+#include <utils/Toolbox.h>
 #include <tasks/analyze/modules/ModuleManager.h>
 
 #include <QtCore>
@@ -37,6 +38,7 @@ bool DatabaseOutput::exportOutput(ExploitSample *sample)
 
 	/* general sample data */
 	if(exportGeneralData(info, sampleId) == false) {
+		LOG("exporting general sample info to database [%s]\n", info->name().toStdString().c_str());
 		LOG_ERROR("FAILURE\n\n");
 		return false;
 	}
@@ -70,55 +72,25 @@ bool DatabaseOutput::checkDuplicate(ExploitInfo *info)
 	return selectQuery.next();
 }
 
-bool DatabaseOutput::exportGeneralData(ExploitInfo *info, int id)
+bool DatabaseOutput::exportGeneralData(ExploitInfo *info, int sampleId)
 {
 	LOG("exporting sample info [general] to database\n");
 	QSqlQuery sampleQuery(DatabaseManager::instance()->database());
-	sampleQuery.prepare("INSERT INTO analyze_sample VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-	sampleQuery.addBindValue(id);
+	//sampleQuery.prepare("INSERT INTO analyze_sample VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+	sampleQuery.prepare("INSERT INTO analyze_sample VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+	sampleQuery.addBindValue(sampleId);
 	sampleQuery.addBindValue(info->name());
 	sampleQuery.addBindValue(info->extractedFrom());
 	sampleQuery.addBindValue(info->graphName());
-	sampleQuery.addBindValue(info->captureDate().toString("yyyy-MM-dd"));
-	sampleQuery.addBindValue(QString().setNum(info->size()));
+	//sampleQuery.addBindValue(info->captureDate().toString("yyyy-MM-dd"));
+	sampleQuery.addBindValue(Toolbox::itos(info->size()));
 	sampleQuery.addBindValue(info->fileType());
-	sampleQuery.addBindValue(QString().setNum(info->fileSize()));
-	sampleQuery.addBindValue(QString().setNum(info->codeOffset()));
+	sampleQuery.addBindValue(Toolbox::itos(info->fileSize()));
+	sampleQuery.addBindValue(Toolbox::itos(info->codeOffset()));
 	sampleQuery.addBindValue("");
 	if(!DatabaseManager::instance()->exec(&sampleQuery)) {
 		LOG_ERROR("FAILURE\n\n");
 		return false;
-	}
-
-	LOG("SUCCESS\n\n");
-	return true;
-}
-
-bool DatabaseOutput::exportAnalyzeData(ExploitInfo *info, int id)
-{
-	TraitsMap::iterator tableIt;
-	TraitsEntry::iterator colIt;
-
-	for(tableIt = info->traits()->begin(); tableIt != info->traits()->end(); ++tableIt) {
-		QString tableName = ANALYZE_PREFIX + tableIt.key();
-
-		/* get next sample_id number */
-		int recordId = DatabaseManager::instance()->sequenceValue(ANALYZE_PREFIX + "_id_seq");
-
-		/* prepare query */
-		QString queryTemplate = "INSERT INTO ? VALUES (?";
-		int columns = tableIt.value()->size();
-		for(int i = 0; i < columns; ++i)
-			queryTemplate += ", ?";
-		queryTemplate += ")";
-
-		QSqlQuery analyzeDataQuery(DatabaseManager::instance()->database());
-		analyzeDataQuery.prepare(queryTemplate);
-		analyzeDataQuery.addBindValue(tableName);
-		analyzeDataQuery.addBindValue(recordId);
-
-		for(colIt = tableIt.value()->begin(); colIt != tableIt.value()->end(); ++colIt)
-			analyzeDataQuery.addBindValue(colIt.value());
 	}
 
 	LOG("SUCCESS\n\n");

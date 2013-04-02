@@ -19,10 +19,12 @@ SystemLogger::SystemLogger()
 {
     m_status = "idle";
     m_error = "no error";
+    m_allErrors = 0;
     m_logLevel = 0;
 
 	if(!readConfigXML()) {
-		m_strategies.push_back(new ConsoleLoggingStrategy);
+        m_logStrategies.push_back(new ConsoleLoggingStrategy());
+        m_statusStrategies.push_back(new DBStatusExportStrategy());
 		LOG_INTERNAL_ERROR("failed to read XML configuration, using default options\n");
 	}
 
@@ -33,8 +35,12 @@ SystemLogger::SystemLogger()
 SystemLogger::~SystemLogger()
 {
 	QList<ILoggingStrategy *>::iterator it;
-	for(it = m_strategies.begin(); it != m_strategies.end(); ++it)
+    for(it = m_logStrategies.begin(); it != m_logStrategies.end(); ++it)
 		delete (*it);
+
+    QList<IStatusExportStrategy *>::iterator it2;
+    for(it2 = m_statusStrategies.begin(); it2 != m_statusStrategies.end(); ++it2)
+        delete (*it2);
 }
 
 bool SystemLogger::readConfigXML()
@@ -53,20 +59,32 @@ bool SystemLogger::readConfigXML()
 	m_logLevel = m_xmlParser.child(options, "Level").text().toInt();
 
 	/* logging strategy */
-	if(m_xmlParser.hasChild(options, "Strategy")) {
-		QDomElement f = m_xmlParser.child(options, "Strategy");
+    if(m_xmlParser.hasChild(options, "LogStrategy")) {
+        QDomElement f = m_xmlParser.child(options, "LogStrategy");
 		while(!f.isNull()) {
 
 			if(f.attribute("type") == "file") {
 				QString filename = f.text();
-				m_strategies.push_back(new FileLoggingStrategy(filename));
+                m_logStrategies.push_back(new FileLoggingStrategy(filename));
 			}
 			else if(f.attribute("type") == "console")
-				m_strategies.push_back(new ConsoleLoggingStrategy);
+                m_logStrategies.push_back(new ConsoleLoggingStrategy());
 
-			f = f.nextSiblingElement("Strategy");
+            f = f.nextSiblingElement("LogStrategy");
 		}
 	}
+
+    /* exporting status */
+    if(m_xmlParser.hasChild(options, "StatusStrategy")) {
+        QDomElement f = m_xmlParser.child(options, "StatusStrategy");
+        while(!f.isNull()) {
+
+            if(f.attribute("type") == "database")
+                m_statusStrategies.push_back(new DBStatusExportStrategy());
+
+            f = f.nextSiblingElement("StatusStrategy");
+        }
+    }
 
 	m_xmlParser.close();
 	return true;
@@ -76,10 +94,12 @@ void SystemLogger::listOptions()
 {
 	LOG_INTERNAL("logging settings:\n");
 	LOG_INTERNAL("m_logLevel: [%d]\n", m_logLevel);
-	QList<ILoggingStrategy *>::iterator it;
-	for(it = m_strategies.begin(); it != m_strategies.end(); ++it)
-		LOG_INTERNAL("m_strategy: [%s]\n", (*it)->description().toStdString().c_str());
-
+    QList<ILoggingStrategy *>::iterator it;
+    for(it = m_logStrategies.begin(); it != m_logStrategies.end(); ++it)
+        LOG_INTERNAL("m_logStrategy: [%s]\n", (*it)->description().toStdString().c_str());
+    QList<IStatusExportStrategy *>::iterator it2;
+    for(it2 = m_statusStrategies.begin(); it2 != m_statusStrategies.end(); ++it2)
+        LOG_INTERNAL("m_statusStrategy: [%s]\n", (*it2)->description().toStdString().c_str());
 }
 
 void SystemLogger::setStatus(QString status)
@@ -90,6 +110,7 @@ void SystemLogger::setStatus(QString status)
 void SystemLogger::setError(QString error)
 {
     m_error = error;
+    ++m_allErrors;
 }
 
 QString SystemLogger::status()
@@ -100,6 +121,11 @@ QString SystemLogger::status()
 QString SystemLogger::error()
 {
     return m_error;
+}
+
+int SystemLogger::errorsNum()
+{
+    return m_allErrors;
 }
 
 void SystemLogger::log(QString file, QString func, int line, QString msg)
@@ -127,7 +153,7 @@ void SystemLogger::log(QString file, QString func, int line, QString msg)
     }
 
 	QList<ILoggingStrategy *>::iterator it;
-	for(it = m_strategies.begin(); it != m_strategies.end(); ++it)
+    for(it = m_logStrategies.begin(); it != m_logStrategies.end(); ++it)
 		(*it)->log(m);
 }
 
@@ -154,8 +180,13 @@ void SystemLogger::logError(QString file, QString func, int line, QString msg)
     default:
         break;
     }
+}
 
-
+void SystemLogger::exportStatus(int progress)
+{
+    QList<IStatusExportStrategy *>::iterator it;
+    for(it = m_statusStrategies.begin(); it != m_statusStrategies.end(); ++it)
+        (*it)->exportStatus(progress);
 }
 
 void SystemLogger::clearError()

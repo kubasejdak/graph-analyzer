@@ -33,19 +33,15 @@ def render_analyze(request):
 		
 		# run analysis
 		if "analyze" in request.POST and PendingFile.objects.count() > 0:
-			Popen(["graph-analyzer"])
+			Popen(["graph-analyzer", "-t"])
 
 		# run analysis
 		if "clear" in request.POST:
 			PendingFile.objects.all().delete()
 			systemInfo_list = SystemInfo.objects.all()
 			info = systemInfo_list[0]
-			info.exploits_num = 0
-			info.samples_num = 0;
 			info.status = "idle"
-			info.error = "no error"
 			info.progress = 0
-			info.files_num = 0
 			info.errors_num = 0
 			info.save()
 	
@@ -56,9 +52,9 @@ def render_analyze(request):
 			  "status": info.status,
 			  "pending_files": pending_files,
 			  "progress": info.progress,
-			  "exploits": info.exploits_num,
-			  "samples": info.samples_num,
-			  "files": info.files_num,
+			  "exploits": 0,
+			  "samples": 0,
+			  "files": 0,
 			  "errors": info.errors_num})
 
 	return render_to_response("analyze.html", c)

@@ -32,7 +32,8 @@ int main(int argc, char *argv[])
 	options.add_options()
 			("help,h", "print help message")
 			("version,v", "print version")
-			("tasks,t", "execute system tasks" )
+            ("tasks,t", "execute system tasks")
+            ("export-status", "save status to XML file")
 			;
 
 	opt::variables_map vm;
@@ -49,6 +50,11 @@ int main(int argc, char *argv[])
 		cout << system.version().toStdString() << endl;
 		return 0;
 	}
+    /* export status */
+    if(vm.count("export-status")) {
+        SystemLogger::instance()->exportStatus();
+        return 0;
+    }
 	/* call rpc function */
 	if(vm.count("tasks")) {
 		bool stat = system.executeTasks();

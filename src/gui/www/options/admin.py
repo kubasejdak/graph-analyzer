@@ -2,7 +2,7 @@ from django.contrib import admin
 from options.models import Option, PendingFile, SystemInfo, Feedback
 
 class SystemInfoAdmin(admin.ModelAdmin):
-    list_display = ("version", "status", "error", "progress", "exploits_num", "samples_num", "files_num", "errors_num")
+    list_display = ("version", "status", "progress", "error", "errors_num")
 
 class OptionAdmin(admin.ModelAdmin):
     list_display = ("log_level", "log_file")

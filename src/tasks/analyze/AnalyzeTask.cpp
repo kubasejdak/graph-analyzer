@@ -53,6 +53,7 @@ bool AnalyzeTask::perform()
 		if(loadError) {
 			if(loadError == -1) {
 				LOG_ERROR("loading file [%s] -> [%s]\n", currentFile.toStdString().c_str(), SystemLogger::instance()->error().toStdString().c_str());
+                SystemLogger::instance()->setError("cannot parse tasks file");
 				++m_errors;
 			}
 			else

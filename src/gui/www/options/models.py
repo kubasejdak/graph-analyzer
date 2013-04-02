@@ -4,11 +4,8 @@ from django.db import models
 class SystemInfo(models.Model):
     version = models.CharField(max_length = 10)
     status = models.CharField(max_length = 100)
-    error = models.CharField(max_length = 200)
     progress = models.IntegerField()
-    exploits_num = models.IntegerField()
-    samples_num = models.IntegerField()
-    files_num = models.IntegerField()
+    error = models.CharField(max_length = 200)
     errors_num = models.IntegerField()
 
 # Options table

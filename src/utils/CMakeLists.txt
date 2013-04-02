@@ -13,3 +13,6 @@ set(UTILS_SRC
 )
 
 add_library(utils ${UTILS_SRC})
+
+target_link_libraries(utils magic)
+target_link_libraries(utils ${QT_LIBRARIES})

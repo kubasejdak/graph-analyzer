@@ -5,6 +5,7 @@ class Sample(models.Model):
 	name = models.CharField(max_length = 200)
 	extracted_from = models.CharField(max_length = 200)
 	graph_name = models.CharField(max_length = 200)
+	capture_date = models.DateField();
 	size = models.CharField(max_length = 10)
 	file_type = models.CharField(max_length = 50)
 	file_size = models.CharField(max_length = 10)
@@ -65,8 +66,8 @@ class LoopAssignment(models.Model):
 	def __unicode__(self):
 		return self.loop.hash
 
-# SampleGroup table
-class SampleGroup(models.Model):
+# Group table
+class Group(models.Model):
 	leader = models.ForeignKey(Sample)
 	active = models.BooleanField()
 	members_num = models.IntegerField()
@@ -77,7 +78,7 @@ class SampleGroup(models.Model):
 	
 # GroupAssignment table
 class GroupAssignment(models.Model):
-	group = models.ForeignKey(SampleGroup)
+	group = models.ForeignKey(Group)
 	member = models.ForeignKey(Sample)
 	resemblence_rate = models.IntegerField()
 	

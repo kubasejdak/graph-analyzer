@@ -26,12 +26,10 @@ target_link_libraries(GraphAnalyzerCpp utils)
 target_link_libraries(graph-analyzer ${QT_LIBRARIES})
 target_link_libraries(graph-analyzer ${Boost_LIBRARIES})
 target_link_libraries(graph-analyzer emu)
-target_link_libraries(graph-analyzer magic)
 
 target_link_libraries(GraphAnalyzerCpp ${QT_LIBRARIES})
 target_link_libraries(GraphAnalyzerCpp ${Boost_LIBRARIES})
 target_link_libraries(GraphAnalyzerCpp emu)
-target_link_libraries(GraphAnalyzerCpp magic)
 
 # post compile
 #add_custom_command(TARGET graph-analyzer POST_BUILD COMMAND ${CMAKE_HOME_DIRECTORY}/bin/graph-analyzer --task export-version)

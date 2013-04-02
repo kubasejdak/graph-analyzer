@@ -7,7 +7,7 @@ import os.path
 from stat import S_IRWXG, S_IRWXO, S_IRWXU
 
 from options.models import SystemInfo
-from analyze.models import Sample, SampleGroup, GroupAssignment, LoopAssignment, Loop, APIAssignment, HashAssignment
+from analyze.models import Sample, Group, GroupAssignment, LoopAssignment, Loop, APIAssignment, HashAssignment
 from django.views.generic.simple import redirect_to
 
 def render_browseSamples(request):
@@ -84,7 +84,7 @@ def render_browseGroups(request):
 
     if request.method == "GET":
         # get all available samples
-        group_list = SampleGroup.objects.filter(active = True).order_by("-members_num")
+        group_list = Group.objects.filter(active = True).order_by("-members_num")
         c.update({"group_list": group_list})
         return render_to_response("browse_groups.html", c)
 
@@ -116,7 +116,7 @@ def render_showSample(request):
             show_apiassignment = APIAssignment.objects.filter(sample = request.GET["sampleId"])
             show_hashassignment = HashAssignment.objects.get(sample = request.GET["sampleId"])
             show_groupassignment = GroupAssignment.objects.filter(member = request.GET["sampleId"]).order_by("-resemblence_rate")
-            show_group = SampleGroup.objects.get(leader = request.GET["sampleId"])
+            show_group = Group.objects.get(leader = request.GET["sampleId"])
             
             # get graph picture
             graph_source = show_sample.graph_name
@@ -179,7 +179,7 @@ def render_showGroup(request):
             c.update({"dataSaved": True})
 
         if "groupId" in request.GET:
-            show_group = SampleGroup.objects.get(id = request.GET["groupId"])
+            show_group = Group.objects.get(id = request.GET["groupId"])
             show_groupassignment = GroupAssignment.objects.filter(group_id = request.GET["groupId"]).order_by("-resemblence_rate")
             c.update({"show_group": show_group,
 					  "show_groupassignment": show_groupassignment})
@@ -189,7 +189,7 @@ def render_showGroup(request):
 
     if request.method == "POST":
         if "saveGroup" in request.POST:
-            group = SampleGroup.objects.get(id = request.POST["saveGroup"])
+            group = Group.objects.get(id = request.POST["saveGroup"])
             group.comment = request.POST["comment"]
             group.save()
             site = "%s&dataSaved" % request.get_full_path()

@@ -32,7 +32,7 @@ target_link_libraries(GraphAnalyzerCpp ${Boost_LIBRARIES})
 target_link_libraries(GraphAnalyzerCpp emu)
 
 # post compile
-#add_custom_command(TARGET graph-analyzer POST_BUILD COMMAND ${CMAKE_HOME_DIRECTORY}/bin/graph-analyzer --task export-version)
+add_custom_command(TARGET graph-analyzer POST_BUILD COMMAND ${CMAKE_HOME_DIRECTORY}/bin/graph-analyzer --export-status)
 
 # install
 install(PROGRAMS ${CMAKE_HOME_DIRECTORY}/bin/graph-analyzer DESTINATION /usr/bin)

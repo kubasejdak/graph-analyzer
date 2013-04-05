@@ -15,41 +15,92 @@
 		<h2>Graph Analyzer <small>v{{ version }}</small></h2>
 	</div>
 	
-	<div class="well">
-		<div class="navbar navbar">
-			<ul class="nav">
-				{% if home %}
-				<li class="active"><a href="/jsejdak/home/">Home</a></li>
-				{% else %}
-				<li><a href="/jsejdak/home/">Home</a></li>
-				{% endif %}
-				{% if analyze %}
-				<li class="active"><a href="/jsejdak/analyze/">Analyze</a> </li>
-				{% else %}
-				<li><a href="/jsejdak/analyze/">Analyze</a> </li>
-				{% endif %}
-				{% if browse %}
-				<li class="active"><a href="/jsejdak/browse_samples/">Samples</a></li>
-				{% else %}
-				<li><a href="/jsejdak/browse_samples/">Samples</a></li>
-				{% endif %}
-				{% if browse_groups %}
-				<li class="active"><a href="/jsejdak/browse_groups/">Groups</a></li>
-				{% else %}
-				<li><a href="/jsejdak/browse_groups/">Groups</a></li>
-				{% endif %}
-				{% if options %}
-				<li class="active"><a href="/jsejdak/options/">Options</a></li>
-				{% else %}
-				<li><a href="/jsejdak/options/">Options</a></li>
-				{% endif %}
-				<li><a href="/jsejdak/admin/">Administration</a></li>
-				{% if feedback %}
-				<li class="active"><a href="/jsejdak/feedback/">Feedback</a></li>
-				{% else %}
-				<li><a href="/jsejdak/feedback/">Feedback</a></li>
-				{% endif %}
-			</ul>
+	<div class="navbar navbar-inverse">
+		<div class="navbar-inner">
+			<div class="nav-collapse collapse navbar-responsive-collapse">
+				<ul class="nav">
+					
+					<!-- HOME -->
+					{% if home %}
+					<li class="active divider-vertical">
+					{% else %}
+					<li class="divider-vertical">
+					{% endif %}
+					<a href="/jsejdak/home/">Home</a></li>
+
+					<!-- TASKS -->
+					{% if tasks %}
+					<li class="active divider-vertical dropdown">
+					{% else %}
+					<li class="divider-vertical dropdown">
+					{% endif %}
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Tasks <b class="caret"></b></a>
+						<ul class="dropdown-menu">
+							<li class="nav-header">Possible tasks</li>
+
+							<!-- ANALYZE TASK -->
+							{% if analyze %}
+							<li class="active">
+							{% else %}
+							<li>
+							{% endif %}
+							<a href="/jsejdak/tasks/analyze/">Analyze</a></li>
+
+							<!-- GROUP TASK -->
+							{% if group %}
+							<li class="active">
+							{% else %}
+							<li>
+							{% endif %}
+							<li><a href="/jsejdak/tasks/group/">Group</a></li>
+							<li class="divider"></li>
+
+							<!-- MANAGE TASKS -->
+							{% if manage_tasks %}
+							<li class="active">
+							{% else %}
+							<li>
+							{% endif %}
+							<a href="/jsejdak/tasks/manage/">Manage tasks</a></li>
+						</ul>
+					</li>
+
+					<!-- BROWSE SAMPLES -->
+					{% if browse %}
+					<li class="active divider-vertical">
+					{% else %}
+					<li class="divider-vertical">
+					{% endif %}
+					<a href="/jsejdak/browse_samples/">Samples</a></li>
+					
+					<!-- BROWSE GROUPS -->
+					{% if browse_groups %}
+					<li class="active divider-vertical">
+					{% else %}
+					<li class="divider-vertical">
+					{% endif %}
+					<a href="/jsejdak/browse_groups/">Groups</a></li>
+
+					<!-- OPTIONS -->
+					{% if options %}
+					<li class="active divider-vertical">
+					{% else %}
+					<li class="divider-vertical">
+					{% endif %}
+					<a href="/jsejdak/options/">Options</a></li>
+
+					<!-- ADMINISTRATION -->
+					<li class="divider-vertical"><a href="/jsejdak/admin/">Administration</a></li>
+
+					<!-- FEEDBACK -->
+					{% if feedback %}
+					<li class="active divider-vertical">
+					{% else %}
+					<li class="divider-vertical">
+					{% endif %}
+					<a href="/jsejdak/feedback/">Feedback</a></li>
+				</ul>
+			</div>
 		</div>
 	</div>
 

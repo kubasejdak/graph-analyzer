@@ -7,12 +7,12 @@ from subprocess import Popen
 
 from options.models import PendingFile, SystemInfo
 
-def render_analyze(request):
+def render_analyzeTask(request):
 	# get system info (only one object should exists)
 	systemInfo_list = SystemInfo.objects.all()
 	info = systemInfo_list[0]
 	
-	c = RequestContext(request, {"version": info.version, "analyze": True})
+	c = RequestContext(request, {"version": info.version, "tasks": True, "analyze": True})
 	c.update(csrf(request))
 
 	# ===================================== GET =====================================

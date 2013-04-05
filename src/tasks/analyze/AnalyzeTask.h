@@ -23,7 +23,7 @@ public:
 
 private:
 	void loadModules();
-	virtual bool perform();
+    virtual bool performTask();
 	bool readConfigXML();
 	void addScheduledFile(QString filename);
 

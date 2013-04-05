@@ -8,13 +8,14 @@
 #define STATUSEXPORTSTRATEGY_H
 
 #include <QString>
+#include <tasks/ITask.h>
 
 class IStatusExportStrategy {
 public:
     IStatusExportStrategy() {}
     virtual ~IStatusExportStrategy() {}
 
-    virtual void exportStatus(int progress) = 0;
+    virtual void exportStatus(ITask *task) = 0;
     virtual QString description() = 0;
 };
 
@@ -23,7 +24,7 @@ public:
     DBStatusExportStrategy() {}
     virtual ~DBStatusExportStrategy() {}
 
-    virtual void exportStatus(int progress);
+    virtual void exportStatus(ITask *task);
     virtual QString description();
 };
 

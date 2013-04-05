@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
 	}
     /* export status */
     if(vm.count("export-status")) {
-        SystemLogger::instance()->exportStatus();
+        SystemLogger::instance()->exportStatus(NULL);
         return 0;
     }
 	/* call rpc function */

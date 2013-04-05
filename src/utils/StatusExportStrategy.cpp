@@ -9,10 +9,11 @@
 #include <utils/SystemLogger.h>
 #include <core/version.h>
 
-void DBStatusExportStrategy::exportStatus(int progress)
+void DBStatusExportStrategy::exportStatus(ITask *task)
 {
     DatabaseManager::instance()->clearTable("options_systeminfo");
     int statusId = DatabaseManager::instance()->sequenceValue("options_systeminfo_id_seq");
+    int progress = (task != NULL) ? task->progress() : 0;
 
     QSqlQuery statusQuery(DatabaseManager::instance()->database());
     statusQuery.prepare("INSERT INTO options_systeminfo VALUES (?, ?, ?, ?, ?, ?)");

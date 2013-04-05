@@ -26,7 +26,7 @@ void AnalyzeTask::loadModules()
 	m_outputMods = ModuleManager::instance()->output();
 }
 
-bool AnalyzeTask::perform()
+bool AnalyzeTask::performTask()
 {
 	SystemLogger::instance()->setStatus("analyze task");
 	LOG("starting task: [analyze], m_id: [%d]\n", m_id);
@@ -163,10 +163,10 @@ bool AnalyzeTask::readConfigXML()
 		m_xmlParser.removeChild(taskElement, file);
 	}
 
-	/* output stratefies */
+    /* output strategies */
 	while(m_xmlParser.hasChild(taskElement, "Output")) {
 		QDomElement out = m_xmlParser.child(taskElement, "Output");
-		m_outStrategies.push_back(out.attribute("val"));
+        m_exportStrategies.push_back(out.attribute("val"));
 		LOG("added output strategy: [%s]\n", out.attribute("val").toStdString().c_str());
 		m_xmlParser.removeChild(taskElement, out);
 	}
@@ -278,8 +278,8 @@ bool AnalyzeTask::analyze(ExploitSample *s)
 
 bool AnalyzeTask::exportResults(ExploitSample *s)
 {
-	for(int i = 0; i < m_outStrategies.size(); ++i) {
-		QString exportStrategy = m_outStrategies.at(i);
+    for(int i = 0; i < m_exportStrategies.size(); ++i) {
+        QString exportStrategy = m_exportStrategies.at(i);
 		LOG("exporting using strategy: [%s]\n", exportStrategy.toStdString().c_str());
 		if(!m_outputMods->contains(exportStrategy)) {
 			LOG_ERROR("output strategy not supported: [%s]", exportStrategy.toStdString().c_str());

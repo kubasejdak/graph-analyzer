@@ -16,7 +16,7 @@ public:
 	virtual ~GroupTask() {}
 
 private:
-	virtual bool perform();
+    virtual bool performTask();
 
 	GroupManager m_groupManager;
 };

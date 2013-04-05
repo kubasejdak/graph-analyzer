@@ -10,7 +10,7 @@ GroupTask::GroupTask(int id) : ITask(id)
 {
 }
 
-bool GroupTask::perform()
+bool GroupTask::performTask()
 {
 	return true;
 }

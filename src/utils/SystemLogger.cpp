@@ -6,6 +6,8 @@
 
 #include "SystemLogger.h"
 #include <core/Options.h>
+#include <tasks/ITask.h>
+#include <utils/StatusExportStrategy.h>
 
 #include <QDate>
 #include <QTime>
@@ -29,7 +31,6 @@ SystemLogger::SystemLogger()
 	}
 
 	listOptions();
-
 }
 
 SystemLogger::~SystemLogger()
@@ -182,11 +183,11 @@ void SystemLogger::logError(QString file, QString func, int line, QString msg)
     }
 }
 
-void SystemLogger::exportStatus(int progress)
+void SystemLogger::exportStatus(ITask *currTask)
 {
     QList<IStatusExportStrategy *>::iterator it;
     for(it = m_statusStrategies.begin(); it != m_statusStrategies.end(); ++it)
-        (*it)->exportStatus(progress);
+        (*it)->exportStatus(currTask);
 }
 
 void SystemLogger::clearError()

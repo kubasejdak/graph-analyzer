@@ -13,23 +13,37 @@
 #include <QList>
 #include <QString>
 #include <utils/XMLParser.h>
-#include <utils/SystemLogger.h>
 #include <core/ExploitSample.h>
 
 class ITask {
 public:
-	ITask(int id) : m_id(id) { m_errors = 0; }
+    ITask(int id);
 	virtual ~ITask() {}
 
-	virtual bool perform() = 0;
+    bool perform();
+
+    /* for exporting status purpose */
+    int errors();
+    int progress();
 
 protected:
-	XMLParser m_xmlParser;
-	int m_id;
-	int m_errors;
+    virtual bool performTask() = 0;
 
-	SampleContainer m_samples;
-	QList<QString> m_outStrategies;
+    XMLParser m_xmlParser;              /* provides parser for XML configuration file */
+    SampleContainer m_samples;          /* samples that are used in task */
+    QList<QString> m_exportStrategies;  /* strategies for exporting task results */
+    QTime m_timer;                      /* provides time functions */
+
+    /* task general info */
+    QString m_name;                     /* task name defined by user */
+    QTime m_startTime;                  /* when task was started */
+    QTime m_endTime;                    /* when task was ended */
+    QTime m_workTime;                   /* how long did task work */
+
+    int m_id;                           /* task id in XML file */
+    int m_errors;                       /* number of errors that occured during task */
+    int m_progress;                     /* current progress of task */
+
 };
 
 #endif /* ITASK_H */

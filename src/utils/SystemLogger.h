@@ -12,8 +12,11 @@
 #include <boost/current_function.hpp>
 
 #include <utils/LoggingStrategy.h>
-#include <utils/StatusExportStrategy.h>
 #include <utils/XMLParser.h>
+
+class ITask;
+
+class IStatusExportStrategy;
 
 #define	LOG(fmt, args...)           SystemLogger::instance()->log(__FILE__, BOOST_CURRENT_FUNCTION, __LINE__, QString().sprintf(fmt, ##args))
 #define	LOG_ERROR(fmt, args...)     SystemLogger::instance()->logError(__FILE__, BOOST_CURRENT_FUNCTION, __LINE__, QString().sprintf(fmt, ##args))
@@ -41,7 +44,7 @@ public:
     void logError(QString file, QString func, int line, QString msg);
 
     /* exporting status */
-    void exportStatus(int progress = 0);
+    void exportStatus(ITask *currTask);
 
 private:
 	SystemLogger();

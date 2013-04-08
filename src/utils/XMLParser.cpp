@@ -51,6 +51,11 @@ void XMLParser::close()
 	}
 }
 
+void XMLParser::clear()
+{
+    m_docRoot.clear();
+}
+
 bool XMLParser::hasRoot(QString rootName)
 {
 	QDomNodeList roots = m_docRoot.childNodes();
@@ -95,16 +100,6 @@ QDomElement XMLParser::child(QDomElement rootNode, QString childNode)
 	return QDomElement();
 }
 
-QString XMLParser::text(QDomElement node)
-{
-	return node.text();
-}
-
-QString XMLParser::attribute(QDomElement node, QString attrName)
-{
-	return node.attribute(attrName);
-}
-
 void XMLParser::removeRoot(QDomElement rootNode)
 {
 	m_docRoot.removeChild(rootNode);
@@ -119,30 +114,14 @@ QDomElement XMLParser::createRoot(QString rootName)
 {
 	QDomElement newRoot = m_doc->createElement(rootName);
 	m_docRoot.appendChild(newRoot);
-	return newRoot;
+    return newRoot;
 }
 
 QDomElement XMLParser::createChild(QDomElement rootNode, QString childName)
 {
 	QDomElement newChild = m_doc->createElement(childName);
 	rootNode.appendChild(newChild);
-	return newChild;
-}
-
-void XMLParser::setText(QDomElement node, QString txt)
-{
-	QDomText newTxt = m_doc->createTextNode(txt);
-	node.appendChild(newTxt);
-}
-
-void XMLParser::setAttribute(QDomElement node, QString attrName, QString attrValue)
-{
-	node.setAttribute(attrName, attrValue);
-}
-
-QDomElement XMLParser::nextSibling(QDomElement node)
-{
-	return node.nextSiblingElement();
+    return newChild;
 }
 
 void XMLParser::save()

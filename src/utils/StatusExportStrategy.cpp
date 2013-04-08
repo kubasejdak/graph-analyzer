@@ -32,3 +32,42 @@ QString DBStatusExportStrategy::description()
 {
     return "database";
 }
+
+void XMLStatusExportStrategy::exportStatus(ITask *task)
+{
+    if(!m_xmlParser.open(STATUS_FILE)) {
+        LOG_ERROR("FAILURE\n\n");
+        return;
+    }
+
+
+    if(m_xmlParser.hasRoot("SystemStatus")) {
+        QDomElement s = m_xmlParser.root("SystemStatus");
+        m_xmlParser.removeRoot(s);
+    }
+
+    QDomElement statusNode = m_xmlParser.createRoot("SystemStatus");
+
+    QDomElement versionNode = m_xmlParser.createChild(statusNode, "Version");
+    versionNode.setAttribute("val", VERSION);
+
+    int progress = (task != NULL) ? task->progress() : 0;
+    QDomElement progressNode = m_xmlParser.createChild(statusNode, "Progress");
+    progressNode.setAttribute("val", progress);
+
+    QDomElement currTaskNode = m_xmlParser.createChild(statusNode, "CurrentTask");
+    currTaskNode.setAttribute("name", SystemLogger::instance()->status());
+
+    QDomElement lastErrorNode = m_xmlParser.createChild(statusNode, "LastError");
+    lastErrorNode.setAttribute("desc", SystemLogger::instance()->error());
+
+    QDomElement errorsNumNode = m_xmlParser.createChild(statusNode, "ErrorsNum");
+    errorsNumNode.setAttribute("val", SystemLogger::instance()->errorsNum());
+
+    m_xmlParser.close();
+}
+
+QString XMLStatusExportStrategy::description()
+{
+    return "xml";
+}

@@ -82,6 +82,8 @@ bool SystemLogger::readConfigXML()
 
             if(f.attribute("type") == "database")
                 m_statusStrategies.push_back(new DBStatusExportStrategy());
+            else if(f.attribute("type") == "xml")
+                m_statusStrategies.push_back(new XMLStatusExportStrategy());
 
             f = f.nextSiblingElement("StatusStrategy");
         }

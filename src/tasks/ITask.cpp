@@ -38,7 +38,7 @@ bool ITask::perform()
     m_endTime = m_timer.currentTime();
 
     /* update working time */
-    m_workTime = m_startTime.addMSecs(m_timer.elapsed());
+	m_workTime = QTime(0, 0).addMSecs(m_timer.elapsed());
 
     return ret;
 }

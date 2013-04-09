@@ -5,17 +5,18 @@ from django.template import RequestContext
 from django.core.context_processors import csrf
 from subprocess import Popen
 
-from options.models import PendingFile, SystemInfo
+from options.models import PendingFile
+from tools.SystemStatus import SystemStatus
 
 def render_analyzeTask(request):
-	# get system info (only one object should exists)
-	systemInfo_list = SystemInfo.objects.all()
-	info = systemInfo_list[0]
+	# get system status
+	systemStatus = SystemStatus()
+	systemStatus.get()
 	
-	c = RequestContext(request, {"version": info.version, "tasks": True, "analyze": True})
+	c = RequestContext(request, {"version": systemStatus.version, "tasks": True, "analyze": True})
 	c.update(csrf(request))
 
-	# ===================================== GET =====================================
+	# ===================================== GET ======================================
 	
 	# ===================================== POST =====================================
 	
@@ -37,24 +38,16 @@ def render_analyzeTask(request):
 
 		# run analysis
 		if "clear" in request.POST:
-			PendingFile.objects.all().delete()
-			systemInfo_list = SystemInfo.objects.all()
-			info = systemInfo_list[0]
-			info.status = "idle"
-			info.progress = 0
-			info.errors_num = 0
-			info.save()
+			print "clear clicked"
 	
 	pending_files = PendingFile.objects.all()
-	systemInfo_list = SystemInfo.objects.all()
-	info = systemInfo_list[0]
-	c.update({"error": info.error,
-			  "status": info.status,
+	c.update({"error": systemStatus.last_error,
+			  "status": systemStatus.current_task,
 			  "pending_files": pending_files,
-			  "progress": info.progress,
+			  "progress": systemStatus.progress,
 			  "exploits": 0,
 			  "samples": 0,
 			  "files": 0,
-			  "errors": info.errors_num})
+			  "errors": systemStatus.errors_num})
 
 	return render_to_response("analyze.html", c)

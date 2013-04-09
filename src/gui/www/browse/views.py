@@ -6,16 +6,16 @@ import shutil
 import os.path
 from stat import S_IRWXG, S_IRWXO, S_IRWXU
 
-from options.models import SystemInfo
 from analyze.models import Sample, Group, GroupAssignment, LoopAssignment, Loop, APIAssignment, HashAssignment
+from tools.SystemStatus import SystemStatus
 from django.views.generic.simple import redirect_to
 
 def render_browseSamples(request):
-    # get system info (only one object should exists)
-    systemInfo_list = SystemInfo.objects.all()
-    info = systemInfo_list[0]
+    # get system status
+    systemStatus = SystemStatus()
+    systemStatus.get()
     
-    c = RequestContext(request, {"version": info.version, "browse": True})
+    c = RequestContext(request, {"version": systemStatus.version, "browse": True})
     c.update(csrf(request))
 
     # ===================================== GET =====================================
@@ -73,11 +73,11 @@ def render_browseSamples(request):
             return render_to_response("browse.html", c)
   
 def render_browseGroups(request):
-    # get system info (only one object should exists)
-    systemInfo_list = SystemInfo.objects.all()
-    info = systemInfo_list[0]
+    # get system status
+    systemStatus = SystemStatus()
+    systemStatus.get()
     
-    c = RequestContext(request, {"version": info.version, "browse_groups": True})
+    c = RequestContext(request, {"version": systemStatus.version, "browse_groups": True})
     c.update(csrf(request))
 
     # ===================================== GET =====================================
@@ -96,11 +96,11 @@ def render_browseGroups(request):
             return redirect_to(request, url=site)
 
 def render_showSample(request):
-    # get system info (only one object should exists)
-    systemInfo_list = SystemInfo.objects.all()
-    info = systemInfo_list[0]
+    # get system status
+    systemStatus = SystemStatus()
+    systemStatus.get()
 
-    c = RequestContext(request, {"version": info.version, "browse": True})
+    c = RequestContext(request, {"version": systemStatus.version, "browse": True})
     c.update(csrf(request))
 
     # ===================================== GET =====================================
@@ -165,11 +165,11 @@ def render_showSample(request):
             return redirect_to(request, url=site)
 
 def render_showGroup(request):
-    # get system info (only one object should exists)
-    systemInfo_list = SystemInfo.objects.all()
-    info = systemInfo_list[0]
+    # get system status
+    systemStatus = SystemStatus()
+    systemStatus.get()
 
-    c = RequestContext(request, {"version": info.version, "browse_groups": True})
+    c = RequestContext(request, {"version": systemStatus.version, "browse_groups": True})
     c.update(csrf(request))
 
     # ===================================== GET =====================================
@@ -200,11 +200,11 @@ def render_showGroup(request):
             return redirect_to(request, url=site)
 
 def render_compareSamples(request):
-    # get system info (only one object should exists)
-    systemInfo_list = SystemInfo.objects.all()
-    info = systemInfo_list[0]
+    # get system status
+    systemStatus = SystemStatus()
+    systemStatus.get()
     
-    c = RequestContext(request, {"version": info.version, "browse": True})
+    c = RequestContext(request, {"version": systemStatus.version, "browse": True})
     c.update(csrf(request))
     
     # ===================================== GET =====================================

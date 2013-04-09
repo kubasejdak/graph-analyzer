@@ -1,11 +1,16 @@
 from django import forms
-from options.models import Option
 
 class OptionsForm(forms.Form):
-    log_level = forms.ChoiceField(choices = Option.LOG_CHOICES)
+    LOG_CHOICES = (
+        (0, "OFF"),           
+        (1, "Low"),
+        (2, "Normal"),
+        (3, "High"),
+    )
+    
+    log_level = forms.ChoiceField(choices = LOG_CHOICES)
     log_file = forms.CharField()
     
-    resemblence_level = forms.ChoiceField(choices = Option.RESEMBLENCE_CHOICES)
     emulation_steps = forms.IntegerField()
     graphs_dir = forms.CharField()
     big_files_protection = forms.BooleanField(required = False)

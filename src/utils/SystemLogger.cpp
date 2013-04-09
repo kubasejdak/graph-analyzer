@@ -57,7 +57,7 @@ bool SystemLogger::readConfigXML()
 	QDomElement options = m_xmlParser.root("Logging");
 
 	/* level */
-	m_logLevel = m_xmlParser.child(options, "Level").text().toInt();
+    m_logLevel = m_xmlParser.child(options, "Level").attribute("val").toInt();
 
 	/* logging strategy */
     if(m_xmlParser.hasChild(options, "LogStrategy")) {
@@ -82,6 +82,8 @@ bool SystemLogger::readConfigXML()
 
             if(f.attribute("type") == "database")
                 m_statusStrategies.push_back(new DBStatusExportStrategy());
+            else if(f.attribute("type") == "xml")
+                m_statusStrategies.push_back(new XMLStatusExportStrategy());
 
             f = f.nextSiblingElement("StatusStrategy");
         }

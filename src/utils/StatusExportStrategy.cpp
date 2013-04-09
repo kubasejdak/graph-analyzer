@@ -40,29 +40,19 @@ void XMLStatusExportStrategy::exportStatus(ITask *task)
         return;
     }
 
-
     if(m_xmlParser.hasRoot("SystemStatus")) {
         QDomElement s = m_xmlParser.root("SystemStatus");
         m_xmlParser.removeRoot(s);
     }
 
     QDomElement statusNode = m_xmlParser.createRoot("SystemStatus");
-
-    QDomElement versionNode = m_xmlParser.createChild(statusNode, "Version");
-    versionNode.setAttribute("val", VERSION);
-
     int progress = (task != NULL) ? task->progress() : 0;
-    QDomElement progressNode = m_xmlParser.createChild(statusNode, "Progress");
-    progressNode.setAttribute("val", progress);
 
-    QDomElement currTaskNode = m_xmlParser.createChild(statusNode, "CurrentTask");
-    currTaskNode.setAttribute("name", SystemLogger::instance()->status());
-
-    QDomElement lastErrorNode = m_xmlParser.createChild(statusNode, "LastError");
-    lastErrorNode.setAttribute("desc", SystemLogger::instance()->error());
-
-    QDomElement errorsNumNode = m_xmlParser.createChild(statusNode, "ErrorsNum");
-    errorsNumNode.setAttribute("val", SystemLogger::instance()->errorsNum());
+    m_xmlParser.createChild(statusNode, "Version").setAttribute("val", VERSION);
+    m_xmlParser.createChild(statusNode, "Progress").setAttribute("val", progress);
+    m_xmlParser.createChild(statusNode, "CurrentTask").setAttribute("name", SystemLogger::instance()->status());
+    m_xmlParser.createChild(statusNode, "LastError").setAttribute("desc", SystemLogger::instance()->error());
+    m_xmlParser.createChild(statusNode, "ErrorsNum").setAttribute("val", SystemLogger::instance()->errorsNum());;
 
     m_xmlParser.close();
 }

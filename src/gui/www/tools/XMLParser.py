@@ -1,18 +1,18 @@
 from PyQt4.QtXml import QDomDocument, QDomElement
 from PyQt4.QtCore import QFile, QIODevice
 
-class MyClass(object):
+class XMLParser(object):
 
     def __init__(self):
         return
     
     def open(self, filename):
         self.__file = QFile(filename)
-        if(self.__file.open(QIODevice.ReadWrite) != True):
+        if(self.__file.open(QIODevice.ReadWrite) == False):
             return False
         
         self.__doc = QDomDocument("conf")
-        if(self.__doc.setContent(self.__file) != True):
+        if(self.__doc.setContent(self.__file) == False):
             self.close()
             return False
         
@@ -28,33 +28,33 @@ class MyClass(object):
 
     def hasRoot(self, rootName):
         roots = self.__docRoot.childNodes();
-        for r in roots:
-            if(r.toElement().tagName() == rootName):
+        for i in range(roots.size()):
+            if(roots.at(i).toElement().tagName() == rootName):
                 return True
 
         return False
 
     def hasChild(self, rootNode, childNode):
         childList = rootNode.childNodes();
-        for n in childList:
-            if(n.toElement().tagName() == childNode):
+        for i in range(childList.size()):
+            if(childList.at(i).toElement().tagName() == childNode):
                 return True
 
         return False
 
     def root(self, rootName):
         roots = self.__docRoot.childNodes();
-        for r in roots:
-            if(r.toElement().tagName() == rootName):
-                return r.toElement();
+        for i in range(roots.size()):
+            if(roots.at(i).toElement().tagName() == rootName):
+                return roots.at(i).toElement();
 
         return QDomElement()
     
     def child(self, rootNode, childNode):
         childList = rootNode.childNodes()
-        for c in childList:
-            if(c.toElement().tagName() == childNode):
-                return c.toElement()
+        for i in range(childList.size()):
+            if(childList.at(i).toElement().tagName() == childNode):
+                return childList.at(i).toElement()
 
         return QDomElement()
 

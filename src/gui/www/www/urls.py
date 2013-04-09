@@ -2,7 +2,9 @@ from django.conf.urls import patterns, include, url
 from tasks.views import render_tasksManage
 from analyze.views import render_analyzeTask
 from browse.views import render_browseSamples, render_browseGroups, render_compareSamples, render_showSample, render_showGroup
-from options.views import render_home, show_options, show_feedback
+from options.views import render_options
+from home.views import render_home
+from feedback.views import render_feedback
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -25,8 +27,8 @@ urlpatterns = patterns('',
     url(r'^jsejdak/tasks/analyze/$', render_analyzeTask),
     url(r'^jsejdak/browse_samples/$', render_browseSamples),
     url(r'^jsejdak/browse_groups/$', render_browseGroups),
-    url(r'^jsejdak/options/$', show_options),
-    url(r'^jsejdak/feedback/$', show_feedback),
+    url(r'^jsejdak/options/$', render_options),
+    url(r'^jsejdak/feedback/$', render_feedback),
     url(r'^jsejdak/compare/', render_compareSamples),
     url(r'^jsejdak/sample/', render_showSample),
     url(r'^jsejdak/group/', render_showGroup),

@@ -2,15 +2,12 @@ from PyQt4.QtXml import QDomDocument, QDomElement
 from PyQt4.QtCore import QFile, QIODevice
 
 class XMLParser(object):
-
-    def __init__(self):
-        return
     
     def open(self, filename):
         self.__file = QFile(filename)
         if(self.__file.open(QIODevice.ReadWrite) == False):
             return False
-        
+
         self.__doc = QDomDocument("conf")
         if(self.__doc.setContent(self.__file) == False):
             self.close()

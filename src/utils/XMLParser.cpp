@@ -6,6 +6,8 @@
 
 #include "XMLParser.h"
 
+#include <sys/file.h>
+
 XMLParser::XMLParser()
 {
 	 m_doc = NULL;
@@ -20,14 +22,14 @@ XMLParser::~XMLParser()
 bool XMLParser::open(QString filename)
 {
 	m_file = new QFile(filename);
-	if(!m_file->open(QIODevice::ReadWrite)) {
+	if(m_file->open(QIODevice::ReadWrite) == false) {
 		delete m_file;
 		m_file = NULL;
 		return false;
 	}
 
 	m_doc = new QDomDocument("conf");
-	if(!m_doc->setContent(m_file)) {
+	if(m_doc->setContent(m_file) == false) {
 		close();
 		return false;
 	}

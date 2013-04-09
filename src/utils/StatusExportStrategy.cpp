@@ -35,7 +35,7 @@ QString DBStatusExportStrategy::description()
 
 void XMLStatusExportStrategy::exportStatus(ITask *task)
 {
-    if(!m_xmlParser.open(STATUS_FILE)) {
+	if(!m_xmlParser.open(STATUS_FILE)) {
         LOG_ERROR("FAILURE\n\n");
         return;
     }

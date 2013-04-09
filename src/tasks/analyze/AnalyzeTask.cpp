@@ -108,6 +108,9 @@ cleanup:
 			delete s;
 			LOG("sample analyzing finished\n");
 			++m_analyzedSamples;
+
+			/* export status */
+			SystemLogger::instance()->exportStatus(this);
 		}
 		LOG("file analyzing finished\n");
 	} /* while */

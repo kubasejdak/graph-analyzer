@@ -1,11 +1,65 @@
 {% extends "base.html" %}
 
 {% block content %}
-<form action="" method="post">{% csrf_token %}
-	<table>{{ form.as_table }}</table></br>
-	<button class="btn btn-primary" name="saveOptions">Save</button>
+<form class="form-horizontal" action="" method="post">{% csrf_token %}
+	<div class="span1">
+		<button class="btn btn-large btn-primary" name="save">Save</button>
+	</div>
+	<br/>
+	<br/>
+	<br/>
+
+	<div class="row-fluid">
+
+		<!-- CORE -->
+		<div class="span5">
+			<h2>Core Options:</h2>
+			<div class="control-group">
+				<label class="control-label">Graphs directory</label>
+				<div class="controls"><input style="width: 100%" type="text" name="graphsDirectory" value="{{ graphsDirectory }}"></div>
+			</div>
+			<div class="control-group">
+				<label class="control-label">Emulation steps</label>
+				<div class="controls"><input style="width: 100%" type="text" name="emulationSteps" value="{{ emulationSteps }}"></div>
+			</div>
+			<div class="control-group">
+				<div class="controls"><label class="checkbox"><input type="checkbox" name="skipBigFiles" checked> Skip big files</label></div>
+			</div>
+			<div class="control-group">
+				<label class="control-label">Big files size</label>
+				<div class="controls"><input style="width: 100%" type="text" name="bigFilesSize"></div>
+			</div>
+			<div class="control-group">
+				<div class="controls"><label class="checkbox"><input type="checkbox" name="skipBrokenSamples" checked> Skip broken samples</label></div>
+			</div>
+			<div class="control-group">
+				<label class="control-label">Broken samples size</label>
+				<div class="controls"><input style="width: 100%" type="text" name="brokenSampesSize"></div>
+			</div>
+			<div class="control-group">
+				<div class="controls"><label class="checkbox"><input type="checkbox" name="skipEmptySamples" checked> Skip empty samples</label></div>
+			</div>
+		</div>
+
+		<!-- LOGGING -->
+		<div class="span5">
+			<h2>Logging options:</h2>
+			<div class="control-group">
+				<label class="control-label">Graphs directory</label>
+				<div class="controls"><input style="width: 100%" type="text" id="inputEmail"></div>
+			</div>
+			<div class="control-group">
+				<label class="control-label">Emulation steps</label>
+				<div class="controls"><input style="width: 100%" type="text" id="inputPassword"></div>
+			</div>
+			<div class="control-group">
+				<div class="controls"><label class="checkbox"><input type="checkbox"> Skip big files</label></div>
+			</div>
+		</div>
+
+	</div>
 </form>
-  
+	
 {% if dataSaved %}
 <div class="alert alert-success">
 	<button type="button" class="close" data-dismiss="alert">×</button>

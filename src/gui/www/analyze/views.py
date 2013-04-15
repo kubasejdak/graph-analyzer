@@ -3,10 +3,9 @@
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.core.context_processors import csrf
-from subprocess import Popen
 
-from options.models import PendingFile
 from tools.SystemStatus import SystemStatus
+from tools.AnalyzeTask import AnalyzeTask
 
 def render_analyzeTask(request):
 	# get system status
@@ -19,27 +18,33 @@ def render_analyzeTask(request):
 	# ===================================== GET ======================================
 	
 	# ===================================== POST =====================================
-	
-	# run system if "Analyze" clicked
-	if request.method == "POST":		
-		# add filename to database
-		#if "add" in request.POST:
-		#	filename = PendingFile()
-		#	filename.name = request.POST["file"]
-		#	filename.save()
+
+	if(request.method == "POST"):
+		if "new" in request.POST:
+			return render_to_response("analyze.html", c)
 		
 		# run analysis
-		if "analyze" in request.POST and PendingFile.objects.count() > 0:
-			Popen(["graph-analyzer", "-t"])
-	
-	pending_files = PendingFile.objects.all()
-	c.update({"error": systemStatus.last_error,
-			  "status": systemStatus.current_task,
-			  "pending_files": pending_files,
-			  "progress": systemStatus.progress,
-			  "exploits": 0,
-			  "samples": 0,
-			  "files": 0,
-			  "errors": systemStatus.errors_num})
+		if "save" in request.POST:
+			c.update({"is_message": True})
+			analyzeTask = AnalyzeTask()
 
+			# analyze files
+			files = request.POST.getlist("analyzeFiles")
+			analyzeTask.setName(request.POST["taskName"])
+			for f in files:
+				analyzeTask.setFile(f)
+
+			# output
+			if("databaseOutput" in request.POST):
+				analyzeTask.setOutput("database")
+			if("consoleOutput" in request.POST):
+				analyzeTask.setOutput("console")
+			
+			# override
+			if("override" in request.POST):
+				analyzeTask.setOverride(True)
+
+			analyzeTask.save()
+	
+	
 	return render_to_response("analyze.html", c)

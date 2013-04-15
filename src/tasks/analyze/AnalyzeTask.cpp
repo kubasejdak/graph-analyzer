@@ -154,11 +154,11 @@ bool AnalyzeTask::readConfigXML()
 	while(m_xmlParser.hasChild(taskElement, "File")) {
 		QDomElement file = m_xmlParser.child(taskElement, "File");
 		if(file.attribute("source") == "local") {
-			addScheduledFile(file.text());
-			LOG("[local]: %s\n", file.text().toStdString().c_str());
+			addScheduledFile(file.attribute("path"));
+			LOG("[local]: %s\n", file.attribute("path").toStdString().c_str());
 		}
 		else {
-			LOG("[remote]: %s\n", file.text().toStdString().c_str());
+			LOG("[remote]: %s\n", file.attribute("path").toStdString().c_str());
 			LOG("NOT SUPPORTED, SKIPPING\n");
 		}
 

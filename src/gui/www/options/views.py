@@ -23,6 +23,9 @@ def render_options(request):
     systemStatus = SystemStatus()
     systemStatus.get()
     
+    c = RequestContext(request, {"version": systemStatus.version, "is_message": False, "options": True})
+    c.update(csrf(request))
+    
     # create objects
     form = OptionsForm(initial = {"log_level": loggingOptions.level,
                                   "log_file": "<NOT IMPLEMENTED>",
@@ -35,8 +38,13 @@ def render_options(request):
                                   "skip_broken_samples": coreOptions.skip_broken_samples,
                                    "broken_samples_size": coreOptions.skip_broken_samples_size})
     
-    c = RequestContext(request, {"version": systemStatus.version, "is_message": False, "options": True})
-    c.update(csrf(request))
+    c.update({"graphsDirectory": coreOptions.graphs_dir,
+			  "emulationSteps": coreOptions.emulation_steps,
+              "skipBigFiles": coreOptions.skip_big_files,
+              "max_input_file_size": coreOptions.skip_big_files_size,
+              "skip_empty_samples": coreOptions.skip_empty_samples,
+              "skip_broken_samples": coreOptions.skip_broken_samples,
+              "broken_samples_size": coreOptions.skip_broken_samples_size})
     
     # ===================================== POST =====================================
     

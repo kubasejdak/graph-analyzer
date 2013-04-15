@@ -21,24 +21,16 @@ def render_analyzeTask(request):
 	# ===================================== POST =====================================
 	
 	# run system if "Analyze" clicked
-	if request.method == "POST":
-		# run group re-make
-		if "regroup" in request.POST:
-			Popen(["graph-analyzer", "--regroup"])
-		
+	if request.method == "POST":		
 		# add filename to database
-		if "add" in request.POST:
-			filename = PendingFile()
-			filename.name = request.POST["file"]
-			filename.save()
+		#if "add" in request.POST:
+		#	filename = PendingFile()
+		#	filename.name = request.POST["file"]
+		#	filename.save()
 		
 		# run analysis
 		if "analyze" in request.POST and PendingFile.objects.count() > 0:
 			Popen(["graph-analyzer", "-t"])
-
-		# run analysis
-		if "clear" in request.POST:
-			print "clear clicked"
 	
 	pending_files = PendingFile.objects.all()
 	c.update({"error": systemStatus.last_error,

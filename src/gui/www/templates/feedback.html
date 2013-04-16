@@ -1,24 +1,16 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="well well-small">
-	<form action="" method="post">{% csrf_token %}
-		<div class="row-fluid">
-			<div class="span2">
-				<select name="type" size="1">
-					<option>bug</option>
-					<option>feature</option>
-				</select>
-			</div>
-			<div class="span9">
-				<input class="span3" style="width:100%" name="description" lang="pl" placeholder="Type feedback here..."></input>
-			</div>
-			<div class="span1">
-				<button class="btn btn-primary" name="add">Add</button>
-			</div>
-		</div>
-	</form>
-</div>
+<form action="" method="post">{% csrf_token %}
+	<div class="input-append">
+		<select name="type">
+			<option>bug</option>
+			<option>feature</option>
+		</select>
+		<input class="span12" name="description" type="text" placeholder="Type feedback here...">
+		<button class="btn btn-primary" name="add"><i class="icon-plus-sign icon-white"></i> Add</button>
+	</div>
+</form>
 
 {% if is_message %}
 <div class="alert alert-success">

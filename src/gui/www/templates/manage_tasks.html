@@ -1,62 +1,46 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="well">
+<div class="span14 offset 2">
 	<form action="" method="post">{% csrf_token %}
-		<div class="row-fluid">
-			<div class="span8">
-				<form method="post" action="">{% csrf_token %}
-					<input class="span3" style="width:100%" name="file" lang="pl" placeholder="Type file or directory..."></input>
-				</form>
-			</div>
-			<div class="span4">
-				<button class="btn" name="add">Add</button>
-				<button class="btn btn-danger" name="clear"><i class="icon-trash icon-white"></i> Clear</button>
-				<button class="btn btn-primary" name="analyze">Analyze</button>
-				<button class="btn btn-warning" name="regroup">Re-make groups</button>
-				<button class="btn" name="refresh"><i class="icon-refresh"></i> Refresh</button>
-			</div>
-		</div>
+		<button class="btn btn-large btn-primary" name="start">Start</button>
 	</form>
+	<h2>Scheduled tasks:</h2>
 </div>
-  
-<p class="PendingFiles"><b>Files to analyze:</b>
-	<ul>
-		{% for file in pending_files %}
-			<li>{{ file.name }}</li>
-		{% endfor %}
-	</ul>
-</p>
-  
-<div class="well">
-	Analysis progress:<br/>
-	<div class="progress progress-striped active">
-		<div class="bar" style="width: {{ progress }}%;">{{ progress }} %</div>
-   </div>
-   <div class="row-fluid">
-		<div class="span1">
-			Exploits:</br>
-			Samples:</br>
-			Errors:</br>
-			Files:</br></br>
-			
-			<b>Status: </b></br>
-			<b>Error: </b>
-		</div>
 
-		<div class="span4">
-			<b>{{ exploits }}</b></br>
-			<b>{{ samples }}</b></br>
-			<b>{{ errors }}</b></br>
-			<b>{{ files }}</b></br></br>
-			
-			<span class="label label-info">{{ status }}</span></br>
-			{% if error == "no error" %}
-			<span class="label label-success">{{ error }}</span>
-			{% else %}
-			<span class="label label-important">{{ error }}</span>
-			{% endif %}
-		</div>
-	</div>
-</div>
+<table class="table table-striped">
+	<thead>
+		<tr>
+			<th>Index</th>
+			<th>Type</th>
+			<th>Name</th>
+			<th>Start time</th>
+			<th>Finish time</th>
+			<th>Work time</th>
+			<th>Progress</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>1</td>
+			<td>Analyze</td>
+			<td>analyze_2013-04-16_14.03.10.77789</td>
+			<td>14:03</td>
+			<td>n/a</td>
+			<td>10:15</td>
+			<td>2 %</td>
+		</tr>
+		{% for sample in sample_list %}
+		<tr>
+			<td>{{ forloop.counter }}</td>
+			<td>{{ sample.id }}</td>
+			<td>{{ sample.name }}</td>
+			<td>{{ sample.extracted_from }}</td>
+			<td>{{ sample.graph_name }}</td>
+			<td>{{ sample.capture_date }}</td>
+			<td>{{ sample.size }}</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
 {% endblock %}

@@ -27,12 +27,18 @@ class CoreOptions(object):
             self.emulation_steps = xmlParser.child(rootNode, "EmulationSteps").attribute("val")
             if(xmlParser.child(rootNode, "SkipBigFiles").attribute("val") == "false"):
                 self.skip_big_files = False
+            else:
+                self.skip_big_files = True
             self.skip_big_files_size = xmlParser.child(rootNode, "SkipBigFiles").attribute("size")
             if(xmlParser.child(rootNode, "SkipBrokenSamples").attribute("val") == "false"):
                 self.skip_broken_samples = False
+            else:
+                self.skip_broken_samples = True
             self.skip_broken_samples_size = xmlParser.child(rootNode, "SkipBrokenSamples").attribute("size")
             if(xmlParser.child(rootNode, "SkipEmptySamples").attribute("val") == "false"):
                 self.skip_empty_samples = False
+            else:
+                self.skip_empty_samples = True
         
             xmlParser.close()
     

@@ -10,53 +10,80 @@
 	<br/>
 
 	<div class="row-fluid">
+		<div class="span12 offset1">
+			<!-- CORE -->
+			<div class="span5">
+				<h2>Core options:</h2>
+				<div class="control-group">
+					<label class="control-label">Graphs directory</label>
+					<div class="controls"><input style="width: 100%" type="text" name="graphsDirectory" value="{{ graphsDirectory }}"></div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">Emulation steps</label>
+					<div class="controls"><input style="width: 100%" type="text" name="emulationSteps" value="{{ emulationSteps }}"></div>
+				</div>
+				<div class="control-group">
+					<div class="controls"><label class="checkbox"><input type="checkbox" name="skipBigFiles" {% if skipBigFiles %}checked{% endif %}> Skip big files</label></div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">Big files size</label>
+					<div class="controls"><input style="width: 100%" type="text" name="skipBigFilesSize" value="{{ skipBigFilesSize }}"></div>
+				</div>
+				<div class="control-group">
+					<div class="controls"><label class="checkbox"><input type="checkbox" name="skipBrokenSamples" {% if skipBrokenSamples %}checked{% endif %}> Skip broken samples</label></div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">Broken samples size</label>
+					<div class="controls"><input style="width: 100%" type="text" name="skipBrokenSamplesSize" value="{{ skipBrokenSamplesSize }}"></div>
+				</div>
+				<div class="control-group">
+					<div class="controls"><label class="checkbox"><input type="checkbox" name="skipEmptySamples" {% if skipEmptySamples %}checked{% endif %}> Skip empty samples</label></div>
+				</div>
+			</div>
 
-		<!-- CORE -->
-		<div class="span5">
-			<h2>Core options:</h2>
-			<div class="control-group">
-				<label class="control-label">Graphs directory</label>
-				<div class="controls"><input style="width: 100%" type="text" name="graphsDirectory" value="{{ graphsDirectory }}"></div>
-			</div>
-			<div class="control-group">
-				<label class="control-label">Emulation steps</label>
-				<div class="controls"><input style="width: 100%" type="text" name="emulationSteps" value="{{ emulationSteps }}"></div>
-			</div>
-			<div class="control-group">
-				<div class="controls"><label class="checkbox"><input type="checkbox" name="skipBigFiles" {% if skipBigFiles %}checked{% endif %}> Skip big files</label></div>
-			</div>
-			<div class="control-group">
-				<label class="control-label">Big files size</label>
-				<div class="controls"><input style="width: 100%" type="text" name="skipBigFilesSize" value="{{ skipBigFilesSize }}"></div>
-			</div>
-			<div class="control-group">
-				<div class="controls"><label class="checkbox"><input type="checkbox" name="skipBrokenSamples" {% if skipBrokenSamples %}checked{% endif %}> Skip broken samples</label></div>
-			</div>
-			<div class="control-group">
-				<label class="control-label">Broken samples size</label>
-				<div class="controls"><input style="width: 100%" type="text" name="skipBrokenSamplesSize" value="{{ skipBrokenSamplesSize }}"></div>
-			</div>
-			<div class="control-group">
-				<div class="controls"><label class="checkbox"><input type="checkbox" name="skipEmptySamples" {% if skipEmptySamples %}checked{% endif %}> Skip empty samples</label></div>
+			<div class="span5">
+				<!-- LOGGING -->
+				<h2>Logging options:</h2>
+				<div class="control-group">
+					<label class="control-label">Level</label>
+					<div class="controls">
+						<select name="logLevel">
+							<option {% ifequal logLevel 0 %} selected {% endifequal %}>OFF</option>
+							<option {% ifequal logLevel 1 %} selected {% endifequal %}>Low</option>
+							<option {% ifequal logLevel 2 %} selected {% endifequal %}>Normal</option>
+							<option {% ifequal logLevel 3 %} selected {% endifequal %}>High</option>
+						</select>
+					</div>
+				</div>
+				<div class="control-group">
+					<div class="controls"><label class="checkbox"><input type="checkbox" name="exportStatusXML" {% if exportStatusXML %}checked{% endif %}> export status to XML</label></div>
+				</div>
+				<br/>
+			
+				<!-- DATABASE -->
+				<h2>Database options:</h2>
+				<div class="control-group">
+					<label class="control-label">Driver</label>
+					<div class="controls"><input style="width: 100%" type="text" name="dbDriver" value="{{ dbDriver }}"></div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">Host</label>
+					<div class="controls"><input style="width: 100%" type="text" name="dbHost" value="{{ dbHost }}"></div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">Name</label>
+					<div class="controls"><input style="width: 100%" type="text" name="dbName" value="{{ dbName }}"></div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">User</label>
+					<div class="controls"><input style="width: 100%" type="text" name="dbUser" value="{{ dbUser }}"></div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">Password</label>
+					<div class="controls"><input style="width: 100%" type="password" name="dbPassword" value="{{ dbPassword }}"></div>
+				</div>
 			</div>
 		</div>
-
-		<!-- LOGGING -->
-		<div class="span5">
-			<h2>Logging options:</h2>
-			<div class="control-group">
-				<label class="control-label">Graphs directory</label>
-				<div class="controls"><input style="width: 100%" type="text" id="inputEmail"></div>
-			</div>
-			<div class="control-group">
-				<label class="control-label">Emulation steps</label>
-				<div class="controls"><input style="width: 100%" type="text" id="inputPassword"></div>
-			</div>
-			<div class="control-group">
-				<div class="controls"><label class="checkbox"><input type="checkbox"> Skip big files</label></div>
-			</div>
-		</div>
-
 	</div>
 </form>
 	

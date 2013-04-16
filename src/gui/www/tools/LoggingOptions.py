@@ -5,6 +5,7 @@ class LoggingOptions(object):
     OPTIONS_FILE = "/var/www/jsejdak/GraphAnalyzer.conf"
     
     level = 2
+    exportStatusXML = True
     
     def get(self):
         xmlParser = XMLParser()
@@ -18,6 +19,10 @@ class LoggingOptions(object):
                 rootNode = xmlParser.root("Logging")
             
             self.level = xmlParser.child(rootNode, "Level").attribute("val")
+            if(xmlParser.child(rootNode, "StatusStrategy").attribute("type") == "xml"):
+                self.exportStatusXML = True
+            else:
+                self.exportStatusXML = False
         
             xmlParser.close()
     
@@ -33,5 +38,9 @@ class LoggingOptions(object):
                 rootNode = xmlParser.root("Logging")
 
             xmlParser.child(rootNode, "Level").setAttribute("val", self.level)
+            e = xmlParser.child(rootNode, "StatusStrategy")
+            xmlParser.removeChild(rootNode, e)
+            if(self.exportStatusXML == True):
+                xmlParser.createChild(rootNode, "StatusStrategy").setAttribute("type", "xml")
         
             xmlParser.close()

@@ -8,6 +8,7 @@
 
 GroupTask::GroupTask(int id) : ITask(id)
 {
+    m_type = "group";
 }
 
 bool GroupTask::performTask()

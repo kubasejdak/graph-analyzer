@@ -6,6 +6,8 @@
 
 #include "TaskManager.h"
 #include <utils/SystemLogger.h>
+#include <utils/XMLParser.h>
+#include <tasks/ITask.h>
 
 #include <QFile>
 
@@ -23,6 +25,7 @@ bool TaskManager::collectTasks()
 
 		ITask *task = m_resolver.createTask(taskType, taskId);
 		m_queue.insert(task);
+        SystemLogger::instance()->exportStatus(task);
 
 		taskElement = taskElement.nextSiblingElement(ROOT_NODE);
 		++taskId;
@@ -44,7 +47,32 @@ bool TaskManager::executeTasks()
 		delete task;
 	}
 
-	QFile(TASKS_FILE).remove();
+    removeTasks();
 	LOG("SUCCESS\n\n");
 	return true;
+}
+
+void TaskManager::removeTasks()
+{
+    XMLParser xmlParser;
+
+    if(!xmlParser.open(TASKS_FILE)) {
+        LOG_ERROR("FAILURE\n\n");
+        return;
+    }
+
+    if(!xmlParser.hasRoot(ROOT_NODE)) {
+        xmlParser.close();
+        LOG_ERROR("FAILURE\n\n");
+        return;
+    }
+
+    QDomElement taskElement = m_xmlParser.root(ROOT_NODE);
+    while(taskElement.isNull() == false) {
+        QDomElement tmpElement = taskElement;
+        taskElement = taskElement.nextSiblingElement(ROOT_NODE);
+        xmlParser.removeRoot(tmpElement);
+    }
+
+    xmlParser.close();
 }

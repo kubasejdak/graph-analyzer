@@ -1,4 +1,5 @@
 from django.db import models
+from tasks.models import Task
 
 # ShellcodeSample table
 class Sample(models.Model):
@@ -11,6 +12,7 @@ class Sample(models.Model):
 	file_size = models.CharField(max_length = 10)
 	shellcode_offset = models.CharField(max_length = 10)
 	comment = models.CharField(max_length = 3000)
+	task = models.ForeignKey(Task)
 	
 	def __unicode__(self):
 		return self.name

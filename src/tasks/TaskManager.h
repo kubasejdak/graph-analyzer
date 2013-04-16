@@ -20,6 +20,8 @@ public:
 	bool executeTasks();
 
 private:
+    void removeTasks();
+
 	TaskQueue m_queue;
 	TaskResolver m_resolver;
 	XMLParser m_xmlParser;

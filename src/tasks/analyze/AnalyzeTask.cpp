@@ -17,6 +17,8 @@ AnalyzeTask::AnalyzeTask(int id) : ITask(id)
 	m_analyzedSamples = 0;
 	m_detectedExploits = 0;
 
+    m_type = "analyze";
+
 	loadModules();
 }
 
@@ -122,6 +124,9 @@ cleanup:
 	else
 		LOG("no errors occured\n");
 
+    m_finished = true;
+    SystemLogger::instance()->exportStatus(this);
+
 	SystemLogger::instance()->setStatus("idle");
 	LOG("SUCCESS\n\n");
 	return true;
@@ -142,11 +147,12 @@ bool AnalyzeTask::readConfigXML()
 
 	QDomElement taskElement = m_xmlParser.root(ROOT_NODE);
 	int taskId = 0;
-	while(taskId != m_id) {
+    while(taskId != m_xmlId) {
 		taskElement = taskElement.nextSiblingElement(ROOT_NODE);
 		++taskId;
 	}
 
+    m_name = m_xmlParser.child(taskElement, "Name").attribute("val");
 	m_override = m_xmlParser.child(taskElement, "Override").attribute("val") == "true" ? true : false;
 
 	/* files */

@@ -11,18 +11,30 @@
 
 void DBStatusExportStrategy::exportStatus(ITask *task)
 {
-    DatabaseManager::instance()->clearTable("options_systeminfo");
-    int statusId = DatabaseManager::instance()->sequenceValue("options_systeminfo_id_seq");
-    int progress = (task != NULL) ? task->progress() : 0;
+    /* get next task_id number */
+    if(task->id() == -1) {
+        int taskId = DatabaseManager::instance()->sequenceValue("analyze_sample_id_seq");
+        task->setId(taskId);
+    }
+    else {
+        QSqlQuery deleteQuery(DatabaseManager::instance()->database());
+        deleteQuery.prepare("DELETE FROM tasks_task WHERE name = ?");
+        deleteQuery.addBindValue(task->name());
+
+        if(!DatabaseManager::instance()->exec(&deleteQuery))
+            LOG_ERROR("FAILURE\n\n");
+    }
 
     QSqlQuery statusQuery(DatabaseManager::instance()->database());
-    statusQuery.prepare("INSERT INTO options_systeminfo VALUES (?, ?, ?, ?, ?, ?)");
-    statusQuery.addBindValue(statusId);
-    statusQuery.addBindValue(VERSION);
-    statusQuery.addBindValue(SystemLogger::instance()->status());
-    statusQuery.addBindValue(progress);
-    statusQuery.addBindValue(SystemLogger::instance()->error());
-    statusQuery.addBindValue(Toolbox::itos(SystemLogger::instance()->errorsNum()));
+    statusQuery.prepare("INSERT INTO tasks_task VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+    statusQuery.addBindValue(task->id());
+    statusQuery.addBindValue(task->name());
+    statusQuery.addBindValue(task->type());
+    statusQuery.addBindValue(task->startTime().toString("HH:mm"));
+    statusQuery.addBindValue(task->endTime().toString("HH:mm"));
+    statusQuery.addBindValue(task->workTime().toString("HH:mm"));
+    statusQuery.addBindValue(task->errors());
+    statusQuery.addBindValue(task->progress());
 
     if(!DatabaseManager::instance()->exec(&statusQuery))
         LOG_ERROR("FAILURE\n\n");

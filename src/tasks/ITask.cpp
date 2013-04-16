@@ -8,11 +8,44 @@
 
 ITask::ITask(int id)
 {
-    m_id = id;
+    m_xmlId = id;
+    m_id = -1;
     m_errors = 0;
     m_progress = 0;
+    m_finished = false;
 
     m_name = "<no_name>";
+    m_type = "<no_type>";
+}
+
+int ITask::id()
+{
+    return m_id;
+}
+
+QString ITask::name()
+{
+    return m_name;
+}
+
+QString ITask::type()
+{
+    return m_type;
+}
+
+QTime ITask::startTime()
+{
+    return m_startTime;
+}
+
+QTime ITask::endTime()
+{
+    return m_endTime;
+}
+
+QTime ITask::workTime()
+{
+    return m_workTime;
 }
 
 int ITask::errors()
@@ -23,6 +56,16 @@ int ITask::errors()
 int ITask::progress()
 {
     return m_progress;
+}
+
+bool ITask::isFinished()
+{
+    return m_finished;
+}
+
+void ITask::setId(int id)
+{
+    m_id = id;
 }
 
 bool ITask::perform()

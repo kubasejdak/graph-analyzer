@@ -12,33 +12,26 @@
 	<thead>
 		<tr>
 			<th>Index</th>
-			<th>Type</th>
 			<th>Name</th>
+			<th>Type</th>
 			<th>Start time</th>
 			<th>Finish time</th>
 			<th>Work time</th>
+			<th>Errors</th>
 			<th>Progress</th>
 		</tr>
 	</thead>
 	<tbody>
-		<tr>
-			<td>1</td>
-			<td>Analyze</td>
-			<td>analyze_2013-04-16_14.03.10.77789</td>
-			<td>14:03</td>
-			<td>n/a</td>
-			<td>10:15</td>
-			<td>2 %</td>
-		</tr>
-		{% for sample in sample_list %}
+		{% for task in tasksList %}
 		<tr>
 			<td>{{ forloop.counter }}</td>
-			<td>{{ sample.id }}</td>
-			<td>{{ sample.name }}</td>
-			<td>{{ sample.extracted_from }}</td>
-			<td>{{ sample.graph_name }}</td>
-			<td>{{ sample.capture_date }}</td>
-			<td>{{ sample.size }}</td>
+			<td>{{ task.name }}</td>
+			<td>{{ task.type }}</td>
+			<td>{{ task.start_time }}</td>
+			<td>{{ task.finish_time }}</td>
+			<td>{{ task.work_time }}</td>
+			<td>{{ task.errors }}</td>
+			<td>{{ task.progress }} %</td>
 		</tr>
 		{% endfor %}
 	</tbody>

@@ -23,8 +23,17 @@ public:
     bool perform();
 
     /* for exporting status purpose */
+    int id();
+    QString name();
+    QString type();
+    QTime startTime();
+    QTime endTime();
+    QTime workTime();
     int errors();
     int progress();
+    bool isFinished();
+
+    void setId(int id);
 
 protected:
     virtual bool performTask() = 0;
@@ -33,16 +42,18 @@ protected:
     SampleContainer m_samples;          /* samples that are used in task */
     QList<QString> m_exportStrategies;  /* strategies for exporting task results */
     QTime m_timer;                      /* provides time functions */
+    int m_xmlId;                        /* number in XML */
 
     /* task general info */
+    int m_id;                           /* task id */
     QString m_name;                     /* task name defined by user */
+    QString m_type;                     /* task type */
     QTime m_startTime;                  /* when task was started */
     QTime m_endTime;                    /* when task was ended */
     QTime m_workTime;                   /* how long did task work */
-
-    int m_id;                           /* task id in XML file */
     int m_errors;                       /* number of errors that occured during task */
     int m_progress;                     /* current progress of task */
+    bool m_finished;                    /* is task finished */
 
 };
 

@@ -13,7 +13,7 @@
 
 		<!-- CORE -->
 		<div class="span5">
-			<h2>Core Options:</h2>
+			<h2>Core options:</h2>
 			<div class="control-group">
 				<label class="control-label">Graphs directory</label>
 				<div class="controls"><input style="width: 100%" type="text" name="graphsDirectory" value="{{ graphsDirectory }}"></div>
@@ -23,21 +23,21 @@
 				<div class="controls"><input style="width: 100%" type="text" name="emulationSteps" value="{{ emulationSteps }}"></div>
 			</div>
 			<div class="control-group">
-				<div class="controls"><label class="checkbox"><input type="checkbox" name="skipBigFiles" checked> Skip big files</label></div>
+				<div class="controls"><label class="checkbox"><input type="checkbox" name="skipBigFiles" {% if skipBigFiles %}checked{% endif %}> Skip big files</label></div>
 			</div>
 			<div class="control-group">
 				<label class="control-label">Big files size</label>
-				<div class="controls"><input style="width: 100%" type="text" name="bigFilesSize"></div>
+				<div class="controls"><input style="width: 100%" type="text" name="skipBigFilesSize" value="{{ skipBigFilesSize }}"></div>
 			</div>
 			<div class="control-group">
-				<div class="controls"><label class="checkbox"><input type="checkbox" name="skipBrokenSamples" checked> Skip broken samples</label></div>
+				<div class="controls"><label class="checkbox"><input type="checkbox" name="skipBrokenSamples" {% if skipBrokenSamples %}checked{% endif %}> Skip broken samples</label></div>
 			</div>
 			<div class="control-group">
 				<label class="control-label">Broken samples size</label>
-				<div class="controls"><input style="width: 100%" type="text" name="brokenSampesSize"></div>
+				<div class="controls"><input style="width: 100%" type="text" name="skipBrokenSamplesSize" value="{{ skipBrokenSamplesSize }}"></div>
 			</div>
 			<div class="control-group">
-				<div class="controls"><label class="checkbox"><input type="checkbox" name="skipEmptySamples" checked> Skip empty samples</label></div>
+				<div class="controls"><label class="checkbox"><input type="checkbox" name="skipEmptySamples" {% if skipEmptySamples %}checked{% endif %}> Skip empty samples</label></div>
 			</div>
 		</div>
 

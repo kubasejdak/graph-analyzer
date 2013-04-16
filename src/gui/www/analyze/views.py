@@ -3,6 +3,7 @@
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.core.context_processors import csrf
+from datetime import date, datetime
 
 from tools.SystemStatus import SystemStatus
 from tools.AnalyzeTask import AnalyzeTask
@@ -11,8 +12,12 @@ def render_analyzeTask(request):
 	# get system status
 	systemStatus = SystemStatus()
 	systemStatus.get()
+
+	# get date
+	today = date.today()
+	taskName = "analyze_" + str(today) + "_" + str(datetime.time(datetime.now()))
 	
-	c = RequestContext(request, {"version": systemStatus.version, "tasks": True, "analyze": True})
+	c = RequestContext(request, {"version": systemStatus.version, "tasks": True, "analyze": True, "taskName": taskName})
 	c.update(csrf(request))
 
 	# ===================================== GET ======================================

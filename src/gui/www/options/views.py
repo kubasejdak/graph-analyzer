@@ -27,7 +27,6 @@ def render_options(request):
     
         # get logging options
         loggingOptions.get()
-        print "level =", loggingOptions.level
         
         # get database options
         databaseOptions.get()

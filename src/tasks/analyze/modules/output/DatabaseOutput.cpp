@@ -74,6 +74,9 @@ bool DatabaseOutput::checkDuplicate(ExploitInfo *info)
 
 bool DatabaseOutput::exportGeneralData(ExploitInfo *info, int sampleId, int taskId)
 {
+	QString d = info->captureDate().toString("yyyy-MM-dd");
+	QString captureDate = (d == "1999-12-31") ? "n/a" : d;
+
 	LOG("exporting sample info [general] to database\n");
 	QSqlQuery sampleQuery(DatabaseManager::instance()->database());
     sampleQuery.prepare("INSERT INTO analyze_sample VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
@@ -81,7 +84,7 @@ bool DatabaseOutput::exportGeneralData(ExploitInfo *info, int sampleId, int task
 	sampleQuery.addBindValue(info->name());
 	sampleQuery.addBindValue(info->extractedFrom());
 	sampleQuery.addBindValue(info->graphName());
-    sampleQuery.addBindValue(info->captureDate().toString("yyyy-MM-dd"));
+	sampleQuery.addBindValue(captureDate);
 	sampleQuery.addBindValue(Toolbox::itos(info->size()));
 	sampleQuery.addBindValue(info->fileType());
 	sampleQuery.addBindValue(Toolbox::itos(info->fileSize()));

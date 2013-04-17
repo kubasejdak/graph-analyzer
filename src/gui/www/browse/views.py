@@ -115,8 +115,6 @@ def render_showSample(request):
             show_loopassignment = LoopAssignment.objects.filter(sample = request.GET["sampleId"])
             show_apiassignment = APIAssignment.objects.filter(sample = request.GET["sampleId"])
             show_hashassignment = HashAssignment.objects.get(sample = request.GET["sampleId"])
-            show_groupassignment = GroupAssignment.objects.filter(member = request.GET["sampleId"]).order_by("-resemblence_rate")
-            show_group = Group.objects.get(leader = request.GET["sampleId"])
             
             # get graph picture
             graph_source = show_sample.graph_name
@@ -130,10 +128,8 @@ def render_showSample(request):
 					  "show_loopassignment": show_loopassignment,
 					  "show_apiassignment": show_apiassignment,
 					  "show_hashassignment": show_hashassignment,
-					  "show_groupassignment": show_groupassignment,
 					  "graph_file": graph_file,
 					  "general_tab": "active",
-					  "show_group": show_group,
 					  "browse": True})
             return render_to_response("show.html", c)
 

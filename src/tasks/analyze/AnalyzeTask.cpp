@@ -7,6 +7,7 @@
 #include "AnalyzeTask.h"
 #include <utils/FileTypeAnalyzer.h>
 #include <utils/SystemLogger.h>
+#include <utils/Toolbox.h>
 #include <core/Options.h>
 
 AnalyzeTask::AnalyzeTask(int id) : ITask(id)
@@ -18,6 +19,8 @@ AnalyzeTask::AnalyzeTask(int id) : ITask(id)
 	m_detectedExploits = 0;
 
     m_type = "analyze";
+	m_traitName = "exploits";
+	m_traitValue = "0";
 
 	loadModules();
 }
@@ -106,6 +109,7 @@ bool AnalyzeTask::performTask()
 			}
 
 			++m_detectedExploits;
+			m_traitValue = Toolbox::itos(m_detectedExploits);
 
 cleanup:
 			/* clean up */

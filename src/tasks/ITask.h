@@ -32,6 +32,8 @@ public:
     int errors();
     int progress();
     bool isFinished();
+	QString traitName();
+	QString traitValue();
 
     void setId(int id);
 
@@ -53,6 +55,8 @@ protected:
     QTime m_workTime;                   /* how long did task work */
     int m_errors;                       /* number of errors that occured during task */
     int m_progress;                     /* current progress of task */
+	QString m_traitName;				/* task specific trait name */
+	QString m_traitValue;				/* task specific trait value */
     bool m_finished;                    /* is task finished */
 
 };

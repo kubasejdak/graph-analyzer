@@ -6,7 +6,7 @@ class Sample(models.Model):
 	name = models.CharField(max_length = 200)
 	extracted_from = models.CharField(max_length = 200)
 	graph_name = models.CharField(max_length = 200)
-	capture_date = models.DateField();
+	capture_date = models.CharField(max_length = 10)
 	size = models.CharField(max_length = 10)
 	file_type = models.CharField(max_length = 50)
 	file_size = models.CharField(max_length = 10)

@@ -66,6 +66,16 @@ bool ITask::isFinished()
     return m_finished;
 }
 
+QString ITask::traitName()
+{
+	return m_traitName;
+}
+
+QString ITask::traitValue()
+{
+	return m_traitValue;
+}
+
 void ITask::setId(int id)
 {
     m_id = id;

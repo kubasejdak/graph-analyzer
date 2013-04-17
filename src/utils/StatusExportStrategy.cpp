@@ -17,7 +17,7 @@ void DBStatusExportStrategy::exportStatus(ITask *task)
         int taskId = DatabaseManager::instance()->sequenceValue("tasks_task_id_seq");
         task->setId(taskId);
 
-		statusQuery.prepare("INSERT INTO tasks_task VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		statusQuery.prepare("INSERT INTO tasks_task VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 		statusQuery.addBindValue(task->id());
 		statusQuery.addBindValue(task->name());
 		statusQuery.addBindValue(task->type());
@@ -26,10 +26,12 @@ void DBStatusExportStrategy::exportStatus(ITask *task)
 		statusQuery.addBindValue(task->workTime().toString("HH:mm"));
 		statusQuery.addBindValue(task->errors());
 		statusQuery.addBindValue(task->isFinished());
+		statusQuery.addBindValue(task->traitName());
+		statusQuery.addBindValue(task->traitValue());
 		statusQuery.addBindValue(task->progress());
     }
     else {
-		statusQuery.prepare("UPDATE tasks_task SET name = ?, type = ?, start_time = ?, end_time = ?, work_time = ?, errors = ?, finished = ?, progress = ? WHERE id = ?");
+		statusQuery.prepare("UPDATE tasks_task SET name = ?, type = ?, start_time = ?, end_time = ?, work_time = ?, errors = ?, finished = ?, trait_name = ?, trait_value = ?, progress = ? WHERE id = ?");
 		statusQuery.addBindValue(task->name());
 		statusQuery.addBindValue(task->type());
 		statusQuery.addBindValue(task->startTime().toString("HH:mm"));
@@ -37,6 +39,8 @@ void DBStatusExportStrategy::exportStatus(ITask *task)
 		statusQuery.addBindValue(task->workTime().toString("HH:mm"));
 		statusQuery.addBindValue(task->errors());
 		statusQuery.addBindValue(task->isFinished());
+		statusQuery.addBindValue(task->traitName());
+		statusQuery.addBindValue(task->traitValue());
 		statusQuery.addBindValue(task->progress());
 		statusQuery.addBindValue(task->id());
     }

@@ -20,7 +20,7 @@ public:
     /* paths */
     static QString makeRelative(QString path);
     static QString removeSlash(QString path);
-    static QString pcapFlowBasename(QString path);
+	static QString pcapFlowBasename(QString path);
     static bool removeDirectory(QString path);
 };
 

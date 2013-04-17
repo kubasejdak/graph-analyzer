@@ -19,5 +19,5 @@ QDate DateRegExp::findDate(QString name)
 	if(date.isValid())
 		return date;
 	else
-		return QDate();
+		return QDate(1999, 12, 31);
 }

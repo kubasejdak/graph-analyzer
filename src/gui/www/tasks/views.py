@@ -25,7 +25,7 @@ def render_tasksManage(request):
         
         # remove task
         if("accept" in request.POST):
-            acceptedTask = Task.objects.get(name = request.POST["accept"])
+            acceptedTask = Task.objects.get(id = request.POST["accept"])
             acceptedTask.finished = True
             acceptedTask.save()
             c.update({"taskRemoved": True})

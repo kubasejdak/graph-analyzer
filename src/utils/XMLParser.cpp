@@ -53,9 +53,13 @@ void XMLParser::close()
 	}
 }
 
-void XMLParser::clear()
+void XMLParser::clear(QString filename)
 {
-    m_docRoot.clear();
+    QFile file(filename);
+    file.resize(0);
+    file.open(QIODevice::WriteOnly);
+    file.write("<xml/>");
+    file.close();
 }
 
 bool XMLParser::hasRoot(QString rootName)
@@ -104,12 +108,12 @@ QDomElement XMLParser::child(QDomElement rootNode, QString childNode)
 
 void XMLParser::removeRoot(QDomElement rootNode)
 {
-	m_docRoot.removeChild(rootNode);
+    m_docRoot.removeChild(rootNode);
 }
 
 void XMLParser::removeChild(QDomElement rootNode, QDomElement childNode)
 {
-	rootNode.removeChild(childNode);
+    rootNode.removeChild(childNode);
 }
 
 QDomElement XMLParser::createRoot(QString rootName)

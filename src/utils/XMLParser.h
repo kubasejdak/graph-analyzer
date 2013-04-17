@@ -19,7 +19,7 @@ public:
 	bool open(QString filename);
 	void close();
 
-    void clear();
+    void clear(QString filename);
 
 	bool hasRoot(QString rootName);
 	bool hasChild(QDomElement rootNode, QString childNode);

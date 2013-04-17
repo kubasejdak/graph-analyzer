@@ -44,6 +44,7 @@ bool TaskManager::executeTasks()
 		if(!task->perform())
 			LOG_ERROR("executing task failed\n");
 
+        SystemLogger::instance()->exportStatus(task);
 		delete task;
 	}
 

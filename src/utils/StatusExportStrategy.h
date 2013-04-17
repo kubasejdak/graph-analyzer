@@ -9,7 +9,6 @@
 
 #include <QString>
 #include <tasks/ITask.h>
-#include <utils/XMLParser.h>
 
 #define STATUS_FILE     "/var/www/jsejdak/GraphAnalyzerStatus.xml"
 
@@ -29,18 +28,6 @@ public:
 
     virtual void exportStatus(ITask *task);
     virtual QString description();
-};
-
-class XMLStatusExportStrategy : public IStatusExportStrategy {
-public:
-    XMLStatusExportStrategy() {}
-    virtual ~XMLStatusExportStrategy() {}
-
-    virtual void exportStatus(ITask *task);
-    virtual QString description();
-
-private:
-    XMLParser m_xmlParser;
 };
 
 #endif /* STATUSEXPORTSTRATEGY_H */

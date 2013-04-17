@@ -13,6 +13,9 @@ ITask::ITask(int id)
     m_errors = 0;
     m_progress = 0;
     m_finished = false;
+    m_startTime = QTime(0, 0);
+    m_endTime = QTime(0, 0);
+    m_workTime = QTime(0, 0);
 
     m_name = "<no_name>";
     m_type = "<no_type>";

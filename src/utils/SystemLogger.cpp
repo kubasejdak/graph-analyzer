@@ -8,6 +8,7 @@
 #include <core/Options.h>
 #include <tasks/ITask.h>
 #include <utils/StatusExportStrategy.h>
+#include <utils/DescriptionExportStrategy.h>
 
 #include <QDate>
 #include <QTime>
@@ -27,6 +28,7 @@ SystemLogger::SystemLogger()
 	if(!readConfigXML()) {
         m_logStrategies.push_back(new ConsoleLoggingStrategy());
         m_statusStrategies.push_back(new DBStatusExportStrategy());
+        m_descriptionStrategies.push_back(new XMLDescriptionExportStrategy());
 		LOG_INTERNAL_ERROR("failed to read XML configuration, using default options\n");
 	}
 
@@ -65,7 +67,7 @@ bool SystemLogger::readConfigXML()
 		while(!f.isNull()) {
 
 			if(f.attribute("type") == "file") {
-				QString filename = f.text();
+                QString filename = f.attribute("path");
                 m_logStrategies.push_back(new FileLoggingStrategy(filename));
 			}
 			else if(f.attribute("type") == "console")
@@ -82,10 +84,20 @@ bool SystemLogger::readConfigXML()
 
             if(f.attribute("type") == "database")
                 m_statusStrategies.push_back(new DBStatusExportStrategy());
-            else if(f.attribute("type") == "xml")
-                m_statusStrategies.push_back(new XMLStatusExportStrategy());
 
             f = f.nextSiblingElement("StatusStrategy");
+        }
+    }
+
+    /* exporting description */
+    if(m_xmlParser.hasChild(options, "DescriptionStrategy")) {
+        QDomElement f = m_xmlParser.child(options, "DescriptionStrategy");
+        while(!f.isNull()) {
+
+            if(f.attribute("type") == "xml")
+                m_descriptionStrategies.push_back(new XMLDescriptionExportStrategy());
+
+            f = f.nextSiblingElement("DescriptionStrategy");
         }
     }
 
@@ -103,6 +115,9 @@ void SystemLogger::listOptions()
     QList<IStatusExportStrategy *>::iterator it2;
     for(it2 = m_statusStrategies.begin(); it2 != m_statusStrategies.end(); ++it2)
         LOG_INTERNAL("m_statusStrategy: [%s]\n", (*it2)->description().toStdString().c_str());
+    QList<IDescriptionExportStrategy *>::iterator it3;
+    for(it3 = m_descriptionStrategies.begin(); it3 != m_descriptionStrategies.end(); ++it3)
+        LOG_INTERNAL("m_descriptionStrategy: [%s]\n", (*it3)->description().toStdString().c_str());
 }
 
 void SystemLogger::setStatus(QString status)
@@ -190,6 +205,13 @@ void SystemLogger::exportStatus(ITask *currTask)
     QList<IStatusExportStrategy *>::iterator it;
     for(it = m_statusStrategies.begin(); it != m_statusStrategies.end(); ++it)
         (*it)->exportStatus(currTask);
+}
+
+void SystemLogger::exportDescription()
+{
+    QList<IDescriptionExportStrategy *>::iterator it;
+    for(it = m_descriptionStrategies.begin(); it != m_descriptionStrategies.end(); ++it)
+        (*it)->exportDescription();
 }
 
 void SystemLogger::clearError()

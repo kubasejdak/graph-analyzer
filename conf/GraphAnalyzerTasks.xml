@@ -1,22 +1,13 @@
 <xml>
-
-	<Task type="analyze">
-		<File source="local">/home/kuba/malware/Nep-DSL/2011</File>
-		<File source="local">/home/kuba/malware/Nep-DSL/2012</File>
-		<Output val="console" />
-		<Output val="database" />
-		<Override val="false" />
-	</Task>
-
 	<Task type="group">
-		<File>/home/kuba/malware/Nep-DSL/2011</File>
-        <File>/home/kuba/malware/Nep-DSL/2012</File>
-		<From>01.01.2008</From>
-		<Until>31.12.2012</Until>
-		<Algorithm>basic</Algorithm>
+		<Name val="group_2013-04-17_12:14:23.597885" />
+		<File path="/home/kuba/malware/Nep-DSL/2011" />
+        <File path="/home/kuba/malware/Nep-DSL/2012" />
+		<From date="01.01.2008" />
+		<Until date="31.12.2012" />
+		<Algorithm name="basic" />
 		<Output val="console" />
         <Output val="database" />
 		<Override val="false" />
 	</Task>
-
 </xml>

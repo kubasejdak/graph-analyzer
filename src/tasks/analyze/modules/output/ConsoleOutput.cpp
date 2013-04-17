@@ -17,7 +17,7 @@ ConsoleOutput::ConsoleOutput()
     m_description = "Prints info about samples in console.";
 }
 
-bool ConsoleOutput::exportOutput(ExploitSample *sample)
+bool ConsoleOutput::exportOutput(ExploitSample *sample, int taskId)
 {	
 	ExploitInfo *info = sample->info();
 
@@ -30,6 +30,7 @@ bool ConsoleOutput::exportOutput(ExploitSample *sample)
 	cout << "\t file size : " << dec << info->fileSize() << endl;
 	cout << "\t exploit present : " << (info->isExploitPresent() ? "yes" : "no") << endl;
 	cout << "\t exploit offset : 0x" << hex << info->codeOffset() << endl;
+    cout << "\t task: " << dec << taskId << endl;
 
 	TraitsMap::iterator it;
 	TraitsEntry::iterator it2;

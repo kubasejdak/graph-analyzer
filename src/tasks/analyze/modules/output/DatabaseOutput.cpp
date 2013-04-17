@@ -20,7 +20,7 @@ DatabaseOutput::DatabaseOutput()
     m_description = "Inserts info about samples into database.";
 }
 
-bool DatabaseOutput::exportOutput(ExploitSample *sample)
+bool DatabaseOutput::exportOutput(ExploitSample *sample, int taskId)
 {
     ExploitInfo *info = sample->info();
 
@@ -37,7 +37,7 @@ bool DatabaseOutput::exportOutput(ExploitSample *sample)
 	int sampleId = DatabaseManager::instance()->sequenceValue("analyze_sample_id_seq");
 
 	/* general sample data */
-	if(exportGeneralData(info, sampleId) == false) {
+    if(exportGeneralData(info, sampleId, taskId) == false) {
 		LOG("exporting general sample info to database [%s]\n", info->name().toStdString().c_str());
 		LOG_ERROR("FAILURE\n\n");
 		return false;
@@ -72,22 +72,22 @@ bool DatabaseOutput::checkDuplicate(ExploitInfo *info)
 	return selectQuery.next();
 }
 
-bool DatabaseOutput::exportGeneralData(ExploitInfo *info, int sampleId)
+bool DatabaseOutput::exportGeneralData(ExploitInfo *info, int sampleId, int taskId)
 {
 	LOG("exporting sample info [general] to database\n");
 	QSqlQuery sampleQuery(DatabaseManager::instance()->database());
-	//sampleQuery.prepare("INSERT INTO analyze_sample VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-	sampleQuery.prepare("INSERT INTO analyze_sample VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    sampleQuery.prepare("INSERT INTO analyze_sample VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 	sampleQuery.addBindValue(sampleId);
 	sampleQuery.addBindValue(info->name());
 	sampleQuery.addBindValue(info->extractedFrom());
 	sampleQuery.addBindValue(info->graphName());
-	//sampleQuery.addBindValue(info->captureDate().toString("yyyy-MM-dd"));
+    sampleQuery.addBindValue(info->captureDate().toString("yyyy-MM-dd"));
 	sampleQuery.addBindValue(Toolbox::itos(info->size()));
 	sampleQuery.addBindValue(info->fileType());
 	sampleQuery.addBindValue(Toolbox::itos(info->fileSize()));
 	sampleQuery.addBindValue(Toolbox::itos(info->codeOffset()));
 	sampleQuery.addBindValue("");
+    sampleQuery.addBindValue(taskId);
 	if(!DatabaseManager::instance()->exec(&sampleQuery)) {
 		LOG_ERROR("FAILURE\n\n");
 		return false;

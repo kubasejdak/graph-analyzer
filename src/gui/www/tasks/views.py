@@ -15,18 +15,25 @@ def render_tasksManage(request):
     
     c = RequestContext(request, {"version": systemStatus.version, "tasks": True, "manage_tasks": True})
     c.update(csrf(request))
+    
+    # ===================================== POST =====================================
+    
+    if request.method == "POST":
+        # start tasks
+        if("start" in request.POST):
+            Popen(["graph-analyzer", "-t"])
+        
+        # remove task
+        if("accept" in request.POST):
+            acceptedTask = Task.objects.get(name = request.POST["accept"])
+            acceptedTask.finished = True
+            acceptedTask.save()
+            c.update({"taskRemoved": True})
 
     # ===================================== GET =====================================
     
     tasksList = Task.objects.filter(finished = False).order_by("-progress", "name")
     c.update({"tasksList": tasksList})
-    
-    # ===================================== POST =====================================
-    
-    # run system if "Analyze" clicked
-    if request.method == "POST":
-        # start tasks
-        if "start" in request.POST:
-            Popen(["graph-analyzer", "-t"])
+            
 
     return render_to_response("manage_tasks.html", c)

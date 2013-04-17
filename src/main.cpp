@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
 			("help,h", "print help message")
 			("version,v", "print version")
             ("tasks,t", "execute system tasks")
-            ("export-status", "save status to XML file")
+            ("export-description", "save description to XML file")
 			;
 
 	opt::variables_map vm;
@@ -51,8 +51,8 @@ int main(int argc, char *argv[])
 		return 0;
 	}
     /* export status */
-    if(vm.count("export-status")) {
-        SystemLogger::instance()->exportStatus(NULL);
+    if(vm.count("export-description")) {
+        SystemLogger::instance()->exportDescription();
         return 0;
     }
 	/* call rpc function */

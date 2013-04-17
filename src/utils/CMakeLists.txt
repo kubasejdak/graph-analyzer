@@ -9,6 +9,7 @@ set(UTILS_SRC
     XMLParser.cpp
     LoggingStrategy.cpp
 	StatusExportStrategy.cpp
+	DescriptionExportStrategy.cpp
     UniqueNameResolver.cpp
     DateRegExp.cpp
 )

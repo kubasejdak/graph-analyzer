@@ -14,7 +14,7 @@ public:
 	ConsoleOutput();
     virtual ~ConsoleOutput() {}
 
-	virtual bool exportOutput(ExploitSample *sample);
+    virtual bool exportOutput(ExploitSample *sample, int taskId);
 };
 
 #endif /* CONSOLEOUTPUT_H_ */

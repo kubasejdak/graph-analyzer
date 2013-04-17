@@ -124,7 +124,7 @@ cleanup:
 	else
 		LOG("no errors occured\n");
 
-    m_finished = true;
+    m_progress = 100;
     SystemLogger::instance()->exportStatus(this);
 
 	SystemLogger::instance()->setStatus("idle");
@@ -296,7 +296,7 @@ bool AnalyzeTask::exportResults(ExploitSample *s)
 			continue;
 		}
 
-		bool status = (*m_outputMods)[exportStrategy]->exportOutput(s);
+        bool status = (*m_outputMods)[exportStrategy]->exportOutput(s, m_id);
 		if(status == false) {
 			LOG_ERROR("failed to export sample [%s] with strategy: [%s]", s->info()->name().toStdString().c_str(), exportStrategy.toStdString().c_str());
 			++m_errors;

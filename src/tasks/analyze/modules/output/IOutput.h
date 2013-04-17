@@ -15,7 +15,7 @@ public:
 	IOutput() {}
 	virtual ~IOutput() {}
 
-	virtual bool exportOutput(ExploitSample *sample) = 0;
+    virtual bool exportOutput(ExploitSample *sample, int taskId) = 0;
 };
 
 #endif /* IOUTPUT_H_ */

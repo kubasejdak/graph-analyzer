@@ -19,6 +19,7 @@
 			<th>Work time</th>
 			<th>Errors</th>
 			<th>Progress</th>
+			<th>Accept</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -28,12 +29,24 @@
 			<td>{{ task.name }}</td>
 			<td>{{ task.type }}</td>
 			<td>{{ task.start_time }}</td>
-			<td>{{ task.finish_time }}</td>
+			<td>{{ task.end_time }}</td>
 			<td>{{ task.work_time }}</td>
 			<td>{{ task.errors }}</td>
-			<td>{{ task.progress }} %</td>
+			<td>
+				<div class="progress progress-striped active">
+					<div class="bar" style="width: {{ task.progress }}%;">{{ task.progress }} %</div>
+				</div>
+			</td>
+			<td><form action="" method="post">{% csrf_token %}<button class="btn btn-small btn-primary" name="accept" value="{{ task.name }}">Accept</button></form></td>
 		</tr>
 		{% endfor %}
 	</tbody>
 </table>
+
+{% if taskRemoved %}
+<div class="alert alert-success">
+	<button type="button" class="close" data-dismiss="alert">×</button>
+	<strong>Success!</strong> Task have been marked as finished.
+</div>
+{% endif %}
 {% endblock %}

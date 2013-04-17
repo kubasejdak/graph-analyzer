@@ -44,6 +44,8 @@ bool AnalyzeTask::performTask()
 
 	/* analyze all task files */
 	LOG("analyzing task files\n");
+
+    int allTaskFiles = m_taskFiles.size();
 	while(!m_taskFiles.isEmpty()) {
 		QString currentFile = m_taskFiles.front();
 		m_taskFiles.pop_front();
@@ -112,6 +114,7 @@ cleanup:
 			++m_analyzedSamples;
 
 			/* export status */
+            m_progress = ((allTaskFiles - m_taskFiles.size()) * 100) / allTaskFiles;
 			SystemLogger::instance()->exportStatus(this);
 		}
 		LOG("file analyzing finished\n");

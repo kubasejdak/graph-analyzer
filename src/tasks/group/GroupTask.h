@@ -17,6 +17,7 @@ public:
 
 private:
     virtual bool performTask();
+	virtual void updateStatus(QString traitValue, int progress);
 
 	GroupManager m_groupManager;
 };

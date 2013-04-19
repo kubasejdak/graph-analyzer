@@ -39,6 +39,7 @@ public:
 
 protected:
     virtual bool performTask() = 0;
+	virtual void updateStatus(QString traitValue, int progress) = 0;
 
     XMLParser m_xmlParser;              /* provides parser for XML configuration file */
     SampleContainer m_samples;          /* samples that are used in task */

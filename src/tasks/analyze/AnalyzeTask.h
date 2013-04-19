@@ -24,6 +24,7 @@ public:
 private:
 	void loadModules();
     virtual bool performTask();
+	virtual void updateStatus(QString traitValue, int progress);
 	bool readConfigXML();
 	void addScheduledFile(QString filename);
 

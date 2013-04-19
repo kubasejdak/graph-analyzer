@@ -109,7 +109,6 @@ bool AnalyzeTask::performTask()
 			}
 
 			++m_detectedExploits;
-			m_traitValue = Toolbox::itos(m_detectedExploits);
 
 cleanup:
 			/* clean up */
@@ -118,7 +117,7 @@ cleanup:
 			++m_analyzedSamples;
 
 			/* export status */
-            m_progress = ((allTaskFiles - m_taskFiles.size()) * 100) / allTaskFiles;
+			updateStatus(Toolbox::itos(m_detectedExploits), ((allTaskFiles - m_taskFiles.size()) * 100) / allTaskFiles);
 			SystemLogger::instance()->exportStatus(this);
 		}
 		LOG("file analyzing finished\n");
@@ -137,6 +136,14 @@ cleanup:
 	SystemLogger::instance()->setStatus("idle");
 	LOG("SUCCESS\n\n");
 	return true;
+}
+
+void AnalyzeTask::updateStatus(QString traitValue, int progress)
+{
+	m_progress = progress;
+	m_traitValue = traitValue;
+
+	m_workTime = QTime(0, 0).addMSecs(m_timer.elapsed());	
 }
 
 bool AnalyzeTask::readConfigXML()

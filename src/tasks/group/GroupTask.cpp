@@ -15,3 +15,7 @@ bool GroupTask::performTask()
 {
 	return true;
 }
+
+void GroupTask::updateStatus(QString traitValue, int progress)
+{
+}

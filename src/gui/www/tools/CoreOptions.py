@@ -5,6 +5,8 @@ class CoreOptions(object):
     OPTIONS_FILE = "/var/www/jsejdak/GraphAnalyzer.conf"
     
     graphs_dir = "/var/www/jsejdak/graphs/"
+    tmp_pcap_dir = "/tmp/tmp_pcap/"
+    tcpflow_params = ""
     emulation_steps = 1000000
     skip_big_files = True
     skip_big_files_size = 20971520
@@ -24,6 +26,8 @@ class CoreOptions(object):
                 rootNode = xmlParser.root("CoreOptions")
             
             self.graphs_dir = xmlParser.child(rootNode, "GraphsDir").attribute("path")
+            self.tmp_pcap_dir = xmlParser.child(rootNode, "TmpPcapDir").attribute("path")
+            self.tcpflow_params = xmlParser.child(rootNode, "TcpflowParams").attribute("val")
             self.emulation_steps = xmlParser.child(rootNode, "EmulationSteps").attribute("val")
             if(xmlParser.child(rootNode, "SkipBigFiles").attribute("val") == "false"):
                 self.skip_big_files = False
@@ -54,6 +58,8 @@ class CoreOptions(object):
                 rootNode = xmlParser.root("CoreOptions")
 
             xmlParser.child(rootNode, "GraphsDir").setAttribute("path", self.graphs_dir)
+            xmlParser.child(rootNode, "TmpPcapDir").setAttribute("path", self.tmp_pcap_dir)
+            xmlParser.child(rootNode, "TcpflowParams").setAttribute("val", self.tcpflow_params)
             xmlParser.child(rootNode, "EmulationSteps").setAttribute("val", self.emulation_steps)
             if(self.skip_big_files == True):
                 xmlParser.child(rootNode, "SkipBigFiles").setAttribute("val", "true")

@@ -30,6 +30,8 @@ public:
 
 	/* options */
 	QString graphsDir;
+    QString tmpPcapDir;
+    QString tcpflowParams;
 	int emulationSteps;
 	bool skipBigFiles;
 	int bigFileSize;

@@ -10,6 +10,7 @@ Options::Options()
 {
 	/* initial configuration */
 	graphsDir = "/var/www/jsejdak/graphs";
+    tmpPcapDir = "/tmp/tmp_pcap";
 	emulationSteps = 1000000;
 	skipBigFiles = true;
 	bigFileSize = 20971520;
@@ -40,6 +41,10 @@ bool Options::readConfigXML()
 
 	graphsDir = m_xmlParser.child(options, "GraphsDir").attribute("path");
 
+    tmpPcapDir = m_xmlParser.child(options, "TmpPcapDir").attribute("path");
+
+    tcpflowParams = m_xmlParser.child(options, "TcpflowParams").attribute("val");
+
 	emulationSteps = m_xmlParser.child(options, "EmulationSteps").attribute("val").toInt();
 
 	skipBigFiles = m_xmlParser.child(options, "SkipBigFiles").attribute("val") == "true" ? true : false;
@@ -58,6 +63,8 @@ void Options::listOptions()
 	/* core settings */
 	LOG("core settings:\n");
 	LOG("graphsDir: [%s]\n", graphsDir.toStdString().c_str());
+    LOG("tmpPcapDir: [%s]\n", tmpPcapDir.toStdString().c_str());
+    LOG("tcpflowParams: [%s]\n", tcpflowParams.toStdString().c_str());
 	LOG("emulationSteps: [%d]\n", emulationSteps);
 	LOG("skipBigFiles: [%s]\n", skipBigFiles ? "true" : "false");
 	LOG("bigFileSize: [%d]\n", bigFileSize);

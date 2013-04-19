@@ -22,38 +22,39 @@ PcapInput::PcapInput()
 bool PcapInput::loadInput(QString filename, QList<ExploitSample *> *samples)
 {
     int success;
+    QString tmpPcapDir = Options::instance()->tmpPcapDir;
 
     /* move to /tmp/pcap_tmp */
     QDir pcapDir;
-    if(!QDir("/tmp/pcap_tmp").exists()) {
-        success = pcapDir.mkdir("/tmp/pcap_tmp");
+    if(!QDir(tmpPcapDir).exists()) {
+        success = pcapDir.mkdir(tmpPcapDir);
         if(!success) {
-            LOG_ERROR("cannot create /tmp/pcap_tmp directory\n");
+            LOG_ERROR("cannot create [%s] directory\n", tmpPcapDir.toStdString().c_str());
             LOG_ERROR("FAILURE\n\n");
             return false;
 		}
 	}
 
-    success = QDir::setCurrent("/tmp/pcap_tmp");
+    success = QDir::setCurrent(tmpPcapDir);
     if(!success) {
-        LOG_ERROR("cannot change directory to /tmp/pcap_dir");
-        Toolbox::removeDirectory("tmp/pcap_tmp");
+        LOG_ERROR("cannot change directory to [%s]\n", tmpPcapDir.toStdString().c_str());
+        Toolbox::removeDirectory(tmpPcapDir);
 		LOG_ERROR("FAILURE\n\n");
         return false;
 	}
 
 	/* create flow files */
     QFileInfo f(filename);
-    QString tcpflowCmd = QString("tcpflow -r \"%1\"").arg(f.absoluteFilePath());
+    QString tcpflowCmd = QString("tcpflow -r \"%1\" %2").arg(f.absoluteFilePath()).arg(Options::instance()->tcpflowParams);
 
     int ret = system(tcpflowCmd.toStdString().c_str());
-    if(ret) {
+    if(ret != 0) {
         SystemLogger::instance()->setError("external program 'tcpflow' failed");
-		LOG_ERROR("tcpflow cmd failed in PcapInput");
+        LOG_ERROR("tcpflow cmd failed in PcapInput\n");
         QDir::setCurrent("..");
 
         /* clear recursively directory */
-        Toolbox::removeDirectory("/tmp/pcap_tmp");
+        Toolbox::removeDirectory(tmpPcapDir);
         LOG_ERROR("FAILURE\n\n");
         return false;
 	}
@@ -106,11 +107,11 @@ bool PcapInput::loadInput(QString filename, QList<ExploitSample *> *samples)
 
     /* clean up */
     QDir::setCurrent("..");
-    LOG("removing directory: [/tmp/pcap_tmp]\n");
-    bool removed = Toolbox::removeDirectory("/tmp/pcap_tmp");
+    LOG("removing directory: [%s]\n", tmpPcapDir.toStdString().c_str());
+    bool removed = Toolbox::removeDirectory(tmpPcapDir);
     if(!removed) {
-        SystemLogger::instance()->setError("removing directory '/tmp/pcap_tmp']' failed");
-        LOG_ERROR("removing directory failed: [/tmp/pcap_tmp]\n");
+        SystemLogger::instance()->setError("removing tmp directory failed");
+        LOG_ERROR("removing directory failed: [%s]\n", tmpPcapDir.toStdString().c_str());
         LOG_ERROR("FAILURE\n\n");
         return false;
     }

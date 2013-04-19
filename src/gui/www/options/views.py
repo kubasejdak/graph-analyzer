@@ -37,6 +37,8 @@ def render_options(request):
     if(request.method == "POST"):
         # core options
         coreOptions.graphs_dir = request.POST["graphsDirectory"]
+        coreOptions.tmp_pcap_dir = request.POST["tmpPcapDirectory"]
+        coreOptions.tcpflow_params = request.POST["tcpflowParams"]
         coreOptions.emulation_steps = request.POST["emulationSteps"]
         if("skipBigFiles" in request.POST):
             coreOptions.skip_big_files = True
@@ -76,6 +78,8 @@ def render_options(request):
     
     # update core options
     c.update({"graphsDirectory": coreOptions.graphs_dir,
+			  "tmpPcapDirectory": coreOptions.tmp_pcap_dir,
+			  "tcpflowParams": coreOptions.tcpflow_params,
 			  "emulationSteps": coreOptions.emulation_steps,
               "skipBigFiles": coreOptions.skip_big_files,
               "skipBigFilesSize": coreOptions.skip_big_files_size,

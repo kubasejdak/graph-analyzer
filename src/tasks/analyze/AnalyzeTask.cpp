@@ -117,7 +117,9 @@ cleanup:
 			++m_analyzedSamples;
 
 			/* export status */
-			updateStatus(Toolbox::itos(m_detectedExploits), ((allTaskFiles - m_taskFiles.size()) * 100) / allTaskFiles);
+            QString traitValue = Toolbox::itos(m_detectedExploits);
+            int taskProgress = ((allTaskFiles - m_taskFiles.size()) * 100) / allTaskFiles;
+            updateStatus(traitValue, taskProgress);
 			SystemLogger::instance()->exportStatus(this);
 		}
 		LOG("file analyzing finished\n");

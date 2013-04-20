@@ -8,13 +8,13 @@
 #include <tasks/analyze/AnalyzeTask.h>
 #include <tasks/group/GroupTask.h>
 
-ITask *TaskResolver::createTask(QString taskName, int id)
+ITask *TaskResolver::createTask(QString taskName)
 {
 	if(taskName == "analyze")
-		return new AnalyzeTask(id);
+		return new AnalyzeTask();
 
 	if(taskName == "group")
-		return new GroupTask(id);
+		return new GroupTask();
 
 	return NULL;
 }

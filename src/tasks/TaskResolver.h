@@ -16,7 +16,7 @@ public:
 	TaskResolver() {}
 	virtual ~TaskResolver() {}
 
-	ITask *createTask(QString taskName, int id);
+	ITask *createTask(QString taskName);
 };
 
 #endif /* TASKRESOLVER_H */

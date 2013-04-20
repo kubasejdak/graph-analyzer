@@ -21,7 +21,11 @@ def render_browseSamples(request):
     # ===================================== GET =====================================
 
     if request.method == "GET":
-        sample_list = Sample.objects.all().order_by("name")
+        if "taskId" in request.GET:
+            # get sample info
+            sample_list = Sample.objects.filter(task = request.GET["taskId"])
+        else:
+            sample_list = Sample.objects.all().order_by("name")
         c.update({"sample_list": sample_list})
         return render_to_response("browse.html", c)
 
@@ -42,6 +46,8 @@ def render_browseSamples(request):
                 search_list = Sample.objects.filter(extracted_from = request.POST["value"]).order_by("name")
             elif filter_value == "Graph name":
                 search_list = Sample.objects.filter(graph_name = request.POST["value"]).order_by("name")
+            elif filter_value == "Capture date":
+                search_list = Sample.objects.filter(capture_date = request.POST["value"]).order_by("name")
             elif filter_value == "Size":
                 search_list = Sample.objects.filter(size = request.POST["value"]).order_by("name")
             elif filter_value == "File type":
@@ -62,6 +68,8 @@ def render_browseSamples(request):
                 sort_list = Sample.objects.all().order_by("extracted_from")
             elif sort_value == "Graph name":
                 sort_list = Sample.objects.all().order_by("graph_name")
+            elif sort_value == "Capture date":
+                sort_list = Sample.objects.all().order_by("capture_date")
             elif sort_value == "Size":
                 sort_list = Sample.objects.all().order_by("size")
             elif sort_value == "File type":

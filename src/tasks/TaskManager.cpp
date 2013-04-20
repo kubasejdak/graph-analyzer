@@ -10,6 +10,7 @@
 #include <tasks/ITask.h>
 
 #include <QFile>
+#include <QDomElement>
 
 bool TaskManager::collectTasks()
 {
@@ -18,20 +19,21 @@ bool TaskManager::collectTasks()
 		return false;
 	}
 
-	QDomElement taskElement = m_xmlParser.root(ROOT_NODE);
-	int taskId = 0;
-    while(taskElement.isNull() == false) {
-		QString taskType = taskElement.attribute("type");
+	QDomElement taskNode = m_xmlParser.root(ROOT_NODE);
+	while(taskNode.isNull() == false) {
+		QString taskType = taskNode.attribute("type");
 
-		ITask *task = m_resolver.createTask(taskType, taskId);
+		ITask *task = m_resolver.createTask(taskType);
+
+		task->readConfigXML(taskNode);
 		m_queue.insert(task);
         SystemLogger::instance()->exportStatus(task);
 
-        taskElement = taskElement.nextSiblingElement(ROOT_NODE);
-		++taskId;
+		taskNode = taskNode.nextSiblingElement(ROOT_NODE);
 	}
 
 	m_xmlParser.close();
+	m_xmlParser.clear(TASKS_FILE);
 	LOG("SUCCESS\n\n");
 	return true;
 }
@@ -48,13 +50,6 @@ bool TaskManager::executeTasks()
 		delete task;
 	}
 
-    removeTasks();
 	LOG("SUCCESS\n\n");
 	return true;
-}
-
-void TaskManager::removeTasks()
-{
-    XMLParser xmlParser;
-    xmlParser.clear(TASKS_FILE);
 }

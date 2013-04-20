@@ -12,12 +12,13 @@
 
 class GroupTask : public ITask {
 public:
-	GroupTask(int id);
+	GroupTask();
 	virtual ~GroupTask() {}
 
 private:
     virtual bool performTask();
-	virtual void updateStatus(QString traitValue, int progress);
+	virtual void updateStatus();
+	virtual bool readConfigXML(QDomElement taskNode);
 
 	GroupManager m_groupManager;
 };

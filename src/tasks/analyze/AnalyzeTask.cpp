@@ -10,13 +10,14 @@
 #include <utils/Toolbox.h>
 #include <core/Options.h>
 
-AnalyzeTask::AnalyzeTask(int id) : ITask(id)
+AnalyzeTask::AnalyzeTask()
 {
 	m_override = false;
 	m_scheduledFiles = 0;
 	m_loadedFiles = 0;
 	m_analyzedSamples = 0;
 	m_detectedExploits = 0;
+	m_allTaskFiles = 0;
 
     m_type = "analyze";
 	m_traitName = "exploits";
@@ -36,19 +37,9 @@ bool AnalyzeTask::performTask()
 	SystemLogger::instance()->setStatus("analyze task");
 	LOG("starting task: [analyze], m_id: [%d]\n", m_id);
 
-	/* read files to analyze */
-	if(readConfigXML() == false) {
-		SystemLogger::instance()->setError("cannot parse tasks file");
-		SystemLogger::instance()->setStatus("idle");
-		LOG_ERROR("cannot parse tasks file\n");
-		LOG_ERROR("FAILUR\n\n");
-		return false;
-	}
-
 	/* analyze all task files */
 	LOG("analyzing task files\n");
 
-    int allTaskFiles = m_taskFiles.size();
 	while(!m_taskFiles.isEmpty()) {
 		QString currentFile = m_taskFiles.front();
 		m_taskFiles.pop_front();
@@ -60,7 +51,7 @@ bool AnalyzeTask::performTask()
 		if(loadError) {
 			if(loadError == -1) {
 				LOG_ERROR("loading file [%s] -> [%s]\n", currentFile.toStdString().c_str(), SystemLogger::instance()->error().toStdString().c_str());
-                SystemLogger::instance()->setError("cannot parse tasks file");
+				SystemLogger::instance()->setError("cannot load file");
 				++m_errors;
 			}
 			else
@@ -117,9 +108,7 @@ cleanup:
 			++m_analyzedSamples;
 
 			/* export status */
-            QString traitValue = Toolbox::itos(m_detectedExploits);
-            int taskProgress = ((allTaskFiles - m_taskFiles.size()) * 100) / allTaskFiles;
-            updateStatus(traitValue, taskProgress);
+			updateStatus();
 			SystemLogger::instance()->exportStatus(this);
 		}
 		LOG("file analyzing finished\n");
@@ -140,41 +129,27 @@ cleanup:
 	return true;
 }
 
-void AnalyzeTask::updateStatus(QString traitValue, int progress)
+void AnalyzeTask::updateStatus()
 {
-	m_progress = progress;
-	m_traitValue = traitValue;
+	if(m_allTaskFiles > 0)
+		m_progress = ((m_allTaskFiles - m_taskFiles.size()) * 100) / m_allTaskFiles;
+	else
+		m_progress = 100;
+
+	m_traitValue = Toolbox::itos(m_detectedExploits);
 
 	m_workTime = QTime(0, 0).addMSecs(m_timer.elapsed());	
 }
 
-bool AnalyzeTask::readConfigXML()
+bool AnalyzeTask::readConfigXML(QDomElement taskNode)
 {
-	if(!m_xmlParser.open(TASKS_FILE)) {
-		LOG_ERROR("FAILURE\n\n");
-		return false;
-	}
-
-	if(!m_xmlParser.hasRoot(ROOT_NODE)) {
-		m_xmlParser.close();
-		LOG_ERROR("FAILURE\n\n");
-		return false;
-	}
-
-	QDomElement taskElement = m_xmlParser.root(ROOT_NODE);
-	int taskId = 0;
-    while(taskId != m_xmlId) {
-		taskElement = taskElement.nextSiblingElement(ROOT_NODE);
-		++taskId;
-	}
-
-    m_name = m_xmlParser.child(taskElement, "Name").attribute("val");
-	m_override = m_xmlParser.child(taskElement, "Override").attribute("val") == "true" ? true : false;
+	m_name = m_xmlParser.child(taskNode, "Name").attribute("val");
+	m_override = m_xmlParser.child(taskNode, "Override").attribute("val") == "true" ? true : false;
 
 	/* files */
 	LOG("collecting files to analyze\n");
-	while(m_xmlParser.hasChild(taskElement, "File")) {
-		QDomElement file = m_xmlParser.child(taskElement, "File");
+	QDomElement file = m_xmlParser.child(taskNode, "File");
+	while(file.isNull() == false) {
 		if(file.attribute("source") == "local") {
 			addScheduledFile(file.attribute("path"));
 			LOG("[local]: %s\n", file.attribute("path").toStdString().c_str());
@@ -185,19 +160,18 @@ bool AnalyzeTask::readConfigXML()
 		}
 
 		++m_scheduledFiles;
-		m_xmlParser.removeChild(taskElement, file);
+		file = file.nextSiblingElement("File");
 	}
+	m_allTaskFiles = m_taskFiles.size();
 
     /* output strategies */
-	while(m_xmlParser.hasChild(taskElement, "Output")) {
-		QDomElement out = m_xmlParser.child(taskElement, "Output");
+	QDomElement out = m_xmlParser.child(taskNode, "Output");
+	while(out.isNull() == false) {
         m_exportStrategies.push_back(out.attribute("val"));
 		LOG("added output strategy: [%s]\n", out.attribute("val").toStdString().c_str());
-		m_xmlParser.removeChild(taskElement, out);
+		out = out.nextSiblingElement("Output");
 	}
 
-	m_xmlParser.close();
-	LOG("SUCCESS\n\n");
 	return true;
 }
 
@@ -206,6 +180,7 @@ void AnalyzeTask::addScheduledFile(QString filename)
 	if(filename.isEmpty())
 		return;
 
+	//filename = filename.trimmed();
 	int addCounter = 0;
 	/* check if directory */
 	if(QDir(filename).exists()) {
@@ -274,7 +249,7 @@ bool AnalyzeTask::emulate(ExploitSample *s)
 	m_emulationSystem.loadSample(s);
 	bool ret = m_emulationSystem.emulate();
 
-	if(!ret) {
+	if(ret == false) {
 		SystemLogger::instance()->setError("general emulation error");
 		LOG_ERROR("general emulation error\n");
 		LOG_ERROR("FAILURE\n\n");
@@ -290,7 +265,7 @@ bool AnalyzeTask::analyze(ExploitSample *s)
 	m_analysisSystem.loadSample(s);
 	bool ret = m_analysisSystem.analyze();
 
-	if(!ret) {
+	if(ret == false) {
 		SystemLogger::instance()->setError("general analyzing error");
 		LOG_ERROR("general analyzing error\n");
 		LOG_ERROR("FAILURE\n\n");

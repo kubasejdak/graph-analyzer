@@ -6,9 +6,8 @@
 
 #include "ITask.h"
 
-ITask::ITask(int id)
+ITask::ITask()
 {
-    m_xmlId = id;
     m_id = -1;
     m_errors = 0;
     m_progress = 0;

@@ -18,14 +18,14 @@
 
 class AnalyzeTask : public ITask {
 public:
-	AnalyzeTask(int id);
+	AnalyzeTask();
 	virtual ~AnalyzeTask() {}
 
 private:
 	void loadModules();
     virtual bool performTask();
-	virtual void updateStatus(QString traitValue, int progress);
-	bool readConfigXML();
+	virtual void updateStatus();
+	virtual bool readConfigXML(QDomElement taskNode);
 	void addScheduledFile(QString filename);
 
 	int load(QString filename);
@@ -44,6 +44,7 @@ private:
 	int m_loadedFiles;
 	int m_analyzedSamples;
 	int m_detectedExploits;
+	int m_allTaskFiles;
 
 	InputMap *m_inputMods;
 	AnalyzeMap *m_analyzeMods;

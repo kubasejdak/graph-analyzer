@@ -12,15 +12,17 @@
 
 #include <QList>
 #include <QString>
+#include <QDomElement>
 #include <utils/XMLParser.h>
 #include <core/ExploitSample.h>
 
 class ITask {
 public:
-    ITask(int id);
+	ITask();
 	virtual ~ITask() {}
 
     bool perform();
+	virtual bool readConfigXML(QDomElement taskNode) = 0;
 
     /* for exporting status purpose */
     int id();
@@ -38,14 +40,13 @@ public:
     void setId(int id);
 
 protected:
-    virtual bool performTask() = 0;
-	virtual void updateStatus(QString traitValue, int progress) = 0;
+	virtual bool performTask() = 0;		/* perform specific task */
+	virtual void updateStatus() = 0;	/* update task status */
 
     XMLParser m_xmlParser;              /* provides parser for XML configuration file */
     SampleContainer m_samples;          /* samples that are used in task */
     QList<QString> m_exportStrategies;  /* strategies for exporting task results */
     QTime m_timer;                      /* provides time functions */
-    int m_xmlId;                        /* number in XML */
 
     /* task general info */
     int m_id;                           /* task id */

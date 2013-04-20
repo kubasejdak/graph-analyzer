@@ -6,7 +6,7 @@
 
 #include "GroupTask.h"
 
-GroupTask::GroupTask(int id) : ITask(id)
+GroupTask::GroupTask()
 {
     m_type = "group";
 }
@@ -16,6 +16,11 @@ bool GroupTask::performTask()
 	return true;
 }
 
-void GroupTask::updateStatus(QString traitValue, int progress)
+void GroupTask::updateStatus()
 {
+}
+
+bool GroupTask::readConfigXML(QDomElement taskNode)
+{
+	return false;
 }

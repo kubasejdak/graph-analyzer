@@ -1,28 +1,26 @@
 {% extends "base.html" %}
 
 {% block content %}
-<form method="post" class="well form-search">{% csrf_token %}
-	<div class="row-fluid">
-		<div class="span8">
-			<input type="text" style="width:100%" class="span3 search-query" name="value" placeholder="Search..."/>
-		</div>
-		<div class="span4" align="right">
-			<select name="filter" size="1">
-				<option>Id</option>
-				<option>Name</option>
-				<option>Extracted from</option>
-				<option>Graph name</option>
-				<option>Capture date</option>
-				<option>Size</option>
-				<option>File type</option>
-				<option>File size</option>
-			</select>
-			<button class="btn" name="search">Search</button>
-			<button class="btn" name="sort">Sort by</button>
-		</div>
+<form action="" method="post">{% csrf_token %}
+	<div class="input-append">
+		<span class="add-on">Value</span>
+		<select name="filter">
+			<option>Id</option>
+			<option>Name</option>
+			<option>Extracted from</option>
+			<option>Graph name</option>
+			<option>Capture date</option>
+			<option>Size</option>
+			<option>File type</option>
+			<option>File size</option>
+		</select>
+		<input class="span12" name="value" type="text" placeholder="Search...">
+		<button class="btn" name="search">Search</button>
+		<button class="btn" name="sort">Sort</button>
 	</div>
 </form>
 
+<div class="row-fluid">
 <table class="table table-striped">
 	<thead>
 		<tr>
@@ -57,4 +55,5 @@
 		{% endfor %}
 	</tbody>
 </table>
+</div>
 {% endblock %}

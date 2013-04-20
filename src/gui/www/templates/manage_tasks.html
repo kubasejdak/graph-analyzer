@@ -1,57 +1,143 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="span14 offset 2">
+<div class="row-fluid">
 	<form action="" method="post">{% csrf_token %}
-		<button class="btn btn-large btn-primary" name="start">Start</button>
 		<button class="btn btn-large" name="refresh">Refresh</button>
+		{% if scheduledTasksList %}
+		<button class="btn btn-large btn-primary" name="start">Start</button>
+		{% endif %}
 	</form>
-	<h2>Scheduled tasks:</h2>
-</div>
+	
+	{% if taskAccepted %}
+	<div class="alert alert-success">
+		<button type="button" class="close" data-dismiss="alert">×</button>
+		<strong>Success!</strong> Task has been marked as finished.
+	</div>
+	{% endif %}
+	
+	{% if taskRemoved %}
+	<div class="alert alert-success">
+		<button type="button" class="close" data-dismiss="alert">×</button>
+		<strong>Success!</strong> Task has been removed.
+	</div>
+	{% endif %}
 
-<table class="table table-striped">
-	<thead>
-		<tr>
-			<th>Index</th>
-			<th>Name</th>
-			<th>Type</th>
-			<th>Start time</th>
-			<th>Finish time</th>
-			<th>Work time</th>
-			<th>Errors</th>
-			<th>Trait name</th>
-			<th>Trait value</th>
-			<th>Progress</th>
-			<th>Accept</th>
-		</tr>
-	</thead>
-	<tbody>
-		{% for task in tasksList %}
-		<tr>
-			<td>{{ forloop.counter }}</td>
-			<td>{{ task.name }}</td>
-			<td>{{ task.type }}</td>
-			<td>{{ task.start_time }}</td>
-			<td>{{ task.end_time }}</td>
-			<td>{{ task.work_time }}</td>
-			<td>{{ task.errors }}</td>
-			<td>{{ task.trait_name }}</td>
-			<td>{{ task.trait_value }}</td>
-			<td>
-				<div class="progress progress-striped active">
-					<div class="bar" style="width: {{ task.progress }}%;">{{ task.progress }} %</div>
-				</div>
-			</td>
-			<td><form action="" method="post">{% csrf_token %}<button class="btn btn-small btn-primary" name="accept" value="{{ task.id }}">Accept</button></form></td>
-		</tr>
-		{% endfor %}
-	</tbody>
-</table>
-
-{% if taskRemoved %}
-<div class="alert alert-success">
-	<button type="button" class="close" data-dismiss="alert">×</button>
-	<strong>Success!</strong> Task has been marked as finished.
+	<div class="tabbable tabs-left">
+		<ul class="nav nav-tabs">
+			<li class="active"><a href="#workingTasks" data-toggle="tab">Working tasks</a></li>
+			<li><a href="#scheduledTasks" data-toggle="tab">Scheduled tasks</a></li>
+			<li><a href="#allTasks" data-toggle="tab">All tasks</a></li>
+		</ul>
+		<div class="tab-content">
+			<div class="tab-pane {% if not scheduledTasksList %}active{% endif %}" id="workingTasks">
+				<!-- WORKING TASKS -->
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>Index</th>
+							<th>Name</th>
+							<th>Type</th>
+							<th>Start time</th>
+							<th>Finish time</th>
+							<th>Work time</th>
+							<th>Errors</th>
+							<th>Trait name</th>
+							<th>Trait value</th>
+							<th>Progress</th>
+							<th>Results</th>
+							<th>Accept</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for task in workingTasksList %}
+						<tr>
+							<td>{{ forloop.counter }}</td>
+							<td>{{ task.name }}</td>
+							<td>{{ task.type }}</td>
+							<td>{{ task.start_time }}</td>
+							<td>{% ifequal task.end_time "00:00" %}----{% else %}{{ task.end_time }}{% endifequal %}</td>
+							<td>{{ task.work_time }}</td>
+							<td>{{ task.errors }}</td>
+							<td>{{ task.trait_name }}</td>
+							<td>{{ task.trait_value }}</td>
+							<td>
+								<div class="progress progress-striped active">
+									<div class="bar" style="width: {{ task.progress }}%;">{{ task.progress }} %</div>
+								</div>
+							</td>
+							<td><a href="/jsejdak/browse_samples/?taskId={{ task.id }}"><span class="label label-info">Show</span></a></td>
+							<td><form action="" method="post">{% csrf_token %}<button class="btn btn-small btn-primary" name="accept" value="{{ task.id }}">Accept</button></form></td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+			
+			<div class="tab-pane {% if scheduledTasksList %}active{% endif %}" id="scheduledTasks">
+				<!-- SCHEDULED TASKS -->
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>Index</th>
+							<th>Name</th>
+							<th>Remove</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for name in scheduledTasksList %}
+						<tr>
+							<td>{{ forloop.counter }}</td>
+							<td>{{ name }}</td>
+							<td><form action="" method="post">{% csrf_token %}<button class="btn btn-small btn-danger" name="remove" value="{{ forloop.counter }}"><i class="icon-remove icon-white"></i> Remove</button></form></td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		
+			<div class="tab-pane" id="allTasks">
+				<!-- ALL TASKS -->
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>Index</th>
+							<th>Name</th>
+							<th>Type</th>
+							<th>Start time</th>
+							<th>Finish time</th>
+							<th>Work time</th>
+							<th>Errors</th>
+							<th>Trait name</th>
+							<th>Trait value</th>
+							<th>Progress</th>
+							<th>Results</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for task in allTasksList %}
+						<tr>
+							<td>{{ forloop.counter }}</td>
+							<td>{{ task.name }}</td>
+							<td>{{ task.type }}</td>
+							<td>{{ task.start_time }}</td>
+							<td>{% ifequal task.end_time "00:00" %}----{% else %}{{ task.end_time }}{% endifequal %}</td>
+							<td>{{ task.work_time }}</td>
+							<td>{{ task.errors }}</td>
+							<td>{{ task.trait_name }}</td>
+							<td>{{ task.trait_value }}</td>
+							<td>
+								<div class="progress progress-striped active">
+									<div class="bar" style="width: {{ task.progress }}%;">{{ task.progress }} %</div>
+								</div>
+							</td>
+							<td><a href="/jsejdak/browse_samples/?taskId={{ task.id }}"><span class="label label-info">Show</span></a></td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		<div/>
+	</div>
 </div>
-{% endif %}
 {% endblock %}

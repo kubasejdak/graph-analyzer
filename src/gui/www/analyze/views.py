@@ -28,14 +28,16 @@ def render_analyzeTask(request):
 		if "new" in request.POST:
 			return render_to_response("analyze.html", c)
 		
-		# run analysis
+		# save analyze task
 		if "save" in request.POST:
 			c.update({"is_message": True})
 			analyzeTask = AnalyzeTask()
 
+			# name
+			analyzeTask.setName(request.POST["taskName"])
+
 			# analyze files
 			files = request.POST.getlist("analyzeFiles")
-			analyzeTask.setName(request.POST["taskName"])
 			for f in files:
 				analyzeTask.setFile(f)
 

@@ -39,7 +39,6 @@ bool AnalyzeTask::performTask()
 
 	/* analyze all task files */
 	LOG("analyzing task files\n");
-
 	while(!m_taskFiles.isEmpty()) {
 		QString currentFile = m_taskFiles.front();
 		m_taskFiles.pop_front();
@@ -143,8 +142,12 @@ void AnalyzeTask::updateStatus()
 
 bool AnalyzeTask::readConfigXML(QDomElement taskNode)
 {
+    LOG("reading analyze task\n");
+
 	m_name = m_xmlParser.child(taskNode, "Name").attribute("val");
+    LOG("name: [%s]\n", m_name.toStdString().c_str());
 	m_override = m_xmlParser.child(taskNode, "Override").attribute("val") == "true" ? true : false;
+    LOG("override: [%s]\n", (m_override) ? "true" : "false");
 
 	/* files */
 	LOG("collecting files to analyze\n");
@@ -152,10 +155,10 @@ bool AnalyzeTask::readConfigXML(QDomElement taskNode)
 	while(file.isNull() == false) {
 		if(file.attribute("source") == "local") {
 			addScheduledFile(file.attribute("path"));
-			LOG("[local]: %s\n", file.attribute("path").toStdString().c_str());
+            LOG("file [local]: %s\n", file.attribute("path").toStdString().c_str());
 		}
 		else {
-			LOG("[remote]: %s\n", file.attribute("path").toStdString().c_str());
+            LOG("file [remote]: %s\n", file.attribute("path").toStdString().c_str());
 			LOG("NOT SUPPORTED, SKIPPING\n");
 		}
 
@@ -168,10 +171,11 @@ bool AnalyzeTask::readConfigXML(QDomElement taskNode)
 	QDomElement out = m_xmlParser.child(taskNode, "Output");
 	while(out.isNull() == false) {
         m_exportStrategies.push_back(out.attribute("val"));
-		LOG("added output strategy: [%s]\n", out.attribute("val").toStdString().c_str());
+        LOG("output strategy: [%s]\n", out.attribute("val").toStdString().c_str());
 		out = out.nextSiblingElement("Output");
 	}
 
+    LOG("SUCCESS\n\n");
 	return true;
 }
 

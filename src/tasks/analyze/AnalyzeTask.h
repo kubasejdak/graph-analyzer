@@ -36,9 +36,8 @@ private:
 	EmulationSystem m_emulationSystem;
 	AnalysisSystem m_analysisSystem;
 
-	QList<QString> m_taskFiles;
-
 	/* task specific info */
+    QList<QString> m_taskFiles;
 	bool m_override;
 	int m_scheduledFiles;
 	int m_loadedFiles;

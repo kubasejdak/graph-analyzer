@@ -19,6 +19,11 @@ GroupTask::GroupTask()
 
 bool GroupTask::performTask()
 {
+    if(collectTaskSamples() == false) {
+        return false;
+    }
+
+    LOG("SUCCESS\n\n");
 	return true;
 }
 
@@ -66,5 +71,11 @@ bool GroupTask::readConfigXML(QDomElement taskNode)
         out = out.nextSiblingElement("Output");
     }
 
+    LOG("SUCCESS\n\n");
     return true;
+}
+
+bool GroupTask::collectTaskSamples()
+{
+    return false;
 }

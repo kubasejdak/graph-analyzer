@@ -24,6 +24,7 @@ private:
     virtual bool performTask();
 	virtual void updateStatus();
 	virtual bool readConfigXML(QDomElement taskNode);
+    bool collectTaskSamples();
 
 	GroupManager m_groupManager;
 

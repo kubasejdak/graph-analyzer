@@ -38,7 +38,7 @@ bool DatabaseOutput::exportOutput(ExploitSample *sample, int taskId)
 
 	/* general sample data */
     if(exportGeneralData(info, sampleId, taskId) == false) {
-		LOG("exporting general sample info to database [%s]\n", info->name().toStdString().c_str());
+        LOG_ERROR("exporting general sample info to database [%s]\n", info->name().toStdString().c_str());
 		LOG_ERROR("FAILURE\n\n");
 		return false;
 	}

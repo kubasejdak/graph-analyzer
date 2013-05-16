@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
 			("help,h", "print help message")
 			("version,v", "print version")
             ("tasks,t", "execute system tasks")
-            ("export-description", "save description to XML file")
+            ("export-description,d", "save description to XML file")
 			;
 
 	opt::variables_map vm;

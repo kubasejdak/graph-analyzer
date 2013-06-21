@@ -7,9 +7,10 @@
 #ifndef GRAPH_H_
 #define GRAPH_H_
 
-#include <iterator>
-#include <QVector>
-#include <QString>
+class iterator;
+class QVector;
+class QString;
+
 using namespace std;
 
 extern "C" {

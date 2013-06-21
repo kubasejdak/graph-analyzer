@@ -5,6 +5,9 @@
  */
 
 #include "AnalysisSystem.h"
+
+#include <QMap>
+
 #include <utils/SystemLogger.h>
 
 AnalysisSystem::AnalysisSystem()

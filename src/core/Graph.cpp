@@ -5,6 +5,11 @@
  */
 
 #include "Graph.h"
+
+#include <iterator>
+#include <QVector>
+#include <QString>
+
 #include <utils/InstructionSplitter.h>
 #include <utils/SystemLogger.h>
 

@@ -23,11 +23,15 @@ target_link_libraries(GraphAnalyzerCpp tasks)
 target_link_libraries(GraphAnalyzerCpp utils)
 
 # link with external libraries
-target_link_libraries(graph-analyzer ${QT_LIBRARIES})
+qt5_use_modules(graph-analyzer Core)
+qt5_use_modules(graph-analyzer Sql)
+qt5_use_modules(graph-analyzer Xml)
 target_link_libraries(graph-analyzer ${Boost_LIBRARIES})
 target_link_libraries(graph-analyzer emu)
 
-target_link_libraries(GraphAnalyzerCpp ${QT_LIBRARIES})
+qt5_use_modules(GraphAnalyzerCpp Core)
+qt5_use_modules(GraphAnalyzerCpp Sql)
+qt5_use_modules(GraphAnalyzerCpp Xml)
 target_link_libraries(GraphAnalyzerCpp ${Boost_LIBRARIES})
 target_link_libraries(GraphAnalyzerCpp emu)
 

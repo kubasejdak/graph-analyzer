@@ -7,9 +7,9 @@
 #ifndef CORESYSTEM_H_
 #define CORESYSTEM_H_
 
-#include <QString>
+class QString;
 
-#include <utils/XMLParser.h>
+class XMLParser;
 
 class CoreSystem {
 public:

@@ -6,6 +6,12 @@
 
 #include "Options.h"
 
+#include <QString>
+#include <QList>
+
+#include <utils/SystemLogger.h>
+#include <utils/XMLParser.h>
+
 Options::Options()
 {
 	/* initial configuration */

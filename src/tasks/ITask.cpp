@@ -6,6 +6,13 @@
 
 #include "ITask.h"
 
+#include <QList>
+#include <QString>
+#include <QDomElement>
+
+#include <utils/XMLParser.h>
+#include <core/ExploitSample.h>
+
 ITask::ITask()
 {
     m_id = -1;

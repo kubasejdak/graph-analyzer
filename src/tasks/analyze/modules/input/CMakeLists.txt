@@ -7,3 +7,6 @@ set(INPUT_SUBMODULES_SRC
 )
 
 add_library(input-submodules ${INPUT_SUBMODULES_SRC})
+
+qt5_use_modules(input-submodules Core)
+qt5_use_modules(input-submodules Sql)

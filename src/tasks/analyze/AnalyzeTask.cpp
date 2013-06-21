@@ -5,10 +5,19 @@
  */
 
 #include "AnalyzeTask.h"
+
+#include <QList>
+#include <QString>
+
+#include <tasks/ITask.h>
+#include <tasks/analyze/AnalysisSystem.h>
+#include <tasks/analyze/EmulationSystem.h>
+#include <tasks/analyze/modules/ModuleManager.h>
 #include <utils/FileTypeAnalyzer.h>
 #include <utils/SystemLogger.h>
 #include <utils/Toolbox.h>
 #include <core/Options.h>
+#include <core/ExploitSample.h>
 
 AnalyzeTask::AnalyzeTask()
 {

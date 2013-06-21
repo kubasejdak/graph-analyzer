@@ -10,11 +10,15 @@
 #define TASKS_FILE		"/var/www/jsejdak/GraphAnalyzerTasks.xml"
 #define ROOT_NODE		"Task"
 
-#include <QList>
-#include <QString>
-#include <QDomElement>
-#include <utils/XMLParser.h>
-#include <core/ExploitSample.h>
+class QList;
+class QString;
+class QDate;
+class QTime;
+class QDomElement;
+
+class XMLParser;
+class ExploitSample;
+class SampleContainer;
 
 class ITask {
 public:

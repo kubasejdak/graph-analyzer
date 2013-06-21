@@ -12,3 +12,6 @@ set(CORE_SRC
 add_library(core ${CORE_SRC})
 
 target_link_libraries(core utils)
+qt5_use_modules(core Sql)
+qt5_use_modules(core Xml)
+qt5_use_modules(core Core)

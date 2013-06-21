@@ -5,8 +5,12 @@
  */
 
 #include "CoreSystem.h"
+
+#include <QString>
+
 #include <core/version.h>
 #include <utils/SystemLogger.h>
+#include <utils/XMLParser.h>
 #include <tasks/TaskManager.h>
 
 CoreSystem::CoreSystem()

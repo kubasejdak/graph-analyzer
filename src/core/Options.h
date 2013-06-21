@@ -7,11 +7,11 @@
 #ifndef OPTIONS_H_
 #define OPTIONS_H_
 
-#include <QString>
-#include <QList>
+class QString;
+class QList;
 
-#include <utils/SystemLogger.h>
-#include <utils/XMLParser.h>
+class SystemLogger;
+class XMLParser;
 
 #define CONFIG_FILE		"/var/www/jsejdak/GraphAnalyzer.conf"
 

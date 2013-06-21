@@ -7,3 +7,5 @@ set(OUTPUT_SUBMODULES_SRC
 )
 
 add_library(output-submodules ${OUTPUT_SUBMODULES_SRC})
+qt5_use_modules(output-submodules Core)
+qt5_use_modules(output-submodules Sql)

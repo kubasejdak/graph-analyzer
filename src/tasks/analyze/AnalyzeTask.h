@@ -7,14 +7,14 @@
 #ifndef ANALYZETASK_H
 #define ANALYZETASK_H
 
-#include <QList>
-#include <QString>
+class QList;
+class QString;
 
-#include <tasks/ITask.h>
-#include <tasks/analyze/AnalysisSystem.h>
-#include <tasks/analyze/EmulationSystem.h>
-#include <tasks/analyze/modules/ModuleManager.h>
-#include <core/ExploitSample.h>
+class ITask;
+class AnalysisSystem;
+class EmulationSystem;
+class ModuleManager;
+class ExploitSample;
 
 class AnalyzeTask : public ITask {
 public:

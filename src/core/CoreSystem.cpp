@@ -6,12 +6,14 @@
 
 #include "CoreSystem.h"
 
-#include <QString>
+#include <string>
 
 #include <core/version.h>
 #include <utils/SystemLogger.h>
 #include <utils/XMLParser.h>
 #include <tasks/TaskManager.h>
+
+using namespace std;
 
 CoreSystem::CoreSystem()
 {
@@ -45,17 +47,17 @@ bool CoreSystem::executeTasks()
 	return true;
 }
 
-QString CoreSystem::status()
+string CoreSystem::status()
 {
 	return SystemLogger::instance()->status();
 }
 
-QString CoreSystem::lastError()
+string CoreSystem::lastError()
 {
 	return SystemLogger::instance()->error();
 }
 
-QString CoreSystem::version()
+string CoreSystem::version()
 {
 	return VERSION;
 }

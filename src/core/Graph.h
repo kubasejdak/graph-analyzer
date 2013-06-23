@@ -7,11 +7,9 @@
 #ifndef GRAPH_H_
 #define GRAPH_H_
 
-class iterator;
-class QVector;
-class QString;
-
-using namespace std;
+#include <vector>
+#include <string>
+#include <cstdint>
 
 extern "C" {
 	#include <emu/emu_hashtable.h>
@@ -50,13 +48,13 @@ void instr_vertex_destructor(void *data);
 
 //====================================================================================================================================
 
-typedef QVector<emu_vertex *> LoopVec;
-typedef QVector<LoopVec *> LoopContainer;
-
 enum GraphExportStrategy {
 	DOT_FILE = 0,
 	XML_FILE
 };
+
+typedef std::vector<emu_vertex *> LoopVec;
+typedef std::vector<LoopVec *> LoopContainer;
 
 class Graph {
 public:
@@ -67,8 +65,8 @@ public:
     emu_graph *emuGraph();
     emu_hashtable *emuHashtable();
 
-	/* iterator */
-	class graph_iterator : public std::iterator<forward_iterator_tag, emu_vertex> {
+	// iterator
+	class graph_iterator : public std::iterator<std::forward_iterator_tag, emu_vertex> {
 	public:
 		graph_iterator();
 		graph_iterator(Graph *g, emu_vertex *v);
@@ -85,7 +83,7 @@ public:
         emu_vertex *m_outVertex;
         Graph *m_outGraph;
 		friend class Graph;
-	}; /* iterator */
+	}; // iterator
 
 	graph_iterator begin();
 	graph_iterator end();
@@ -93,12 +91,12 @@ public:
     LoopContainer *detectLoop(graph_iterator from_it);
 	int size();
 
-	bool exportGraph(GraphExportStrategy strategy, QString filename);
+	bool exportGraph(GraphExportStrategy strategy, std::string filename);
 
 private:
 	void clearVertColor(emu_vertex *from);
 
-	bool dotExportStrategy(QString filename);
+	bool dotExportStrategy(std::string filename);
 
     struct emu_graph *m_graph;
     struct emu_hashtable *m_hashtable;

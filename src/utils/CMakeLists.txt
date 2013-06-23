@@ -1,15 +1,15 @@
 # === UTILS ===
 
 set(UTILS_SRC
-	InstructionSplitter.cpp
+    InstructionSplitter.cpp
     FileTypeAnalyzer.cpp
-	SystemLogger.cpp
-	DatabaseManager.cpp
+    SystemLogger.cpp
+    DatabaseManager.cpp
     Toolbox.cpp
     XMLParser.cpp
     LoggingStrategy.cpp
-	StatusExportStrategy.cpp
-	DescriptionExportStrategy.cpp
+    StatusExportStrategy.cpp
+    DescriptionExportStrategy.cpp
     UniqueNameResolver.cpp
     DateRegExp.cpp
 )
@@ -17,6 +17,5 @@ set(UTILS_SRC
 add_library(utils ${UTILS_SRC})
 
 target_link_libraries(utils magic)
-qt5_use_modules(utils Core)
 qt5_use_modules(utils Xml)
 qt5_use_modules(utils Sql)

@@ -6,22 +6,39 @@
 
 #include "Toolbox.h"
 
+#include <sstream>
+#include <string>
+#include <cstdio>
+#include <cstdarg>
 #include <QFileInfo>
 #include <QDir>
-#include <stdint.h>
-#include <string>
+
 using namespace std;
 
-QString Toolbox::itos(int n, int base)
+string Toolbox::itos(int n, int base)
 {
-    QString s;
-    return QString("%1%2").arg((base == 16) ? "0x" : "").arg(s.setNum(n, base));
+	char buffer[1024];
+	switch(base) {
+	case 8:
+		sprintf(buffer, "%o", n);
+		break;
+	case 10:
+		sprintf(buffer, "%d", n);
+		break;
+	case 16:
+		sprintf(buffer, "%#x", n);
+		break;
+	default:
+		break;
+	}
+
+	return string(buffer);
 }
 
-QString Toolbox::hash(QString data)
+string Toolbox::hash(string data)
 {
-	/* Fowler–Noll–Vo (FNV-1) hash function */
-    string str = data.toStdString();
+	// Fowler–Noll–Vo (FNV-1) hash function
+	string str = data;
 	int h = 2166136261U;
     for(unsigned i = 0; i < str.size(); ++i)
         h = (16777619U * h) ^ (uint8_t) str[i];
@@ -31,27 +48,48 @@ QString Toolbox::hash(QString data)
     return itos(h, 16);
 }
 
-QString Toolbox::makeRelative(QString path)
+string Toolbox::makeRelative(string path)
 {
-    QFileInfo f(path);
-    return f.absoluteFilePath();
+	QFileInfo f(path.c_str());
+	return f.absoluteFilePath().toStdString();
 }
 
-QString Toolbox::removeSlash(QString path)
+string Toolbox::removeSlash(string path)
 {
-    if(path.endsWith('/'))
-        path.chop(1);
+	if(path.back() == '/')
+		path.substr(0, path.size() - 1);
 
 	return path;
 }
 
-QString Toolbox::pcapFlowBasename(QString path)
+string Toolbox::pcapFlowBasename(string path)
 {
-    int n = path.lastIndexOf("/");
-    return path.mid(n + 1);
+	int n = path.find_last_of("/");
+	return path.substr(n + 1);
 }
 
-bool Toolbox::removeDirectory(QString path)
+bool Toolbox::removeDirectory(string path)
 {
-    return QDir().rmdir(path);
+	return QDir().rmdir(path.c_str());
+}
+
+string Toolbox::formatToString(const string fmt...) {
+	int size = 100;
+	string str;
+	while(1) {
+		str.resize(size);
+		va_list argptr;
+		va_start(argptr, fmt);
+		int n = vsnprintf((char *)str.c_str(), size, fmt.c_str(), argptr);
+		va_end(argptr);
+		if(n > -1 && n < size) {
+			str.resize(n);
+			return str;
+		}
+		if(n > -1)
+			size = n + 1;
+		else
+			size *= 2;
+	}
+	return str;
 }

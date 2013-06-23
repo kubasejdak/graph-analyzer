@@ -7,14 +7,17 @@
 #ifndef BINARYINPUT_H_
 #define BINARYINPUT_H_
 
+#include <string>
+
 #include <tasks/analyze/modules/input/IInput.h>
+#include <core/ExploitSample.h>
 
 class BinaryInput: public IInput {
 public:
 	BinaryInput();
     virtual ~BinaryInput() {}
 
-	virtual bool loadInput(QString filename, SampleContainer *samples);
+	virtual bool loadInput(std::string filename, SampleContainer *samples);
 };
 
 #endif /* BINARYINPUT_H_ */

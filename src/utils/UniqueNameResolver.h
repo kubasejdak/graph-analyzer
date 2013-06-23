@@ -7,14 +7,14 @@
 #ifndef UNIQUENAMERESOLVER_H
 #define UNIQUENAMERESOLVER_H
 
-#include <QString>
+#include <string>
 
 class UniqueNameResolver {
 public:
 	UniqueNameResolver() {}
 	virtual ~UniqueNameResolver() {}
 
-	QString resolve(QString filename);
+	std::string resolve(std::string filename);
 };
 
 #endif /* UNIQUENAMERESOLVER_H */

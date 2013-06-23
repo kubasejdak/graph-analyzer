@@ -5,12 +5,18 @@
  */
 
 #include "TaskManager.h"
+
+#include <string>
+#include <QDomElement>
+
+#include <tasks/TaskQueue.h>
+#include <tasks/TaskResolver.h>
+#include <tasks/ITask.h>
+#include <utils/XMLParser.h>
 #include <utils/SystemLogger.h>
 #include <utils/XMLParser.h>
-#include <tasks/ITask.h>
 
-#include <QFile>
-#include <QDomElement>
+using namespace std;
 
 bool TaskManager::collectTasks()
 {
@@ -21,7 +27,7 @@ bool TaskManager::collectTasks()
 
 	QDomElement taskNode = m_xmlParser.root(ROOT_NODE);
 	while(taskNode.isNull() == false) {
-		QString taskType = taskNode.attribute("type");
+		string taskType = taskNode.attribute("type").toStdString();
 
 		ITask *task = m_resolver.createTask(taskType);
 

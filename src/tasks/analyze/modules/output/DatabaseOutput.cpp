@@ -5,14 +5,23 @@
  */
 
 #include "DatabaseOutput.h"
+
+#include <string>
+#include <sstream>
+#include <QSqlQuery>
+#include <QFile>
+
 #include <core/Options.h>
+#include <core/ExploitSample.h>
+#include <core/ExploitInfo.h>
 #include <utils/SystemLogger.h>
 #include <utils/DatabaseManager.h>
 #include <utils/Toolbox.h>
 #include <tasks/analyze/modules/ModuleManager.h>
+#include <tasks/analyze/modules/analyze/IAnalyze.h>
+#include <tasks/analyze/modules/output/IOutput.h>
 
-#include <QtCore>
-#include <QtSql>
+using namespace std;
 
 DatabaseOutput::DatabaseOutput()
 {
@@ -24,31 +33,31 @@ bool DatabaseOutput::exportOutput(ExploitSample *sample, int taskId)
 {
     ExploitInfo *info = sample->info();
 
-    /* ensure that sample is not a duplicate */
+	// ensure that sample is not a duplicate
     bool duplicate = checkDuplicate(info);
     if(duplicate) {
         LOG("duplicate sample: skipping and removing duplicated graph file\n");
-		QFile(info->graphName()).remove();
+		QFile(info->graphName().c_str()).remove();
         LOG("SUCCESS\n\n");
         return true;
     }
 
-	/* get next sample_id number */
+	// get next sample_id number
 	int sampleId = DatabaseManager::instance()->sequenceValue("analyze_sample_id_seq");
 
-	/* general sample data */
+	// general sample data
     if(exportGeneralData(info, sampleId, taskId) == false) {
-        LOG_ERROR("exporting general sample info to database [%s]\n", info->name().toStdString().c_str());
+		LOG_ERROR("exporting general sample info to database [%s]\n", info->name().c_str());
 		LOG_ERROR("FAILURE\n\n");
 		return false;
 	}
 
-    /* analyze modules specific data */
+	// analyze modules specific data
 	AnalyzeMap *anaMods = ModuleManager::instance()->analyze();
 	AnalyzeMap::iterator anaIt;
 	for(anaIt = anaMods->begin(); anaIt != anaMods->end(); ++anaIt) {
-		LOG("exporting sample info [%s] to database\n", anaIt.key().toStdString().c_str());
-		anaIt.value()->exportToDatabase(sample, sampleId);
+		LOG("exporting sample info [%s] to database\n", anaIt->first.c_str());
+		anaIt->second->exportToDatabase(sample, sampleId);
 	}
 
     LOG("SUCCESS\n\n");
@@ -57,12 +66,14 @@ bool DatabaseOutput::exportOutput(ExploitSample *sample, int taskId)
 
 bool DatabaseOutput::checkDuplicate(ExploitInfo *info)
 {
+	stringstream ss;
+	ss << "SELECT * FROM analyze_sample WHERE " << "name = '" << info->name() << "'"
+											   << " AND extracted_from = '" << info->extractedFrom() << "'"
+											   << " AND file_size = '" << info->size()  << "'"
+											   << " AND shellcode_offset = '" << info->codeOffset() << "'";
+
 	QSqlQuery selectQuery(DatabaseManager::instance()->database());
-	selectQuery.prepare("SELECT * FROM analyze_sample WHERE name = ? AND extracted_from = ? AND file_size = ? AND shellcode_offset = ?");
-	selectQuery.addBindValue(info->name());
-	selectQuery.addBindValue(info->extractedFrom());
-	selectQuery.addBindValue(info->size());
-	selectQuery.addBindValue(info->codeOffset());
+	selectQuery.prepare(ss.str().c_str());
 	if(!DatabaseManager::instance()->exec(&selectQuery)) {
 		LOG_ERROR("FAILURE\n\n");
         return false;
@@ -74,23 +85,25 @@ bool DatabaseOutput::checkDuplicate(ExploitInfo *info)
 
 bool DatabaseOutput::exportGeneralData(ExploitInfo *info, int sampleId, int taskId)
 {
-	QString d = info->captureDate().toString("yyyy-MM-dd");
-	QString captureDate = (d == "1999-12-31") ? "n/a" : d;
+	string d = info->captureDate().toString("yyyy-MM-dd").toStdString();
+	string captureDate = (d == "1999-12-31") ? "n/a" : d;
 
 	LOG("exporting sample info [general] to database\n");
+	stringstream ss;
+	ss << "INSERT INTO analyze_sample VALUES (" << sampleId
+												<< ", '" << info->name() << "'"
+												<< ", '" << info->extractedFrom() << "'"
+												<< ", '" << info->graphName() << "'"
+												<< ", '" << captureDate << "'"
+												<< ", '" << Toolbox::itos(info->size()) << "'"
+												<< ", '" << info->fileType() << "'"
+												<< ", '" << Toolbox::itos(info->fileSize()) << "'"
+												<< ", '" << Toolbox::itos(info->codeOffset()) << "'"
+												<< ", " << "''"
+												<< ", " << taskId << ")";
+
 	QSqlQuery sampleQuery(DatabaseManager::instance()->database());
-    sampleQuery.prepare("INSERT INTO analyze_sample VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-	sampleQuery.addBindValue(sampleId);
-	sampleQuery.addBindValue(info->name());
-	sampleQuery.addBindValue(info->extractedFrom());
-	sampleQuery.addBindValue(info->graphName());
-	sampleQuery.addBindValue(captureDate);
-	sampleQuery.addBindValue(Toolbox::itos(info->size()));
-	sampleQuery.addBindValue(info->fileType());
-	sampleQuery.addBindValue(Toolbox::itos(info->fileSize()));
-	sampleQuery.addBindValue(Toolbox::itos(info->codeOffset()));
-	sampleQuery.addBindValue("");
-    sampleQuery.addBindValue(taskId);
+	sampleQuery.prepare(ss.str().c_str());
 	if(!DatabaseManager::instance()->exec(&sampleQuery)) {
 		LOG_ERROR("FAILURE\n\n");
 		return false;

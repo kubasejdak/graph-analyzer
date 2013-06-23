@@ -5,29 +5,37 @@
  */
 
 #include "UniqueNameResolver.h"
-#include <utils/SystemLogger.h>
 
+#include <string>
+#include <sstream>
 #include <QFile>
 #include <QFileInfo>
 
-QString UniqueNameResolver::resolve(QString filename)
+#include <utils/SystemLogger.h>
+#include <utils/Toolbox.h>
+
+using namespace std;
+
+string UniqueNameResolver::resolve(string filename)
 {
-	QString uniqueName = filename;
+	string uniqueName = filename;
 	int k = 2;
-	while(QFile(uniqueName).exists()) {
+	while(QFile(uniqueName.c_str()).exists()) {
 		LOG("duplicate for given filename found, renaming\n");
-		QFileInfo duplicate(uniqueName);
-		uniqueName = QString("%1/%2").arg(duplicate.absolutePath()).arg(duplicate.baseName());
+		QFileInfo duplicate(uniqueName.c_str());
+		stringstream ss;
+		ss << duplicate.absolutePath().toStdString() << "/" << duplicate.baseName().toStdString();
+		uniqueName = ss.str();
 
 		if(k != 2) {
-			int n = uniqueName.lastIndexOf('_');
-			uniqueName.truncate(n + 1);
+			int n = uniqueName.find_last_of('_');
+			uniqueName = uniqueName.substr(0, n + 1);
 		}
 		else
 			uniqueName += "_";
-		QString str_num;
-		uniqueName += str_num.setNum(k) + ".png";
-		LOG("renamed to: [%s]\n", uniqueName.toStdString().c_str());
+
+		uniqueName += Toolbox::itos(k) + ".png";
+		LOG("renamed to: [%s]\n", uniqueName.c_str());
 		++k;
 	}
 

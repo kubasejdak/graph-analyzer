@@ -5,9 +5,16 @@
  */
 
 #include "BinaryInput.h"
-#include <core/Options.h>
 
+#include <string>
 #include <QFileInfo>
+
+#include <tasks/analyze/modules/input/IInput.h>
+#include <core/ExploitSample.h>
+#include <core/Options.h>
+#include <utils/SystemLogger.h>
+
+using namespace std;
 
 BinaryInput::BinaryInput()
 {
@@ -16,9 +23,9 @@ BinaryInput::BinaryInput()
 	m_description = "Loads exploit from binary files.";
 }
 
-bool BinaryInput::loadInput(QString filename, QList<ExploitSample *> *samples)
+bool BinaryInput::loadInput(string filename, SampleContainer *samples)
 {
-    QFile file(filename);
+	QFile file(filename.c_str());
     file.open(QIODevice::ReadOnly);
     if(!file.isOpen()) {
         LOG_ERROR("FAILURE\n\n");
@@ -27,10 +34,10 @@ bool BinaryInput::loadInput(QString filename, QList<ExploitSample *> *samples)
 
 	int size = file.size();
 
-	/* protect against bad or too big files */
+	// protect against bad or too big files
 	if(Options::instance()->skipBigFiles) {
 		if(size > Options::instance()->bigFileSize) {
-			LOG("file [%s] is too big, size: [%d]\n", filename.toStdString().c_str(), size);
+			LOG("file [%s] is too big, size: [%d]\n", filename.c_str(), size);
 			LOG("skipping\n");
 			LOG("SUCCESS\n\n");
 			return true;
@@ -44,9 +51,9 @@ bool BinaryInput::loadInput(QString filename, QList<ExploitSample *> *samples)
 	file.close();
 
 	ExploitSample *s = new ExploitSample();
-    QFileInfo info(filename);
-    s->info()->setName(info.absoluteFilePath());
-    s->info()->setExtractedFrom(info.absoluteFilePath());
+	QFileInfo info(filename.c_str());
+	s->info()->setName(info.absoluteFilePath().toStdString());
+	s->info()->setExtractedFrom(info.absoluteFilePath().toStdString());
     s->info()->setFileType(m_type);
 	s->info()->setFileSize(size);
 	s->setCode((byte_t *) buffer);

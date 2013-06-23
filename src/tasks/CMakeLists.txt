@@ -4,9 +4,9 @@ add_subdirectory(analyze)
 add_subdirectory(group)
 
 set(TASKS_SRC
-	ITask.cpp
-	TaskManager.cpp
-	TaskResolver.cpp
+    ITask.cpp
+    TaskManager.cpp
+    TaskResolver.cpp
     TaskQueue.cpp
 )
 

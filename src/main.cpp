@@ -6,28 +6,22 @@
 
 #define AUTHOR	"Kuba Sejdak"
 
-#include <boost/program_options.hpp>
-namespace opt = boost::program_options;
-
-#include <QString>
-#include <QList>
 #include <vector>
-#include <string>
 #include <iostream>
-using namespace std;
+#include <boost/program_options.hpp>
 
 #include <core/CoreSystem.h>
 #include <utils/SystemLogger.h>
 
-/* global variables */
-vector<string> input;
+namespace opt = boost::program_options;
+using namespace std;
 
 int main(int argc, char *argv[])
 {
-	/* create main system */
+	// create main system
 	CoreSystem system;
 
-	/* parse cmd line arguments */
+	// parse cmd line arguments
 	opt::options_description options("Options");
 	options.add_options()
 			("help,h", "print help message")
@@ -40,22 +34,22 @@ int main(int argc, char *argv[])
 	opt::store(opt::parse_command_line(argc, argv, options), vm);
 	opt::notify(vm);
 
-	/* help */
+	// help
 	if(vm.count("help")) {
 		cout << options << endl;
 		return 0;
 	}
-	/* version */
+	// version
 	if(vm.count("version")) {
-		cout << system.version().toStdString() << endl;
+		cout << system.version() << endl;
 		return 0;
 	}
-    /* export status */
+	// export status
     if(vm.count("export-description")) {
         SystemLogger::instance()->exportDescription();
         return 0;
     }
-	/* call rpc function */
+	// call rpc function
 	if(vm.count("tasks")) {
 		bool stat = system.executeTasks();
 

@@ -5,10 +5,16 @@
  */
 
 #include "TaskResolver.h"
+
+#include <string>
+
+#include <tasks/ITask.h>
 #include <tasks/analyze/AnalyzeTask.h>
 #include <tasks/group/GroupTask.h>
 
-ITask *TaskResolver::createTask(QString taskName)
+using namespace std;
+
+ITask *TaskResolver::createTask(string taskName)
 {
 	if(taskName == "analyze")
 		return new AnalyzeTask();

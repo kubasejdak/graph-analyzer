@@ -7,28 +7,26 @@
 #ifndef INSTRUCTIONSPLITTER_H_
 #define INSTRUCTIONSPLITTER_H_
 
-#include <QString>
 #include <vector>
 #include <string>
-using namespace std;
 
 class InstructionSplitter {
 public:
 	InstructionSplitter() {}
 	virtual ~InstructionSplitter() {}
 
-    QString address();
-    QString code();
-    QString syscall();
-    QString instr();
-    QString firstArg();
-    QString secondArg();
+	std::string address();
+	std::string code();
+	std::string syscall();
+	std::string instr();
+	std::string firstArg();
+	std::string secondArg();
 	void clear();
 
-    InstructionSplitter &operator=(QString s);
+	InstructionSplitter &operator=(std::string s);
 
 private:
-    vector<string> m_holder;
+	std::vector<std::string> m_holder;
 };
 
 #endif /* INSTRUCTIONSPLITTER_H_ */

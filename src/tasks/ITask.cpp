@@ -6,12 +6,15 @@
 
 #include "ITask.h"
 
-#include <QList>
-#include <QString>
+#include <list>
+#include <string>
+#include <QTime> // TODO: change to some non-Qt
 #include <QDomElement>
 
 #include <utils/XMLParser.h>
 #include <core/ExploitSample.h>
+
+using namespace std;
 
 ITask::ITask()
 {
@@ -32,12 +35,12 @@ int ITask::id()
     return m_id;
 }
 
-QString ITask::name()
+string ITask::name()
 {
     return m_name;
 }
 
-QString ITask::type()
+string ITask::type()
 {
     return m_type;
 }
@@ -72,12 +75,12 @@ bool ITask::isFinished()
     return m_finished;
 }
 
-QString ITask::traitName()
+string ITask::traitName()
 {
 	return m_traitName;
 }
 
-QString ITask::traitValue()
+string ITask::traitValue()
 {
 	return m_traitValue;
 }
@@ -89,17 +92,17 @@ void ITask::setId(int id)
 
 bool ITask::perform()
 {
-    /* update start time */
+	// update start time
     m_startTime = m_timer.currentTime();
     m_timer.start();
 
-    /* perform task */
+	// perform task
     bool ret = performTask();
 
-    /* update end time */
+	// update end time
     m_endTime = m_timer.currentTime();
 
-    /* update working time */
+	// update working time
 	m_workTime = QTime(0, 0).addMSecs(m_timer.elapsed());
 
     return ret;

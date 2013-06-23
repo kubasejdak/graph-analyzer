@@ -5,18 +5,28 @@
  */
 
 #include "SystemLogger.h"
+
+#include <iostream>
+#include <cstdarg>
+#include <sstream>
+#include <string>
+#include <list>
+#include <boost/current_function.hpp>
+#include <QDate>
+#include <QTime>
+
 #include <core/Options.h>
 #include <tasks/ITask.h>
 #include <utils/StatusExportStrategy.h>
 #include <utils/DescriptionExportStrategy.h>
+#include <utils/LoggingStrategy.h>
+#include <utils/XMLParser.h>
+#include <utils/Toolbox.h>
 
-#include <QDate>
-#include <QTime>
-#include <iostream>
 using namespace std;
 
-#define LOG_INTERNAL(fmt, args...)			log(__FILE__, BOOST_CURRENT_FUNCTION, __LINE__, QString().sprintf(fmt, ##args))
-#define LOG_INTERNAL_ERROR(fmt, args...)	logError(__FILE__, BOOST_CURRENT_FUNCTION, __LINE__, QString().sprintf(fmt, ##args))
+#define LOG_INTERNAL(fmt, args...)			log(__FILE__, BOOST_CURRENT_FUNCTION, __LINE__, Toolbox::formatToString(fmt, ##args))
+#define LOG_INTERNAL_ERROR(fmt, args...)	logError(__FILE__, BOOST_CURRENT_FUNCTION, __LINE__, Toolbox::formatToString(fmt, ##args))
 
 SystemLogger::SystemLogger()
 {
@@ -37,11 +47,11 @@ SystemLogger::SystemLogger()
 
 SystemLogger::~SystemLogger()
 {
-	QList<ILoggingStrategy *>::iterator it;
+	list<ILoggingStrategy *>::iterator it;
     for(it = m_logStrategies.begin(); it != m_logStrategies.end(); ++it)
 		delete (*it);
 
-    QList<IStatusExportStrategy *>::iterator it2;
+	list<IStatusExportStrategy *>::iterator it2;
     for(it2 = m_statusStrategies.begin(); it2 != m_statusStrategies.end(); ++it2)
         delete (*it2);
 }
@@ -58,16 +68,16 @@ bool SystemLogger::readConfigXML()
 
 	QDomElement options = m_xmlParser.root("Logging");
 
-	/* level */
+	// level
     m_logLevel = m_xmlParser.child(options, "Level").attribute("val").toInt();
 
-	/* logging strategy */
+	// logging strategy
     if(m_xmlParser.hasChild(options, "LogStrategy")) {
         QDomElement f = m_xmlParser.child(options, "LogStrategy");
 		while(!f.isNull()) {
 
 			if(f.attribute("type") == "file") {
-                QString filename = f.attribute("path");
+				string filename = f.attribute("path").toStdString();
                 m_logStrategies.push_back(new FileLoggingStrategy(filename));
 			}
 			else if(f.attribute("type") == "console")
@@ -77,7 +87,7 @@ bool SystemLogger::readConfigXML()
 		}
 	}
 
-    /* exporting status */
+	// exporting status
     if(m_xmlParser.hasChild(options, "StatusStrategy")) {
         QDomElement f = m_xmlParser.child(options, "StatusStrategy");
         while(!f.isNull()) {
@@ -89,7 +99,7 @@ bool SystemLogger::readConfigXML()
         }
     }
 
-    /* exporting description */
+	// exporting description
     if(m_xmlParser.hasChild(options, "DescriptionStrategy")) {
         QDomElement f = m_xmlParser.child(options, "DescriptionStrategy");
         while(!f.isNull()) {
@@ -109,34 +119,34 @@ void SystemLogger::listOptions()
 {
 	LOG_INTERNAL("logging settings:\n");
 	LOG_INTERNAL("m_logLevel: [%d]\n", m_logLevel);
-    QList<ILoggingStrategy *>::iterator it;
+	list<ILoggingStrategy *>::iterator it;
     for(it = m_logStrategies.begin(); it != m_logStrategies.end(); ++it)
-        LOG_INTERNAL("m_logStrategy: [%s]\n", (*it)->description().toStdString().c_str());
-    QList<IStatusExportStrategy *>::iterator it2;
+		LOG_INTERNAL("m_logStrategy: [%s]\n", (*it)->description().c_str());
+	list<IStatusExportStrategy *>::iterator it2;
     for(it2 = m_statusStrategies.begin(); it2 != m_statusStrategies.end(); ++it2)
-        LOG_INTERNAL("m_statusStrategy: [%s]\n", (*it2)->description().toStdString().c_str());
-    QList<IDescriptionExportStrategy *>::iterator it3;
+		LOG_INTERNAL("m_statusStrategy: [%s]\n", (*it2)->description().c_str());
+	list<IDescriptionExportStrategy *>::iterator it3;
     for(it3 = m_descriptionStrategies.begin(); it3 != m_descriptionStrategies.end(); ++it3)
-        LOG_INTERNAL("m_descriptionStrategy: [%s]\n", (*it3)->description().toStdString().c_str());
+		LOG_INTERNAL("m_descriptionStrategy: [%s]\n", (*it3)->description().c_str());
 }
 
-void SystemLogger::setStatus(QString status)
+void SystemLogger::setStatus(string status)
 {
     m_status = status;
 }
 
-void SystemLogger::setError(QString error)
+void SystemLogger::setError(string error)
 {
     m_error = error;
     ++m_allErrors;
 }
 
-QString SystemLogger::status()
+string SystemLogger::status()
 {
     return m_status;
 }
 
-QString SystemLogger::error()
+string SystemLogger::error()
 {
     return m_error;
 }
@@ -146,70 +156,82 @@ int SystemLogger::errorsNum()
     return m_allErrors;
 }
 
-void SystemLogger::log(QString file, QString func, int line, QString msg)
+void SystemLogger::log(string file, string func, int line, string msg)
 {
     if(m_logLevel == 0)
         return;
 
-    /* prepare string */
-    QString date = QDate::currentDate().toString("dd.MM.yyyy");
-    QString time = QTime::currentTime().toString("hh:mm:ss");
-    QString m = QString("[%1 %2] ").arg(date).arg(time);
+	// prepare string
+	string date = QDate::currentDate().toString("dd.MM.yyyy").toStdString();
+	string time = QTime::currentTime().toString("hh:mm:ss").toStdString();
+	stringstream ss;
+	ss << "[" << date << " " << time << "] ";
+	string m;
 
     switch(m_logLevel) {
     case 1:
-        m += msg;
+		ss << msg;
         break;
     case 2:
-        m += QString("FUNC: %1, LINE: %2 %3").arg(func).arg(line).arg(msg);
+		ss << "FUNC: " << func << ", LINE: " << line << " " << msg;
         break;
     case 3:
-        m += QString("FILE: %1, FUNC: %2, LINE: %3 %4").arg(file).arg(func).arg(line).arg(msg);
+		ss << "FILE: " << file << "FUNC: " << func << ", LINE: " << line << " " << msg;
         break;
     default:
         break;
     }
 
-	QList<ILoggingStrategy *>::iterator it;
+	m = ss.str();
+
+	list<ILoggingStrategy *>::iterator it;
     for(it = m_logStrategies.begin(); it != m_logStrategies.end(); ++it)
 		(*it)->log(m);
 }
 
-void SystemLogger::logError(QString file, QString func, int line, QString msg)
+void SystemLogger::logError(string file, string func, int line, string msg)
 {
     if(m_logLevel == 0)
         return;
 
-    /* prepare string */
-    QString date = QDate::currentDate().toString("dd.MM.yyyy");
-    QString time = QTime::currentTime().toString("hh:mm:ss");
-    QString m = QString("[%1 %2] ").arg(date).arg(time);
+	// prepare string
+	string date = QDate::currentDate().toString("dd.MM.yyyy").toStdString();
+	string time = QTime::currentTime().toString("hh:mm:ss").toStdString();
+	stringstream ss;
+	ss << "[" << date << " " << time << "] ";
+	string m;
 
     switch(m_logLevel) {
     case 1:
-        m += QString("ERROR: %1").arg(msg);
+		ss << "ERROR: " << msg;
         break;
     case 2:
-        m += QString("FUNC: %1, LINE: %2 ERROR: %3").arg(func).arg(line).arg(msg);
+		ss << "FUNC: " << func << ", LINE: " << line << " ERROR: " << msg;
         break;
     case 3:
-        m += QString("FILE: %1, FUNC: %2, LINE: %3 ERROR: %4").arg(file).arg(func).arg(line).arg(msg);
+		ss << "FILE: " << file << "FUNC: " << func << ", LINE: " << line << " ERROR: " << msg;
         break;
     default:
         break;
     }
+
+	m = ss.str();
+
+	list<ILoggingStrategy *>::iterator it;
+	for(it = m_logStrategies.begin(); it != m_logStrategies.end(); ++it)
+		(*it)->log(m);
 }
 
 void SystemLogger::exportStatus(ITask *currTask)
 {
-    QList<IStatusExportStrategy *>::iterator it;
+	list<IStatusExportStrategy *>::iterator it;
     for(it = m_statusStrategies.begin(); it != m_statusStrategies.end(); ++it)
         (*it)->exportStatus(currTask);
 }
 
 void SystemLogger::exportDescription()
 {
-    QList<IDescriptionExportStrategy *>::iterator it;
+	list<IDescriptionExportStrategy *>::iterator it;
     for(it = m_descriptionStrategies.begin(); it != m_descriptionStrategies.end(); ++it)
         (*it)->exportDescription();
 }

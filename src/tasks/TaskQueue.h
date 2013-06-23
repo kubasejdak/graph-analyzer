@@ -7,23 +7,24 @@
 #ifndef TASKQUEUE_H
 #define TASKQUEUE_H
 
-#include <QVector>
-#include <tasks/ITask.h>
+#include <vector>
+
+class ITask;
 
 class TaskQueue {
 public:
 	TaskQueue() {}
 	virtual ~TaskQueue();
 
-	/* access */
+	// access
 	void insert(ITask *task);
 	ITask *get();
 
-	/* utils */
+	// utils
 	int size();
 
 private:
-	QVector<ITask *> m_tasks;
+	std::vector<ITask *> m_tasks;
 };
 
 #endif /* TASKQUEUE_H */

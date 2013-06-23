@@ -5,12 +5,20 @@
  */
 
 #include "PcapInput.h"
+
+#include <string>
+#include <sstream>
+#include <QDir>
+#include <QDirIterator>
+#include <QFileInfo>
+
+#include <tasks/analyze/modules/input/IInput.h>
+#include <core/ExploitSample.h>
 #include <core/Options.h>
 #include <utils/Toolbox.h>
 #include <utils/SystemLogger.h>
 
-#include <QDir>
-#include <QFileInfo>
+using namespace std;
 
 PcapInput::PcapInput()
 {
@@ -19,67 +27,69 @@ PcapInput::PcapInput()
 	m_description = "Loads exploit from pcap files.";
 }
 
-bool PcapInput::loadInput(QString filename, QList<ExploitSample *> *samples)
+bool PcapInput::loadInput(string filename, SampleContainer *samples)
 {
     int success;
-    QString tmpPcapDir = Options::instance()->tmpPcapDir;
+	string tmpPcapDir = Options::instance()->tmpPcapDir;
 
-    /* move to /tmp/pcap_tmp */
+	// move to /tmp/pcap_tmp
     QDir pcapDir;
-    if(!QDir(tmpPcapDir).exists()) {
-        success = pcapDir.mkdir(tmpPcapDir);
+	if(!QDir(tmpPcapDir.c_str()).exists()) {
+		success = pcapDir.mkdir(tmpPcapDir.c_str());
         if(!success) {
-            LOG_ERROR("cannot create [%s] directory\n", tmpPcapDir.toStdString().c_str());
+			LOG_ERROR("cannot create [%s] directory\n", tmpPcapDir.c_str());
             LOG_ERROR("FAILURE\n\n");
             return false;
 		}
 	}
 
-    success = QDir::setCurrent(tmpPcapDir);
+	success = QDir::setCurrent(tmpPcapDir.c_str());
     if(!success) {
-        LOG_ERROR("cannot change directory to [%s]\n", tmpPcapDir.toStdString().c_str());
+		LOG_ERROR("cannot change directory to [%s]\n", tmpPcapDir.c_str());
         Toolbox::removeDirectory(tmpPcapDir);
 		LOG_ERROR("FAILURE\n\n");
         return false;
 	}
 
-	/* create flow files */
-    QFileInfo f(filename);
-    QString tcpflowCmd = QString("tcpflow -r \"%1\" %2").arg(f.absoluteFilePath()).arg(Options::instance()->tcpflowParams);
+	// create flow files
+	QFileInfo f(filename.c_str());
+	stringstream ss;
+	ss << "tcpflow -r \"" << f.absoluteFilePath().toStdString() << "\" " << Options::instance()->tcpflowParams;
+	string tcpflowCmd = ss.str();
 
-    int ret = system(tcpflowCmd.toStdString().c_str());
+	int ret = system(tcpflowCmd.c_str());
     if(ret != 0) {
         SystemLogger::instance()->setError("external program 'tcpflow' failed");
         LOG_ERROR("tcpflow cmd failed in PcapInput\n");
         QDir::setCurrent("..");
 
-        /* clear recursively directory */
+		// clear recursively directory
         Toolbox::removeDirectory(tmpPcapDir);
         LOG_ERROR("FAILURE\n\n");
         return false;
 	}
 
-    /* iterate through all flow files */
+	// iterate through all flow files
     ExploitSample *s;
 	QDirIterator it(".", QDir::Files | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
     while(it.hasNext()) {
-        QString entryName = it.next();
+		string entryName = it.next().toStdString();
 		if(entryName == "report.xml")
             continue;
 
-        /* read code */
-        LOG("opening pcap flow file: [%s]\n", entryName.toStdString().c_str());
-        QFile file(entryName);
+		// read code
+		LOG("opening pcap flow file: [%s]\n", entryName.c_str());
+		QFile file(entryName.c_str());
         file.open(QIODevice::ReadOnly);
         if(!file.isOpen())
             continue;
 
         int size = file.size();
 
-		/* protect against bad or too big files */
+		// protect against bad or too big files
 		if(Options::instance()->skipBigFiles) {
 			if(size > Options::instance()->bigFileSize) {
-				LOG("file [%s] is too big, size: [%d]\n", entryName.toStdString().c_str(), size);
+				LOG("file [%s] is too big, size: [%d]\n", entryName.c_str(), size);
 				LOG("skipping\n");
 				file.close();
 				file.remove();
@@ -93,11 +103,11 @@ bool PcapInput::loadInput(QString filename, QList<ExploitSample *> *samples)
         file.read(buffer, size);
         file.close();
 
-        /* create new sample */
+		// create new sample
         s = new ExploitSample();
-        QFileInfo info(filename);
+		QFileInfo info(filename.c_str());
         s->info()->setName(Toolbox::pcapFlowBasename(entryName));
-        s->info()->setExtractedFrom(info.absoluteFilePath());
+		s->info()->setExtractedFrom(info.absoluteFilePath().toStdString());
         s->info()->setFileType(m_type);
 		s->info()->setFileSize(size);
         s->setCode((byte_t *) buffer);
@@ -105,13 +115,13 @@ bool PcapInput::loadInput(QString filename, QList<ExploitSample *> *samples)
         file.remove();
     }
 
-    /* clean up */
+	// clean up
     QDir::setCurrent("..");
-    LOG("removing directory: [%s]\n", tmpPcapDir.toStdString().c_str());
+	LOG("removing directory: [%s]\n", tmpPcapDir.c_str());
     bool removed = Toolbox::removeDirectory(tmpPcapDir);
     if(!removed) {
         SystemLogger::instance()->setError("removing tmp directory failed");
-        LOG_ERROR("removing directory failed: [%s]\n", tmpPcapDir.toStdString().c_str());
+		LOG_ERROR("removing directory failed: [%s]\n", tmpPcapDir.c_str());
         LOG_ERROR("FAILURE\n\n");
         return false;
     }

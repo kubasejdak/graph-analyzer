@@ -9,6 +9,8 @@
 
 #include <tasks/analyze/modules/output/IOutput.h>
 
+class ExploitSample;
+
 class ConsoleOutput: public IOutput {
 public:
 	ConsoleOutput();

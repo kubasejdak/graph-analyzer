@@ -7,31 +7,33 @@
 #ifndef XMLPARSER_H
 #define XMLPARSER_H
 
-#include <QtXml/QDomDocument>
+#include <string>
 #include <QtXml/QDomElement>
-#include <QFile>
+
+class QFile;
+class QDomDocument;
 
 class XMLParser {
 public:
 	XMLParser();
 	virtual ~XMLParser();
 
-	bool open(QString filename);
+	bool open(std::string filename);
 	void close();
 
-    void clear(QString filename);
+	void clear(std::string filename);
 
-	bool hasRoot(QString rootName);
-	bool hasChild(QDomElement rootNode, QString childNode);
+	bool hasRoot(std::string rootName);
+	bool hasChild(QDomElement rootNode, std::string childNode);
 
-	QDomElement root(QString rootName);
-	QDomElement child(QDomElement rootNode, QString childNode);
+	QDomElement root(std::string rootName);
+	QDomElement child(QDomElement rootNode, std::string childNode);
 
 	void removeRoot(QDomElement rootNode);
 	void removeChild(QDomElement rootNode, QDomElement childNode);
 
-	QDomElement createRoot(QString rootName);
-	QDomElement createChild(QDomElement rootNode, QString childName);
+	QDomElement createRoot(std::string rootName);
+	QDomElement createChild(QDomElement rootNode, std::string childName);
 
 private:
 	void save();

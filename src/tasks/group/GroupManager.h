@@ -7,12 +7,15 @@
 #ifndef GROUPMANAGER_H_
 #define GROUPMANAGER_H_
 
+#if 0
 #include <QVector>
 #include <QString>
 #include <QMap>
+#endif
 
 class GroupManager {
 public:
+#if 0
 	GroupManager() {}
 	virtual ~GroupManager() {}
 
@@ -30,6 +33,7 @@ private:
 	QVector<QString> loopHashes(int sampleId);
 
 	bool isDoubleConnected(int group1Id, int group2Id);
+#endif
 };
 
 #endif /* GROUPMANAGER_H_ */

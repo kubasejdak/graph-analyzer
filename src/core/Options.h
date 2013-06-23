@@ -7,11 +7,9 @@
 #ifndef OPTIONS_H_
 #define OPTIONS_H_
 
-class QString;
-class QList;
+#include <string>
 
-class SystemLogger;
-class XMLParser;
+#include <utils/XMLParser.h>
 
 #define CONFIG_FILE		"/var/www/jsejdak/GraphAnalyzer.conf"
 
@@ -24,22 +22,19 @@ public:
 		return &m_instance;
 	}
 
-	/* list options */
+	// list options
 	void listOptions();
 	void listPendingFiles();
 
-	/* options */
-	QString graphsDir;
-    QString tmpPcapDir;
-    QString tcpflowParams;
+	// options
+	std::string graphsDir;
+	std::string tmpPcapDir;
+	std::string tcpflowParams;
 	int emulationSteps;
 	bool skipBigFiles;
 	int bigFileSize;
 	bool skipBrokenSamples;
 	int brokenSampleSize;
-
-	/* pending files */
-	QList<QString> pendingFiles;
 
 private:
 	Options();

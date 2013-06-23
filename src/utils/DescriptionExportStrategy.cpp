@@ -5,9 +5,15 @@
  */
 
 #include "DescriptionExportStrategy.h"
+
+#include <string>
+
 #include <utils/DatabaseManager.h>
 #include <utils/SystemLogger.h>
 #include <core/version.h>
+#include <tasks/ITask.h>
+
+using namespace std;
 
 void XMLDescriptionExportStrategy::exportDescription()
 {
@@ -24,14 +30,14 @@ void XMLDescriptionExportStrategy::exportDescription()
     QDomElement statusNode = m_xmlParser.createRoot("SystemStatus");
 
     m_xmlParser.createChild(statusNode, "Version").setAttribute("val", VERSION);
-    m_xmlParser.createChild(statusNode, "CurrentTask").setAttribute("name", SystemLogger::instance()->status());
-    m_xmlParser.createChild(statusNode, "LastError").setAttribute("desc", SystemLogger::instance()->error());
+	m_xmlParser.createChild(statusNode, "CurrentTask").setAttribute("name", SystemLogger::instance()->status().c_str());
+	m_xmlParser.createChild(statusNode, "LastError").setAttribute("desc", SystemLogger::instance()->error().c_str());
     m_xmlParser.createChild(statusNode, "ErrorsNum").setAttribute("val", SystemLogger::instance()->errorsNum());;
 
     m_xmlParser.close();
 }
 
-QString XMLDescriptionExportStrategy::description()
+string XMLDescriptionExportStrategy::description()
 {
     return "xml";
 }

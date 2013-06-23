@@ -7,19 +7,21 @@
 #ifndef SYSTEMLOGGER_H_
 #define SYSTEMLOGGER_H_
 
-#include <QString>
-#include <QList>
+#include <cstdio>
+#include <string>
+#include <list>
 #include <boost/current_function.hpp>
 
-#include <utils/LoggingStrategy.h>
 #include <utils/XMLParser.h>
+#include <utils/Toolbox.h>
 
 class ITask;
+class ILoggingStrategy;
 class IStatusExportStrategy;
 class IDescriptionExportStrategy;
 
-#define	LOG(fmt, args...)           SystemLogger::instance()->log(__FILE__, BOOST_CURRENT_FUNCTION, __LINE__, QString().sprintf(fmt, ##args))
-#define	LOG_ERROR(fmt, args...)     SystemLogger::instance()->logError(__FILE__, BOOST_CURRENT_FUNCTION, __LINE__, QString().sprintf(fmt, ##args))
+#define	LOG(fmt, args...)           SystemLogger::instance()->log(__FILE__, BOOST_CURRENT_FUNCTION, __LINE__, Toolbox::formatToString(fmt, ##args))
+#define	LOG_ERROR(fmt, args...)     SystemLogger::instance()->logError(__FILE__, BOOST_CURRENT_FUNCTION, __LINE__, Toolbox::formatToString(fmt, ##args))
 
 class SystemLogger {
 public:
@@ -30,23 +32,23 @@ public:
 		return &m_instance;
 	}
 
-	/* error and status */
-    void setStatus(QString status);
-    QString status();
+    // error and status
+	void setStatus(std::string status);
+	std::string status();
 
-    void setError(QString error);
+	void setError(std::string error);
     void clearError();
-    QString error();
+	std::string error();
     int errorsNum();
 
-    /* logging */
-    void log(QString file, QString func, int line, QString msg);
-    void logError(QString file, QString func, int line, QString msg);
+    // logging
+	void log(std::string file, std::string func, int line, std::string msg);
+	void logError(std::string file, std::string func, int line, std::string msg);
 
-    /* exporting status */
+    // exporting status
     void exportStatus(ITask *currTask);
 
-    /* export system description */
+    // export system description
     void exportDescription();
 
 private:
@@ -54,14 +56,14 @@ private:
 	bool readConfigXML();
 	void listOptions();
 
-    QString m_status;
-    QString m_error;
+	std::string m_status;
+	std::string m_error;
     int m_allErrors;
 
     int m_logLevel;
-    QList<ILoggingStrategy *> m_logStrategies;
-    QList<IStatusExportStrategy *> m_statusStrategies;
-    QList<IDescriptionExportStrategy *> m_descriptionStrategies;
+	std::list<ILoggingStrategy *> m_logStrategies;
+	std::list<IStatusExportStrategy *> m_statusStrategies;
+	std::list<IDescriptionExportStrategy *> m_descriptionStrategies;
 
 	XMLParser m_xmlParser;
 };

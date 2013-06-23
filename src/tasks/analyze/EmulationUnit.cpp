@@ -5,6 +5,19 @@
  */
 
 #include "EmulationUnit.h"
+
+extern "C" {
+	#include <emu/emu.h>
+	#include <emu/emu_cpu.h>
+	#include <emu/emu_memory.h>
+	#include <emu/emu_shellcode.h>
+	#include <emu/environment/emu_env.h>
+	#include <emu/environment/emu_profile.h>
+}
+
+#include <cstdint>
+
+#include <utils/Toolbox.h>
 #include <utils/SystemLogger.h>
 #if 0
 #include <core/UserHooks.h>
@@ -22,19 +35,19 @@ EmulationUnit::~EmulationUnit()
 
 void EmulationUnit::prepareUnit()
 {
-	/* create emulation unit */
+	// create emulation unit
     m_emu = emu_new();
     m_cpu = emu_cpu_get(m_emu);
     m_mem = emu_memory_get(m_emu);
 
-	/* create enviroment unit */
+	// create enviroment unit
     m_env = emu_env_new(m_emu);
     m_env->profile = emu_profile_new();
 
-	/* IAT for sqlslammer */
+	// IAT for sqlslammer
 	prepareIATForSQLSlammer();
 
-	/* export user hooks */
+	// export user hooks
 	exportWin32Hooks();
 	exportLinuxHooks();
 }
@@ -58,18 +71,18 @@ bool EmulationUnit::step()
 
 int32_t EmulationUnit::loadCode(byte_t *code, int32_t size)
 {
-	/* perform getPC test */
+	// perform getPC test
     m_codeOffset = getPcTest(code, size);
     LOG("m_codeOffset: [%d]\n", m_codeOffset);
 
-	/* clear registers */
+	// clear registers
 	for(int i = 0; i < 8; ++i)
         emu_cpu_reg32_set(m_cpu, (emu_reg32) i, 0);
 
-	/* clear flags */
+	// clear flags
     emu_cpu_eflags_set(m_cpu, 0);
 
-	/* FIXME: what is it? */
+	// FIXME: what is it?
     emu_memory_write_dword(m_mem, 0xef787c3c, 4711);
     emu_memory_write_dword(m_mem, 0x00416f9a, 4711);
     emu_memory_write_dword(m_mem, 0x0044fcf7, 4711);
@@ -79,13 +92,13 @@ int32_t EmulationUnit::loadCode(byte_t *code, int32_t size)
     emu_memory_write_dword(m_mem, 0x01001265, 4711);
     emu_memory_write_dword(m_mem, 0x8a000066, 4711);
 
-	/* write the code to the offset */
+	// write the code to the offset
     emu_memory_write_block(m_mem, STATIC_CODE_OFFSET, code, size);
 
-	/* set eip to the code */
+	// set eip to the code
     emu_cpu_eip_set(m_cpu, STATIC_CODE_OFFSET + m_codeOffset);
 
-	/* FIXME: what is it? */
+	// FIXME: what is it?
     emu_memory_write_block(m_mem, 0x0012fe98, code, size);
     emu_cpu_reg32_set(m_cpu, esp, STATIC_CODE_OFFSET - 50); //0x0012fe98);
     emu_memory_write_dword(m_mem, 0x7df7b0bb, 0x00000000); //UrldownloadToFile
@@ -141,12 +154,12 @@ void EmulationUnit::exportWin32Hooks()
     emu_env_w32_export_hook(m_env, "ExitProcess", userHook_ExitProcess, NULL);
     emu_env_w32_export_hook(m_env, "ExitThread", userHook_ExitThread, NULL);
 
-	/* shdocvw.dll */
+	// shdocvw.dll
     emu_env_w32_load_dll(m_env->env.win,"shdocvw.dll");
     emu_env_w32_export_hook(m_env, "IEWinMain", userHook_IEWinMain, NULL);
     LOG("loaded: [shdocvw.dll]\n");
 
-	/* msvcrt.dll */
+	// msvcrt.dll
     emu_env_w32_load_dll(m_env->env.win,"msvcrt.dll");
     emu_env_w32_export_hook(m_env, "fclose", userHook_fclose, na);
     emu_env_w32_export_hook(m_env, "fopen", userHook_fopen, na);
@@ -159,7 +172,7 @@ void EmulationUnit::exportWin32Hooks()
     emu_env_w32_export_hook(m_env, "CloseHandle", userHook_CloseHandle, na);
     LOG("loaded: [msvcrt.dll]\n");
 
-	/* ws2_32.dll */
+	// ws2_32.dll
     emu_env_w32_load_dll(m_env->env.win,"ws2_32.dll");
     emu_env_w32_export_hook(m_env, "accept", userHook_accept, NULL);
     emu_env_w32_export_hook(m_env, "bind", userHook_bind, NULL);
@@ -173,7 +186,7 @@ void EmulationUnit::exportWin32Hooks()
     emu_env_w32_export_hook(m_env, "WSASocketA", userHook_WSASocket, NULL);
     LOG("loaded: [ws2_32.dll]\n");
 
-	/* urlmon.dll */
+	// urlmon.dll
     emu_env_w32_load_dll(m_env->env.win,"urlmon.dll");
     emu_env_w32_export_hook(m_env, "URLDownloadToFileA", userHook_URLDownloadToFile, NULL);
     LOG("loaded: [urlmon.dll]\n");

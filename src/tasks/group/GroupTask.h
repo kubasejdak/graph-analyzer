@@ -7,9 +7,9 @@
 #ifndef GROUPTASK_H
 #define GROUPTASK_H
 
+#include <list>
+#include <string>
 #include <QDate>
-#include <QList>
-#include <QString>
 #include <QDomElement>
 
 #include <tasks/ITask.h>
@@ -28,12 +28,12 @@ private:
 
 	GroupManager m_groupManager;
 
-    /* task specific info */
-    QList<QString> m_taskFiles;
+	// task specific info
+	std::list<std::string> m_taskFiles;
     bool m_override;
     QDate m_from;
     QDate m_until;
-    QString m_algorithm;
+	std::string m_algorithm;
 };
 
 #endif /* GROUPTASK_H */

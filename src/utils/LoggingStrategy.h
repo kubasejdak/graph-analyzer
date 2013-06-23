@@ -7,27 +7,27 @@
 #ifndef LOGGINGSTRATEGY_H
 #define LOGGINGSTRATEGY_H
 
-#include <QString>
+#include <string>
 
 class ILoggingStrategy {
 public:
 	ILoggingStrategy() {}
 	virtual ~ILoggingStrategy() {}
 
-	virtual void log(QString message) = 0;
-	virtual QString description() = 0;
+	virtual void log(std::string message) = 0;
+	virtual std::string description() = 0;
 };
 
 class FileLoggingStrategy : public ILoggingStrategy {
 public:
-	FileLoggingStrategy(QString filename);
+	FileLoggingStrategy(std::string filename);
 	virtual ~FileLoggingStrategy() {}
 
-	virtual void log(QString message);
-	virtual QString description();
+	virtual void log(std::string message);
+	virtual std::string description();
 
 private:
-	QString m_logFile;
+	std::string m_logFile;
 };
 
 class ConsoleLoggingStrategy : public ILoggingStrategy {
@@ -35,8 +35,8 @@ public:
 	ConsoleLoggingStrategy() {}
 	virtual ~ConsoleLoggingStrategy() {}
 
-	virtual void log(QString message);
-	virtual QString description();
+	virtual void log(std::string message);
+	virtual std::string description();
 };
 
 #endif // LOGGINGSTRATEGY_H

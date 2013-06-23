@@ -7,13 +7,11 @@
 #ifndef IANALYZE_H_
 #define IANALYZE_H_
 
-#include <QMap>
-#include <QtSql>
+#include <string>
 
 #include <tasks/analyze/modules/IModule.h>
-#include <core/ExploitSample.h>
-#include <core/ExploitInfo.h>
-#include <utils/DatabaseManager.h>
+
+class ExploitSample;
 
 class IAnalyze: public IModule {
 public:
@@ -24,7 +22,7 @@ public:
 	virtual bool exportToDatabase(ExploitSample *sample, int sampleId) = 0;
 
 protected:
-    QString m_traitName;
+	std::string m_traitName;
 };
 
 #endif /* IANALYZE_H_ */

@@ -6,9 +6,11 @@
 
 #include "AnalysisSystem.h"
 
-#include <QMap>
-
+#include <core/ExploitSample.h>
 #include <utils/SystemLogger.h>
+#include <tasks/analyze/modules/analyze/IAnalyze.h>
+
+using namespace std;
 
 AnalysisSystem::AnalysisSystem()
 {
@@ -44,9 +46,9 @@ bool AnalysisSystem::analyze()
 	bool status;
 	AnalyzeMap::iterator it;
 	for(it = m_analyzeMods->begin(); it != m_analyzeMods->end(); ++it) {
-        status = it.value()->perform(m_sample);
+		status = it->second->perform(m_sample);
         if(!status) {
-            LOG_ERROR("analyze module failed: [%s]\n", it.key().toStdString().c_str());
+			LOG_ERROR("analyze module failed: [%s]\n", it->first.c_str());
             LOG_ERROR("FAILURE\n\n");
             return false;
         }

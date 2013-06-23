@@ -7,21 +7,22 @@
 #ifndef TOOLBOX_H_
 #define TOOLBOX_H_
 
-#include <QString>
-#include <stdint.h>
+#include <cstdint>
+#include <string>
 
 typedef uint8_t byte_t;
 
 class Toolbox {
 public:
-    static QString itos(int n, int base = 10);
-    static QString hash(QString data);
+	static std::string itos(int n, int base = 10);
+	static std::string hash(std::string data);
 
-    /* paths */
-    static QString makeRelative(QString path);
-    static QString removeSlash(QString path);
-	static QString pcapFlowBasename(QString path);
-    static bool removeDirectory(QString path);
+	// paths
+	static std::string makeRelative(std::string path);
+	static std::string removeSlash(std::string path);
+	static std::string pcapFlowBasename(std::string path);
+	static bool removeDirectory(std::string path);
+	static std::string formatToString(const std::string fmt...);
 };
 
 #endif /* TOOLBOX_H_ */

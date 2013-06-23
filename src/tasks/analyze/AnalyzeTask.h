@@ -7,13 +7,14 @@
 #ifndef ANALYZETASK_H
 #define ANALYZETASK_H
 
-class QList;
-class QString;
+#include <string>
+#include <list>
+#include <QDomElement>
 
-class ITask;
-class AnalysisSystem;
-class EmulationSystem;
-class ModuleManager;
+#include <tasks/ITask.h>
+#include <tasks/analyze/AnalysisSystem.h>
+#include <tasks/analyze/EmulationSystem.h>
+
 class ExploitSample;
 
 class AnalyzeTask : public ITask {
@@ -26,9 +27,9 @@ private:
     virtual bool performTask();
 	virtual void updateStatus();
 	virtual bool readConfigXML(QDomElement taskNode);
-	void addScheduledFile(QString filename);
+	void addScheduledFile(std::string filename);
 
-	int load(QString filename);
+	int load(std::string filename);
 	bool emulate(ExploitSample *s);
 	bool analyze(ExploitSample *s);
 	bool exportResults(ExploitSample *s);
@@ -36,8 +37,8 @@ private:
 	EmulationSystem m_emulationSystem;
 	AnalysisSystem m_analysisSystem;
 
-	/* task specific info */
-    QList<QString> m_taskFiles;
+	// task specific info
+	std::list<std::string> m_taskFiles;
 	bool m_override;
 	int m_scheduledFiles;
 	int m_loadedFiles;

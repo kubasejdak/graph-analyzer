@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 2.8.10)
 project(graph-analyzer)
 
 # options passed to the compiler
-add_definitions(-g -Wall -fPIC)
+add_definitions(-g -Wall -fPIC -std=c++11)
 
 # Qt5
 find_package(Qt5Core REQUIRED)

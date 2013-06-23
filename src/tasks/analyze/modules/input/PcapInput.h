@@ -7,14 +7,17 @@
 #ifndef PCAPINPUT_H_
 #define PCAPINPUT_H_
 
+#include <string>
+
 #include <tasks/analyze/modules/input/IInput.h>
+#include <core/ExploitSample.h>
 
 class PcapInput: public IInput {
 public:
 	PcapInput();
     virtual ~PcapInput() {}
 
-	virtual bool loadInput(QString filename, SampleContainer *samples);
+	virtual bool loadInput(std::string filename, SampleContainer *samples);
 };
 
 #endif /* PCAPINPUT_H_ */

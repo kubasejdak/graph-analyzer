@@ -5,19 +5,23 @@
  */
 
 #include "FileTypeAnalyzer.h"
+
+#include <string>
+#include <magic.h>
+
 #include <utils/Toolbox.h>
 #include <utils/SystemLogger.h>
 
-#include <magic.h>
+using namespace std;
 
-QString FileTypeAnalyzer::analyze(QString filename)
+string FileTypeAnalyzer::analyze(string filename)
 {
 	magic_t myt = magic_open(MAGIC_ERROR | MAGIC_MIME_TYPE);
 	magic_load(myt, NULL);
-	QString fileType = magic_file(myt, filename.toStdString().c_str());
+    string fileType = magic_file(myt, filename.c_str());
 	magic_close(myt);
 
-	LOG("recognized file: [%s] as [%s] type\n", filename.toStdString().c_str(), fileType.toStdString().c_str());
+    LOG("recognized file: [%s] as [%s] type\n", filename.c_str(), fileType.c_str());
 	LOG("SUCCESS\n\n");
 	return fileType;
 }

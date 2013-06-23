@@ -7,11 +7,9 @@
 #ifndef ANALYSISSYSTEM_H_
 #define ANALYSISSYSTEM_H_
 
-class QMap;
+#include <tasks/analyze/modules/ModuleManager.h>
 
 class ExploitSample;
-class IAnalyze;
-class ModuleManager;
 
 class AnalysisSystem {
 public:

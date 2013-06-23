@@ -5,8 +5,19 @@
  */
 
 #include "SyscallAnalyze.h"
+
+#include <string>
+#include <sstream>
+#include <QtSql>
+
 #include <core/Graph.h>
+#include <core/ExploitSample.h>
 #include <utils/InstructionSplitter.h>
+#include <utils/SystemLogger.h>
+#include <utils/DatabaseManager.h>
+#include <tasks/analyze/modules/analyze/IAnalyze.h>
+
+using namespace std;
 
 SyscallAnalyze::SyscallAnalyze()
 {
@@ -19,7 +30,7 @@ bool SyscallAnalyze::perform(ExploitSample *sample)
 {
     Graph *g = sample->graph();
 	struct instr_vertex *instr_vert;
-    QString syscall, dll;
+	string syscall, dll;
 	Graph::graph_iterator it;
 	InstructionSplitter splitter;
 	TraitsEntry *m;
@@ -33,9 +44,9 @@ bool SyscallAnalyze::perform(ExploitSample *sample)
             syscall = splitter.syscall();
 			m = new TraitsEntry();
 			(*m)["syscall"] = syscall;
-            LOG("syscall: [%s]\n", syscall.toStdString().c_str());
+			LOG("syscall: [%s]\n", syscall.c_str());
 			(*m)["DLL"] = dll;
-            LOG("DLL: [%s]\n", dll.toStdString().c_str());
+			LOG("DLL: [%s]\n", dll.c_str());
             sample->info()->setTrait(m_traitName, m);
 		}
 	}
@@ -46,49 +57,52 @@ bool SyscallAnalyze::perform(ExploitSample *sample)
 
 bool SyscallAnalyze::exportToDatabase(ExploitSample *sample, int sampleId)
 {
-	/* get sample traits */
+	// get sample traits
 	TraitsMap *traits = sample->info()->traits();
 	TraitsMap::iterator it;
 
-	/* for all api traits in sample*/
+	// for all api traits in sample
 	for(it = traits->find(m_traitName); it != traits->end() && it.key() == m_traitName; ++it) {
-		/* check if syscall/DLL is unique */
-		QString syscall = it.value()->value("syscall");
-		QString dll = it.value()->value("DLL");
+		// check if syscall/DLL is unique
+		string syscall = it.value()->value("syscall");
+		string dll = it.value()->value("DLL");
+
+		stringstream ss;
+		ss << "SELECT * FROM analyze_api WHERE syscall = '" << syscall << "' AND dll = '" << dll << "'";
+
 		QSqlQuery selectQuery(DatabaseManager::instance()->database());
-		selectQuery.prepare("SELECT * FROM analyze_api WHERE syscall = ? AND dll = ?");
-		selectQuery.addBindValue(syscall);
-		selectQuery.addBindValue(dll);
+		selectQuery.prepare(ss.str().c_str());
 		if(!DatabaseManager::instance()->exec(&selectQuery)) {
 			LOG_ERROR("FAILURE\n\n");
 			return false;
 		}
 
 		int apiId;
-		/* if entry in database exists */
+		// if entry in database exists
 		if(selectQuery.next())
 			apiId = selectQuery.record().value("id").toInt();
 		else {
-			/* get next api_id number */
+			// get next api_id number
 			apiId = DatabaseManager::instance()->sequenceValue("analyze_api_id_seq");
 
-			/* insert data */
+			// insert data
+			stringstream ss;
+			ss << "INSERT INTO analyze_api VALUES (" << apiId << ", '" << dll << "', '" << syscall << "')";
+
 			QSqlQuery insertQuery(DatabaseManager::instance()->database());
-			insertQuery.prepare("INSERT INTO analyze_api VALUES (?, ?, ?)");
-			insertQuery.addBindValue(apiId);
-			insertQuery.addBindValue(dll);
-			insertQuery.addBindValue(syscall);
+			insertQuery.prepare(ss.str().c_str());
 			if(!DatabaseManager::instance()->exec(&insertQuery)) {
 				LOG_ERROR("FAILURE\n\n");
 				return false;
 			}
 		}
 
-		/* add assignment to sample */
+		// add assignment to sample
+		ss.str("");
+		ss << "INSERT INTO analyze_apiassignment VALUES (DEFAULT, " << apiId << ", " << sampleId << ")";
+
 		QSqlQuery insert2Query(DatabaseManager::instance()->database());
-		insert2Query.prepare("INSERT INTO analyze_apiassignment VALUES (DEFAULT, ?, ?)");
-		insert2Query.addBindValue(apiId);
-		insert2Query.addBindValue(sampleId);
+		insert2Query.prepare(ss.str().c_str());
 		if(!DatabaseManager::instance()->exec(&insert2Query)) {
 			LOG_ERROR("FAILURE\n\n");
 			return false;

@@ -7,19 +7,19 @@
 #ifndef IMODULE_H_
 #define IMODULE_H_
 
-#include <QString>
+#include <string>
 
 class IModule {
 public:
 	IModule() {}
 	virtual ~IModule() {}
 
-	QString name() { return m_name; }
-	QString description() { return m_description; }
+	std::string name() { return m_name; }
+	std::string description() { return m_description; }
 
 protected:
-    QString m_name;
-    QString m_description;
+	std::string m_name;
+	std::string m_description;
 };
 
 #endif /* IMODULE_H_ */

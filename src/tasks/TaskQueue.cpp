@@ -6,17 +6,22 @@
 
 #include "TaskQueue.h"
 
+#include <vector>
+#include <tasks/ITask.h>
+
+using namespace std;
+
 TaskQueue::~TaskQueue()
 {
-	while(!m_tasks.empty()) {
-		delete m_tasks.first();
-		m_tasks.pop_front();
+	while(m_tasks.empty() == false) {
+		delete m_tasks.back();
+		m_tasks.pop_back();
 	}
 }
 
 void TaskQueue::insert(ITask *task)
 {
-	m_tasks.append(task);
+	m_tasks.push_back(task);
 }
 
 ITask *TaskQueue::get()
@@ -24,8 +29,8 @@ ITask *TaskQueue::get()
 	if(m_tasks.size() == 0)
 		return NULL;
 
-	ITask *ret = m_tasks.first();
-	m_tasks.pop_front();
+	ITask *ret = m_tasks.front();
+	m_tasks.erase(m_tasks.begin());
 
 	return ret;
 }

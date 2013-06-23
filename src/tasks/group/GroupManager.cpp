@@ -4,6 +4,7 @@
  * Created on	: 09-12-2012
  */
 
+#if 0
 #include "GroupManager.h"
 #include <core/ExploitSample.h>
 #include <utils/DatabaseManager.h>
@@ -15,22 +16,22 @@ void GroupManager::processOneSampleGroup(int sampleId, int groupId, int resemble
 {
 	LOG("resemblence level: [%d]\n", resemblenceLevel);
 
-	/* ====== PART 1: assign sample to all existing groups ====== */
+	// ====== PART 1: assign sample to all existing groups ======
 
-	/* find maching groups */
+	// find maching groups
 	QMap<int, int> machingGroups = findMatchingGroups(sampleId, resemblenceLevel);
 
-	/* assign to maching groups */
+	// assign to maching groups
 	QMap<int, int>::iterator itGroup;
 	for(itGroup = machingGroups.begin(); itGroup != machingGroups.end(); ++itGroup)
 		assignToGroup(itGroup.key(), sampleId, itGroup.value());
 
-	/* ====== PART 2: assign all samples to new sample group ====== */ /* <--------------- OK */
+	// ====== PART 2: assign all samples to new sample group ======
 
-	/* find maching samples */
+	// find maching samples
 	QMap<int, int> machingSamples = findMatchingSamples(sampleId, resemblenceLevel);
 
-	/* assign to maching samples */
+	// assign to maching samples
 	LOG("assigning samples to one group, leaderId: [%d]\n", sampleId);
 	QMap<int, int>::iterator itSample;
 	for(itSample = machingSamples.begin(); itSample != machingSamples.end(); ++itSample)
@@ -39,20 +40,20 @@ void GroupManager::processOneSampleGroup(int sampleId, int groupId, int resemble
 
 void GroupManager::processAllSampleGroups(int resemblenceLevel)
 {
-	/* clear current group assignments */
+	// clear current group assignments
 	DatabaseManager::instance()->clearTable("analyze_groupassignment");
 
-	/* get all samples */
+	// get all samples
 	QSqlQuery samplesQuery(DatabaseManager::instance()->database());
 	samplesQuery.prepare("SELECT * FROM analyze_sample");
 	if(!DatabaseManager::instance()->exec(&samplesQuery))
 		return;
 
-	/* for every sample */
+	// for every sample
 	while(samplesQuery.next()) {
 		int sampleId = samplesQuery.record().value("id").toInt();
 
-		/* process samples group */
+		// process samples group
 		QSqlQuery idQuery(DatabaseManager::instance()->database());
 		idQuery.prepare("SELECT * FROM analyze_samplegroup WHERE leader_id = ?");
 		idQuery.addBindValue(sampleId);
@@ -69,7 +70,7 @@ QMap<int, int> GroupManager::findMatchingGroups(int sampleId, int resemblenceLev
 {
 	QMap<int, int> machingGroups;
 
-	/* get all leaders */
+	// get all leaders
 	QSqlQuery leadersQuery(DatabaseManager::instance()->database());
 	leadersQuery.prepare("SELECT * FROM analyze_sample");
 	if(!DatabaseManager::instance()->exec(&leadersQuery))
@@ -82,9 +83,9 @@ QMap<int, int> GroupManager::findMatchingGroups(int sampleId, int resemblenceLev
 
 		int resemblenceRate = resemblenceToGroup(sampleId, leaderId);
 
-		/* add */
+		// add
 		if(resemblenceRate >= resemblenceLevel) {
-			/* get group id */
+			// get group id
 			QSqlQuery groupQuery(DatabaseManager::instance()->database());
 			groupQuery.prepare("SELECT * FROM analyze_samplegroup WHERE leader_id = ?");
 			groupQuery.addBindValue(leaderId);
@@ -106,7 +107,7 @@ QMap<int, int> GroupManager::findMatchingSamples(int leaderId, int resemblenceLe
 {
 	QMap<int, int> machingSamples;
 
-	/* get all samples */
+	// get all samples
 	QSqlQuery samplesQuery(DatabaseManager::instance()->database());
 	samplesQuery.prepare("SELECT * FROM analyze_sample");
 	if(!DatabaseManager::instance()->exec(&samplesQuery))
@@ -117,10 +118,10 @@ QMap<int, int> GroupManager::findMatchingSamples(int leaderId, int resemblenceLe
 		if(sampleId == leaderId)
 			continue;
 
-		/* get resemblence */
+		// get resemblence
 		int resemblenceRate = resemblenceToGroup(sampleId, leaderId);
 
-		/* add */
+		// add
 		if(resemblenceRate >= resemblenceLevel) {
 			machingSamples[sampleId] = resemblenceRate;
 			LOG("resemblence rate: [%d] for sample: [%d]\n", resemblenceRate, sampleId);
@@ -133,13 +134,13 @@ QMap<int, int> GroupManager::findMatchingSamples(int leaderId, int resemblenceLe
 
 int GroupManager::resemblenceToGroup(int sampleId, int leaderId)
 {
-	/* get all sample loop hashes */
+	// get all sample loop hashes
 	QVector<QString> sampleHashes = loopHashes(sampleId);
 
-	/* get all leader's loops */
+	// get all leader's loops
 	QVector<QString> leaderHashes = loopHashes(leaderId);
 
-	/* compare samples and leaders loop hashes */
+	// compare samples and leaders loop hashes
 	int resemblenceCounter = 0;
 	int overallCounter = 0;
 	for(int i = 0; i < leaderHashes.size(); ++i) {
@@ -148,13 +149,13 @@ int GroupManager::resemblenceToGroup(int sampleId, int leaderId)
 			++resemblenceCounter;
 	}
 
-	/* prevent floating point exception */
+	// prevent floating point exception
 	if(overallCounter == 0) {
 		LOG("leader doesn't have any loops, skipping, leader_id: [%d]\n", leaderId);
 		return 0;
 	}
 
-	/* compute resemlence rate */
+	// compute resemlence rate
 	int resemblenceRate = (resemblenceCounter * 100) / overallCounter;
 	LOG("resemblenceRate: [%d]\n", resemblenceRate);
 
@@ -165,10 +166,10 @@ void GroupManager::assignToGroup(int groupId, int memberId, int resemblenceRate)
 {
 	LOG("assigning member: [%d] to group: [%d]\n", memberId, groupId);
 
-	/* get next samplegroup_id number */
+	// get next samplegroup_id number
 	int assignId = DatabaseManager::instance()->sequenceValue("analyze_groupassignment_id_seq");
 
-	/* check if assignment is unique */
+	// check if assignment is unique
 	QSqlQuery checkQuery(DatabaseManager::instance()->database());
 	checkQuery.prepare("SELECT * FROM analyze_groupassignment WHERE group_id = ? AND member_id = ?");
 	checkQuery.addBindValue(groupId);
@@ -176,11 +177,11 @@ void GroupManager::assignToGroup(int groupId, int memberId, int resemblenceRate)
 	if(!DatabaseManager::instance()->exec(&checkQuery))
 		return;
 
-	/* do not assign same sample to same group more than once */
+	// do not assign same sample to same group more than once
 	if(checkQuery.next())
 		return;
 
-	/* assign sample to group */
+	// assign sample to group
 	QSqlQuery assignQuery(DatabaseManager::instance()->database());
 	assignQuery.prepare("INSERT INTO analyze_groupassignment VALUES (?, ?, ?, ?)");
 	assignQuery.addBindValue(assignId);
@@ -195,7 +196,7 @@ void GroupManager::assignToGroup(int groupId, int memberId, int resemblenceRate)
 
 QVector<QString> GroupManager::loopHashes(int sampleId)
 {
-	/* get all sample loop hashes */
+	// get all sample loop hashes
 	QSqlQuery assignQuery(DatabaseManager::instance()->database());
 	assignQuery.prepare("SELECT * FROM analyze_loopassignment WHERE sample_id = ?");
 	assignQuery.addBindValue(sampleId);
@@ -221,17 +222,17 @@ QVector<QString> GroupManager::loopHashes(int sampleId)
 
 void GroupManager::countGroupsMembers()
 {
-	/* get all groups */
+	// get all groups
 	QSqlQuery selectQuery(DatabaseManager::instance()->database());
 	selectQuery.prepare("SELECT * FROM analyze_samplegroup");
 	if(!DatabaseManager::instance()->exec(&selectQuery))
 		return;
 
-	/* for all groups */
+	// for all groups
 	while(selectQuery.next()) {
 		int groupId = selectQuery.record().value("id").toInt();
 
-		/* get number of members in this group */
+		// get number of members in this group
 		QSqlQuery select2Query(DatabaseManager::instance()->database());
 		select2Query.prepare("SELECT * FROM analyze_groupassignment WHERE group_id = ?");
 		select2Query.addBindValue(groupId);
@@ -241,7 +242,7 @@ void GroupManager::countGroupsMembers()
 		int membersNum = select2Query.size() + 1;	// +1 because we count also the leader
 		LOG("groupId: [%d], membersNum: [%d]\n", groupId, membersNum);
 
-		/* update number of members for this group */
+		// update number of members for this group
 		QSqlQuery updateQuery(DatabaseManager::instance()->database());
 		updateQuery.prepare("UPDATE analyze_samplegroup SET members_num = ? WHERE id = ?");
 		updateQuery.addBindValue(membersNum);
@@ -255,7 +256,7 @@ void GroupManager::countGroupsMembers()
 
 void GroupManager::activateUniqueGroups()
 {
-	/* get all groups */
+	// get all groups
 	QSqlQuery selectQuery(DatabaseManager::instance()->database());
 	selectQuery.prepare("SELECT * FROM analyze_samplegroup");
 	if(!DatabaseManager::instance()->exec(&selectQuery))
@@ -263,11 +264,11 @@ void GroupManager::activateUniqueGroups()
 
 	QVector<int> activeGroups;
 
-	/* for all groups */
+	// for all groups
 	while(selectQuery.next()) {
 		int groupId = selectQuery.record().value("id").toInt();
 
-		/* check if is assigned to active groups in both ways */
+		// check if is assigned to active groups in both ways
 		bool active = true;
 		for(int i = 0; i < activeGroups.size(); ++i) {
 			int activeId = activeGroups[i];
@@ -280,7 +281,7 @@ void GroupManager::activateUniqueGroups()
 			activeGroups.push_back(groupId);
 	}
 
-	/* for all groups */
+	// for all groups
 	QSqlQuery select2Query(DatabaseManager::instance()->database());
 	select2Query.prepare("SELECT * FROM analyze_samplegroup");
 	if(!DatabaseManager::instance()->exec(&select2Query))
@@ -294,7 +295,7 @@ void GroupManager::activateUniqueGroups()
 		else
 			activation = "false";
 
-		/* update group */
+		// update group
 		QSqlQuery updateQuery(DatabaseManager::instance()->database());
 		updateQuery.prepare("UPDATE analyze_samplegroup SET active = ? WHERE id = ?");
 		updateQuery.addBindValue(activation);
@@ -308,7 +309,7 @@ void GroupManager::activateUniqueGroups()
 
 bool GroupManager::isDoubleConnected(int group1Id, int group2Id)
 {
-	/* get first leader */
+	// get first leader
 	QSqlQuery leader1Query(DatabaseManager::instance()->database());
 	leader1Query.prepare("SELECT leader_id FROM analyze_samplegroup WHERE id = ?");
 	leader1Query.addBindValue(group1Id);
@@ -318,7 +319,7 @@ bool GroupManager::isDoubleConnected(int group1Id, int group2Id)
 	leader1Query.next();
 	int leader1Id = leader1Query.record().value("leader_id").toInt();
 
-	/* get second leader */
+	// get second leader
 	QSqlQuery leader2Query(DatabaseManager::instance()->database());
 	leader2Query.prepare("SELECT leader_id FROM analyze_samplegroup WHERE id = ?");
 	leader2Query.addBindValue(group2Id);
@@ -328,7 +329,7 @@ bool GroupManager::isDoubleConnected(int group1Id, int group2Id)
 	leader2Query.next();
 	int leader2Id = leader2Query.record().value("leader_id").toInt();
 
-	/* check first way connection */
+	// check first way connection
 	bool connection1 = false;
 	QSqlQuery select1Query(DatabaseManager::instance()->database());
 	select1Query.prepare("SELECT * FROM analyze_groupassignment WHERE group_id = ?");
@@ -343,7 +344,7 @@ bool GroupManager::isDoubleConnected(int group1Id, int group2Id)
 		}
 	}
 
-	/* check second way connection */
+	// check second way connection
 	bool connection2 = false;
 	QSqlQuery select2Query(DatabaseManager::instance()->database());
 	select2Query.prepare("SELECT * FROM analyze_groupassignment WHERE group_id = ?");
@@ -360,3 +361,4 @@ bool GroupManager::isDoubleConnected(int group1Id, int group2Id)
 
 	return (connection1 && connection2);
 }
+#endif

@@ -6,15 +6,17 @@
 
 #include "Options.h"
 
-#include <QString>
-#include <QList>
+#include <string>
+#include <QDomElement>
 
 #include <utils/SystemLogger.h>
 #include <utils/XMLParser.h>
 
+using namespace std;
+
 Options::Options()
 {
-	/* initial configuration */
+	// initial configuration
 	graphsDir = "/var/www/jsejdak/graphs";
     tmpPcapDir = "/tmp/tmp_pcap";
 	emulationSteps = 1000000;
@@ -45,11 +47,11 @@ bool Options::readConfigXML()
 
 	QDomElement options = m_xmlParser.root("CoreOptions");
 
-	graphsDir = m_xmlParser.child(options, "GraphsDir").attribute("path");
+    graphsDir = m_xmlParser.child(options, "GraphsDir").attribute("path").toStdString();
 
-    tmpPcapDir = m_xmlParser.child(options, "TmpPcapDir").attribute("path");
+    tmpPcapDir = m_xmlParser.child(options, "TmpPcapDir").attribute("path").toStdString();
 
-    tcpflowParams = m_xmlParser.child(options, "TcpflowParams").attribute("val");
+    tcpflowParams = m_xmlParser.child(options, "TcpflowParams").attribute("val").toStdString();
 
 	emulationSteps = m_xmlParser.child(options, "EmulationSteps").attribute("val").toInt();
 
@@ -66,11 +68,11 @@ bool Options::readConfigXML()
 
 void Options::listOptions()
 {
-	/* core settings */
+	// core settings
 	LOG("core settings:\n");
-	LOG("graphsDir: [%s]\n", graphsDir.toStdString().c_str());
-    LOG("tmpPcapDir: [%s]\n", tmpPcapDir.toStdString().c_str());
-    LOG("tcpflowParams: [%s]\n", tcpflowParams.toStdString().c_str());
+	LOG("graphsDir: [%s]\n", graphsDir.c_str());
+	LOG("tmpPcapDir: [%s]\n", tmpPcapDir.c_str());
+	LOG("tcpflowParams: [%s]\n", tcpflowParams.c_str());
 	LOG("emulationSteps: [%d]\n", emulationSteps);
 	LOG("skipBigFiles: [%s]\n", skipBigFiles ? "true" : "false");
 	LOG("bigFileSize: [%d]\n", bigFileSize);

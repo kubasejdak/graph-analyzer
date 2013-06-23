@@ -7,11 +7,13 @@
 #include "Graph.h"
 
 #include <iterator>
-#include <QVector>
-#include <QString>
+#include <vector>
+#include <string>
 
 #include <utils/InstructionSplitter.h>
 #include <utils/SystemLogger.h>
+
+using namespace std;
 
 //====================================================================================================================================
 
@@ -155,7 +157,7 @@ LoopContainer *Graph::detectLoop(Graph::graph_iterator from_it)
 {
 	emu_vertex *from = &(*from_it);
 
-	/* eliminate impossible loop starts */
+	// eliminate impossible loop starts
 	uint32_t n = (emu_vertexes_ishead(from)) ? 1 : 2;
 	if(from->backlinks < n)
 		return NULL;
@@ -171,28 +173,28 @@ LoopContainer *Graph::detectLoop(Graph::graph_iterator from_it)
 	emu_edge *tmp_e = emu_edge_new();
 	emu_vertex *v;
 
-	/* possible loop paths for vertex "from" */
-    for(int i = 0; i < loops->size(); ++i) {
-		/* last vertex in actual path */
+	// possible loop paths for vertex "from"
+	for(unsigned int i = 0; i < loops->size(); ++i) {
+		// last vertex in actual path
 		v = (*loops)[i]->back();
 
-		/* clear colors starting from this vertex */
+		// clear colors starting from this vertex
 		clearVertColor(v);
 
-		/* all vertexes in possible loop path */
+		// all vertexes in possible loop path
 		while(true) {
-			/* save actual path */
+			// save actual path
 			*tmp = *((*loops)[i]);
 
-			/* this vertex is visited */
+			// this vertex is visited
 			v->color = black;
 
-			/* all edges from v */
+			// all edges from v
 			bool actual = 1;
 			bool continuation = true;
 			bool has_edges = false;
 			for(e = emu_edges_first(v->edges); !emu_edges_attail(e); e = emu_edges_next(e), actual = 0) {
-				/* at least one edge */
+				// at least one edge
 				has_edges = true;
 
 				if(actual) {
@@ -225,9 +227,9 @@ LoopContainer *Graph::detectLoop(Graph::graph_iterator from_it)
 				break;
 
 			v = tmp_e->destination;
-		} /* while */
+		} // while
 
-		/* remove paths that are not loops */
+		// remove paths that are not loops
 		v = (*loops)[i]->back();
 		bool loop_found = false;
 		for(e = emu_edges_first(v->edges); !emu_edges_attail(e); e = emu_edges_next(e)) {
@@ -242,7 +244,7 @@ LoopContainer *Graph::detectLoop(Graph::graph_iterator from_it)
 			loops->erase(loops->begin() + i);
 			--i;
 		}
-	} /* for */
+	} // for
 
 	return loops;
 }
@@ -262,7 +264,7 @@ int Graph::size()
 	return vertexes_num;
 }
 
-bool Graph::exportGraph(GraphExportStrategy strategy, QString filename)
+bool Graph::exportGraph(GraphExportStrategy strategy, string filename)
 {
 	bool stat = false;
 
@@ -280,14 +282,14 @@ bool Graph::exportGraph(GraphExportStrategy strategy, QString filename)
 	return stat;
 }
 
-bool Graph::dotExportStrategy(QString filename)
+bool Graph::dotExportStrategy(string filename)
 {
 	struct emu_vertex *ev;
 	struct instr_vertex *iv;
 
-	FILE *f = fopen(filename.toStdString().c_str(), "w+");
+	FILE *f = fopen(filename.c_str(), "w+");
 	if(f == NULL) {
-		LOG_ERROR("cannot open temporary file [%s]\n", filename.toStdString().c_str());
+		LOG_ERROR("cannot open temporary file [%s]\n", filename.c_str());
 		LOG_ERROR("FAILURE\n\n");
 		return false;
 	}
@@ -313,11 +315,11 @@ bool Graph::dotExportStrategy(QString filename)
 	}
 
 	for(ev = emu_vertexes_first(graph->vertexes); !emu_vertexes_attail(ev); ev = emu_vertexes_next(ev)) {
-		/* ignore known */
+		// ignore known
 		if(ev->color == black)
 			continue;
 
-		/* find the first in a chain */
+		// find the first in a chain
 		iv = (struct instr_vertex *) ev->data;
 		while(emu_edges_length(ev->backedges) == 1 && emu_edges_length(ev->edges) <= 1
 				&& ev->color == white && iv->dll == NULL && iv->syscall == NULL) {
@@ -333,7 +335,7 @@ bool Graph::dotExportStrategy(QString filename)
 
 		iv = (struct instr_vertex *) ev->data;
 
-		/* create the new vertex */
+		// create the new vertex
 		nev = (struct emu_vertex *) emu_hashtable_search(ht, (void *) iv)->value;
 		niv = (struct instr_vertex *) nev->data;
 		iv = (struct instr_vertex *) ev->data;

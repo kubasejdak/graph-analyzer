@@ -9,6 +9,8 @@
 
 #include <tasks/analyze/modules/analyze/IAnalyze.h>
 
+class ExploitSample;
+
 class GraphHash: public IAnalyze {
 public:
 	GraphHash();

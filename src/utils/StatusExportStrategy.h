@@ -7,8 +7,9 @@
 #ifndef STATUSEXPORTSTRATEGY_H
 #define STATUSEXPORTSTRATEGY_H
 
-#include <QString>
-#include <tasks/ITask.h>
+#include <string>
+
+class ITask;
 
 #define STATUS_FILE     "/var/www/jsejdak/GraphAnalyzerStatus.xml"
 
@@ -18,7 +19,7 @@ public:
     virtual ~IStatusExportStrategy() {}
 
     virtual void exportStatus(ITask *task) = 0;
-    virtual QString description() = 0;
+	virtual std::string description() = 0;
 };
 
 class DBStatusExportStrategy : public IStatusExportStrategy {
@@ -27,7 +28,7 @@ public:
     virtual ~DBStatusExportStrategy() {}
 
     virtual void exportStatus(ITask *task);
-    virtual QString description();
+	virtual std::string description();
 };
 
 #endif /* STATUSEXPORTSTRATEGY_H */

@@ -9,6 +9,8 @@
 
 #include <tasks/analyze/modules/analyze/IAnalyze.h>
 
+class ExploitSample;
+
 class LoopDetector: public IAnalyze {
 public:
 	LoopDetector();

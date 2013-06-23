@@ -7,6 +7,7 @@
 #ifndef DATEREGEXP_H
 #define DATEREGEXP_H
 
+#include <string>
 #include <QDate>
 
 class DateRegExp {
@@ -14,7 +15,7 @@ public:
 	DateRegExp() {}
 	virtual ~DateRegExp() {}
 
-	QDate findDate(QString name);
+	QDate findDate(std::string name);
 };
 
 #endif /* DATEREGEXP_H */

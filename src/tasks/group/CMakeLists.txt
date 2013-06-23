@@ -2,7 +2,7 @@
 
 set(GROUP_TASK_SRC
     GroupTask.cpp
-    ../../utils/DatabaseManager.cpp
+    #../../utils/DatabaseManager.cpp
     GroupManager.cpp
 )
 

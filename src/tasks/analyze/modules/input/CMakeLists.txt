@@ -2,7 +2,7 @@
 
 set(INPUT_SUBMODULES_SRC
     IInput.h
-	BinaryInput.cpp
+    BinaryInput.cpp
     PcapInput.cpp
 )
 

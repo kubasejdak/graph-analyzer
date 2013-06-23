@@ -5,11 +5,21 @@
  */
 
 #include "DatabaseManager.h"
+
+#include <string>
+#include <sstream>
+#include <QtSql>
+
 #include <core/Options.h>
+#include <core/ExploitSample.h>
+#include <utils/SystemLogger.h>
+#include <utils/XMLParser.h>
+
+using namespace std;
 
 DatabaseManager::DatabaseManager()
 {
-	/* initial configuration */
+	// initial configuration
 	m_driver = "QPSQL";
 	m_host = "localhost";
 	m_name = "graph_analyzer_db";
@@ -21,17 +31,19 @@ DatabaseManager::DatabaseManager()
 
 	listOptions();
 
-	m_db = QSqlDatabase::addDatabase(m_driver, "graph_analyzer_conn");
-	m_db.setHostName(m_host);
-	m_db.setDatabaseName(m_name);
-	m_db.setUserName(m_user);
-	m_db.setPassword(m_pass);
+    m_db = QSqlDatabase::addDatabase(m_driver.c_str(), "graph_analyzer_conn");
+    m_db.setHostName(m_host.c_str());
+    m_db.setDatabaseName(m_name.c_str());
+    m_db.setUserName(m_user.c_str());
+    m_db.setPassword(m_pass.c_str());
 
     m_lastError = "";
 
     if(!m_db.open()) {
-        m_lastError = QString("couldn't set up a connection to db: %1").arg(m_db.lastError().text());
-        LOG_ERROR("canot set up a connection with database\n");
+        stringstream ss;
+        ss << "couldn't set up a connection to db: " << m_db.lastError().text().toStdString();
+        m_lastError = ss.str();
+        LOG_ERROR("canot set up a connection with database, [%s]\n", ss.str().c_str());
     }
 
     LOG("created connection to database\n");
@@ -54,11 +66,11 @@ bool DatabaseManager::readConfigXML()
 	}
 
 	QDomElement options = m_xmlParser.root("Database");
-	m_driver = m_xmlParser.child(options, "DBDriver").attribute("val");
-	m_host = m_xmlParser.child(options, "DBHost").attribute("val");
-	m_name = m_xmlParser.child(options, "DBName").attribute("val");
-	m_user = m_xmlParser.child(options, "DBUser").attribute("val");
-	m_pass = m_xmlParser.child(options, "DBPass").attribute("val");
+    m_driver = m_xmlParser.child(options, "DBDriver").attribute("val").toStdString();
+    m_host = m_xmlParser.child(options, "DBHost").attribute("val").toStdString();
+    m_name = m_xmlParser.child(options, "DBName").attribute("val").toStdString();
+    m_user = m_xmlParser.child(options, "DBUser").attribute("val").toStdString();
+    m_pass = m_xmlParser.child(options, "DBPass").attribute("val").toStdString();
 
 	m_xmlParser.close();
 	LOG("SUCCESS\n\n");
@@ -67,22 +79,24 @@ bool DatabaseManager::readConfigXML()
 
 void DatabaseManager::listOptions()
 {
-	/* database settings */
+	// database settings
 	LOG("database settings:\n");
-	LOG("m_driver: [%s]\n", m_driver.toStdString().c_str());
-	LOG("m_host: [%s]\n", m_host.toStdString().c_str());
-	LOG("m_name: [%s]\n", m_name.toStdString().c_str());
-	LOG("m_user: [%s]\n", m_user.toStdString().c_str());
-	LOG("m_pass: [%s]\n", m_pass.toStdString().c_str());
+    LOG("m_driver: [%s]\n", m_driver.c_str());
+    LOG("m_host: [%s]\n", m_host.c_str());
+    LOG("m_name: [%s]\n", m_name.c_str());
+    LOG("m_user: [%s]\n", m_user.c_str());
+    LOG("m_pass: [%s]\n", m_pass.c_str());
 	LOG("SUCCESS\n\n");
 }
 
 bool DatabaseManager::exec(QSqlQuery *query) {
 	if(query->exec() == false) {
-		m_lastError = QString("error while executing query: %1").arg(query->lastError().databaseText());
-		SystemLogger::instance()->setError(DatabaseManager::instance()->lastError());
+        stringstream ss;
+        ss << "error while executing query: " << query->lastError().databaseText().toStdString();
+        m_lastError = ss.str();
+        SystemLogger::instance()->setError(m_lastError);
 		LOG_ERROR("query: [%s]\n", query->executedQuery().toStdString().c_str());
-        LOG_ERROR("executing query failed: [%s]\n", query->lastError().databaseText().toStdString().c_str());
+        LOG_ERROR("executing query failed: [%s]\n", m_lastError.c_str());
         LOG_ERROR("FAILURE\n\n");
         return false;
     }
@@ -90,14 +104,14 @@ bool DatabaseManager::exec(QSqlQuery *query) {
     return true;
 }
 
-bool DatabaseManager::clearTable(QString table)
+bool DatabaseManager::clearTable(string table)
 {
-	LOG("clearing table: [%s]\n", table.toStdString().c_str());
+    LOG("clearing table: [%s]\n", table.c_str());
 
-	/* delete all group assignments */
+	// delete all group assignments
 	QSqlQuery deleteQuery(DatabaseManager::instance()->database());
-	QString q = QString("DELETE FROM %1").arg(table);
-	deleteQuery.prepare(q);
+    deleteQuery.prepare("DELETE FROM ?");
+    deleteQuery.addBindValue(table.c_str());
 	if(!DatabaseManager::instance()->exec(&deleteQuery)) {
 		LOG_ERROR("FAILURE\n\n");
 		return false;
@@ -106,14 +120,14 @@ bool DatabaseManager::clearTable(QString table)
 	return true;
 }
 
-int DatabaseManager::sequenceValue(QString table)
+int DatabaseManager::sequenceValue(string table)
 {
-	LOG("getting next sequence value for table: [%s]\n", table.toStdString().c_str());
+    LOG("getting next sequence value for table: [%s]\n", table.c_str());
 
-	/* get next sample_id number */
+	// get next sample_id number
 	QSqlQuery seqQuery(DatabaseManager::instance()->database());
 	seqQuery.prepare("SELECT nextval(?)");
-	seqQuery.addBindValue(table);
+    seqQuery.addBindValue(table.c_str());
 	if(!DatabaseManager::instance()->exec(&seqQuery)) {
 		LOG_ERROR("FAILURE\n\n");
 		return -1;
@@ -128,7 +142,7 @@ int DatabaseManager::sampleId(ExploitSample *s)
 {
 	QSqlQuery idQuery(DatabaseManager::instance()->database());
 	idQuery.prepare("SELECT * FROM analyze_sample WHERE graph_name = ?");
-	idQuery.addBindValue(s->info()->graphName());
+	idQuery.addBindValue(s->info()->graphName().c_str());
 	if(!DatabaseManager::instance()->exec(&idQuery))
 		return -1;
 
@@ -155,7 +169,7 @@ QSqlDatabase &DatabaseManager::database()
     return m_db;
 }
 
-QString DatabaseManager::lastError()
+string DatabaseManager::lastError()
 {
     return m_lastError;
 }

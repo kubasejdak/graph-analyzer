@@ -7,13 +7,13 @@
 #ifndef DATABASEMANAGER_H_
 #define DATABASEMANAGER_H_
 
-#include <QString>
-#include <QMap>
-#include <QtSql>
+#include <string>
+#include <QSqlDatabase>
+#include <QSqlQuery>
 
-#include <core/ExploitSample.h>
-#include <utils/SystemLogger.h>
 #include <utils/XMLParser.h>
+
+class ExploitSample;
 
 class DatabaseManager {
 public:
@@ -24,16 +24,16 @@ public:
 		return &m_instance;
     }
 
-	/* general */
+	// general
     bool exec(QSqlQuery *query);
-	bool clearTable(QString table);
-	int sequenceValue(QString table);
+	bool clearTable(std::string table);
+	int sequenceValue(std::string table);
 	int sampleId(ExploitSample *s);
 	int groupId(ExploitSample *s);
 
-	/* utility */
+	// utility
     QSqlDatabase &database();
-    QString lastError();
+	std::string lastError();
 
 private:
     DatabaseManager();
@@ -41,13 +41,13 @@ private:
 	void listOptions();
 
     QSqlDatabase m_db;
-    QString m_lastError;
+	std::string m_lastError;
 
-	QString m_driver;
-	QString m_host;
-	QString m_name;
-	QString m_user;
-	QString m_pass;
+	std::string m_driver;
+	std::string m_host;
+	std::string m_name;
+	std::string m_user;
+	std::string m_pass;
 
 	XMLParser m_xmlParser;
 };

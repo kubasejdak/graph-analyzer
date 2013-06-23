@@ -6,42 +6,51 @@
 
 #include "LoggingStrategy.h"
 
-#include <QFile>
 #include <iostream>
+#include <sstream>
+#include <fstream>
+#include <string>
+
 using namespace std;
 
-FileLoggingStrategy::FileLoggingStrategy(QString filename) : m_logFile(filename)
+FileLoggingStrategy::FileLoggingStrategy(string filename) : m_logFile(filename)
 {
 }
 
-void FileLoggingStrategy::log(QString message)
+void FileLoggingStrategy::log(string message)
 {
 	if(m_logFile != "") {
-		QFile f(m_logFile);
-		f.open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Append);
-		if(!f.isOpen())
+		ofstream file(m_logFile, ios_base::out | ios_base::app);
+		if(file.is_open() == false)
 			return;
 
-		/* if size is greater than 1GB */
-		if(f.size() > 1024*1024*1024)
-			f.resize(0);
+		// if size is greater than 1GB
+		file.seekp(0, ios_base::end);
+		int size = file.tellp();
+		if(size > 1024*1024*1024) {
+			file.close();
+			file.open(m_logFile, ios_base::out | ios_base::trunc);
+		}
 
-		f.write(message.toUtf8());
-		f.close();
+
+		file.write(message.c_str(), message.size());
+		file.close();
 	}
 }
 
-QString FileLoggingStrategy::description()
+string FileLoggingStrategy::description()
 {
-	return QString("file: %1").arg(m_logFile);
+	stringstream ss;
+	ss << "file: " << m_logFile;
+	return ss.str();
 }
 
-void ConsoleLoggingStrategy::log(QString message)
+void ConsoleLoggingStrategy::log(string message)
 {
-	cout << message.toStdString();
+	cout << message;
 }
 
-QString ConsoleLoggingStrategy::description()
+string ConsoleLoggingStrategy::description()
 {
 	return "console";
 }

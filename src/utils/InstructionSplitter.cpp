@@ -6,63 +6,65 @@
 
 #include "InstructionSplitter.h"
 
+#include <string>
+#include <vector>
 #include <boost/algorithm/string.hpp>
-using namespace boost;
 
-QString InstructionSplitter::address()
+using namespace std;
+
+string InstructionSplitter::address()
 {
     if(m_holder.size() < 1)
 		return "";
 
-    return m_holder[0].c_str();
+	return m_holder[0];
 }
 
-QString InstructionSplitter::code()
+string InstructionSplitter::code()
 {
     if(m_holder.size() < 2)
 		return "";
 
-    return m_holder[1].c_str();
+	return m_holder[1];
 }
 
-QString InstructionSplitter::syscall()
+string InstructionSplitter::syscall()
 {
     if(m_holder.size() != 2)
 		return "";
 
-    return m_holder[1].c_str();
+	return m_holder[1];
 }
 
-QString InstructionSplitter::instr()
+string InstructionSplitter::instr()
 {
     if(m_holder.size() < 3)
 		return "";
 
-    return m_holder[2].c_str();
+	return m_holder[2];
 }
 
-QString InstructionSplitter::firstArg()
+string InstructionSplitter::firstArg()
 {
     if(m_holder.size() < 4)
 		return "";
 
-    return m_holder[3].c_str();
+	return m_holder[3];
 }
 
-QString InstructionSplitter::secondArg()
+string InstructionSplitter::secondArg()
 {
     if(m_holder.size() < 5)
 		return "";
 
-    return m_holder[4].c_str();
+	return m_holder[4];
 }
 
-InstructionSplitter &InstructionSplitter::operator=(QString s)
+InstructionSplitter &InstructionSplitter::operator=(string s)
 {
     m_holder.clear();
-    s.chop(2);
-    string stdStr = s.toStdString();
-    split(m_holder, stdStr, is_any_of(" ,"), token_compress_on);
+	s = s.substr(0, s.size() - 2);
+	boost::split(m_holder, s, boost::is_any_of(" ,"), boost::token_compress_on);
 
 	return *this;
 }

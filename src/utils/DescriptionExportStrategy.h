@@ -7,8 +7,8 @@
 #ifndef DESCRIPTIONEXPORTSTRATEGY_H
 #define DESCRIPTIONEXPORTSTRATEGY_H
 
-#include <QString>
-#include <tasks/ITask.h>
+#include <string>
+
 #include <utils/XMLParser.h>
 
 #define STATUS_FILE     "/var/www/jsejdak/GraphAnalyzerStatus.xml"
@@ -19,7 +19,7 @@ public:
     virtual ~IDescriptionExportStrategy() {}
 
     virtual void exportDescription() = 0;
-    virtual QString description() = 0;
+	virtual std::string description() = 0;
 };
 
 class XMLDescriptionExportStrategy : public IDescriptionExportStrategy {
@@ -28,7 +28,7 @@ public:
     virtual ~XMLDescriptionExportStrategy() {}
 
     virtual void exportDescription();
-    virtual QString description();
+	virtual std::string description();
 
 private:
     XMLParser m_xmlParser;

@@ -8,7 +8,9 @@
 #define DATABASEOUTPUT_H_
 
 #include <tasks/analyze/modules/output/IOutput.h>
-#include <core/ExploitInfo.h>
+
+class ExploitSample;
+class ExploitInfo;
 
 class DatabaseOutput: public IOutput {
 public:

@@ -8,7 +8,8 @@
 #define IOUTPUT_H_
 
 #include <tasks/analyze/modules/IModule.h>
-#include <core/ExploitSample.h>
+
+class ExploitSample;
 
 class IOutput: public IModule {
 public:

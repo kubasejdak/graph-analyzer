@@ -4,8 +4,8 @@ add_subdirectory(modules)
 
 set(ANALYZE_TASK_SRC
     EmulationUnit.cpp
-	EmulationSystem.cpp
-	AnalyzeTask.cpp
+    EmulationSystem.cpp
+    AnalyzeTask.cpp
     AnalysisSystem.cpp
 )
 

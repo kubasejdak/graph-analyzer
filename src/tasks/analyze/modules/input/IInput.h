@@ -7,10 +7,7 @@
 #ifndef IINPUT_H_
 #define IINPUT_H_
 
-#include <QString>
-#include <QList>
-#include <QFile>
-#include <QQueue>
+#include <string>
 
 #include <tasks/analyze/modules/IModule.h>
 #include <core/ExploitSample.h>
@@ -20,11 +17,11 @@ public:
 	IInput() {}
 	virtual ~IInput() {}
 
-	QString type() { return m_type; }
-	virtual bool loadInput(QString filename, SampleContainer *samples) = 0;
+	std::string type() { return m_type; }
+	virtual bool loadInput(std::string filename, SampleContainer *samples) = 0;
 
 protected:
-    QString m_type;
+	std::string m_type;
 };
 
 #endif /* IINPUT_H_ */

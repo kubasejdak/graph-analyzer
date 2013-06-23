@@ -7,25 +7,25 @@
 #ifndef CORESYSTEM_H_
 #define CORESYSTEM_H_
 
-class QString;
+#include <string>
 
-class XMLParser;
+#include <utils/XMLParser.h>
 
 class CoreSystem {
 public:
 	CoreSystem();
 	virtual ~CoreSystem() {}
 
-	/* system interface */
+	// system interface
 	bool executeTasks();
 
-	/* status and error */
-	QString status();
-	QString lastError();
-	QString version();
+	// status and error
+	std::string status();
+	std::string lastError();
+	std::string version();
 
 private:
-	/* data members */
+	// data members
 	XMLParser m_xmlParser;
 };
 

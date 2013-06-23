@@ -17,7 +17,8 @@ extern "C" {
 	#include <emu/environment/emu_env.h>
 	#include <emu/environment/emu_profile.h>
 }
-#include <stdint.h>
+
+#include <cstdint>
 
 #include <utils/Toolbox.h>
 

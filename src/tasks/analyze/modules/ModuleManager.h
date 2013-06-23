@@ -7,16 +7,16 @@
 #ifndef MODULEMANAGER_H_
 #define MODULEMANAGER_H_
 
-#include <QMap>
-#include <QList>
+#include <map>
+#include <string>
 
-#include <tasks/analyze/modules/input/IInput.h>
-#include <tasks/analyze/modules/output/IOutput.h>
-#include <tasks/analyze/modules/analyze/IAnalyze.h>
+class IInput;
+class IOutput;
+class IAnalyze;
 
-typedef QMap<QString, IInput *> InputMap;
-typedef QMap<QString, IOutput *> OutputMap;
-typedef QMap<QString, IAnalyze *> AnalyzeMap;
+typedef std::map<std::string, IInput *> InputMap;
+typedef std::map<std::string, IOutput *> OutputMap;
+typedef std::map<std::string, IAnalyze *> AnalyzeMap;
 
 class ModuleManager {
 public:

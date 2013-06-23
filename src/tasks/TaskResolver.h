@@ -7,16 +7,16 @@
 #ifndef TASKRESOLVER_H
 #define TASKRESOLVER_H
 
-#include <QString>
+#include <string>
 
-#include <tasks/ITask.h>
+class ITask;
 
 class TaskResolver {
 public:
 	TaskResolver() {}
 	virtual ~TaskResolver() {}
 
-	ITask *createTask(QString taskName);
+	ITask *createTask(std::string taskName);
 };
 
 #endif /* TASKRESOLVER_H */

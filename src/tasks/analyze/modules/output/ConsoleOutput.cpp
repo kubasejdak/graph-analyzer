@@ -5,10 +5,13 @@
  */
 
 #include "ConsoleOutput.h"
-#include <core/ExploitSample.h>
 
 #include <iostream>
 #include <iomanip>
+
+#include <core/ExploitSample.h>
+#include <tasks/analyze/modules/output/IOutput.h>
+
 using namespace std;
 
 ConsoleOutput::ConsoleOutput()
@@ -21,12 +24,12 @@ bool ConsoleOutput::exportOutput(ExploitSample *sample, int taskId)
 {	
 	ExploitInfo *info = sample->info();
 
-	cout << "\t name : " << info->name().toStdString() << endl;
-	cout << "\t extracted from: " << info->extractedFrom().toStdString() << endl;
-	cout << "\t graph name: " << info->graphName().toStdString() << endl;
+	cout << "\t name : " << info->name() << endl;
+	cout << "\t extracted from: " << info->extractedFrom() << endl;
+	cout << "\t graph name: " << info->graphName() << endl;
 	cout << "\t capture date: " << info->captureDate().toString("yyyy-MM-dd").toStdString() << endl;
 	cout << "\t size : " << dec << info->size() << endl;
-	cout << "\t file type : " << info->fileType().toStdString() << endl;
+	cout << "\t file type : " << info->fileType() << endl;
 	cout << "\t file size : " << dec << info->fileSize() << endl;
 	cout << "\t exploit present : " << (info->isExploitPresent() ? "yes" : "no") << endl;
 	cout << "\t exploit offset : 0x" << hex << info->codeOffset() << endl;
@@ -35,9 +38,9 @@ bool ConsoleOutput::exportOutput(ExploitSample *sample, int taskId)
 	TraitsMap::iterator it;
 	TraitsEntry::iterator it2;
 	for(it = info->traits()->begin(); it != info->traits()->end(); ++it) {
-		cout << "\t * " << it.key().toStdString() << " *" << "\t";
+		cout << "\t * " << it.key() << " *" << "\t";
 		for(it2 = it.value()->begin(); it2 != it.value()->end(); ++it2)
-			cout << it2.key().toStdString() << " : " << it2.value().toStdString() << ", ";
+			cout << it2.key() << " : " << it2.value() << ", ";
 		cout << endl << endl;
 	}
 

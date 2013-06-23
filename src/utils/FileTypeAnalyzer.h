@@ -7,14 +7,14 @@
 #ifndef FILETYPEANALYZER_H_
 #define FILETYPEANALYZER_H_
 
-#include <QString>
+#include <string>
 
 class FileTypeAnalyzer {
 public:
 	FileTypeAnalyzer() {}
 	virtual ~FileTypeAnalyzer() {}
 
-    QString analyze(QString filename);
+	std::string analyze(std::string filename);
 };
 
 #endif /* FILETYPEANALYZER_H_ */

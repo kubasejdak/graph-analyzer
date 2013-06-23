@@ -25,9 +25,11 @@ extern "C" {
 	#include <emu/environment/linux/env_linux_syscall_hooks.h>
 }
 
-#include <tasks/analyze/EmulationUnit.h>
-#include <core/ExploitSample.h>
-#include <core/Graph.h>
+#include <string>
+
+class ExploitSample;
+class EmulationUnit;
+class Graph;
 
 class EmulationSystem {
 public:
@@ -43,7 +45,7 @@ private:
     EmulationUnit *m_emuUnit;
     ExploitSample *m_sample;
 
-	QString m_graphsDir;
+	std::string m_graphsDir;
 };
 
 #endif /* EMULATIONSYSTEM_H_ */

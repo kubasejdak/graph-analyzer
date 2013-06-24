@@ -10,16 +10,15 @@
 #include <string>
 
 #include <tasks/analyze/modules/IModule.h>
-
-class ExploitSample;
+#include <core/ExploitSample.h>
 
 class IAnalyze: public IModule {
 public:
 	IAnalyze() {}
 	virtual ~IAnalyze() {}
 
-	virtual bool perform(ExploitSample *sample) = 0;
-	virtual bool exportToDatabase(ExploitSample *sample, int sampleId) = 0;
+	virtual bool perform(ExploitSampleHandle sample) = 0;
+	virtual bool exportToDatabase(ExploitSampleHandle sample, int sampleId) = 0;
 
 protected:
 	std::string m_traitName;

@@ -18,8 +18,6 @@ extern "C" {
 	#include <emu/environment/emu_profile.h>
 }
 
-#include <cstdint>
-
 #include <utils/Toolbox.h>
 
 class EmulationUnit {
@@ -32,16 +30,16 @@ public:
 	void resetUnit();
 
 	bool step();
-	int32_t loadCode(byte_t *code, int32_t size);
+	int loadCode(byte_t *code, int size);
 
     struct emu *emu();
     struct emu_cpu *cpu();
     struct emu_memory *memory();
     struct emu_env *env();
-    int32_t codeOffset();
+	int codeOffset();
 
 private:
-	int32_t getPcTest(byte_t *code, int32_t size);
+	int getPcTest(byte_t *code, int size);
 	void prepareIATForSQLSlammer();
 	void exportWin32Hooks();
 	void exportLinuxHooks();
@@ -51,7 +49,7 @@ private:
     struct emu_memory *m_mem;
     struct emu_env *m_env;
 
-    int32_t m_codeOffset;
+	int m_codeOffset;
 };
 
 #endif /* EMULATIONUNIT_H_ */

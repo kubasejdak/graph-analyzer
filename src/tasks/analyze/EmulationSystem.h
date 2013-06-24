@@ -27,7 +27,8 @@ extern "C" {
 
 #include <string>
 
-class ExploitSample;
+#include <core/ExploitSample.h>
+
 class EmulationUnit;
 class Graph;
 
@@ -36,14 +37,14 @@ public:
 	EmulationSystem();
 	virtual ~EmulationSystem();
 
-	void loadSample(ExploitSample *sample);
+	void loadSample(ExploitSampleHandle sample);
 	bool emulate();
 
 private:
-	bool drawGraph(Graph *graph);
+	bool drawGraph(GraphHandle graph);
 
     EmulationUnit *m_emuUnit;
-    ExploitSample *m_sample;
+    ExploitSampleHandle m_sample;
 
 	std::string m_graphsDir;
 };

@@ -23,7 +23,7 @@ void AnalysisSystem::loadModules()
 	m_analyzeMods = ModuleManager::instance()->analyze();
 }
 
-void AnalysisSystem::loadSample(ExploitSample *sample)
+void AnalysisSystem::loadSample(ExploitSampleHandle sample)
 {
     m_sample = sample;
 }

@@ -8,21 +8,20 @@
 #define ANALYSISSYSTEM_H_
 
 #include <tasks/analyze/modules/ModuleManager.h>
-
-class ExploitSample;
+#include <core/ExploitSample.h>
 
 class AnalysisSystem {
 public:
 	AnalysisSystem();
 	virtual ~AnalysisSystem() {}
 
-	void loadSample(ExploitSample *sample);
+	void loadSample(ExploitSampleHandle sample);
 	bool analyze();
 
 private:
 	void loadModules();
 
-    ExploitSample *m_sample;
+	ExploitSampleHandle m_sample;
 	AnalyzeMap *m_analyzeMods;
 };
 

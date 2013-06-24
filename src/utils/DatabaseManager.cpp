@@ -8,7 +8,11 @@
 
 #include <string>
 #include <sstream>
-#include <QtSql>
+#include <QSqlDatabase>
+#include <QSqlQuery>
+#include <QSqlError>
+#include <QVariant>
+#include <QSqlRecord>
 
 #include <core/Options.h>
 #include <core/ExploitSample.h>
@@ -138,7 +142,7 @@ int DatabaseManager::sequenceValue(string table)
 	return seqValue;
 }
 
-int DatabaseManager::sampleId(ExploitSample *s)
+int DatabaseManager::sampleId(ExploitSampleHandle s)
 {
 	QSqlQuery idQuery(DatabaseManager::instance()->database());
 	idQuery.prepare("SELECT * FROM analyze_sample WHERE graph_name = ?");
@@ -151,7 +155,7 @@ int DatabaseManager::sampleId(ExploitSample *s)
 	return id;
 }
 
-int DatabaseManager::groupId(ExploitSample *s)
+int DatabaseManager::groupId(ExploitSampleHandle s)
 {
 	QSqlQuery idQuery(DatabaseManager::instance()->database());
 	idQuery.prepare("SELECT * FROM analyze_samplegroup WHERE leader_id = ?");

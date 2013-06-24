@@ -27,7 +27,7 @@ PcapInput::PcapInput()
 	m_description = "Loads exploit from pcap files.";
 }
 
-bool PcapInput::loadInput(string filename, SampleContainer *samples)
+bool PcapInput::loadInput(string filename, SampleList *samples)
 {
     int success;
 	string tmpPcapDir = Options::instance()->tmpPcapDir;
@@ -70,7 +70,7 @@ bool PcapInput::loadInput(string filename, SampleContainer *samples)
 	}
 
 	// iterate through all flow files
-    ExploitSample *s;
+    ExploitSampleHandle s;
 	QDirIterator it(".", QDir::Files | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
     while(it.hasNext()) {
 		string entryName = it.next().toStdString();
@@ -104,7 +104,7 @@ bool PcapInput::loadInput(string filename, SampleContainer *samples)
         file.close();
 
 		// create new sample
-        s = new ExploitSample();
+		s = ExploitSampleHandle(new ExploitSample());
 		QFileInfo info(filename.c_str());
         s->info()->setName(Toolbox::pcapFlowBasename(entryName));
 		s->info()->setExtractedFrom(info.absoluteFilePath().toStdString());

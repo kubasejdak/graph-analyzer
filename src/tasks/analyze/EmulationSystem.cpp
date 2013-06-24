@@ -8,6 +8,7 @@
 
 #include <string>
 #include <sstream>
+#include <cstdint>
 #include <QDir>
 
 #include <utils/SystemLogger.h>
@@ -32,7 +33,7 @@ EmulationSystem::~EmulationSystem()
     delete m_emuUnit;
 }
 
-void EmulationSystem::loadSample(ExploitSample *sample)
+void EmulationSystem::loadSample(ExploitSampleHandle sample)
 {
     m_sample = sample;
 }
@@ -46,8 +47,7 @@ bool EmulationSystem::emulate()
     }
 
 	// load code to emu unit
-	int32_t codeOffset;
-	codeOffset = m_emuUnit->loadCode(m_sample->code(), m_sample->info()->fileSize());
+	int codeOffset = m_emuUnit->loadCode(m_sample->code(), m_sample->info()->fileSize());
     m_sample->info()->setCodeOffset(codeOffset);
 
 	// if exploit not detected return
@@ -62,10 +62,10 @@ bool EmulationSystem::emulate()
 	uint32_t eipsave = 0;
 	int ret = 0;
 
-    Graph *graph = m_sample->graph();
+    GraphHandle graph = m_sample->graph();
     struct emu_cpu *cpu = m_emuUnit->cpu();
     struct emu_env *env = m_emuUnit->env();
-    struct emu_graph *eg = graph->emuGraph();
+	struct emu_graph *eg = graph->emuGraph();
     struct emu_hashtable *eh = graph->emuHashtable();
 	struct emu_vertex *last_vertex = NULL;
 	struct emu_vertex *ev = NULL;
@@ -229,7 +229,7 @@ bool EmulationSystem::emulate()
 	return true;
 }
 
-bool EmulationSystem::drawGraph(Graph *graph)
+bool EmulationSystem::drawGraph(GraphHandle graph)
 {
 	// create .dot file
     string dotFile = DOT_FILENAME;

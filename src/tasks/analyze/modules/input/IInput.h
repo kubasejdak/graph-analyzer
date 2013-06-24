@@ -18,7 +18,7 @@ public:
 	virtual ~IInput() {}
 
 	std::string type() { return m_type; }
-	virtual bool loadInput(std::string filename, SampleContainer *samples) = 0;
+	virtual bool loadInput(std::string filename, SampleList *samples) = 0;
 
 protected:
 	std::string m_type;

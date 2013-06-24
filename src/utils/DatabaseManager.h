@@ -12,8 +12,7 @@
 #include <QSqlQuery>
 
 #include <utils/XMLParser.h>
-
-class ExploitSample;
+#include <core/ExploitSample.h>
 
 class DatabaseManager {
 public:
@@ -28,8 +27,8 @@ public:
     bool exec(QSqlQuery *query);
 	bool clearTable(std::string table);
 	int sequenceValue(std::string table);
-	int sampleId(ExploitSample *s);
-	int groupId(ExploitSample *s);
+	int sampleId(ExploitSampleHandle s);
+	int groupId(ExploitSampleHandle s);
 
 	// utility
     QSqlDatabase &database();

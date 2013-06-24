@@ -17,12 +17,12 @@ public:
 	DatabaseOutput();
     virtual ~DatabaseOutput() {}
 
-    virtual bool exportOutput(ExploitSample *sample, int taskId);
+    virtual bool exportOutput(ExploitSampleHandle sample, int taskId);
 
 private:
-    bool checkDuplicate(ExploitInfo *info);
+    bool checkDuplicate(ExploitInfoHandle info);
 
-    bool exportGeneralData(ExploitInfo *info, int sampleId, int taskId);
+    bool exportGeneralData(ExploitInfoHandle info, int sampleId, int taskId);
 };
 
 #endif /* DATABASEOUTPUT_H_ */

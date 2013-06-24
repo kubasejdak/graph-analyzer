@@ -30,9 +30,9 @@ private:
 	void addScheduledFile(std::string filename);
 
 	int load(std::string filename);
-	bool emulate(ExploitSample *s);
-	bool analyze(ExploitSample *s);
-	bool exportResults(ExploitSample *s);
+	bool emulate(ExploitSampleHandle s);
+	bool analyze(ExploitSampleHandle s);
+	bool exportResults(ExploitSampleHandle s);
 
 	EmulationSystem m_emulationSystem;
 	AnalysisSystem m_analysisSystem;

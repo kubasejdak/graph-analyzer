@@ -17,7 +17,7 @@ public:
 	BinaryInput();
     virtual ~BinaryInput() {}
 
-	virtual bool loadInput(std::string filename, SampleContainer *samples);
+	virtual bool loadInput(std::string filename, SampleList *samples);
 };
 
 #endif /* BINARYINPUT_H_ */

@@ -20,9 +20,9 @@ ConsoleOutput::ConsoleOutput()
     m_description = "Prints info about samples in console.";
 }
 
-bool ConsoleOutput::exportOutput(ExploitSample *sample, int taskId)
+bool ConsoleOutput::exportOutput(ExploitSampleHandle sample, int taskId)
 {	
-	ExploitInfo *info = sample->info();
+	ExploitInfoHandle info = sample->info();
 
 	cout << "\t name : " << info->name() << endl;
 	cout << "\t extracted from: " << info->extractedFrom() << endl;
@@ -35,8 +35,8 @@ bool ConsoleOutput::exportOutput(ExploitSample *sample, int taskId)
 	cout << "\t exploit offset : 0x" << hex << info->codeOffset() << endl;
     cout << "\t task: " << dec << taskId << endl;
 
-	TraitsMap::iterator it;
-	TraitsEntry::iterator it2;
+	TraitMap::iterator it;
+	TraitEntry::iterator it2;
 	for(it = info->traits()->begin(); it != info->traits()->end(); ++it) {
 		cout << "\t * " << it.key() << " *" << "\t";
 		for(it2 = it.value()->begin(); it2 != it.value()->end(); ++it2)

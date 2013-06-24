@@ -8,7 +8,9 @@
 
 #include <string>
 #include <sstream>
-#include <QtSql>
+#include <QSqlQuery>
+#include <QSqlRecord>
+#include <QVariant>
 
 #include <core/Graph.h>
 #include <core/ExploitSample.h>
@@ -27,19 +29,20 @@ LoopDetector::LoopDetector()
     m_traitName = "loop";
 }
 
-bool LoopDetector::perform(ExploitSample *sample)
+bool LoopDetector::perform(ExploitSampleHandle sample)
 {
-    Graph *g = sample->graph();
+    GraphHandle g = sample->graph();
 	Graph::graph_iterator it;
-    LoopContainer *loops;
-    LoopVec *vec;
+    LoopVector *loops;
+    VertexVector *vec;
 	instr_vertex *iv;
-	TraitsEntry *m;
+	TraitEntryHandle m;
 	InstructionSplitter splitter;
 	string vertexes;
+
 	for(it = g->begin(); it != g->end(); ++it) {
 		loops = g->detectLoop(it);
-		if(loops == NULL)
+		if(loops == NULL || loops->size() == 0)
 			continue;
 
 		// extract information about loops
@@ -47,7 +50,7 @@ bool LoopDetector::perform(ExploitSample *sample)
 		for(unsigned int i = 0; i < loops->size(); ++i) {
 			vec = (*loops)[i];
 			iv = (instr_vertex *) vec->front()->data;
-			m = new TraitsEntry();
+			TraitEntryHandle m(new TraitEntry());
 
 			// start address
             (*m)["start"] = Toolbox::itos(iv->eip, 16);
@@ -109,11 +112,11 @@ bool LoopDetector::perform(ExploitSample *sample)
 	return true;
 }
 
-bool LoopDetector::exportToDatabase(ExploitSample *sample, int sampleId)
+bool LoopDetector::exportToDatabase(ExploitSampleHandle sample, int sampleId)
 {
 	// get sample traits
-	TraitsMap *traits = sample->info()->traits();
-	TraitsMap::iterator it;;
+	TraitMapHandle traits = sample->info()->traits();
+	TraitMap::iterator it;;
 
 	// for all api traits in sample
 	for(it = traits->find(m_traitName); it != traits->end() && it.key() == m_traitName; ++it) {

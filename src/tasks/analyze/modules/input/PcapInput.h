@@ -17,7 +17,7 @@ public:
 	PcapInput();
     virtual ~PcapInput() {}
 
-	virtual bool loadInput(std::string filename, SampleContainer *samples);
+	virtual bool loadInput(std::string filename, SampleList *samples);
 };
 
 #endif /* PCAPINPUT_H_ */

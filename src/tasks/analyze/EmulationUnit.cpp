@@ -15,7 +15,7 @@ extern "C" {
 	#include <emu/environment/emu_profile.h>
 }
 
-#include <cstdint>
+//#include <cstdint>
 
 #include <utils/Toolbox.h>
 #include <utils/SystemLogger.h>
@@ -69,7 +69,7 @@ bool EmulationUnit::step()
 	return true;
 }
 
-int32_t EmulationUnit::loadCode(byte_t *code, int32_t size)
+int EmulationUnit::loadCode(byte_t *code, int size)
 {
 	// perform getPC test
     m_codeOffset = getPcTest(code, size);
@@ -127,9 +127,9 @@ struct emu_env *EmulationUnit::env()
     return m_env;
 }
 
-int32_t EmulationUnit::getPcTest(byte_t *code, int32_t size)
+int EmulationUnit::getPcTest(byte_t *code, int size)
 {
-    int32_t off = emu_shellcode_test(m_emu, code, size);
+	int off = emu_shellcode_test(m_emu, code, size);
 	resetUnit();
 
 	return off;
@@ -143,7 +143,7 @@ void EmulationUnit::prepareIATForSQLSlammer()
     emu_memory_write_byte(m_mem, 0x7c814eeb, 0xc3);
 }
 
-int32_t EmulationUnit::codeOffset()
+int EmulationUnit::codeOffset()
 {
     return m_codeOffset;
 }

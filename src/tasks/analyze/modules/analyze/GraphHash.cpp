@@ -8,7 +8,9 @@
 
 #include <string>
 #include <sstream>
-#include <QtSql>
+#include <QSqlQuery>
+#include <QSqlRecord>
+#include <QVariant>
 
 #include <core/Graph.h>
 #include <core/ExploitSample.h>
@@ -27,11 +29,11 @@ GraphHash::GraphHash()
     m_traitName = "hash";
 }
 
-bool GraphHash::perform(ExploitSample *sample)
+bool GraphHash::perform(ExploitSampleHandle sample)
 {
-    Graph *g = sample->graph();
+    GraphHandle g = sample->graph();
 	Graph::graph_iterator it;
-	TraitsEntry *m = new TraitsEntry();
+	TraitEntryHandle m = TraitEntryHandle(new TraitEntry());
 	string graphString = "";
 	InstructionSplitter splitter;
 	instr_vertex *iv;
@@ -55,11 +57,11 @@ bool GraphHash::perform(ExploitSample *sample)
 	return true;
 }
 
-bool GraphHash::exportToDatabase(ExploitSample *sample, int sampleId)
+bool GraphHash::exportToDatabase(ExploitSampleHandle sample, int sampleId)
 {
 	// get sample traits
-	TraitsMap *traits = sample->info()->traits();
-	TraitsMap::iterator it;
+	TraitMapHandle traits = sample->info()->traits();
+	TraitMap::iterator it;
 
 	// for all api traits in sample
 	for(it = traits->find(m_traitName); it != traits->end() && it.key() == m_traitName; ++it) {

@@ -47,7 +47,7 @@ protected:
 	virtual void updateStatus() = 0;			// update task status
 
 	XMLParser m_xmlParser;						// provides parser for XML configuration file
-	SampleContainer m_samples;					// samples that are used in task
+	SampleList m_samples;					// samples that are used in task
 	std::list<std::string> m_exportStrategies;  // strategies for exporting task results
 	QTime m_timer;								// provides time functions
 

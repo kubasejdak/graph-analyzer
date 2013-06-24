@@ -75,7 +75,7 @@ bool AnalyzeTask::performTask()
 			continue;
 		}
 
-		ExploitSample *s;
+		ExploitSampleHandle s;
 		while(m_samples.empty() == false) {
 			s = m_samples.front();
 			m_samples.pop_front();
@@ -118,7 +118,7 @@ bool AnalyzeTask::performTask()
 
 cleanup:
 			// clean up
-			delete s;
+			s.reset();
 			LOG("sample analyzing finished\n");
 			++m_analyzedSamples;
 
@@ -130,11 +130,14 @@ cleanup:
 	} // while
 
 	// summarize
-	LOG("FINISHED: found %d exploit(s) in %d sample(s) extracted from %d file(s)!\n", m_detectedExploits, m_analyzedSamples, m_loadedFiles);
-	if(m_errors)
-		LOG("some ERRORS occured, errorCounter: [%d]\n", m_errors);
-	else
-		LOG("no errors occured\n");
+	LOG("=====================================================================================\n");
+	LOG("=                                    FINISHED TASK                                   \n");
+	LOG("= name     : %s\n", m_name.c_str());
+	LOG("= exploits : %d\n", m_detectedExploits);
+	LOG("= samples  : %d\n", m_analyzedSamples);
+	LOG("= files    : %d\n", m_loadedFiles);
+	LOG("= errors   : %d\n", m_errors);
+	LOG("=====================================================================================\n");
 
     m_progress = 100;
     SystemLogger::instance()->exportStatus(this);
@@ -224,8 +227,8 @@ void AnalyzeTask::addScheduledFile(string filename)
 
 int AnalyzeTask::load(string filename)
 {
-	SampleContainer q;
-	ExploitSample *s;
+	SampleList q;
+	ExploitSampleHandle s;
 	bool moduleFound = false;
 
 	FileTypeAnalyzer fileAnalyzer;
@@ -264,7 +267,7 @@ int AnalyzeTask::load(string filename)
 	return 1;
 }
 
-bool AnalyzeTask::emulate(ExploitSample *s)
+bool AnalyzeTask::emulate(ExploitSampleHandle s)
 {
 	m_emulationSystem.loadSample(s);
 	bool ret = m_emulationSystem.emulate();
@@ -280,7 +283,7 @@ bool AnalyzeTask::emulate(ExploitSample *s)
 	return true;
 }
 
-bool AnalyzeTask::analyze(ExploitSample *s)
+bool AnalyzeTask::analyze(ExploitSampleHandle s)
 {
 	m_analysisSystem.loadSample(s);
 	bool ret = m_analysisSystem.analyze();
@@ -296,7 +299,7 @@ bool AnalyzeTask::analyze(ExploitSample *s)
 	return true;
 }
 
-bool AnalyzeTask::exportResults(ExploitSample *s)
+bool AnalyzeTask::exportResults(ExploitSampleHandle s)
 {
 	list<string>::iterator it;
 	for(it = m_exportStrategies.begin(); it != m_exportStrategies.end(); ++it) {

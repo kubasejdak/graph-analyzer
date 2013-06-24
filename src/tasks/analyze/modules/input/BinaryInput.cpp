@@ -23,7 +23,7 @@ BinaryInput::BinaryInput()
 	m_description = "Loads exploit from binary files.";
 }
 
-bool BinaryInput::loadInput(string filename, SampleContainer *samples)
+bool BinaryInput::loadInput(string filename, SampleList *samples)
 {
 	QFile file(filename.c_str());
     file.open(QIODevice::ReadOnly);
@@ -50,7 +50,7 @@ bool BinaryInput::loadInput(string filename, SampleContainer *samples)
 	file.read(buffer, size);
 	file.close();
 
-	ExploitSample *s = new ExploitSample();
+	ExploitSampleHandle s = ExploitSampleHandle(new ExploitSample());
 	QFileInfo info(filename.c_str());
 	s->info()->setName(info.absoluteFilePath().toStdString());
 	s->info()->setExtractedFrom(info.absoluteFilePath().toStdString());

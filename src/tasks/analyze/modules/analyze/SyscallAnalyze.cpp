@@ -8,7 +8,9 @@
 
 #include <string>
 #include <sstream>
-#include <QtSql>
+#include <QSqlQuery>
+#include <QSqlRecord>
+#include <QVariant>
 
 #include <core/Graph.h>
 #include <core/ExploitSample.h>
@@ -26,14 +28,13 @@ SyscallAnalyze::SyscallAnalyze()
     m_traitName = "api";
 }
 
-bool SyscallAnalyze::perform(ExploitSample *sample)
+bool SyscallAnalyze::perform(ExploitSampleHandle sample)
 {
-    Graph *g = sample->graph();
+    GraphHandle g = sample->graph();
 	struct instr_vertex *instr_vert;
 	string syscall, dll;
 	Graph::graph_iterator it;
 	InstructionSplitter splitter;
-	TraitsEntry *m;
 
 	for(it = g->begin(); it != g->end(); ++it) {
 		instr_vert = (struct instr_vertex *) it->data;
@@ -42,7 +43,7 @@ bool SyscallAnalyze::perform(ExploitSample *sample)
 			dll = instr_vert->dll->dllname;
 			dll += ".dll";
             syscall = splitter.syscall();
-			m = new TraitsEntry();
+			TraitEntryHandle m(new TraitEntry());
 			(*m)["syscall"] = syscall;
 			LOG("syscall: [%s]\n", syscall.c_str());
 			(*m)["DLL"] = dll;
@@ -55,11 +56,11 @@ bool SyscallAnalyze::perform(ExploitSample *sample)
 	return true;
 }
 
-bool SyscallAnalyze::exportToDatabase(ExploitSample *sample, int sampleId)
+bool SyscallAnalyze::exportToDatabase(ExploitSampleHandle sample, int sampleId)
 {
 	// get sample traits
-	TraitsMap *traits = sample->info()->traits();
-	TraitsMap::iterator it;
+	TraitMapHandle traits = sample->info()->traits();
+	TraitMap::iterator it;
 
 	// for all api traits in sample
 	for(it = traits->find(m_traitName); it != traits->end() && it.key() == m_traitName; ++it) {

@@ -29,9 +29,9 @@ DatabaseOutput::DatabaseOutput()
     m_description = "Inserts info about samples into database.";
 }
 
-bool DatabaseOutput::exportOutput(ExploitSample *sample, int taskId)
+bool DatabaseOutput::exportOutput(ExploitSampleHandle sample, int taskId)
 {
-    ExploitInfo *info = sample->info();
+    ExploitInfoHandle info = sample->info();
 
 	// ensure that sample is not a duplicate
     bool duplicate = checkDuplicate(info);
@@ -64,7 +64,7 @@ bool DatabaseOutput::exportOutput(ExploitSample *sample, int taskId)
 	return true;
 }
 
-bool DatabaseOutput::checkDuplicate(ExploitInfo *info)
+bool DatabaseOutput::checkDuplicate(ExploitInfoHandle info)
 {
 	stringstream ss;
 	ss << "SELECT * FROM analyze_sample WHERE " << "name = '" << info->name() << "'"
@@ -83,7 +83,7 @@ bool DatabaseOutput::checkDuplicate(ExploitInfo *info)
 	return selectQuery.next();
 }
 
-bool DatabaseOutput::exportGeneralData(ExploitInfo *info, int sampleId, int taskId)
+bool DatabaseOutput::exportGeneralData(ExploitInfoHandle info, int sampleId, int taskId)
 {
 	string d = info->captureDate().toString("yyyy-MM-dd").toStdString();
 	string captureDate = (d == "1999-12-31") ? "n/a" : d;

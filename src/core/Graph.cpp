@@ -153,7 +153,7 @@ Graph::graph_iterator Graph::end()
     return graph_iterator(this, emu_vertexes_last(m_graph->vertexes));
 }
 
-LoopContainer *Graph::detectLoop(Graph::graph_iterator from_it)
+LoopVector *Graph::detectLoop(Graph::graph_iterator from_it)
 {
 	emu_vertex *from = &(*from_it);
 
@@ -162,9 +162,9 @@ LoopContainer *Graph::detectLoop(Graph::graph_iterator from_it)
 	if(from->backlinks < n)
 		return NULL;
 
-    LoopContainer *loops = new LoopContainer();
-    LoopVec *vec = new LoopVec();
-    LoopVec *tmp = new LoopVec();
+	LoopVector *loops = new LoopVector();
+	VertexVector *vec = new VertexVector();
+	VertexVector *tmp = new VertexVector();
 
 	vec->push_back(from);
 	loops->push_back(vec);
@@ -215,7 +215,7 @@ LoopContainer *Graph::detectLoop(Graph::graph_iterator from_it)
 					if(e->destination->color == black)
 						continue;
 					else {
-                        vec = new LoopVec();
+						vec = new VertexVector();
 						*vec = *tmp;
 						vec->push_back(e->destination);
 						loops->push_back(vec);

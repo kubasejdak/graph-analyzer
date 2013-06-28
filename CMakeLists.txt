@@ -1,7 +1,8 @@
 # === ROOT ===
 
 # required cmake version
-cmake_minimum_required(VERSION 2.8.10)
+#cmake_minimum_required(VERSION 2.8.10)
+cmake_minimum_required(VERSION 2.8)
 
 # project name
 project(graph-analyzer)
@@ -9,10 +10,21 @@ project(graph-analyzer)
 # options passed to the compiler
 add_definitions(-g -Wall -fPIC -std=c++11)
 
-# Qt5
-find_package(Qt5Core REQUIRED)
-find_package(Qt5Xml REQUIRED)
-find_package(Qt5Sql REQUIRED)
+# Qt
+if(${CMAKE_VERSION} STREQUAL "2.8.10.1")
+    message("-- Development environment: using Qt5")
+    find_package(Qt5Core REQUIRED)
+    find_package(Qt5Xml REQUIRED)
+    find_package(Qt5Sql REQUIRED)
+    set(machine "development")
+else()
+    message("Target environment -- using Qt4\n")
+    find_package(Qt4 COMPONENTS QtCore QtXml QtSql REQUIRED)
+    include(${QT_USE_FILE})
+    add_definitions(${QT_DEFINITIONS})
+    include_directories(${Qt4_INCLUDE_DIRS})
+    set(machine "target")
+endif()
 
 # Boost
 find_package(Boost COMPONENTS program_options REQUIRED)

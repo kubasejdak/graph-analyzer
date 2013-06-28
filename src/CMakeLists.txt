@@ -13,7 +13,7 @@ add_executable(graph-analyzer main.cpp)
 add_library(GraphAnalyzerCpp SHARED core/CoreSystem.cpp)
 set_target_properties(GraphAnalyzerCpp PROPERTIES PREFIX "")
 
-# link with modules 
+# link with modules
 target_link_libraries(graph-analyzer core)
 target_link_libraries(graph-analyzer tasks)
 target_link_libraries(graph-analyzer utils)

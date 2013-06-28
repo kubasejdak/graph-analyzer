@@ -16,7 +16,7 @@ git config --add user.email kuba.sejdak@gmail.com
 ##### replace necessary file paths #####
 sed -i 's/\/kuba\/projects/\/jsejdak/g' bin/clearGraphFiles.sh
 sed -i 's/\/kuba\/projects/\/jsejdak/g' conf/apache.conf
-sed -i 's/\/kuba\/projects/\/jsejdak/g' web_gui/web_gui/settings.py
+sed -i 's/\/kuba\/projects/\/jsejdak/g' src/gui/www/www/settings.py
 
 ##### prepare environment #####
 

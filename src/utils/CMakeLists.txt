@@ -17,5 +17,9 @@ set(UTILS_SRC
 add_library(utils ${UTILS_SRC})
 
 target_link_libraries(utils magic)
-qt5_use_modules(utils Xml)
-qt5_use_modules(utils Sql)
+if(${MACHINE} STREQUAL ${DEVELOPMENT_MACHINE})
+    qt5_use_modules(utils Xml)
+    qt5_use_modules(utils Sql)
+else()
+    target_link_libraries(utils ${QT_LIBRARIES})
+endif()

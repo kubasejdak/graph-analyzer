@@ -10,20 +10,24 @@ project(graph-analyzer)
 # options passed to the compiler
 add_definitions(-g -Wall -fPIC -std=c++11)
 
+# environment definitions
+set(DEVELOPMENT_MACHINE "development")
+set(TARGET_MACHINE "target")
+
 # Qt
 if(${CMAKE_VERSION} STREQUAL "2.8.10.1")
     message("-- Development environment: using Qt5")
     find_package(Qt5Core REQUIRED)
     find_package(Qt5Xml REQUIRED)
     find_package(Qt5Sql REQUIRED)
-    set(machine "development")
+    set(MACHINE ${DEVELOPMENT_MACHINE})
 else()
-    message("Target environment -- using Qt4\n")
+    message("-- Target environment: using Qt4\n")
     find_package(Qt4 COMPONENTS QtCore QtXml QtSql REQUIRED)
     include(${QT_USE_FILE})
     add_definitions(${QT_DEFINITIONS})
     include_directories(${Qt4_INCLUDE_DIRS})
-    set(machine "target")
+    set(MACHINE ${TARGET_MACHINE})
 endif()
 
 # Boost

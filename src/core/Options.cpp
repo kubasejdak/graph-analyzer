@@ -75,7 +75,7 @@ void Options::listOptions()
 	LOG("tcpflowParams: [%s]\n", tcpflowParams.c_str());
 	LOG("emulationSteps: [%d]\n", emulationSteps);
 	LOG("skipBigFiles: [%s]\n", skipBigFiles ? "true" : "false");
-	LOG("bigFileSize: [%d]\n", bigFileSize);
+	LOG("bigFileSize: [%lu]\n", bigFileSize);
 	LOG("skipBrokenSamples: [%s]\n", skipBrokenSamples ? "true" : "false");
 	LOG("brokenSampleSize: [%d]\n", brokenSampleSize);
 	LOG("SUCCESS\n\n");

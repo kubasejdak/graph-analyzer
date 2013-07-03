@@ -32,7 +32,7 @@ public:
 	std::string tcpflowParams;
 	int emulationSteps;
 	bool skipBigFiles;
-	int bigFileSize;
+	unsigned long bigFileSize;
 	bool skipBrokenSamples;
 	int brokenSampleSize;
 

@@ -33,14 +33,15 @@ bool PcapInput::loadInput(string filename, SampleList *samples)
 	string tmpPcapDir = Options::instance()->tmpPcapDir;
 
 	// move to /tmp/pcap_tmp
-    QDir pcapDir;
-	if(!QDir(tmpPcapDir.c_str()).exists()) {
-		success = pcapDir.mkdir(tmpPcapDir.c_str());
-        if(!success) {
-			LOG_ERROR("cannot create [%s] directory\n", tmpPcapDir.c_str());
-            LOG_ERROR("FAILURE\n\n");
-            return false;
-		}
+	if(QDir(tmpPcapDir.c_str()).exists())
+		QDir(tmpPcapDir.c_str()).removeRecursively();
+
+	QDir pcapDir;
+	success = pcapDir.mkdir(tmpPcapDir.c_str());
+	if(!success) {
+		LOG_ERROR("cannot create [%s] directory\n", tmpPcapDir.c_str());
+		LOG_ERROR("FAILURE\n\n");
+		return false;
 	}
 
 	success = QDir::setCurrent(tmpPcapDir.c_str());
@@ -84,7 +85,7 @@ bool PcapInput::loadInput(string filename, SampleList *samples)
         if(!file.isOpen())
             continue;
 
-        int size = file.size();
+		unsigned long size = file.size();
 
 		// protect against bad or too big files
 		if(Options::instance()->skipBigFiles) {

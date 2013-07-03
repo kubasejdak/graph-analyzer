@@ -32,12 +32,12 @@ bool BinaryInput::loadInput(string filename, SampleList *samples)
         return false;
     }
 
-	int size = file.size();
+	unsigned long size = file.size();
 
 	// protect against bad or too big files
 	if(Options::instance()->skipBigFiles) {
 		if(size > Options::instance()->bigFileSize) {
-			LOG("file [%s] is too big, size: [%d]\n", filename.c_str(), size);
+			LOG("file [%s] is too big, size: [%lu]\n", filename.c_str(), size);
 			LOG("skipping\n");
 			LOG("SUCCESS\n\n");
 			return true;
@@ -45,7 +45,7 @@ bool BinaryInput::loadInput(string filename, SampleList *samples)
 	}
 
 	char *buffer = new char[size];
-	LOG("allocating code buffer for sample, size: [%d]\n", size);
+	LOG("allocating code buffer for sample, size: [%lu]\n", size);
 
 	file.read(buffer, size);
 	file.close();

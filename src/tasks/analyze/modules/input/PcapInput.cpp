@@ -33,15 +33,14 @@ bool PcapInput::loadInput(string filename, SampleList *samples)
 	string tmpPcapDir = Options::instance()->tmpPcapDir;
 
 	// move to /tmp/pcap_tmp
-	if(QDir(tmpPcapDir.c_str()).exists())
-		QDir(tmpPcapDir.c_str()).removeRecursively();
-
 	QDir pcapDir;
-	success = pcapDir.mkdir(tmpPcapDir.c_str());
-	if(!success) {
-		LOG_ERROR("cannot create [%s] directory\n", tmpPcapDir.c_str());
-		LOG_ERROR("FAILURE\n\n");
-		return false;
+	if(!QDir(tmpPcapDir.c_str()).exists()) {
+		success = pcapDir.mkdir(tmpPcapDir.c_str());
+		if(!success) {
+			LOG_ERROR("cannot create [%s] directory\n", tmpPcapDir.c_str());
+			LOG_ERROR("FAILURE\n\n");
+			return false;
+		}
 	}
 
 	success = QDir::setCurrent(tmpPcapDir.c_str());

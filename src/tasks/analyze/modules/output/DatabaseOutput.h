@@ -17,7 +17,7 @@ public:
 	DatabaseOutput();
     virtual ~DatabaseOutput() {}
 
-    virtual bool exportOutput(ExploitSampleHandle sample, int taskId);
+	virtual bool exportOutput(ExploitSampleHandle sample, int taskId, bool override);
 
 private:
     bool checkDuplicate(ExploitInfoHandle info);

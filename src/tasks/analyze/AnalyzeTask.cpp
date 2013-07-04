@@ -311,7 +311,7 @@ bool AnalyzeTask::exportResults(ExploitSampleHandle s)
 			continue;
 		}
 
-        bool status = (*m_outputMods)[exportStrategy]->exportOutput(s, m_id);
+		bool status = (*m_outputMods)[exportStrategy]->exportOutput(s, m_id, m_override);
 		if(status == false) {
 			LOG_ERROR("failed to export sample [%s] with strategy: [%s]\n", s->info()->name().c_str(), exportStrategy.c_str());
 			++m_errors;

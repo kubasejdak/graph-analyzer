@@ -29,13 +29,13 @@ DatabaseOutput::DatabaseOutput()
     m_description = "Inserts info about samples into database.";
 }
 
-bool DatabaseOutput::exportOutput(ExploitSampleHandle sample, int taskId)
+bool DatabaseOutput::exportOutput(ExploitSampleHandle sample, int taskId, bool override)
 {
     ExploitInfoHandle info = sample->info();
 
 	// ensure that sample is not a duplicate
     bool duplicate = checkDuplicate(info);
-    if(duplicate) {
+	if(duplicate && override == false) {
         LOG("duplicate sample: skipping and removing duplicated graph file\n");
 		QFile(info->graphName().c_str()).remove();
         LOG("SUCCESS\n\n");

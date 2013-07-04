@@ -20,7 +20,7 @@ ConsoleOutput::ConsoleOutput()
     m_description = "Prints info about samples in console.";
 }
 
-bool ConsoleOutput::exportOutput(ExploitSampleHandle sample, int taskId)
+bool ConsoleOutput::exportOutput(ExploitSampleHandle sample, int taskId, bool override)
 {	
 	ExploitInfoHandle info = sample->info();
 

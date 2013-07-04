@@ -178,3 +178,48 @@ bool LoopDetector::exportToDatabase(ExploitSampleHandle sample, int sampleId)
 	LOG("SUCCESS\n\n");
 	return true;
 }
+
+bool LoopDetector::importFromDatabase(ExploitSampleHandle sample, int sampleId)
+{
+	stringstream ss;
+	ss << "SELECT * FROM analyze_loopassignment WHERE sample_id = " << sampleId;
+
+	QSqlQuery selectLoopIdQuery(DatabaseManager::instance()->database());
+	selectLoopIdQuery.prepare(ss.str().c_str());
+	if(!DatabaseManager::instance()->exec(&selectLoopIdQuery)) {
+		LOG_ERROR("FAILURE\n\n");
+		return false;
+	}
+
+	while(selectLoopIdQuery.next()) {
+		int loopId = selectLoopIdQuery.record().value("loop_id").toInt();
+
+		ss.str("");
+		ss << "SELECT * FROM analyze_loop WHERE id = " << loopId;
+
+		QSqlQuery selectLoopQuery(DatabaseManager::instance()->database());
+		selectLoopQuery.prepare(ss.str().c_str());
+		if(!DatabaseManager::instance()->exec(&selectLoopQuery)) {
+			LOG_ERROR("FAILURE\n\n");
+			return false;
+		}
+
+		if(selectLoopQuery.next() == false) {
+			LOG_ERROR("FAILURE\n\n");
+			return false;
+		}
+
+		TraitEntryHandle m = TraitEntryHandle(new TraitEntry());
+		(*m)["start"] = selectLoopQuery.record().value("start").toString().toStdString();
+		(*m)["size"] = selectLoopQuery.record().value("size").toString().toStdString();
+		(*m)["vertexes"] = selectLoopQuery.record().value("vertexes").toString().toStdString();
+		(*m)["iterations"] = selectLoopQuery.record().value("iterations").toString().toStdString();
+		(*m)["hash"] = selectLoopQuery.record().value("hash").toString().toStdString();
+
+		// set traits
+		sample->info()->setTrait(m_traitName, m);
+	}
+
+	LOG("SUCCESS\n\n");
+	return true;
+}

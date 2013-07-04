@@ -34,6 +34,8 @@ private:
     QDate m_from;
     QDate m_until;
 	std::string m_algorithm;
+	int m_foundGroups;
+	int m_groupedSamples;
 };
 
 #endif /* GROUPTASK_H */

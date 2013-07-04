@@ -18,6 +18,7 @@ public:
 
 	virtual bool perform(ExploitSampleHandle sample);
 	virtual bool exportToDatabase(ExploitSampleHandle sample, int sampleId);
+	virtual bool importFromDatabase(ExploitSampleHandle sample, int sampleId);
 };
 
 #endif /* SYSCALLANALYZE_H_ */

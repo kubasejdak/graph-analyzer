@@ -141,8 +141,8 @@ cleanup:
 
     m_progress = 100;
     SystemLogger::instance()->exportStatus(this);
-
 	SystemLogger::instance()->setStatus("idle");
+
 	LOG("SUCCESS\n\n");
 	return true;
 }

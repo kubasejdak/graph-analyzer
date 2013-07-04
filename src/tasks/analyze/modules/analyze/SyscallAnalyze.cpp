@@ -113,3 +113,45 @@ bool SyscallAnalyze::exportToDatabase(ExploitSampleHandle sample, int sampleId)
 	LOG("SUCCESS\n\n");
 	return true;
 }
+
+bool SyscallAnalyze::importFromDatabase(ExploitSampleHandle sample, int sampleId)
+{
+	stringstream ss;
+	ss << "SELECT * FROM analyze_apiassignment WHERE sample_id = " << sampleId;
+
+	QSqlQuery selectSyscallIdQuery(DatabaseManager::instance()->database());
+	selectSyscallIdQuery.prepare(ss.str().c_str());
+	if(!DatabaseManager::instance()->exec(&selectSyscallIdQuery)) {
+		LOG_ERROR("FAILURE\n\n");
+		return false;
+	}
+
+	while(selectSyscallIdQuery.next()) {
+		int apiId = selectSyscallIdQuery.record().value("api_id").toInt();
+
+		ss.str("");
+		ss << "SELECT * FROM analyze_api WHERE id = " << apiId;
+
+		QSqlQuery selectSyscallQuery(DatabaseManager::instance()->database());
+		selectSyscallQuery.prepare(ss.str().c_str());
+		if(!DatabaseManager::instance()->exec(&selectSyscallQuery)) {
+			LOG_ERROR("FAILURE\n\n");
+			return false;
+		}
+
+		if(selectSyscallQuery.next() == false) {
+			LOG_ERROR("FAILURE\n\n");
+			return false;
+		}
+
+		TraitEntryHandle m = TraitEntryHandle(new TraitEntry());
+		(*m)["syscall"] = selectSyscallQuery.record().value("syscall").toString().toStdString();
+		(*m)["DLL"] = selectSyscallQuery.record().value("dll").toString().toStdString();
+
+		// set traits
+		sample->info()->setTrait(m_traitName, m);
+	}
+
+	LOG("SUCCESS\n\n");
+	return true;
+}

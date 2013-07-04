@@ -114,3 +114,44 @@ bool GraphHash::exportToDatabase(ExploitSampleHandle sample, int sampleId)
 	LOG("SUCCESS\n\n");
 	return true;
 }
+
+bool GraphHash::importFromDatabase(ExploitSampleHandle sample, int sampleId)
+{
+	stringstream ss;
+	ss << "SELECT * FROM analyze_hashassignment WHERE sample_id = " << sampleId;
+
+	QSqlQuery selectHashIdQuery(DatabaseManager::instance()->database());
+	selectHashIdQuery.prepare(ss.str().c_str());
+	if(!DatabaseManager::instance()->exec(&selectHashIdQuery)) {
+		LOG_ERROR("FAILURE\n\n");
+		return false;
+	}
+
+	if(selectHashIdQuery.next()) {
+		int hashId = selectHashIdQuery.record().value("hash_id").toInt();
+
+		ss.str("");
+		ss << "SELECT * FROM analyze_hash WHERE id = " << hashId;
+
+		QSqlQuery selectHashQuery(DatabaseManager::instance()->database());
+		selectHashQuery.prepare(ss.str().c_str());
+		if(!DatabaseManager::instance()->exec(&selectHashQuery)) {
+			LOG_ERROR("FAILURE\n\n");
+			return false;
+		}
+
+		if(selectHashQuery.next() == false) {
+			LOG_ERROR("FAILURE\n\n");
+			return false;
+		}
+
+		TraitEntryHandle m = TraitEntryHandle(new TraitEntry());
+		(*m)["hash"] = selectHashQuery.record().value("hash").toString().toStdString();
+
+		// set traits
+		sample->info()->setTrait(m_traitName, m);
+	}
+
+	LOG("SUCCESS\n\n");
+	return true;
+}

@@ -19,6 +19,7 @@ public:
 
 	virtual bool perform(ExploitSampleHandle sample) = 0;
 	virtual bool exportToDatabase(ExploitSampleHandle sample, int sampleId) = 0;
+	virtual bool importFromDatabase(ExploitSampleHandle sample, int sampleId) = 0;
 
 protected:
 	std::string m_traitName;

@@ -19,6 +19,9 @@
 #include <utils/DatabaseManager.h>
 #include <tasks/ITask.h>
 #include <tasks/group/GroupManager.h>
+#include <tasks/group/algorithms/IAlgorithm.h>
+#include <tasks/group/algorithms/AlgorithmFactory.h>
+#include <tasks/group/algorithms/AlgorithmContext.h>
 #include <tasks/analyze/modules/ModuleManager.h>
 #include <tasks/analyze/modules/analyze/IAnalyze.h>
 #include <core/ExploitSample.h>
@@ -30,7 +33,7 @@ using namespace std;
 GroupTask::GroupTask()
 {
     m_override = false;
-    m_algorithm = "basic";
+	m_algorithm = "symetric";
 
     m_type = "group";
     m_traitName = "groups";
@@ -44,11 +47,13 @@ bool GroupTask::performTask()
 	SystemLogger::instance()->setStatus("group task");
 	LOG("starting task: [group], m_id: [%d]\n", m_id);
 
+	// gather all samples that match user criteria to be grouped
     if(collectTaskSamples() == false) {
         return false;
     }
 
-	// TODO: implement
+	AlgorithmFactory algorithmFactory;
+	IAlgorithm algorithm = algorithmFactory.createAlgorithm(m_algorithm);
 
 	// summarize
 	LOG("=====================================================================================\n");

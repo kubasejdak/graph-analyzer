@@ -20,7 +20,6 @@
 #include <tasks/ITask.h>
 #include <tasks/group/GroupManager.h>
 #include <tasks/group/modules/algorithms/IAlgorithm.h>
-#include <tasks/group/modules/algorithms/AlgorithmFactory.h>
 #include <tasks/group/modules/algorithms/AlgorithmContext.h>
 #include <tasks/group/modules/ModulesManager.h>
 #include <tasks/analyze/modules/ModulesManager.h>
@@ -34,7 +33,7 @@ using namespace std;
 GroupTask::GroupTask()
 {
     m_override = false;
-	m_algorithm = "symetric";
+    m_algorithm = "SymetricProbability";
 
     m_type = "group";
     m_traitName = "groups";
@@ -53,9 +52,8 @@ bool GroupTask::performTask()
         return false;
     }
 
-	// create grouping algorithm
-    Group::AlgorithmFactory algorithmFactory;
-    Group::IAlgorithmHandle algorithm = algorithmFactory.createAlgorithm(m_algorithm);
+    // get grouping algorithm
+    Group::IAlgorithmHandle algorithm = Group::ModuleManager::algorithm()->[m_algorithm];
 
 	// for each sample try to find appropriate group for it
 	for(ExploitSampleHandle sample : m_samples) {

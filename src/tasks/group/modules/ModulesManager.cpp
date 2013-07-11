@@ -57,20 +57,20 @@ AlgorithmMap *ModuleManager::algorithm()
 
 void ModuleManager::removeInput()
 {
-	InputMap::iterator it;
+    /*InputMap::iterator it;
     for(it = m_inputModules.begin(); it != m_inputModules.end(); ++it)
 		delete it->second;
 
-    m_inputModules.clear();
+    m_inputModules.clear();*/
 }
 
 void ModuleManager::removeOutput()
 {
-	OutputMap::iterator it;
+    /*OutputMap::iterator it;
     for(it = m_outputModules.begin(); it != m_outputModules.end(); ++it)
 		delete it->second;
 
-    m_outputModules.clear();
+    m_outputModules.clear();*/
 }
 
 void ModuleManager::removeAlgorithm()

@@ -3,7 +3,6 @@
 set(GROUP_TASK_ALGORITHMS_SUBMODULES_SRC
     IAlgorithm.h
     AlgorithmContext.cpp
-    AlgorithmFactory.cpp
     SymetricProbability.cpp
 )
 

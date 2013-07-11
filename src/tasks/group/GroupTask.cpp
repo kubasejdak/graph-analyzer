@@ -52,8 +52,53 @@ bool GroupTask::performTask()
         return false;
     }
 
+	// create grouping algorithm
 	AlgorithmFactory algorithmFactory;
-	IAlgorithm algorithm = algorithmFactory.createAlgorithm(m_algorithm);
+	IAlgorithmHandle algorithm = algorithmFactory.createAlgorithm(m_algorithm);
+
+	// for each sample try to find appropriate group for it
+	for(ExploitSampleHandle sample : m_samples) {
+		// if no groups found (first sample), create immediately group for it
+		if(m_groupManager.count() == 0) {
+			int groupId = m_groupManager.createGroup();
+			m_groupManager.add(groupId, sample);
+
+			++m_foundGroups;
+			++m_groupedSamples;
+
+			// export status
+			updateStatus();
+			SystemLogger::instance()->exportStatus(this);
+
+			continue;
+		}
+
+		// for each existing group, compare its leader and current sample
+		bool assign = false;
+		for(int i = 0; i < m_groupManager.count(); ++i) {
+			assign = algorithm->process(m_groupManager.leader(i), sample, m_context);
+
+			if(assign == true) {
+				m_groupManager.add(i, sample);
+				break;
+			}
+		}
+
+		// if not assigned to any group, create group for it
+		if(assign == false) {
+			int groupId = m_groupManager.createGroup();
+			m_groupManager.add(groupId, sample);
+
+			++m_foundGroups;
+		}
+
+		++m_groupedSamples;
+
+		// export status
+		updateStatus();
+		SystemLogger::instance()->exportStatus(this);
+	}
+
 
 	// summarize
 	LOG("=====================================================================================\n");

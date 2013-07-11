@@ -4,13 +4,15 @@
  *  Created on	: 07-05-2012
  */
 
-#ifndef IANALYZE_H_
-#define IANALYZE_H_
+#ifndef ANALYZE_IANALYZE_H_
+#define ANALYZE_IANALYZE_H_
 
 #include <string>
 
 #include <tasks/analyze/modules/IModule.h>
 #include <core/ExploitSample.h>
+
+namespace Analyze {
 
 class IAnalyze: public IModule {
 public:
@@ -25,4 +27,6 @@ protected:
 	std::string m_traitName;
 };
 
-#endif /* IANALYZE_H_ */
+} // namespace Analyze
+
+#endif /* ANALYZE_IANALYZE_H_ */

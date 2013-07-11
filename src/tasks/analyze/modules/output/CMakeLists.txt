@@ -1,14 +1,14 @@
-#=== OUTPUT SUBMODULES ===
+#=== ANALYZE TASK OUTPUT SUBMODULES ===
 
-set(OUTPUT_SUBMODULES_SRC
+set(ANALYZE_TASK_OUTPUT_SUBMODULES_SRC
     IOutput.h
     DatabaseOutput.cpp
     ConsoleOutput.cpp
 )
 
-add_library(output-submodules ${OUTPUT_SUBMODULES_SRC})
+add_library(analyze-output-submodules ${ANALYZE_TASK_OUTPUT_SUBMODULES_SRC})
 if(${MACHINE} STREQUAL ${DEVELOPMENT_MACHINE})
-    qt5_use_modules(output-submodules Sql)
+	qt5_use_modules(analyze-output-submodules Sql)
 else()
-    target_link_libraries(output-submodules ${QT_LIBRARIES})
+	target_link_libraries(analyze-output-submodules ${QT_LIBRARIES})
 endif()

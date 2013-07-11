@@ -19,10 +19,11 @@
 #include <utils/DatabaseManager.h>
 #include <tasks/ITask.h>
 #include <tasks/group/GroupManager.h>
-#include <tasks/group/algorithms/IAlgorithm.h>
-#include <tasks/group/algorithms/AlgorithmFactory.h>
-#include <tasks/group/algorithms/AlgorithmContext.h>
-#include <tasks/analyze/modules/ModuleManager.h>
+#include <tasks/group/modules/algorithms/IAlgorithm.h>
+#include <tasks/group/modules/algorithms/AlgorithmFactory.h>
+#include <tasks/group/modules/algorithms/AlgorithmContext.h>
+#include <tasks/group/modules/ModulesManager.h>
+#include <tasks/analyze/modules/ModulesManager.h>
 #include <tasks/analyze/modules/analyze/IAnalyze.h>
 #include <core/ExploitSample.h>
 #include <core/ExploitInfo.h>
@@ -53,8 +54,8 @@ bool GroupTask::performTask()
     }
 
 	// create grouping algorithm
-	AlgorithmFactory algorithmFactory;
-	IAlgorithmHandle algorithm = algorithmFactory.createAlgorithm(m_algorithm);
+    Group::AlgorithmFactory algorithmFactory;
+    Group::IAlgorithmHandle algorithm = algorithmFactory.createAlgorithm(m_algorithm);
 
 	// for each sample try to find appropriate group for it
 	for(ExploitSampleHandle sample : m_samples) {
@@ -187,8 +188,8 @@ bool GroupTask::collectTaskSamples()
 		return false;
 	}
 
-	AnalyzeMap *anaMods = ModuleManager::instance()->analyze();
-	AnalyzeMap::iterator anaIt;
+    Analyze::AnalyzeMap *anaMods = Analyze::ModuleManager::instance()->analyze();
+    Analyze::AnalyzeMap::iterator anaIt;
 	ExploitSampleHandle sample;
 	while(selectQuery.next()) {
 		int sampleId = selectQuery.record().value("id").toInt();

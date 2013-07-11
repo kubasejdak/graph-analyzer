@@ -4,12 +4,14 @@
  *  Created on	: 13-05-2012
  */
 
-#ifndef SYSCALLANALYZE_H_
-#define SYSCALLANALYZE_H_
+#ifndef ANALYZE_SYSCALLANALYZE_H_
+#define ANALYZE_SYSCALLANALYZE_H_
 
 #include <tasks/analyze/modules/analyze/IAnalyze.h>
 
 class ExploitSample;
+
+namespace Analyze {
 
 class SyscallAnalyze: public IAnalyze {
 public:
@@ -21,4 +23,6 @@ public:
 	virtual bool importFromDatabase(ExploitSampleHandle sample, int sampleId);
 };
 
-#endif /* SYSCALLANALYZE_H_ */
+} // namespace Analyze
+
+#endif /* ANALYZE_SYSCALLANALYZE_H_ */

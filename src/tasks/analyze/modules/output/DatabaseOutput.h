@@ -4,13 +4,15 @@
  * Created on	: 22-08-2012
  */
 
-#ifndef DATABASEOUTPUT_H_
-#define DATABASEOUTPUT_H_
+#ifndef ANALYZE_DATABASEOUTPUT_H_
+#define ANALYZE_DATABASEOUTPUT_H_
 
 #include <tasks/analyze/modules/output/IOutput.h>
 
 class ExploitSample;
 class ExploitInfo;
+
+namespace Analyze {
 
 class DatabaseOutput: public IOutput {
 public:
@@ -25,4 +27,6 @@ private:
     bool exportGeneralData(ExploitInfoHandle info, int sampleId, int taskId);
 };
 
-#endif /* DATABASEOUTPUT_H_ */
+} // namespace Analyze
+
+#endif /* ANALYZE_DATABASEOUTPUT_H_ */

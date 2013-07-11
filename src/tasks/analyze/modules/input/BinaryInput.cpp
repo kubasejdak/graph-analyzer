@@ -15,6 +15,7 @@
 #include <utils/SystemLogger.h>
 
 using namespace std;
+using namespace Analyze;
 
 BinaryInput::BinaryInput()
 {

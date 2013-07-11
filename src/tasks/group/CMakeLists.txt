@@ -1,6 +1,6 @@
 # === GROUP TASK ===
 
-add_subdirectory(algorithms)
+add_subdirectory(modules)
 
 set(GROUP_TASK_SRC
     GroupTask.cpp
@@ -9,7 +9,7 @@ set(GROUP_TASK_SRC
 
 add_library(group-task ${GROUP_TASK_SRC})
 
-target_link_libraries(group-task group-algorithms)
+target_link_libraries(group-task group-modules)
 if(${MACHINE} STREQUAL ${DEVELOPMENT_MACHINE})
     qt5_use_modules(group-task Core)
     qt5_use_modules(group-task Xml)

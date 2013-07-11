@@ -21,6 +21,7 @@
 #include <tasks/analyze/modules/analyze/IAnalyze.h>
 
 using namespace std;
+using namespace Analyze;
 
 LoopDetector::LoopDetector()
 {

@@ -4,13 +4,15 @@
  *  Created on	: 08-05-2012
  */
 
-#ifndef BINARYINPUT_H_
-#define BINARYINPUT_H_
+#ifndef ANALYZE_BINARYINPUT_H_
+#define ANALYZE_BINARYINPUT_H_
 
 #include <string>
 
 #include <tasks/analyze/modules/input/IInput.h>
 #include <core/ExploitSample.h>
+
+namespace Analyze {
 
 class BinaryInput: public IInput {
 public:
@@ -20,4 +22,6 @@ public:
 	virtual bool loadInput(std::string filename, SampleList *samples);
 };
 
-#endif /* BINARYINPUT_H_ */
+} // namespace Analyze
+
+#endif /* ANALYZE_BINARYINPUT_H_ */

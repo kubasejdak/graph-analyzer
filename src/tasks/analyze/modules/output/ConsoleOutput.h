@@ -4,12 +4,14 @@
  * Created on	: 23-08-2012
  */
 
-#ifndef CONSOLEOUTPUT_H_
-#define CONSOLEOUTPUT_H_
+#ifndef ANALYZE_CONSOLEOUTPUT_H_
+#define ANALYZE_CONSOLEOUTPUT_H_
 
 #include <tasks/analyze/modules/output/IOutput.h>
 
 class ExploitSample;
+
+namespace Analyze {
 
 class ConsoleOutput: public IOutput {
 public:
@@ -19,4 +21,6 @@ public:
 	virtual bool exportOutput(ExploitSampleHandle sample, int taskId, bool override);
 };
 
-#endif /* CONSOLEOUTPUT_H_ */
+} // namespace Analyze
+
+#endif /* ANALYZE_CONSOLEOUTPUT_H_ */

@@ -4,8 +4,8 @@
  * Created on	: 09-12-2012
  */
 
-#ifndef GROUPMANAGER_H_
-#define GROUPMANAGER_H_
+#ifndef GROUP_GROUPMANAGER_H_
+#define GROUP_GROUPMANAGER_H_
 
 #include <vector>
 
@@ -17,7 +17,6 @@ class GroupManager {
 public:
 	GroupManager() {}
 	virtual ~GroupManager() {}
-
 
 	int createGroup();
 	void add(int groupId, ExploitSampleHandle sample);
@@ -32,4 +31,4 @@ private:
 	GroupsVector m_groups;
 };
 
-#endif /* GROUPMANAGER_H_ */
+#endif /* GROUP_GROUPMANAGER_H_ */

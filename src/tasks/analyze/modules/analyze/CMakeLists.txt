@@ -1,17 +1,17 @@
-#=== ANALYZE SUBMODULES ===
+#=== ANALYZE TASK ANALYZE SUBMODULES ===
 
-set(ANALYZE_SUBMODULES_SRC
+set(ANALYZETASK_ANALYZE_SUBMODULES_SRC
     IAnalyze.h
     SyscallAnalyze.cpp
     GraphHash.cpp
     LoopDetector.cpp
 )
 
-add_library(analyze-submodules ${ANALYZE_SUBMODULES_SRC})
+add_library(analyze-analyze-submodules ${ANALYZETASK_ANALYZE_SUBMODULES_SRC})
 
-target_link_libraries(analyze-submodules utils)
+target_link_libraries(analyze-analyze-submodules utils)
 if(${MACHINE} STREQUAL ${DEVELOPMENT_MACHINE})
-    qt5_use_modules(analyze-submodules Sql)
+	qt5_use_modules(analyze-analyze-submodules Sql)
 else()
-    target_link_libraries(analyze-submodules ${QT_LIBRARIES})
+	target_link_libraries(analyze-analyze-submodules ${QT_LIBRARIES})
 endif()

@@ -4,13 +4,15 @@
  *  Created on	: 06-05-2012
  */
 
-#ifndef IINPUT_H_
-#define IINPUT_H_
+#ifndef ANALYZE_IINPUT_H_
+#define ANALYZE_IINPUT_H_
 
 #include <string>
 
 #include <tasks/analyze/modules/IModule.h>
 #include <core/ExploitSample.h>
+
+namespace Analyze {
 
 class IInput: public IModule {
 public:
@@ -24,4 +26,6 @@ protected:
 	std::string m_type;
 };
 
-#endif /* IINPUT_H_ */
+} // namespace Analyze
+
+#endif /* ANALYZE_IINPUT_H_ */

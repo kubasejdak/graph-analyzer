@@ -22,6 +22,7 @@
 #include <tasks/analyze/modules/output/IOutput.h>
 
 using namespace std;
+using namespace Analyze;
 
 DatabaseOutput::DatabaseOutput()
 {

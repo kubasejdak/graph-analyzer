@@ -4,10 +4,12 @@
  *  Created on	: 01-05-2012
  */
 
-#ifndef IMODULE_H_
-#define IMODULE_H_
+#ifndef ANALYZE_IMODULE_H_
+#define ANALYZE_IMODULE_H_
 
 #include <string>
+
+namespace Analyze {
 
 class IModule {
 public:
@@ -22,4 +24,6 @@ protected:
 	std::string m_description;
 };
 
-#endif /* IMODULE_H_ */
+} // namespace Analyze
+
+#endif /* ANALYZE_IMODULE_H_ */

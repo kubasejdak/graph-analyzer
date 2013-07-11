@@ -4,12 +4,14 @@
  * Created on	: 13-07-2012
  */
 
-#ifndef LOOPDETECTOR_H_
-#define LOOPDETECTOR_H_
+#ifndef ANALYZE_LOOPDETECTOR_H_
+#define ANALYZE_LOOPDETECTOR_H_
 
 #include <tasks/analyze/modules/analyze/IAnalyze.h>
 
 class ExploitSample;
+
+namespace Analyze {
 
 class LoopDetector: public IAnalyze {
 public:
@@ -21,4 +23,6 @@ public:
 	virtual bool importFromDatabase(ExploitSampleHandle sample, int sampleId);
 };
 
-#endif /* LOOPDETECTOR_H_ */
+} // namespace Analyze
+
+#endif /* ANALYZE_LOOPDETECTOR_H_ */

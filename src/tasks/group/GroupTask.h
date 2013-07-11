@@ -14,7 +14,7 @@
 
 #include <tasks/ITask.h>
 #include <tasks/group/GroupManager.h>
-#include <tasks/group/algorithms/AlgorithmContext.h>
+#include <tasks/group/modules/algorithms/AlgorithmContext.h>
 
 class GroupTask : public ITask {
 public:
@@ -28,7 +28,7 @@ private:
     bool collectTaskSamples();
 
 	GroupManager m_groupManager;
-	AlgorithmContext m_context;
+    Group::AlgorithmContext m_context;
 
 	// task specific info
 	std::list<std::string> m_taskFiles;

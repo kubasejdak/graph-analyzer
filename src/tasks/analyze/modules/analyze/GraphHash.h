@@ -4,12 +4,14 @@
  * Created on	: 23-07-2012
  */
 
-#ifndef GRAPHHASH_H_
-#define GRAPHHASH_H_
+#ifndef ANALYZE_GRAPHHASH_H_
+#define ANALYZE_GRAPHHASH_H_
 
 #include <tasks/analyze/modules/analyze/IAnalyze.h>
 
 class ExploitSample;
+
+namespace Analyze {
 
 class GraphHash: public IAnalyze {
 public:
@@ -21,4 +23,6 @@ public:
 	virtual bool importFromDatabase(ExploitSampleHandle sample, int sampleId);
 };
 
-#endif /* GRAPHHASH_H_ */
+} // namespace Analyze
+
+#endif /* ANALYZE_GRAPHHASH_H_ */

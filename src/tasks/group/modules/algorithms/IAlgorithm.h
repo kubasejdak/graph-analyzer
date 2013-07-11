@@ -1,0 +1,30 @@
+/*
+ *  Filename	: IAlgorithm.h
+ *  Author		: Kuba Sejdak
+ *  Created on	: 07-07-2013
+ */
+
+#ifndef IALGORITHM_H
+#define IALGORITHM_H
+
+#include <memory>
+
+#include <core/ExploitSample.h>
+#include <tasks/group/modules/IModule.h>
+#include <tasks/group/modules/algorithms/AlgorithmContext.h>
+
+namespace Group {
+
+class IAlgorithm: public IModule {
+public:
+	IAlgorithm() {}
+	virtual ~IAlgorithm() {}
+
+	virtual bool process(ExploitSampleHandle sampleA, ExploitSampleHandle sampleB, AlgorithmContext &context) = 0;
+};
+
+typedef std::shared_ptr<IAlgorithm> IAlgorithmHandle;
+
+} // namespace Group
+
+#endif /* IALGORITHM_H */

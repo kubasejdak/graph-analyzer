@@ -70,18 +70,18 @@ bool DatabaseOutput::checkDuplicate(ExploitInfoHandle info)
 	stringstream ss;
 	ss << "SELECT * FROM analyze_sample WHERE " << "name = '" << info->name() << "'"
 											   << " AND extracted_from = '" << info->extractedFrom() << "'"
-											   << " AND file_size = '" << info->size()  << "'"
+											   << " AND size = '" << info->size()  << "'"
 											   << " AND shellcode_offset = '" << info->codeOffset() << "'";
 
 	QSqlQuery selectQuery(DatabaseManager::instance()->database());
 	selectQuery.prepare(ss.str().c_str());
 	if(!DatabaseManager::instance()->exec(&selectQuery)) {
 		LOG_ERROR("FAILURE\n\n");
-        return false;
+		return false;
 	}
 
-    LOG("SUCCESS\n\n");
-	return selectQuery.next();
+	LOG("SUCCESS\n\n");
+	return (selectQuery.size() != 0) ? true : false;
 }
 
 bool DatabaseOutput::exportGeneralData(ExploitInfoHandle info, int sampleId, int taskId)

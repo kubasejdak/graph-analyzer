@@ -32,6 +32,13 @@
 </script>
 
 <div class="span14 offset 2">
+	{% if is_message %}
+	<div class="alert alert-success">
+		<button type="button" class="close" data-dismiss="alert">×</button>
+		<strong>Success!</strong> Analyze task has been saved.
+	</div>
+	{% endif %}
+
 	<form action="" method="post">{% csrf_token %}
 		<button class="btn btn-large btn-primary" name="save" onclick="selectAllFiles()">Save</button>
 		<button class="btn btn-large" name="new">New configuration</button>
@@ -68,12 +75,5 @@
 			</div>
 		</div>
 	</form>
-	
-	{% if is_message %}
-	<div class="alert alert-success">
-		<button type="button" class="close" data-dismiss="alert">×</button>
-		<strong>Success!</strong> Analyze task has been saved.
-	</div>
-	{% endif %}
 </div>
 {% endblock %}

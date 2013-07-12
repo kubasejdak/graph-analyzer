@@ -23,14 +23,14 @@
 using namespace std;
 using namespace Analyze;
 
-ModuleManager::~ModuleManager()
+ModulesManager::~ModulesManager()
 {
 	removeInput();
 	removeOutput();
 	removeAnalyze();
 }
 
-void ModuleManager::loadInput()
+void ModulesManager::loadInput()
 {
 	// BinaryInput
 	BinaryInput *binaryInput = new BinaryInput();
@@ -41,7 +41,7 @@ void ModuleManager::loadInput()
     m_inputModules[pcapInput->name()] = pcapInput;
 }
 
-void ModuleManager::loadOutput()
+void ModulesManager::loadOutput()
 {
 	// DatabaseOutput
 	DatabaseOutput *databaseOutput = new DatabaseOutput();
@@ -52,7 +52,7 @@ void ModuleManager::loadOutput()
     m_outputModules[consoleOutput->name()] = consoleOutput;
 }
 
-void ModuleManager::loadAnalyze()
+void ModulesManager::loadAnalyze()
 {
 	// SyscallAnalyze
 	SyscallAnalyze *syscallAnalyze = new SyscallAnalyze();
@@ -67,25 +67,25 @@ void ModuleManager::loadAnalyze()
     m_analyzeModules[loopDetector->name()] = loopDetector;
 }
 
-InputMap *ModuleManager::input()
+InputMap *ModulesManager::input()
 {
 	loadInput();
     return &m_inputModules;
 }
 
-OutputMap *ModuleManager::output()
+OutputMap *ModulesManager::output()
 {
 	loadOutput();
     return &m_outputModules;
 }
 
-AnalyzeMap *ModuleManager::analyze()
+AnalyzeMap *ModulesManager::analyze()
 {
 	loadAnalyze();
     return &m_analyzeModules;
 }
 
-void ModuleManager::removeInput()
+void ModulesManager::removeInput()
 {
 	InputMap::iterator it;
     for(it = m_inputModules.begin(); it != m_inputModules.end(); ++it)
@@ -94,7 +94,7 @@ void ModuleManager::removeInput()
     m_inputModules.clear();
 }
 
-void ModuleManager::removeOutput()
+void ModulesManager::removeOutput()
 {
 	OutputMap::iterator it;
     for(it = m_outputModules.begin(); it != m_outputModules.end(); ++it)
@@ -103,7 +103,7 @@ void ModuleManager::removeOutput()
     m_outputModules.clear();
 }
 
-void ModuleManager::removeAnalyze()
+void ModulesManager::removeAnalyze()
 {
 	AnalyzeMap::iterator it;
     for(it = m_analyzeModules.begin(); it != m_analyzeModules.end(); ++it)

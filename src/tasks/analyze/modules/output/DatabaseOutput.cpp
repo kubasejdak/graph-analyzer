@@ -54,7 +54,7 @@ bool DatabaseOutput::exportOutput(ExploitSampleHandle sample, int taskId, bool o
 	}
 
 	// analyze modules specific data
-	AnalyzeMap *anaMods = ModuleManager::instance()->analyze();
+	AnalyzeMap *anaMods = ModulesManager::instance()->analyze();
 	AnalyzeMap::iterator anaIt;
 	for(anaIt = anaMods->begin(); anaIt != anaMods->end(); ++anaIt) {
 		LOG("exporting sample info [%s] to database\n", anaIt->first.c_str());

@@ -12,7 +12,6 @@
 #include <core/ExploitSample.h>
 #include <core/ExploitGroup.h>
 
-//typedef std::vector<SampleVector> GroupsVector;
 typedef std::vector<ExploitGroupHandle> GroupsVector;
 
 class GroupManager {
@@ -24,6 +23,7 @@ public:
 	void add(int groupId, ExploitSampleHandle sample);
 
 	int find(ExploitSampleHandle sample);
+	ExploitGroupHandle group(int groupId);
 	ExploitSampleHandle leader(int groupId);
 
 	int count();

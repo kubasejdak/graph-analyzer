@@ -20,6 +20,7 @@
 #include <tasks/ITask.h>
 #include <tasks/group/GroupManager.h>
 #include <tasks/group/modules/algorithms/IAlgorithm.h>
+#include <tasks/group/modules/output/IOutput.h>
 #include <tasks/group/modules/algorithms/AlgorithmContext.h>
 #include <tasks/group/modules/ModulesManager.h>
 #include <tasks/analyze/modules/ModulesManager.h>
@@ -54,7 +55,7 @@ bool GroupTask::performTask()
 	LOG("loaded samples: [%d]\n", m_samples.size());
 
     // get grouping algorithm
-	Group::IAlgorithm *algorithm = (*Group::ModuleManager::instance()->algorithm())[m_algorithm];
+	Group::IAlgorithm *algorithm = (*Group::ModulesManager::instance()->algorithm())[m_algorithm];
 
 	// for each sample try to find appropriate group for it
 	for(ExploitSampleHandle sample : m_samples) {
@@ -100,6 +101,14 @@ bool GroupTask::performTask()
 		SystemLogger::instance()->exportStatus(this);
 	}
 
+	// export results
+	for(int i = 0; i < m_groupManager.count(); ++i) {
+		if(exportResults(m_groupManager.group(i)) == false) {
+			LOG_ERROR("FAILURE\n\n");
+			return false;
+		}
+	}
+
 
 	// summarize
 	LOG("=====================================================================================\n");
@@ -115,6 +124,31 @@ bool GroupTask::performTask()
 	SystemLogger::instance()->setStatus("idle");
 
     LOG("SUCCESS\n\n");
+	return true;
+}
+
+bool GroupTask::exportResults(ExploitGroupHandle g)
+{
+	Group::OutputMap *outputMods = Group::ModulesManager::instance()->output();
+
+	list<string>::iterator it;
+	for(it = m_exportStrategies.begin(); it != m_exportStrategies.end(); ++it) {
+		string exportStrategy = *it;
+		LOG("exporting using strategy: [%s]\n", exportStrategy.c_str());
+		if(outputMods->find(exportStrategy) == outputMods->end()) {
+			LOG_ERROR("output strategy not supported: [%s]\n", exportStrategy.c_str());
+			++m_errors;
+			continue;
+		}
+
+		bool status = (*outputMods)[exportStrategy]->exportOutput(g, m_id, m_override);
+		if(status == false) {
+			LOG_ERROR("failed to export group with strategy: [%s]\n", exportStrategy.c_str());
+			++m_errors;
+		}
+	}
+
+	LOG("SUCCESS\n\n");
 	return true;
 }
 
@@ -199,7 +233,7 @@ bool GroupTask::collectTaskSamples()
 		return false;
 	}
 
-    Analyze::AnalyzeMap *anaMods = Analyze::ModuleManager::instance()->analyze();
+	Analyze::AnalyzeMap *anaMods = Analyze::ModulesManager::instance()->analyze();
     Analyze::AnalyzeMap::iterator anaIt;
 	ExploitSampleHandle sample;
 	while(selectQuery.next()) {

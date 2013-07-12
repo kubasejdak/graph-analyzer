@@ -12,6 +12,7 @@
 #include <QDate>
 #include <QDomElement>
 
+#include <core/ExploitGroup.h>
 #include <tasks/ITask.h>
 #include <tasks/group/GroupManager.h>
 #include <tasks/group/modules/algorithms/AlgorithmContext.h>
@@ -23,6 +24,8 @@ public:
 
 private:
     virtual bool performTask();
+	bool exportResults(ExploitGroupHandle g);
+
 	virtual void updateStatus();
 	virtual bool readConfigXML(QDomElement taskNode);
     bool collectTaskSamples();

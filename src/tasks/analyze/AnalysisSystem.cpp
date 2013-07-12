@@ -21,7 +21,7 @@ AnalysisSystem::AnalysisSystem()
 
 void AnalysisSystem::loadModules()
 {
-	m_analyzeMods = ModuleManager::instance()->analyze();
+	m_analyzeMods = ModulesManager::instance()->analyze();
 }
 
 void AnalysisSystem::loadSample(ExploitSampleHandle sample)

@@ -45,6 +45,11 @@ exit:
 	return id;
 }
 
+ExploitGroupHandle GroupManager::group(int groupId)
+{
+	return m_groups[groupId];
+}
+
 ExploitSampleHandle GroupManager::leader(int groupId)
 {
 	//return m_groups[groupId][0];

@@ -45,8 +45,8 @@ AnalyzeTask::AnalyzeTask()
 
 void AnalyzeTask::loadModules()
 {
-	m_inputMods = ModuleManager::instance()->input();
-	m_outputMods = ModuleManager::instance()->output();
+	m_inputMods = ModulesManager::instance()->input();
+	m_outputMods = ModulesManager::instance()->output();
 }
 
 bool AnalyzeTask::performTask()

@@ -20,12 +20,12 @@ typedef std::map<std::string, IInput *> InputMap;
 typedef std::map<std::string, IOutput *> OutputMap;
 typedef std::map<std::string, IAlgorithm *> AlgorithmMap;
 
-class ModuleManager {
+class ModulesManager {
 public:
-	virtual ~ModuleManager();
-    static ModuleManager *instance()
+	virtual ~ModulesManager();
+	static ModulesManager *instance()
 	{
-		static ModuleManager m_instance;
+		static ModulesManager m_instance;
 		return &m_instance;
 	}
 
@@ -34,7 +34,7 @@ public:
     AlgorithmMap *algorithm();
 
 private:
-	ModuleManager() {}
+	ModulesManager() {}
 
 	void loadInput();
 	void loadOutput();

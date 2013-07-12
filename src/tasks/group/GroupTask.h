@@ -22,13 +22,17 @@ public:
 	GroupTask();
 	virtual ~GroupTask() {}
 
+	QDate from();
+	QDate until();
+	std::list<std::string> taskFiles();
+
 private:
     virtual bool performTask();
-	bool exportResults(ExploitGroupHandle g);
-
 	virtual void updateStatus();
 	virtual bool readConfigXML(QDomElement taskNode);
-    bool collectTaskSamples();
+
+	bool load();
+	bool exportResults(ExploitGroupHandle g);
 
 	GroupManager m_groupManager;
     Group::AlgorithmContext m_context;
@@ -38,6 +42,7 @@ private:
     bool m_override;
     QDate m_from;
     QDate m_until;
+	std::string m_inputStrategy;
 	std::string m_algorithm;
 	int m_foundGroups;
 	int m_groupedSamples;

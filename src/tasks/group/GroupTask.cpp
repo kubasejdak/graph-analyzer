@@ -9,11 +9,7 @@
 #include <list>
 #include <string>
 #include <sstream>
-#include <QDate>
 #include <QDomElement>
-#include <QSqlQuery>
-#include <QSqlRecord>
-#include <QVariant>
 
 #include <utils/SystemLogger.h>
 #include <utils/DatabaseManager.h>
@@ -21,13 +17,9 @@
 #include <tasks/group/GroupManager.h>
 #include <tasks/group/modules/algorithms/IAlgorithm.h>
 #include <tasks/group/modules/output/IOutput.h>
+#include <tasks/group/modules/input/IInput.h>
 #include <tasks/group/modules/algorithms/AlgorithmContext.h>
 #include <tasks/group/modules/ModulesManager.h>
-#include <tasks/analyze/modules/ModulesManager.h>
-#include <tasks/analyze/modules/analyze/IAnalyze.h>
-#include <core/ExploitSample.h>
-#include <core/ExploitInfo.h>
-
 
 using namespace std;
 
@@ -35,6 +27,7 @@ GroupTask::GroupTask()
 {
     m_override = false;
     m_algorithm = "SymetricProbability";
+	m_inputStrategy = "database";
 
     m_type = "group";
     m_traitName = "groups";
@@ -43,13 +36,28 @@ GroupTask::GroupTask()
 	m_groupedSamples = 0;
 }
 
+QDate GroupTask::from()
+{
+	return m_from;
+}
+
+QDate GroupTask::until()
+{
+	return m_until;
+}
+
+list<string> GroupTask::taskFiles()
+{
+	return m_taskFiles;
+}
+
 bool GroupTask::performTask()
 {
 	SystemLogger::instance()->setStatus("group task");
 	LOG("starting task: [group], m_id: [%d]\n", m_id);
 
 	// gather all samples that match user criteria to be grouped
-    if(collectTaskSamples() == false) {
+	if(load() == false) {
         return false;
     }
 	LOG("loaded samples: [%d]\n", m_samples.size());
@@ -127,31 +135,6 @@ bool GroupTask::performTask()
 	return true;
 }
 
-bool GroupTask::exportResults(ExploitGroupHandle g)
-{
-	Group::OutputMap *outputMods = Group::ModulesManager::instance()->output();
-
-	list<string>::iterator it;
-	for(it = m_exportStrategies.begin(); it != m_exportStrategies.end(); ++it) {
-		string exportStrategy = *it;
-		LOG("exporting using strategy: [%s]\n", exportStrategy.c_str());
-		if(outputMods->find(exportStrategy) == outputMods->end()) {
-			LOG_ERROR("output strategy not supported: [%s]\n", exportStrategy.c_str());
-			++m_errors;
-			continue;
-		}
-
-		bool status = (*outputMods)[exportStrategy]->exportOutput(g, m_id, m_override);
-		if(status == false) {
-			LOG_ERROR("failed to export group with strategy: [%s]\n", exportStrategy.c_str());
-			++m_errors;
-		}
-	}
-
-	LOG("SUCCESS\n\n");
-	return true;
-}
-
 void GroupTask::updateStatus()
 {
 	if(m_samples.size() > 0)
@@ -207,6 +190,13 @@ bool GroupTask::readConfigXML(QDomElement taskNode)
 		context = context.nextSiblingElement("Context");
 	}
 
+	// input strategy
+	QDomElement in = m_xmlParser.child(taskNode, "Input");
+	if(in.isNull() == false) {
+		m_inputStrategy = in.attribute("val").toStdString();
+		LOG("input strategy: [%s]\n", in.attribute("val").toStdString().c_str());
+	}
+
 	// output strategies
     QDomElement out = m_xmlParser.child(taskNode, "Output");
     while(out.isNull() == false) {
@@ -219,59 +209,55 @@ bool GroupTask::readConfigXML(QDomElement taskNode)
     return true;
 }
 
-bool GroupTask::collectTaskSamples()
+bool GroupTask::load()
 {
-	// select all sample
-	stringstream ss;
-	ss << "SELECT * FROM analyze_sample WHERE " << "capture_date >= '" << m_from.toString("yyyy-MM-dd").toStdString() << "' AND "
-												<< "capture_date <= '" << m_until.toString("yyyy-MM-dd").toStdString() << "'";
+	Group::InputMap *inputMods = Group::ModulesManager::instance()->input();
+	Group::InputMap::iterator it;
+	bool moduleFound = false;
 
-	QSqlQuery selectQuery(DatabaseManager::instance()->database());
-	selectQuery.prepare(ss.str().c_str());
-	if(!DatabaseManager::instance()->exec(&selectQuery)) {
-		LOG_ERROR("FAILURE\n\n");
-		return false;
-	}
-
-	Analyze::AnalyzeMap *anaMods = Analyze::ModulesManager::instance()->analyze();
-    Analyze::AnalyzeMap::iterator anaIt;
-	ExploitSampleHandle sample;
-	while(selectQuery.next()) {
-		int sampleId = selectQuery.record().value("id").toInt();
-		sample = ExploitSampleHandle(new ExploitSample());
-		sample->info()->setName(selectQuery.record().value("name").toString().toStdString());
-		sample->info()->setExtractedFrom(selectQuery.record().value("extracted_from").toString().toStdString());
-		sample->info()->setGraphName(selectQuery.record().value("graph_name").toString().toStdString());
-		sample->info()->setSize(selectQuery.record().value("size").toInt());
-		sample->info()->setFileType(selectQuery.record().value("file_type").toString().toStdString());
-		sample->info()->setFileSize(selectQuery.record().value("file_size").toInt());
-		sample->info()->setCodeOffset(selectQuery.record().value("shellcode_offset").toInt());
-
-		// if task files not empty, then check if sample matches criteria
-		if(m_taskFiles.empty() == false) {
-			bool pathFound = false;
-			for(string path : m_taskFiles) {
-				if(sample->info()->extractedFrom().find(path) != string::npos) {
-					pathFound = true;
-					break;
-				}
-			}
-
-			if(pathFound == false)
-				continue;
-		}
-
-		// get analyze specific information about current sample
-		bool status;
-		for(anaIt = anaMods->begin(); anaIt != anaMods->end(); ++anaIt) {
-			status = anaIt->second->importFromDatabase(sample, sampleId);
+	for(it = inputMods->begin(); it != inputMods->end(); ++it) {
+		if(m_inputStrategy == it->second->type()) {
+			moduleFound = true;
+			bool status = it->second->loadInput(this, &m_samples);
 			if(status == false) {
+				SystemLogger::instance()->setError("loading samples failed");
 				LOG_ERROR("FAILURE\n\n");
 				return false;
 			}
+
+			break;
+		}
+	}
+
+	if(moduleFound) {
+		LOG("SUCCESS\n\n");
+		return true;
+	}
+
+	LOG_ERROR("no appropriate input module\n");
+	LOG_ERROR("FAILURE\n\n");
+	return false;
+}
+
+bool GroupTask::exportResults(ExploitGroupHandle g)
+{
+	Group::OutputMap *outputMods = Group::ModulesManager::instance()->output();
+
+	list<string>::iterator it;
+	for(it = m_exportStrategies.begin(); it != m_exportStrategies.end(); ++it) {
+		string exportStrategy = *it;
+		LOG("exporting using strategy: [%s]\n", exportStrategy.c_str());
+		if(outputMods->find(exportStrategy) == outputMods->end()) {
+			LOG_ERROR("output strategy not supported: [%s]\n", exportStrategy.c_str());
+			++m_errors;
+			continue;
 		}
 
-		m_samples.push_back(sample);
+		bool status = (*outputMods)[exportStrategy]->exportOutput(g, m_id, m_override);
+		if(status == false) {
+			LOG_ERROR("failed to export group with strategy: [%s]\n", exportStrategy.c_str());
+			++m_errors;
+		}
 	}
 
 	LOG("SUCCESS\n\n");

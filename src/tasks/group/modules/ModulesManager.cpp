@@ -11,8 +11,10 @@
 
 #include <tasks/group/modules/algorithms/IAlgorithm.h>
 #include <tasks/group/modules/output/IOutput.h>
+#include <tasks/group/modules/input/IInput.h>
 #include <tasks/group/modules/algorithms/SymetricProbability.h>
 #include <tasks/group/modules/output/ConsoleOutput.h>
+#include <tasks/group/modules/input/DatabaseInput.h>
 
 using namespace std;
 using namespace Group;
@@ -26,6 +28,9 @@ ModulesManager::~ModulesManager()
 
 void ModulesManager::loadInput()
 {
+	// DatabaseInput
+	DatabaseInput *databaseInput = new DatabaseInput();
+	m_inputModules[databaseInput->name()] = databaseInput;
 }
 
 void ModulesManager::loadOutput()
@@ -62,11 +67,11 @@ AlgorithmMap *ModulesManager::algorithm()
 
 void ModulesManager::removeInput()
 {
-	/*InputMap::iterator it;
+	InputMap::iterator it;
     for(it = m_inputModules.begin(); it != m_inputModules.end(); ++it)
 		delete it->second;
 
-	m_inputModules.clear();*/
+	m_inputModules.clear();
 }
 
 void ModulesManager::removeOutput()

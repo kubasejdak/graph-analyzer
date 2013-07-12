@@ -29,7 +29,7 @@ using namespace Analyze;
 
 AnalyzeTask::AnalyzeTask()
 {
-	m_override = false;
+	m_duplicate = false;
 	m_scheduledFiles = 0;
 	m_loadedFiles = 0;
 	m_analyzedSamples = 0;
@@ -166,8 +166,8 @@ bool AnalyzeTask::readConfigXML(QDomElement taskNode)
 
 	m_name = m_xmlParser.child(taskNode, "Name").attribute("val").toStdString();
 	LOG("name: [%s]\n", m_name.c_str());
-	m_override = m_xmlParser.child(taskNode, "Override").attribute("val") == "true" ? true : false;
-    LOG("override: [%s]\n", (m_override) ? "true" : "false");
+	m_duplicate = m_xmlParser.child(taskNode, "Duplicate").attribute("val") == "true" ? true : false;
+	LOG("duplicate: [%s]\n", (m_duplicate) ? "true" : "false");
 
 	// files
 	LOG("collecting files to analyze\n");
@@ -312,7 +312,7 @@ bool AnalyzeTask::exportResults(ExploitSampleHandle s)
 			continue;
 		}
 
-		bool status = (*m_outputMods)[exportStrategy]->exportOutput(s, m_id, m_override);
+		bool status = (*m_outputMods)[exportStrategy]->exportOutput(s, m_id, m_duplicate);
 		if(status == false) {
 			LOG_ERROR("failed to export sample [%s] with strategy: [%s]\n", s->info()->name().c_str(), exportStrategy.c_str());
 			++m_errors;

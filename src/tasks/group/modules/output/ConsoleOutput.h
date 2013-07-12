@@ -17,7 +17,7 @@ public:
 	ConsoleOutput();
     virtual ~ConsoleOutput() {}
 
-	virtual bool exportOutput(ExploitGroupHandle sample, int taskId, bool override);
+	virtual bool exportOutput(ExploitGroupHandle sample, int taskId, bool duplicate);
 };
 
 } // namespace Group

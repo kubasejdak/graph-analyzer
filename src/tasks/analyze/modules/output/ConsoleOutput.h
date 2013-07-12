@@ -18,7 +18,7 @@ public:
 	ConsoleOutput();
     virtual ~ConsoleOutput() {}
 
-	virtual bool exportOutput(ExploitSampleHandle sample, int taskId, bool override);
+	virtual bool exportOutput(ExploitSampleHandle sample, int taskId, bool duplicate);
 };
 
 } // namespace Analyze

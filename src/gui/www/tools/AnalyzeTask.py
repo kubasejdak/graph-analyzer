@@ -8,7 +8,7 @@ class AnalyzeTask(object):
 		self.__name = "noname"
 		self.__files = []
 		self.__output = []
-		self.__override = False
+		self.__duplicate = False
 
 	def setName(self, name):
 		self.__name = name
@@ -19,8 +19,8 @@ class AnalyzeTask(object):
 	def setOutput(self, output):
 		self.__output.append(output)
 
-	def setOverride(self, value):
-		self.__override = value
+	def setDuplicate(self, value):
+		self.__duplicate = value
 
 	def save(self):
 		xmlParser = XMLParser()
@@ -44,9 +44,9 @@ class AnalyzeTask(object):
 				xmlParser.createChild(rootNode, "Output").setAttribute("val", o)
 			
 			# override
-			if(self.__override == True):
-				xmlParser.createChild(rootNode, "Override").setAttribute("val", "true")
+			if(self.__duplicate == True):
+				xmlParser.createChild(rootNode, "Duplicate").setAttribute("val", "true")
 			else:
-				xmlParser.createChild(rootNode, "Override").setAttribute("val", "false")
+				xmlParser.createChild(rootNode, "Duplicate").setAttribute("val", "false")
 
 			xmlParser.close()

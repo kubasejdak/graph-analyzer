@@ -14,7 +14,7 @@ DatabaseOutput::DatabaseOutput()
 	m_description = "Uploads info about groups in database.";
 }
 
-bool DatabaseOutput::exportOutput(ExploitGroupHandle sample, int taskId, bool override)
+bool DatabaseOutput::exportOutput(ExploitGroupHandle sample, int taskId, bool duplicate)
 {
 	return true;
 }

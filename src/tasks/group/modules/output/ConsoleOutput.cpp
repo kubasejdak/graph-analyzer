@@ -21,7 +21,7 @@ ConsoleOutput::ConsoleOutput()
     m_description = "Prints info about groups in console.";
 }
 
-bool ConsoleOutput::exportOutput(ExploitGroupHandle group, int taskId, bool override)
+bool ConsoleOutput::exportOutput(ExploitGroupHandle group, int taskId, bool duplicate)
 {
 	cout << "\t size : " << dec << group->size() << endl;
 	cout << "\t task: " << dec << taskId << endl;

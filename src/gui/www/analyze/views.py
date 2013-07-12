@@ -48,8 +48,8 @@ def render_analyzeTask(request):
 				analyzeTask.setOutput("console")
 			
 			# override
-			if("override" in request.POST):
-				analyzeTask.setOverride(True)
+			if("duplicate" in request.POST):
+				analyzeTask.setDuplicate(True)
 
 			analyzeTask.save()
 	

@@ -39,7 +39,7 @@ private:
 
 	// task specific info
 	std::list<std::string> m_taskFiles;
-	bool m_override;
+	bool m_duplicate;
 	int m_scheduledFiles;
 	int m_loadedFiles;
 	int m_analyzedSamples;

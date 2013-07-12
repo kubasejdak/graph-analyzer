@@ -17,7 +17,7 @@
 #include <utils/SystemLogger.h>
 #include <utils/DatabaseManager.h>
 #include <utils/Toolbox.h>
-#include <tasks/analyze/modules/ModuleManager.h>
+#include <tasks/analyze/modules/ModulesManager.h>
 #include <tasks/analyze/modules/analyze/IAnalyze.h>
 #include <tasks/analyze/modules/output/IOutput.h>
 

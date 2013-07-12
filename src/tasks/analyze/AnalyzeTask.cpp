@@ -17,7 +17,7 @@
 #include <tasks/analyze/modules/input/IInput.h>
 #include <tasks/analyze/AnalysisSystem.h>
 #include <tasks/analyze/EmulationSystem.h>
-#include <tasks/analyze/modules/ModuleManager.h>
+#include <tasks/analyze/modules/ModulesManager.h>
 #include <utils/FileTypeAnalyzer.h>
 #include <utils/SystemLogger.h>
 #include <utils/Toolbox.h>
@@ -25,6 +25,7 @@
 #include <core/ExploitSample.h>
 
 using namespace std;
+using namespace Analyze;
 
 AnalyzeTask::AnalyzeTask()
 {

@@ -4,7 +4,7 @@ set(CORE_SRC
     version.h
     CoreSystem.cpp
     ExploitSample.cpp
-	ExploitGroup.cpp
+    ExploitGroup.cpp
     ExploitInfo.cpp
     Graph.cpp
     Options.cpp

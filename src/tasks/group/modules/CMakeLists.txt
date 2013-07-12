@@ -11,6 +11,7 @@ set(GROUP_MODULES_SRC
 
 add_library(group-modules ${GROUP_MODULES_SRC} )
 
+target_link_libraries(group-modules core)
 target_link_libraries(group-modules group-algorithms-submodules)
 #target_link_libraries(group-modules group-input-submodules)
 #target_link_libraries(group-modules group-output-submodules)

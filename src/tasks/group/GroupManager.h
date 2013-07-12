@@ -10,8 +10,10 @@
 #include <vector>
 
 #include <core/ExploitSample.h>
+#include <core/ExploitGroup.h>
 
-typedef std::vector<SampleVector> GroupsVector;
+//typedef std::vector<SampleVector> GroupsVector;
+typedef std::vector<ExploitGroupHandle> GroupsVector;
 
 class GroupManager {
 public:

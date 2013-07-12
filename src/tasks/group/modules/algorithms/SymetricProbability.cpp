@@ -29,6 +29,10 @@ bool SymetricProbability::process(ExploitSampleHandle sampleA, ExploitSampleHand
 	HashVector loopsB = findLoopHashes(sampleB);
 	HashVector commonLoops = commonLoopHashes(loopsA, loopsB);
 
+	// check if samples have any loops
+	if(loopsA.size() == 0 && loopsB.size() == 0)
+		return false;
+
 	int treshold = atoi(context.value("treshold").c_str());
 
 	if(calculateProbability(loopsA.size(), loopsB.size(), commonLoops.size()) >= treshold)
@@ -48,10 +52,13 @@ SymetricProbability::HashVector SymetricProbability::findLoopHashes(ExploitSampl
     TraitMapHandle traits = sample->info()->traits();
 
     TraitMap::iterator it = traits->find("loop");
-    TraitEntry::iterator it2;
+	TraitEntry::iterator it2;
     while(it != traits->end() && it.key() == "loop") {
-        it2 = (*it)->find("hash");
-        hashes.push_back(*it2);
+		for(it2 = it.value()->begin(); it2 != it.value()->end(); ++it2) {
+			if(it2.key() == "hash")
+				hashes.push_back(it2.value());
+		}
+		++it;
     }
 
     return hashes;

@@ -7,7 +7,7 @@
 #ifndef ANALYSISSYSTEM_H_
 #define ANALYSISSYSTEM_H_
 
-#include <tasks/analyze/modules/ModuleManager.h>
+#include <tasks/analyze/modules/ModulesManager.h>
 #include <core/ExploitSample.h>
 
 class AnalysisSystem {
@@ -22,7 +22,7 @@ private:
 	void loadModules();
 
 	ExploitSampleHandle m_sample;
-	AnalyzeMap *m_analyzeMods;
+	Analyze::AnalyzeMap *m_analyzeMods;
 };
 
 #endif /* ANALYSISSYSTEM_H_ */

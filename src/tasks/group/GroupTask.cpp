@@ -51,9 +51,10 @@ bool GroupTask::performTask()
     if(collectTaskSamples() == false) {
         return false;
     }
+	LOG("loaded samples: [%d]\n", m_samples.size());
 
     // get grouping algorithm
-    Group::IAlgorithmHandle algorithm = Group::ModuleManager::algorithm()->[m_algorithm];
+	Group::IAlgorithm *algorithm = (*Group::ModuleManager::instance()->algorithm())[m_algorithm];
 
 	// for each sample try to find appropriate group for it
 	for(ExploitSampleHandle sample : m_samples) {
@@ -95,6 +96,7 @@ bool GroupTask::performTask()
 
 		// export status
 		updateStatus();
+		LOG("progress: [%d]\n", m_progress);
 		SystemLogger::instance()->exportStatus(this);
 	}
 
@@ -137,7 +139,7 @@ bool GroupTask::readConfigXML(QDomElement taskNode)
     m_override = m_xmlParser.child(taskNode, "Override").attribute("val") == "true" ? true : false;
     LOG("override: [%s]\n", (m_override) ? "true" : "false");
 
-    /* files */
+	// files
     LOG("collecting files to analyze\n");
     QDomElement file = m_xmlParser.child(taskNode, "File");
     while(file.isNull() == false) {
@@ -153,12 +155,23 @@ bool GroupTask::readConfigXML(QDomElement taskNode)
         file = file.nextSiblingElement("File");
     }
 
+	// dates
     m_from = QDate::fromString(m_xmlParser.child(taskNode, "From").attribute("date"), "yyyy-MM-dd");
     LOG("from: [%s]\n", m_from.toString("yyyy-MM-dd").toStdString().c_str());
     m_until = QDate::fromString(m_xmlParser.child(taskNode, "Until").attribute("date"), "yyyy-MM-dd");
     LOG("until: [%s]\n", m_until.toString("yyyy-MM-dd").toStdString().c_str());
-    m_algorithm = m_xmlParser.child(taskNode, "Algorithm").attribute("name").toStdString();
+
+	// algorithm
+	m_algorithm = m_xmlParser.child(taskNode, "Algorithm").attribute("name").toStdString();
 	LOG("algorithm: [%s]\n", m_algorithm.c_str());
+
+	// algorithm context
+	QDomElement context = m_xmlParser.child(taskNode, "Context");
+	while(context.isNull() == false) {
+		m_context.setValue(context.attribute("name").toStdString(), context.attribute("val").toStdString());
+		LOG("algorithm context: name: [%s], value: [%s]\n", context.attribute("name").toStdString().c_str(), context.attribute("val").toStdString().c_str());
+		context = context.nextSiblingElement("Context");
+	}
 
 	// output strategies
     QDomElement out = m_xmlParser.child(taskNode, "Output");

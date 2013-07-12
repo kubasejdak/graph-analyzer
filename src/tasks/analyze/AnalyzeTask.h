@@ -46,9 +46,9 @@ private:
 	int m_detectedExploits;
 	int m_allTaskFiles;
 
-	InputMap *m_inputMods;
-	AnalyzeMap *m_analyzeMods;
-	OutputMap *m_outputMods;
+	Analyze::InputMap *m_inputMods;
+	Analyze::AnalyzeMap *m_analyzeMods;
+	Analyze::OutputMap *m_outputMods;
 };
 
 #endif /* ANALYZETASK_H */

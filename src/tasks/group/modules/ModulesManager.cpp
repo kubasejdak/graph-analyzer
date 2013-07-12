@@ -32,8 +32,8 @@ void ModuleManager::loadOutput()
 
 void ModuleManager::loadAlgorithm()
 {
-    // SymetricProbability
-    SymetricProbability *symetricProbability = new SymetricProbability();
+	// SymetricProbability
+	SymetricProbability *symetricProbability = new SymetricProbability();
     m_algorithmModules[symetricProbability->name()] = symetricProbability;
 }
 

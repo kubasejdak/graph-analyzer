@@ -55,14 +55,22 @@ def render_options(request):
         else:
             coreOptions.skip_empty_samples = False
         
-        # logging options
+        # logging level
         levelDictStr = {"OFF": 0, "Low": 1, "Normal": 2, "High": 3}
         levelStr = request.POST["logLevel"]
         loggingOptions.level = levelDictStr[levelStr]
-        if("exportStatusXML" in request.POST):
-            loggingOptions.exportStatusXML = True
+        
+        # status options
+        if("exportStatusDB" in request.POST):
+            loggingOptions.exportStatusDB = True
         else:
-            loggingOptions.exportStatusXML = False
+            loggingOptions.exportStatusDB = False
+        
+        # description options
+        if("exportDescriptionXML" in request.POST):
+            loggingOptions.exportDescriptionXML = True
+        else:
+            loggingOptions.exportDescriptionXML = False
         
         # database options
         databaseOptions.driver = request.POST["dbDriver"]
@@ -89,7 +97,8 @@ def render_options(request):
 
     # update logging options
     c.update({"logLevel": int(loggingOptions.level),
-			  "exportStatusXML": loggingOptions.exportStatusXML})
+              "exportDescriptionXML": loggingOptions.exportDescriptionXML,
+			  "exportStatusDB": loggingOptions.exportStatusDB})
     
     # update database options
     c.update({"dbDriver": databaseOptions.driver,

@@ -5,7 +5,8 @@ class LoggingOptions(object):
     OPTIONS_FILE = "/var/www/jsejdak/GraphAnalyzer.conf"
     
     level = 2
-    exportStatusXML = True
+    exportStatusDB = True
+    exportDescriptionXML = True
     
     def get(self):
         xmlParser = XMLParser()
@@ -18,11 +19,20 @@ class LoggingOptions(object):
             else:
                 rootNode = xmlParser.root("Logging")
             
+            # logging level
             self.level = xmlParser.child(rootNode, "Level").attribute("val")
-            if(xmlParser.child(rootNode, "StatusStrategy").attribute("type") == "xml"):
-                self.exportStatusXML = True
+            
+            # status strategy
+            if(xmlParser.child(rootNode, "StatusStrategy").attribute("type") == "database"):
+                self.exportStatusDB = True
             else:
-                self.exportStatusXML = False
+                self.exportStatusDB = False
+            
+            # description strategy
+            if(xmlParser.child(rootNode, "DescriptionStrategy").attribute("type") == "xml"):
+                self.exportDescriptionXML = True
+            else:
+                self.exportDescriptionXML = False
         
             xmlParser.close()
     
@@ -37,10 +47,20 @@ class LoggingOptions(object):
             else:
                 rootNode = xmlParser.root("Logging")
 
+            # logging level
             xmlParser.child(rootNode, "Level").setAttribute("val", self.level)
-            e = xmlParser.child(rootNode, "StatusStrategy")
-            xmlParser.removeChild(rootNode, e)
-            if(self.exportStatusXML == True):
-                xmlParser.createChild(rootNode, "StatusStrategy").setAttribute("type", "xml")
+            
+            # status strategy
+            s = xmlParser.child(rootNode, "StatusStrategy")
+            xmlParser.removeChild(rootNode, s)
+            if(self.exportStatusDB == True):
+                xmlParser.createChild(rootNode, "StatusStrategy").setAttribute("type", "database")
         
+        
+            # description strategy
+            d = xmlParser.child(rootNode, "DescriptionStrategy")
+            xmlParser.removeChild(rootNode, d)
+            if(self.exportDescriptionXML == True):
+                xmlParser.createChild(rootNode, "DescriptionStrategy").setAttribute("type", "xml")
+            
             xmlParser.close()

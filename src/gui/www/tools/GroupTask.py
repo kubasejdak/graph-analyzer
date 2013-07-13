@@ -9,7 +9,9 @@ class GroupTask(object):
 		self.__files = []
 		self.__from = "dd.mm.rrrr"
 		self.__until = "dd.mm.rrrr"
-		self.__algorithm = "basic"
+		self.__algorithm = "SymetricProbability"
+		self.__context = {}
+		self.__input = ""
 		self.__output = []
 		self.__override = False
 
@@ -27,9 +29,15 @@ class GroupTask(object):
 
 	def setAlgorithm(self, algorithm):
 		self.__algorithm = algorithm
+	
+	def setContext(self, key, value):
+		self.__context[key] = value
 
-	def setOutput(self, output):
-		self.__output.append(output)
+	def setInput(self, inputMod):
+		self.__input = inputMod
+
+	def setOutput(self, outputMod):
+		self.__output.append(outputMod)
 
 	def setOverride(self, value):
 		self.__override = value
@@ -59,6 +67,15 @@ class GroupTask(object):
 
 			# algorithm
 			xmlParser.createChild(rootNode, "Algorithm").setAttribute("name", self.__algorithm)
+			
+			# context
+			for c in self.__context.keys():
+				n = xmlParser.createChild(rootNode, "Context")
+				n.setAttribute("name", c)
+				n.setAttribute("val", self.__context[c])
+			
+			# input
+			xmlParser.createChild(rootNode, "Input").setAttribute("val", self.__input)
 			
 			# output
 			for o in self.__output:

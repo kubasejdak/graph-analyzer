@@ -33,7 +33,7 @@ bool SymetricProbability::process(ExploitSampleHandle sampleA, ExploitSampleHand
 	if(loopsA.size() == 0 && loopsB.size() == 0)
 		return false;
 
-	int treshold = atoi(context.value("treshold").c_str());
+	int treshold = atoi(context.value("threshold").c_str());
 
 	if(calculateProbability(loopsA.size(), loopsB.size(), commonLoops.size()) >= treshold)
 		return true;

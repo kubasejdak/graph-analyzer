@@ -28,7 +28,7 @@ def render_groupTask(request):
 	if "save" in request.POST:
 		c.update({"is_message": True})
 		groupTask = GroupTask()
-
+		
 		# name
 		groupTask.setName(request.POST["taskName"])
 
@@ -45,6 +45,14 @@ def render_groupTask(request):
 		
 		# algorithm
 		groupTask.setAlgorithm(request.POST["algorithm"])
+
+		# algorithm context
+		if(request.POST["algorithm"] == "SymetricProbability"):
+			groupTask.setContext("threshold", request.POST["threshold_SymetricProbability"])
+
+		# input
+		if("databaseInput" in request.POST):
+			groupTask.setInput("database")
 
 		# output
 		if("databaseOutput" in request.POST):

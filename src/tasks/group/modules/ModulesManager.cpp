@@ -14,6 +14,7 @@
 #include <tasks/group/modules/input/IInput.h>
 #include <tasks/group/modules/algorithms/SymetricProbability.h>
 #include <tasks/group/modules/output/ConsoleOutput.h>
+#include <tasks/group/modules/output/DatabaseOutput.h>
 #include <tasks/group/modules/input/DatabaseInput.h>
 
 using namespace std;
@@ -38,6 +39,10 @@ void ModulesManager::loadOutput()
 	// ConsoleOutput
 	ConsoleOutput *consoleOutput = new ConsoleOutput();
 	m_outputModules[consoleOutput->name()] = consoleOutput;
+
+	// DatabaseOutput
+	DatabaseOutput *databaseOutput = new DatabaseOutput();
+	m_outputModules[databaseOutput->name()] = databaseOutput;
 }
 
 void ModulesManager::loadAlgorithm()

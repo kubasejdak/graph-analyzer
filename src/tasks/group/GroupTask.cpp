@@ -51,6 +51,16 @@ list<string> GroupTask::taskFiles()
 	return m_taskFiles;
 }
 
+void GroupTask::incrementGroupedsamples()
+{
+	++m_groupedSamples;
+}
+
+void GroupTask::incrementFoundGroups()
+{
+	++m_foundGroups;
+}
+
 bool GroupTask::performTask()
 {
 	SystemLogger::instance()->setStatus("group task");
@@ -65,49 +75,9 @@ bool GroupTask::performTask()
     // get grouping algorithm
 	Group::IAlgorithm *algorithm = (*Group::ModulesManager::instance()->algorithm())[m_algorithm];
 
-	// for each sample try to find appropriate group for it
-	for(ExploitSampleHandle sample : m_samples) {
-		// if no groups found (first sample), create immediately group for it
-		if(m_groupManager.count() == 0) {
-			int groupId = m_groupManager.createGroup();
-			m_groupManager.add(groupId, sample);
-
-			++m_foundGroups;
-			++m_groupedSamples;
-
-			// export status
-			updateStatus();
-			SystemLogger::instance()->exportStatus(this);
-
-			continue;
-		}
-
-		// for each existing group, compare its leader and current sample
-		bool assign = false;
-		for(int i = 0; i < m_groupManager.count(); ++i) {
-			assign = algorithm->process(m_groupManager.leader(i), sample, m_context);
-
-			if(assign == true) {
-				m_groupManager.add(i, sample);
-				break;
-			}
-		}
-
-		// if not assigned to any group, create group for it
-		if(assign == false) {
-			int groupId = m_groupManager.createGroup();
-			m_groupManager.add(groupId, sample);
-
-			++m_foundGroups;
-		}
-
-		++m_groupedSamples;
-
-		// export status
-		updateStatus();
-		LOG("progress: [%d]\n", m_progress);
-		SystemLogger::instance()->exportStatus(this);
-	}
+	// perform algorithm
+	LOG("starting algorithm: [%s]\n", m_algorithm.c_str());
+	algorithm->group(this, m_samples, m_groupManager, m_context);
 
 	// export results
 	for(int i = 0; i < m_groupManager.count(); ++i) {
@@ -116,7 +86,6 @@ bool GroupTask::performTask()
 			return false;
 		}
 	}
-
 
 	// summarize
 	LOG("=====================================================================================\n");

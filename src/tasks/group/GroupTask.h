@@ -26,9 +26,13 @@ public:
 	QDate until();
 	std::list<std::string> taskFiles();
 
-private:
-    virtual bool performTask();
+	void incrementGroupedsamples();
+	void incrementFoundGroups();
+
 	virtual void updateStatus();
+
+private:
+	virtual bool performTask();
 	virtual bool readConfigXML(QDomElement taskNode);
 
 	bool load();

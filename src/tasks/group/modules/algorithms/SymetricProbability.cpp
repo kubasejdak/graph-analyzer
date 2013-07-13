@@ -11,8 +11,11 @@
 #include <cstdlib>
 
 #include <tasks/group/modules/algorithms/IAlgorithm.h>
+#include <tasks/group/GroupManager.h>
+#include <tasks/group/GroupTask.h>
 #include <core/ExploitSample.h>
 #include <core/ExploitInfo.h>
+#include <utils/SystemLogger.h>
 
 using namespace std;
 using namespace Group;
@@ -23,7 +26,60 @@ SymetricProbability::SymetricProbability()
     m_description = "Groups samples using naive symetric probability.";
 }
 
-bool SymetricProbability::process(ExploitSampleHandle sampleA, ExploitSampleHandle sampleB, AlgorithmContext &context)
+bool SymetricProbability::group(GroupTask *task, SampleList &samples, GroupManager &groupManager, AlgorithmContext &context)
+{
+	// extract context
+	int threshold = atoi(context.value("threshold").c_str());
+
+	// for each sample try to find appropriate group for it
+	for(ExploitSampleHandle sample : samples) {
+		// if no groups found (first sample), create immediately group for it
+		if(groupManager.count() == 0) {
+			int groupId = groupManager.createGroup();
+			groupManager.add(groupId, sample);
+
+			task->incrementFoundGroups();
+			task->incrementGroupedsamples();
+
+			// export status
+			task->updateStatus();
+			SystemLogger::instance()->exportStatus(task);
+
+			continue;
+		}
+
+		// for each existing group, compare its leader and current sample
+		bool assign = false;
+		for(int i = 0; i < groupManager.count(); ++i) {
+			assign = compare(groupManager.leader(i), sample, threshold);
+
+			if(assign == true) {
+				LOG("adding sample [%s] to group [%d]\n", sample->info()->name().c_str(), i);
+				groupManager.add(i, sample);
+				break;
+			}
+		}
+
+		// if not assigned to any group, create group for it
+		if(assign == false) {
+			int groupId = groupManager.createGroup();
+			LOG("creating new group [%d] for sample [%s]\n", groupId, sample->info()->name().c_str());
+			groupManager.add(groupId, sample);
+
+			task->incrementFoundGroups();
+		}
+
+		task->incrementGroupedsamples();
+
+		// export status
+		task->updateStatus();
+		SystemLogger::instance()->exportStatus(task);
+	}
+
+	return true;
+}
+
+bool SymetricProbability::compare(ExploitSampleHandle sampleA, ExploitSampleHandle sampleB, int threshold)
 {
 	HashVector loopsA = findLoopHashes(sampleA);
 	HashVector loopsB = findLoopHashes(sampleB);
@@ -33,9 +89,7 @@ bool SymetricProbability::process(ExploitSampleHandle sampleA, ExploitSampleHand
 	if(loopsA.size() == 0 && loopsB.size() == 0)
 		return false;
 
-	int treshold = atoi(context.value("threshold").c_str());
-
-	if(calculateProbability(loopsA.size(), loopsB.size(), commonLoops.size()) >= treshold)
+	if(calculateProbability(loopsA.size(), loopsB.size(), commonLoops.size()) >= threshold)
 		return true;
 
 	return false;

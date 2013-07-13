@@ -25,6 +25,7 @@ public:
 	virtual ~ITask() {}
 
     bool perform();
+	virtual void updateStatus() = 0;
 	virtual bool readConfigXML(QDomElement taskNode) = 0;
 
     // for exporting status purpose
@@ -44,7 +45,6 @@ public:
 
 protected:
 	virtual bool performTask() = 0;				// perform specific task
-	virtual void updateStatus() = 0;			// update task status
 
 	XMLParser m_xmlParser;						// provides parser for XML configuration file
 	SampleList m_samples;						// samples that are used in task

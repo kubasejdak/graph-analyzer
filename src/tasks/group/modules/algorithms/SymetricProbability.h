@@ -10,6 +10,7 @@
 #include <vector>
 
 #include <tasks/group/modules/algorithms/IAlgorithm.h>
+#include <tasks/group/GroupManager.h>
 #include <core/ExploitSample.h>
 
 namespace Group {
@@ -19,11 +20,12 @@ public:
     SymetricProbability();
 	virtual ~SymetricProbability() {}
 
-	virtual bool process(ExploitSampleHandle sampleA, ExploitSampleHandle sampleB, AlgorithmContext &context);
+	virtual bool group(GroupTask *task, SampleList &samples, GroupManager &groupManager, AlgorithmContext &context);
 
 private:
 	typedef std::vector<std::string> HashVector;
 
+	bool compare(ExploitSampleHandle sampleA, ExploitSampleHandle sampleB, int threshold);
 	int calculateProbability(int commonA, int commonB, int commonAB);
 
 	HashVector findLoopHashes(ExploitSampleHandle sample);

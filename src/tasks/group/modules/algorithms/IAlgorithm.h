@@ -11,7 +11,10 @@
 
 #include <core/ExploitSample.h>
 #include <tasks/group/modules/IModule.h>
+#include <tasks/group/GroupManager.h>
 #include <tasks/group/modules/algorithms/AlgorithmContext.h>
+
+class GroupTask;
 
 namespace Group {
 
@@ -20,7 +23,7 @@ public:
 	IAlgorithm() {}
 	virtual ~IAlgorithm() {}
 
-	virtual bool process(ExploitSampleHandle sampleA, ExploitSampleHandle sampleB, AlgorithmContext &context) = 0;
+	virtual bool group(GroupTask *task, SampleList &samples, GroupManager &groupManager, AlgorithmContext &context) = 0;
 };
 
 typedef std::shared_ptr<IAlgorithm> IAlgorithmHandle;

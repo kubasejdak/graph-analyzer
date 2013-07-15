@@ -20,7 +20,7 @@ public:
 	virtual ~GroupManager() {}
 
 	int createGroup();
-	void add(int groupId, ExploitSampleHandle sample);
+	void add(int groupId, ExploitSampleHandle sample, int resemblence);
 
 	int find(ExploitSampleHandle sample);
 	ExploitGroupHandle group(int groupId);

@@ -67,22 +67,3 @@ class LoopAssignment(models.Model):
 	
 	def __unicode__(self):
 		return self.loop.hash
-
-# Group table
-class Group(models.Model):
-	leader = models.ForeignKey(Sample)
-	active = models.BooleanField()
-	members_num = models.IntegerField()
-	comment = models.CharField(max_length = 3000)
-	
-	def __unicode__(self):
-		return self.leader.name
-	
-# GroupAssignment table
-class GroupAssignment(models.Model):
-	group = models.ForeignKey(Group)
-	member = models.ForeignKey(Sample)
-	resemblence_rate = models.IntegerField()
-	
-	def __unicode__(self):
-		return self.group.leader.name

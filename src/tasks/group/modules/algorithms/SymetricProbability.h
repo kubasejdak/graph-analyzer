@@ -25,7 +25,7 @@ public:
 private:
 	typedef std::vector<std::string> HashVector;
 
-	bool compare(ExploitSampleHandle sampleA, ExploitSampleHandle sampleB, int threshold);
+	bool compare(ExploitSampleHandle sampleA, ExploitSampleHandle sampleB, int threshold, int &resemblence);
 	int calculateProbability(int commonA, int commonB, int commonAB);
 
 	HashVector findLoopHashes(ExploitSampleHandle sample);

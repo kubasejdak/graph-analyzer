@@ -36,7 +36,7 @@ bool SymetricProbability::group(GroupTask *task, SampleList &samples, GroupManag
 		// if no groups found (first sample), create immediately group for it
 		if(groupManager.count() == 0) {
 			int groupId = groupManager.createGroup();
-			groupManager.add(groupId, sample);
+			groupManager.add(groupId, sample, 100);
 
 			task->incrementFoundGroups();
 			task->incrementGroupedsamples();
@@ -51,11 +51,12 @@ bool SymetricProbability::group(GroupTask *task, SampleList &samples, GroupManag
 		// for each existing group, compare its leader and current sample
 		bool assign = false;
 		for(int i = 0; i < groupManager.count(); ++i) {
-			assign = compare(groupManager.leader(i), sample, threshold);
+			int resemblence;
+			assign = compare(groupManager.leader(i), sample, threshold, resemblence);
 
 			if(assign == true) {
 				LOG("adding sample [%s] to group [%d]\n", sample->info()->name().c_str(), i);
-				groupManager.add(i, sample);
+				groupManager.add(i, sample, resemblence);
 				break;
 			}
 		}
@@ -64,7 +65,7 @@ bool SymetricProbability::group(GroupTask *task, SampleList &samples, GroupManag
 		if(assign == false) {
 			int groupId = groupManager.createGroup();
 			LOG("creating new group [%d] for sample [%s]\n", groupId, sample->info()->name().c_str());
-			groupManager.add(groupId, sample);
+			groupManager.add(groupId, sample, 100);
 
 			task->incrementFoundGroups();
 		}
@@ -79,7 +80,7 @@ bool SymetricProbability::group(GroupTask *task, SampleList &samples, GroupManag
 	return true;
 }
 
-bool SymetricProbability::compare(ExploitSampleHandle sampleA, ExploitSampleHandle sampleB, int threshold)
+bool SymetricProbability::compare(ExploitSampleHandle sampleA, ExploitSampleHandle sampleB, int threshold, int &resemblence)
 {
 	HashVector loopsA = findLoopHashes(sampleA);
 	HashVector loopsB = findLoopHashes(sampleB);

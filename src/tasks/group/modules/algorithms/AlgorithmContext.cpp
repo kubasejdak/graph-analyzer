@@ -21,3 +21,8 @@ string AlgorithmContext::value(string key)
 {
 	return m_values[key];
 }
+
+AlgorithmContext::ContextMap &AlgorithmContext::data()
+{
+	return m_values;
+}

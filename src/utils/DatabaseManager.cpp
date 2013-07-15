@@ -145,8 +145,9 @@ int DatabaseManager::sequenceValue(string table)
 int DatabaseManager::sampleId(ExploitSampleHandle s)
 {
 	QSqlQuery idQuery(DatabaseManager::instance()->database());
-	idQuery.prepare("SELECT * FROM analyze_sample WHERE graph_name = ?");
-	idQuery.addBindValue(s->info()->graphName().c_str());
+	idQuery.prepare("SELECT * FROM analyze_sample WHERE name = ? AND extracted_from = ?");
+	idQuery.addBindValue(s->info()->name().c_str());
+	idQuery.addBindValue(s->info()->extractedFrom().c_str());
 	if(!DatabaseManager::instance()->exec(&idQuery))
 		return -1;
 

@@ -26,8 +26,10 @@ bool ConsoleOutput::exportOutput(ExploitGroupHandle group, int taskId, bool dupl
 	cout << "\t size : " << dec << group->size() << endl;
 	cout << "\t task: " << dec << taskId << endl;
 	cout << "\t Samples in group:" << endl;
-	for(int i = 0; i < group->size(); ++i)
-		cout << "\t\t [" << i << "] " << "name: [" << group->get(i)->info()->name() << "], extracted from: [" << group->get(i)->info()->extractedFrom() << "]" << endl;
+	for(int i = 0; i < group->size(); ++i) {
+		cout << "\t\t [" << i << "] " << "name: [" << group->get(i)->info()->name() << "], extracted from: [" << group->get(i)->info()->extractedFrom() << "], ";
+		cout << "resemblence [" << group->resemblence(i) << "]" << endl;
+	}
 
 	return true;
 }

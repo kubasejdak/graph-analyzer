@@ -1,5 +1,5 @@
 from django.contrib import admin
-from models import Sample, API, APIAssignment, Hash, HashAssignment, Loop, LoopAssignment, Group, GroupAssignment
+from models import Sample, API, APIAssignment, Hash, HashAssignment, Loop, LoopAssignment
 
 class SampleAdmin(admin.ModelAdmin):
 	list_display = ("name", "extracted_from", "graph_name")
@@ -43,18 +43,6 @@ class LoopAssignmentAdmin(admin.ModelAdmin):
 	list_filter = ("sample", "loop")
 	ordering = ("sample",)
 
-class GroupAdmin(admin.ModelAdmin):
-	list_display = ("leader", "members_num", "active", "comment")
-	search_fields = ("leader", "active", "comment", "members_num")
-	list_filter = ("leader", "active", "members_num")
-	ordering = ("-active", "-members_num", "-leader")
-
-class GroupAssignmentAdmin(admin.ModelAdmin):
-	list_display = ("group", "member", "resemblence_rate")
-	search_fields = ("group", "member", "resemblence_rate")
-	list_filter = ("group", "member", "resemblence_rate")
-	ordering = ("-resemblence_rate", "-group")
-
 admin.site.register(Sample, SampleAdmin)
 admin.site.register(API, APIAdmin)
 admin.site.register(APIAssignment, APIAssignmentAdmin)
@@ -62,5 +50,3 @@ admin.site.register(Hash, HashAdmin)
 admin.site.register(HashAssignment, HashAssignmentAdmin)
 admin.site.register(Loop, LoopAdmin)
 admin.site.register(LoopAssignment, LoopAssignmentAdmin)
-admin.site.register(Group, GroupAdmin)
-admin.site.register(GroupAssignment, GroupAssignmentAdmin)

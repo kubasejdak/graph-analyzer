@@ -17,7 +17,11 @@ public:
 	DatabaseOutput();
 	virtual ~DatabaseOutput() {}
 
-	virtual bool exportOutput(ExploitGroupHandle sample, int taskId, bool duplicate);
+	virtual bool exportOutput(ExploitGroupHandle group, int taskId, bool duplicate);
+
+private:
+	bool exportGeneralData(ExploitGroupHandle group, int groupId, int taskId);
+	bool exportMembersData(ExploitGroupHandle group, int groupId);
 };
 
 } // namespace Group

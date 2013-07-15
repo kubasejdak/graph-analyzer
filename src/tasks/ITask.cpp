@@ -75,14 +75,19 @@ bool ITask::isFinished()
     return m_finished;
 }
 
-string ITask::traitName()
+string ITask::displayTraitName()
 {
-	return m_traitName;
+	return m_displayTraitName;
 }
 
-string ITask::traitValue()
+string ITask::displayTraitValue()
 {
-	return m_traitValue;
+	return m_displayTraitValue;
+}
+
+ITask::TaskTraits &ITask::traits()
+{
+	return m_traits;
 }
 
 void ITask::setId(int id)

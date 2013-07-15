@@ -37,8 +37,12 @@ AnalyzeTask::AnalyzeTask()
 	m_allTaskFiles = 0;
 
     m_type = "analyze";
-	m_traitName = "exploits";
-	m_traitValue = "0";
+	m_displayTraitName = "exploits";
+	m_displayTraitValue = "0";
+
+	m_traits["exploits"] = to_string(m_detectedExploits);
+	m_traits["samples"] = to_string(m_analyzedSamples);
+	m_traits["files"] = to_string(m_loadedFiles);
 
 	loadModules();
 }
@@ -150,14 +154,20 @@ cleanup:
 
 void AnalyzeTask::updateStatus()
 {
+	// update general values
 	if(m_allTaskFiles > 0)
 		m_progress = ((m_allTaskFiles - m_taskFiles.size()) * 100) / m_allTaskFiles;
 	else
 		m_progress = 100;
 
-	m_traitValue = Toolbox::itos(m_detectedExploits);
+	m_displayTraitValue = Toolbox::itos(m_detectedExploits);
 
-	m_workTime = QTime(0, 0).addMSecs(m_timer.elapsed());	
+	m_workTime = QTime(0, 0).addMSecs(m_timer.elapsed());
+
+	// update task traits
+	m_traits["exploits"] = to_string(m_detectedExploits);
+	m_traits["samples"] = to_string(m_analyzedSamples);
+	m_traits["files"] = to_string(m_loadedFiles);
 }
 
 bool AnalyzeTask::readConfigXML(QDomElement taskNode)

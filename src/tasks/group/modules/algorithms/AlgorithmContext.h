@@ -14,14 +14,18 @@ namespace Group {
 
 class AlgorithmContext {
 public:
+	typedef std::map<std::string, std::string> ContextMap;
+
 	AlgorithmContext() {}
 	virtual ~AlgorithmContext() {}
 
 	void setValue(std::string key, std::string value);
 	std::string value(std::string key);
 
+	ContextMap &data();
+
 private:
-	std::map<std::string, std::string> m_values;
+	ContextMap m_values;
 };
 
 } // namespace Group

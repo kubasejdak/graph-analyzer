@@ -6,7 +6,7 @@ import shutil
 import os.path
 from stat import S_IRWXG, S_IRWXO, S_IRWXU
 
-from analyze.models import Sample, Group, GroupAssignment, LoopAssignment, Loop, APIAssignment, HashAssignment
+from analyze.models import Sample, LoopAssignment, Loop, APIAssignment, HashAssignment
 from tools.SystemStatus import SystemStatus
 from django.views.generic.simple import redirect_to
 
@@ -92,8 +92,8 @@ def render_browseGroups(request):
 
     if request.method == "GET":
         # get all available samples
-        group_list = Group.objects.filter(active = True).order_by("-members_num")
-        c.update({"group_list": group_list})
+        #group_list = Group.objects.filter(active = True).order_by("-members_num")
+        #c.update({"group_list": group_list})
         return render_to_response("browse_groups.html", c)
 
     # ===================================== POST =====================================
@@ -183,25 +183,25 @@ def render_showGroup(request):
             c.update({"dataSaved": True})
 
         if "groupId" in request.GET:
-            show_group = Group.objects.get(id = request.GET["groupId"])
-            show_groupassignment = GroupAssignment.objects.filter(group_id = request.GET["groupId"]).order_by("-resemblence_rate")
-            c.update({"show_group": show_group,
-					  "show_groupassignment": show_groupassignment})
+            #show_group = Group.objects.get(id = request.GET["groupId"])
+            #show_groupassignment = GroupAssignment.objects.filter(group_id = request.GET["groupId"]).order_by("-resemblence_rate")
+            #c.update({"show_group": show_group,
+            #		  "show_groupassignment": show_groupassignment})
             return render_to_response("show_group.html", c)
 
     # ===================================== POST =====================================
 
-    if request.method == "POST":
-        if "saveGroup" in request.POST:
-            group = Group.objects.get(id = request.POST["saveGroup"])
-            group.comment = request.POST["comment"]
-            group.save()
-            site = "%s&dataSaved" % request.get_full_path()
-            return redirect_to(request, url=site)
+    #if request.method == "POST":
+        #if "saveGroup" in request.POST:
+            #group = Group.objects.get(id = request.POST["saveGroup"])
+            #group.comment = request.POST["comment"]
+            #group.save()
+            #site = "%s&dataSaved" % request.get_full_path()
+            #return redirect_to(request, url=site)
 
-        if "showSample" in request.POST:
-            site = "/jsejdak/sample/?sampleId=%s" % request.POST["showSample"]
-            return redirect_to(request, url=site)
+        #if "showSample" in request.POST:
+            #site = "/jsejdak/sample/?sampleId=%s" % request.POST["showSample"]
+            #return redirect_to(request, url=site)
 
 def render_compareSamples(request):
     # get system status

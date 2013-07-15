@@ -20,10 +20,10 @@ int GroupManager::createGroup()
 	return m_groups.size() - 1;
 }
 
-void GroupManager::add(int groupId, ExploitSampleHandle sample)
+void GroupManager::add(int groupId, ExploitSampleHandle sample, int resemblence)
 {
 	//m_groups[groupId].push_back(sample);
-	m_groups[groupId]->add(sample);
+	m_groups[groupId]->add(sample, resemblence);
 }
 
 int GroupManager::find(ExploitSampleHandle sample)

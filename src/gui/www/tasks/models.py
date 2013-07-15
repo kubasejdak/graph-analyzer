@@ -15,3 +15,9 @@ class Task(models.Model):
 	
 	def __unicode__(self):
 		return self.name
+	
+# Task traits table
+class TaskTrait(models.Model):
+	name = models.CharField(max_length = 200)
+	value = models.CharField(max_length = 200)
+	task = models.ForeignKey(Task)

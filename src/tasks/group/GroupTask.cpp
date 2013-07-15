@@ -30,10 +30,14 @@ GroupTask::GroupTask()
 	m_inputStrategy = "database";
 
     m_type = "group";
-    m_traitName = "groups";
-    m_traitValue = "0";
+    m_displayTraitName = "groups";
+    m_displayTraitValue = "0";
 	m_foundGroups = 0;
 	m_groupedSamples = 0;
+
+	m_traits["groups"] = to_string(m_foundGroups);
+	m_traits["samples"] = to_string(m_samples.size());
+	m_traits["algorithm"] = m_algorithm;
 }
 
 QDate GroupTask::from()
@@ -91,8 +95,8 @@ bool GroupTask::performTask()
 	LOG("=====================================================================================\n");
 	LOG("=                                    FINISHED TASK                                   \n");
 	LOG("= name     : %s\n", m_name.c_str());
-	LOG("= samples  : %d\n", m_samples.size());
 	LOG("= groups   : %d\n", m_foundGroups);
+	LOG("= samples  : %d\n", m_samples.size());
 	LOG("= errors   : %d\n", m_errors);
 	LOG("=====================================================================================\n");
 
@@ -106,14 +110,24 @@ bool GroupTask::performTask()
 
 void GroupTask::updateStatus()
 {
+	// update general values
 	if(m_samples.size() > 0)
 		m_progress = (m_groupedSamples * 100) / m_samples.size();
 	else
 		m_progress = 100;
 
-	m_traitValue = Toolbox::itos(m_foundGroups);
+	m_displayTraitValue = Toolbox::itos(m_foundGroups);
 
 	m_workTime = QTime(0, 0).addMSecs(m_timer.elapsed());
+
+	// update task traits
+	m_traits["groups"] = to_string(m_foundGroups);
+	m_traits["samples"] = to_string(m_samples.size());
+	m_traits["algorithm"] = m_algorithm;
+
+	TaskTraits::iterator it;
+	for(it = m_context.data().begin(); it != m_context.data().end(); ++it)
+		m_traits[it->first] = it->second;
 }
 
 bool GroupTask::readConfigXML(QDomElement taskNode)

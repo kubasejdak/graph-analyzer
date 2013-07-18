@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form action="" method="post">{% csrf_token %}
+	<div class="input-append">
+		<span class="add-on">Value</span>
+		<select name="filter">
+			<option>Id</option>
+			<option>Name</option>
+			<option>Extracted from</option>
+			<option>Graph name</option>
+			<option>Capture date</option>
+			<option>Size</option>
+			<option>File type</option>
+			<option>File size</option>
+		</select>
+		<input class="span12" name="value" type="text" placeholder="Search...">
+		<button class="btn" name="search">Search</button>
+		<button class="btn" name="sort">Sort</button>
+	</div>
+</form>
+
+<div class="row-fluid">
+<table class="table table-striped">
+	<thead>
+		<tr>
+			<th>Index</th>
+			<th>Id</th>
+			<th>Name</th>
+			<th>Extracted from</th>
+			<th>Graph name</th>
+			<th>Capture date</th>
+			<th>Size [vertexes]</th>
+			<th>File type</th>
+			<th>File size [bytes]</th>
+			<th>Exploit offset [bytes]</th>
+			<th>More</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for sample in sample_list %}
+		<tr>
+			<td>{{ forloop.counter }}</td>
+			<td>{{ sample.id }}</td>
+			<td>{{ sample.name }}</td>
+			<td>{{ sample.extracted_from }}</td>
+			<td>{{ sample.graph_name }}</td>
+			<td>{{ sample.capture_date }}</td>
+			<td>{{ sample.size }}</td>
+			<td>{{ sample.file_type }}</td>
+			<td>{{ sample.file_size }}</td>
+			<td>{{ sample.shellcode_offset }}</td>
+			<td><a href="/jsejdak/show/sample/?sampleId={{ sample.id }}"><span class="label label-info">Show</span></a></td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+</div>
+{% endblock %}

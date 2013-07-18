@@ -1,69 +1,67 @@
 # Create your views here.
 
 from django.shortcuts import render_to_response
+from django.views.generic.simple import redirect_to
 from django.template import RequestContext
 from django.core.context_processors import csrf
-from datetime import date, datetime
 
 from tools.SystemStatus import SystemStatus
-from tools.GroupTask import GroupTask
+from tasks.models import Task, TaskTrait
+from group.models import Group, GroupAssignment
 
-def render_groupTask(request):
-	# get system status
-	systemStatus = SystemStatus()
-	systemStatus.get()
+def render_showGroup(request):
+    # get system status
+    systemStatus = SystemStatus()
+    systemStatus.get()
 
-	# get date
-	today = date.today()
-	taskName = "group_" + str(today) + "_" + str(datetime.time(datetime.now()))
+    c = RequestContext(request, {"version": systemStatus.version, "browse_groups": True})
+    c.update(csrf(request))
 
-	c = RequestContext(request, {"version": systemStatus.version, "tasks": True, "group": True, "taskName": taskName})
-	c.update(csrf(request))
+    # ===================================== GET =====================================
 
-	# ===================================== GET ======================================
-	
-	# ===================================== POST =====================================
-	
-	# save group task
-	if "save" in request.POST:
-		c.update({"is_message": True})
-		groupTask = GroupTask()
-		
-		# name
-		groupTask.setName(request.POST["taskName"])
+    if request.method == "GET":
+        if "dataSaved" in request.GET:
+            c.update({"dataSaved": True})
 
-		# group files
-		files = request.POST.getlist("groupFiles")
-		for f in files:
-			groupTask.setFile(f)
+        if "groupId" in request.GET:
+            show_group = Group.objects.get(id = request.GET["groupId"])
+            show_groupassignment = GroupAssignment.objects.filter(group_id = request.GET["groupId"]).order_by("-resemblence")
+            c.update({"show_group": show_group,
+                      "show_groupassignment": show_groupassignment})
+            return render_to_response("show_group.html", c)
 
-		# from
-		groupTask.setFrom(request.POST["fromDate"])
+    # ===================================== POST =====================================
 
-		# until
-		groupTask.setUntil(request.POST["untilDate"])
-		
-		# algorithm
-		groupTask.setAlgorithm(request.POST["algorithm"])
+    if request.method == "POST":
+        if "saveGroup" in request.POST:
+            group = Group.objects.get(id = request.POST["saveGroup"])
+            group.comment = request.POST["comment"]
+            group.save()
+            site = "%s&dataSaved" % request.get_full_path()
+            return redirect_to(request, url=site)
 
-		# algorithm context
-		if(request.POST["algorithm"] == "SymetricProbability"):
-			groupTask.setContext("threshold", request.POST["threshold_SymetricProbability"])
+def render_showGroupTask(request):
+    # get system status
+    systemStatus = SystemStatus()
+    systemStatus.get()
+    
+    c = RequestContext(request, {"version": systemStatus.version, "show_tasks_group": True, "list_tasks_group": True})
+    c.update(csrf(request))
 
-		# input
-		if("databaseInput" in request.POST):
-			groupTask.setInput("database")
+    # ===================================== GET =====================================
 
-		# output
-		if("databaseOutput" in request.POST):
-			groupTask.setOutput("database")
-		if("consoleOutput" in request.POST):
-			groupTask.setOutput("console")
-			
-		# override
-		if("override" in request.POST):
-			groupTask.setOverride(True)
-
-		groupTask.save()
-	
-	return render_to_response("group.html", c)
+    if request.method == "GET":
+        if "taskId" in request.GET:
+            # get task info
+            task = Task.objects.get(id = request.GET["taskId"])
+            c.update({"task": task})
+            
+            # get task traits info
+            traitsList = TaskTrait.objects.all().filter(task = request.GET["taskId"])
+            c.update({"traitsList": traitsList})
+            
+            # get task groups info
+            groupsList = Group.objects.all().filter(task = request.GET["taskId"]).order_by("-members_num")
+            c.update({"groupsList": groupsList})
+    
+    return render_to_response("show_task_group.html", c)

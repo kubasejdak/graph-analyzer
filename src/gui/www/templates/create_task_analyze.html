@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block content %}
+<script>
+	function addFile() {
+		var fileList = document.getElementById("analyzeFiles");
+		var fileRow = document.createElement("OPTION");
+		fileList.options.add(fileRow);
+
+		var fileField = document.getElementById("file");
+		var fileName = fileField.value;
+		if(fileName === "")
+			return;
+
+		fileRow.text = fileName;
+		fileRow.value = fileName;
+		
+		fileField.value = "";
+	}
+
+	function removeFile() {
+		var fileList = document.getElementById("analyzeFiles");
+		fileList.remove(fileList.selectedIndex);
+	}
+	
+	function selectAllFiles() {
+		var selectField = document.getElementById("analyzeFiles");
+		for(var i = 0; i < selectField.options.length; i++) { 
+			selectField.options[i].selected = true; 
+		} 
+	}
+</script>
+
+<div class="span14 offset 2">
+	{% if is_message %}
+	<div class="alert alert-success">
+		<button type="button" class="close" data-dismiss="alert">×</button>
+		<strong>Success!</strong> Analyze task has been saved.
+	</div>
+	{% endif %}
+
+	<form action="" method="post">{% csrf_token %}
+		<button class="btn btn-large btn-primary" name="save" onclick="selectAllFiles()">Save</button>
+		<button class="btn btn-large" name="new">New configuration</button>
+	
+	
+		<h2>Analyze task name:</h2>
+		<input class="span12" id="taskName" type="text" name="taskName" value="{{ taskName }}">
+		<br/>
+	
+		<h2>Choose files:</h2>
+		<div class="input-append">
+			<input class="span12" id="file" type="text" placeholder="Type file or directory...">
+			<button class="btn btn-primary" type="button" onclick="addFile()"><i class="icon-plus-sign icon-white"></i> Add</button>
+			<button class="btn" type="button" onclick="removeFile()"><i class="icon-trash"></i> Remove</button>
+		</div>
+		<br/>
+
+		<div class="row-fluid">
+			<div class="span12">
+				<div class="span6">
+					<h2>Files selected to analyze:</h2>
+					<select multiple id="analyzeFiles" name="analyzeFiles" size="15" width="300" style="width: 100%"></select>
+				</div>
+				<div class="span6">
+					<h2>Output options:</h2>
+					<label class="checkbox"><input type="checkbox" name="databaseOutput" checked="checked" value=""> Database output</label>
+					<label class="checkbox"><input type="checkbox" name="consoleOutput" value=""> Console output</label>
+					<br/>
+					<label class="checkbox"><input type="checkbox" name="duplicate" value=""> Save results even if duplicated</label>
+					<br/>
+					<br/>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>
+{% endblock %}

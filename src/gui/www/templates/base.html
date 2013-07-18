@@ -28,13 +28,13 @@
 					{% endif %}
 					<a href="/jsejdak/home/">Home</a></li>
 
-					<!-- TASKS -->
-					{% if tasks %}
+					<!-- CREATE TASKS -->
+					{% if create_tasks %}
 					<li class="active divider-vertical dropdown">
 					{% else %}
 					<li class="divider-vertical dropdown">
 					{% endif %}
-						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Tasks <b class="caret"></b></a>
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Create tasks <b class="caret"></b></a>
 						<ul class="dropdown-menu">
 							<li class="nav-header">Possible tasks</li>
 
@@ -44,7 +44,7 @@
 							{% else %}
 							<li>
 							{% endif %}
-							<a href="/jsejdak/tasks/analyze/">Analyze</a></li>
+							<a href="/jsejdak/create/task/analyze/">Analyze</a></li>
 
 							<!-- GROUP TASK -->
 							{% if group %}
@@ -52,7 +52,7 @@
 							{% else %}
 							<li>
 							{% endif %}
-							<a href="/jsejdak/tasks/group/">Group</a>
+							<a href="/jsejdak/create/task/group/">Group</a>
 							<li class="divider"></li>
 
 							<!-- MANAGE TASKS -->
@@ -61,25 +61,45 @@
 							{% else %}
 							<li>
 							{% endif %}
-							<a href="/jsejdak/tasks/manage/">Manage tasks</a></li>
+							<a href="/jsejdak/manage/tasks/">Manage tasks</a></li>
 						</ul>
 					</li>
 
-					<!-- BROWSE SAMPLES -->
-					{% if browse %}
+					<!-- LIST SAMPLES -->
+					{% if list_samples %}
 					<li class="active divider-vertical">
 					{% else %}
 					<li class="divider-vertical">
 					{% endif %}
-					<a href="/jsejdak/browse_samples/">Samples</a></li>
-					
-					<!-- BROWSE GROUPS -->
-					{% if browse_groups %}
-					<li class="active divider-vertical">
+					<a href="/jsejdak/list/samples/">Samples</a></li>
+
+					<!-- SHOW TASKS -->
+					{% if show_tasks %}
+					<li class="active divider-vertical dropdown">
 					{% else %}
-					<li class="divider-vertical">
+					<li class="divider-vertical dropdown">
 					{% endif %}
-					<a href="/jsejdak/browse_groups/">Groups</a></li>
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Tasks <b class="caret"></b></a>
+						<ul class="dropdown-menu">
+							<li class="nav-header">Task types</li>
+
+							<!-- ANALYZE TASK -->
+							{% if list_tasks_analyze %}
+							<li class="active">
+							{% else %}
+							<li>
+							{% endif %}
+							<a href="/jsejdak/list/tasks/analyze/">Analyze</a></li>
+
+							<!-- GROUP TASK -->
+							{% if list_tasks_group %}
+							<li class="active">
+							{% else %}
+							<li>
+							{% endif %}
+							<a href="/jsejdak/list/tasks/group/">Group</a>
+						</ul>
+					</li>
 
 					<!-- OPTIONS -->
 					{% if options %}

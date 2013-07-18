@@ -26,6 +26,13 @@ BinaryInput::BinaryInput()
 
 bool BinaryInput::loadInput(string filename, SampleList *samples)
 {
+	// naive protection against files from 'binaries' directories
+	if(filename.find("binaries") != string::npos) {
+		LOG("file [%s] is from directory: [binaries], skipping\n", filename.c_str());
+		LOG("SUCCESS\n\n");
+		return true;
+	}
+
 	QFile file(filename.c_str());
     file.open(QIODevice::ReadOnly);
     if(!file.isOpen()) {
@@ -38,8 +45,7 @@ bool BinaryInput::loadInput(string filename, SampleList *samples)
 	// protect against bad or too big files
 	if(Options::instance()->skipBigFiles) {
 		if(size > Options::instance()->bigFileSize) {
-			LOG("file [%s] is too big, size: [%lu]\n", filename.c_str(), size);
-			LOG("skipping\n");
+			LOG("file [%s] is too big, size: [%lu], skipping\n", filename.c_str(), size);
 			LOG("SUCCESS\n\n");
 			return true;
 		}

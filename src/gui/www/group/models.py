@@ -4,6 +4,7 @@ from analyze.models import Sample
 
 # Group table
 class Group(models.Model):
+    #name = models.CharField(max_length = 200)
     leader = models.ForeignKey(Sample)
     members_num = models.IntegerField()
     comment = models.CharField(max_length = 3000)

@@ -122,7 +122,6 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     "analyze",
     "group",
-    "browse",
     "feedback",
     "home",
     "options",

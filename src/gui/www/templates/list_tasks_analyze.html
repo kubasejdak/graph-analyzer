@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row-fluid">
+<table class="table table-striped">
+	<thead>
+		<tr>
+			<th>Index</th>
+			<th>Name</th>
+			<th>Type</th>
+			<th>Start time</th>
+			<th>Finish time</th>
+			<th>Work time</th>
+			<th>Errors</th>
+			<th>Trait name</th>
+			<th>Trait value</th>
+			<th>Progress</th>
+			<th>Results</th>
+		</tr>
+	</thead>
+	<tbody>
+	{% for task in taskList %}
+		<tr>
+			<td>{{ forloop.counter }}</td>
+			<td>{{ task.name }}</td>
+			<td>{{ task.type }}</td>
+			<td>{{ task.start_time }}</td>
+			<td>{% ifequal task.end_time "00:00" %}----{% else %}{{ task.end_time }}{% endifequal %}</td>
+			<td>{{ task.work_time }}</td>
+			<td>{{ task.errors }}</td>
+			<td>{{ task.trait_name }}</td>
+			<td>{{ task.trait_value }}</td>
+			<td>
+				<div class="progress progress-striped active">
+					<div class="bar" style="width: {{ task.progress }}%;">{{ task.progress }} %</div>
+				</div>
+			</td>
+			<td><a href="/jsejdak/show/tasks/analyze/?taskId={{ task.id }}"><span class="label label-info">Show</span></a></td>
+		</tr>
+	{% endfor %}
+	</tbody>
+</table>
+</div>
+{% endblock %}

@@ -8,6 +8,7 @@
 
 #include <vector>
 #include <algorithm>
+#include <utility>
 #include <cstdlib>
 
 #include <tasks/group/modules/algorithms/IAlgorithm.h>
@@ -19,6 +20,10 @@
 
 using namespace std;
 using namespace Group;
+
+typedef vector<pair<int, int> > ResemblenceVector;
+
+bool compareResemblence(pair<int, int> a, pair<int, int> b);
 
 SymetricProbability::SymetricProbability()
 {
@@ -49,20 +54,22 @@ bool SymetricProbability::group(GroupTask *task, SampleList &samples, GroupManag
 		}
 
 		// for each existing group, compare its leader and current sample
-		bool assign = false;
+		ResemblenceVector resemblenceVector;
 		for(int i = 0; i < groupManager.count(); ++i) {
 			int resemblence;
-			assign = compare(groupManager.leader(i), sample, threshold, resemblence);
-
-			if(assign == true) {
-				LOG("adding sample [%s] to group [%d]\n", sample->info()->name().c_str(), i);
-				groupManager.add(i, sample, resemblence);
-				break;
-			}
+			if(compare(groupManager.leader(i), sample, threshold, resemblence) == true)
+				resemblenceVector.push_back(make_pair(i, resemblence));
 		}
 
-		// if not assigned to any group, create group for it
-		if(assign == false) {
+		sort(resemblenceVector.begin(), resemblenceVector.end(), compareResemblence);
+
+		if(resemblenceVector.size() > 0) {
+			int group = resemblenceVector[resemblenceVector.size() - 1].first;
+			int resemblence = resemblenceVector[resemblenceVector.size() - 1].second;
+			LOG("adding sample [%s] to group [%d]\n", sample->info()->name().c_str(), group);
+			groupManager.add(group, sample, resemblence);
+		}
+		else {
 			int groupId = groupManager.createGroup();
 			LOG("creating new group [%d] for sample [%s]\n", groupId, sample->info()->name().c_str());
 			groupManager.add(groupId, sample, 100);
@@ -90,7 +97,8 @@ bool SymetricProbability::compare(ExploitSampleHandle sampleA, ExploitSampleHand
 	if(loopsA.size() == 0 && loopsB.size() == 0)
 		return false;
 
-	if(calculateProbability(loopsA.size(), loopsB.size(), commonLoops.size()) >= threshold)
+	resemblence = calculateProbability(loopsA.size(), loopsB.size(), commonLoops.size());
+	if(resemblence >= threshold)
 		return true;
 
 	return false;
@@ -98,7 +106,8 @@ bool SymetricProbability::compare(ExploitSampleHandle sampleA, ExploitSampleHand
 
 int SymetricProbability::calculateProbability(int commonA, int commonB, int commonAB)
 {
-	return (commonAB / (commonA + commonB - commonAB)) * 100;
+	double probability = (double) commonAB / (double) (commonA + commonB - commonAB);
+	return probability * 100;
 }
 
 SymetricProbability::HashVector SymetricProbability::findLoopHashes(ExploitSampleHandle sample)
@@ -130,4 +139,9 @@ SymetricProbability::HashVector SymetricProbability::commonLoopHashes(HashVector
     }
 
     return commonLoops;
+}
+
+bool compareResemblence(pair<int, int> a, pair<int, int> b)
+{
+	return a.second > b.second;
 }

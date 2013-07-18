@@ -1,5 +1,6 @@
 /build
 /CMakeLists.txt.user
+src/gui/www/static/tmp_graphs
 
 src/gui/www/analyze/__init__.pyc
 src/gui/www/analyze/admin.pyc
@@ -39,3 +40,4 @@ src/gui/www/www/__init__.pyc
 src/gui/www/www/settings.pyc
 src/gui/www/www/urls.pyc
 src/gui/www/www/wsgi.pyc
+src/gui/www/group/admin.pyc

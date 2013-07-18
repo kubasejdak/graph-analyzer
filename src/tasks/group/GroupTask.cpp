@@ -111,8 +111,13 @@ bool GroupTask::performTask()
 void GroupTask::updateStatus()
 {
 	// update general values
-	if(m_samples.size() > 0)
+	if(m_samples.size() > 0) {
 		m_progress = (m_groupedSamples * 100) / m_samples.size();
+
+		// leave 1% for exporting results
+		if(m_progress >= 1)
+			m_progress -= 1;
+	}
 	else
 		m_progress = 100;
 

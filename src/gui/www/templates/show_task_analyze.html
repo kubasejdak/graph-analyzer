@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row-fluid">
+	<!-- GENERAL -->
+	<div class="span12">
+		<div class="span2 offset1">
+			<h4>Id:</h4>
+			<h4>Name:</h4>
+			<h4>Type:</h4>
+		</div>
+		<div class="span4">
+			<h4>{{ task.id }}</h4>
+			<h4>{{ task.name }}</h4>
+			<h4>{{ task.type }}</h4>
+		</div>
+		<div class="span2">
+			<h4>Start time:</h4>
+			<h4>End time:</h4>
+			<h4>Work time:</h4>
+			<h4>Errors:</h4>
+		</div>
+		<div class="span2">
+			<h4>{{ task.start_time }}</h4>
+			<h4>{{ task.end_time }}</h4>
+			<h4>{{ task.work_time }}</h4>
+			<h4>{{ task.errors }}</h4>
+		</div>
+	</div>
+</div>
+<br/>
+<br/>
+
+<div class="row-fluid">
+	<!-- TRAITS -->
+	<div align="center"><h2>Traits</h2></div>
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th><h4>Trait</h4></th>
+				<th><h4>Value</h4></th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for trait in traitsList %}
+			<tr>
+				<td>{{ trait.name }}</td>
+				<td>{{ trait.value }}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
+	<!-- SAMPLES -->
+	<div align="center"><h2>Samples</h2></div>
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th><h4>Index</h4></th>
+				<th>Id</th>
+				<th>Name</th>
+				<th>Extracted from</th>
+				<th>Graph name</th>
+				<th>Capture date</th>
+				<th>Size [vertexes]</th>
+				<th>File type</th>
+				<th>File size [bytes]</th>
+				<th>Exploit offset [bytes]</th>
+				<th>More</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for sample in samplesList %}
+			<tr>
+				<td>{{ forloop.counter }}</td>
+				<td>{{ sample.id }}</td>
+				<td>{{ sample.name }}</td>
+				<td>{{ sample.extracted_from }}</td>
+				<td>{{ sample.graph_name }}</td>
+				<td>{{ sample.capture_date }}</td>
+				<td>{{ sample.size }}</td>
+				<td>{{ sample.file_type }}</td>
+				<td>{{ sample.file_size }}</td>
+				<td>{{ sample.shellcode_offset }}</td>
+				<td><a href="/jsejdak/show/sample/?sampleId={{ sample.id }}"><span class="label label-info">Show</span></a></td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+{% endblock %}

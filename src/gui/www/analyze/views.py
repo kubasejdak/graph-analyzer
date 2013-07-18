@@ -11,6 +11,7 @@ from stat import S_IRWXG, S_IRWXO, S_IRWXU
 
 from analyze.models import Sample, LoopAssignment, Loop, APIAssignment, HashAssignment
 from tools.SystemStatus import SystemStatus
+from tasks.models import Task, TaskTrait
 
 def render_listSamples(request):
     # get system status
@@ -217,3 +218,29 @@ def render_compareSamples(request):
             
             site = "%s&dataSaved" % request.get_full_path()
             return redirect_to(request, url=site)
+
+def render_showAnalyzeTask(request):
+    # get system status
+    systemStatus = SystemStatus()
+    systemStatus.get()
+    
+    c = RequestContext(request, {"version": systemStatus.version, "show_tasks_analyze": True, "list_tasks_analyze": True})
+    c.update(csrf(request))
+
+    # ===================================== GET =====================================
+
+    if request.method == "GET":
+        if "taskId" in request.GET:
+            # get task info
+            task = Task.objects.get(id = request.GET["taskId"])
+            c.update({"task": task})
+            
+            # get task traits info
+            traitsList = TaskTrait.objects.all().filter(task = request.GET["taskId"])
+            c.update({"traitsList": traitsList})
+            
+            # get task samples info
+            samplesList = Sample.objects.all().filter(task = request.GET["taskId"]).order_by("name")
+            c.update({"samplesList": samplesList})
+    
+    return render_to_response("show_task_analyze.html", c)

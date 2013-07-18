@@ -49,6 +49,7 @@ bool DatabaseOutput::exportGeneralData(ExploitGroupHandle group, int groupId, in
 	LOG("exporting group info [general] to database\n");
 	stringstream ss;
 	ss << "INSERT INTO group_group VALUES (" << groupId
+											 << ", '" << group->get(0)->info()->name() << "'"
 											 << ", " << DatabaseManager::instance()->sampleId(group->get(0))
 											 << ", " << group->size()
 											 << ", " << "''"

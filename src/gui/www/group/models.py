@@ -4,14 +4,14 @@ from analyze.models import Sample
 
 # Group table
 class Group(models.Model):
-    #name = models.CharField(max_length = 200)
+    name = models.CharField(max_length = 200)
     leader = models.ForeignKey(Sample)
     members_num = models.IntegerField()
     comment = models.CharField(max_length = 3000)
     task = models.ForeignKey(Task)
     
     def __unicode__(self):
-        return self.leader.name
+        return self.name
     
 # GroupAssignment table
 class GroupAssignment(models.Model):
@@ -20,4 +20,4 @@ class GroupAssignment(models.Model):
     resemblence = models.IntegerField()
     
     def __unicode__(self):
-        return self.group.leader.name
+        return self.group.name

@@ -12,7 +12,7 @@
 #include <tasks/group/modules/IModule.h>
 #include <core/ExploitSample.h>
 
-class GroupTask;
+class ITask;
 
 namespace Group {
 
@@ -22,7 +22,7 @@ public:
 	virtual ~IInput() {}
 
 	std::string type() { return m_type; }
-	virtual bool loadInput(GroupTask *context, SampleList *samples) = 0;
+	virtual bool loadInput(ITask *context, SampleList *samples) = 0;
 
 protected:
 	std::string m_type;

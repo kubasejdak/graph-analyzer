@@ -219,10 +219,6 @@ bool EmulationSystem::emulate()
 		return false;
 	}
 
-	// delete code to release memory
-	delete m_sample->code();
-	m_sample->setCode(NULL);
-
     m_sample = NULL;
     LOG("emulation finished\n");
     LOG("SUCCESS\n\n");

@@ -42,10 +42,7 @@ private:
     Group::AlgorithmContext m_context;
 
 	// task specific info
-	std::list<std::string> m_taskFiles;
 	bool m_duplicate;
-    QDate m_from;
-    QDate m_until;
 	std::string m_inputStrategy;
 	std::string m_algorithm;
 	int m_foundGroups;

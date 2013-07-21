@@ -56,7 +56,7 @@ void AnalyzeTask::loadModules()
 bool AnalyzeTask::performTask()
 {
 	SystemLogger::instance()->setStatus("analyze task");
-	LOG("starting task: [analyze], m_id: [%d]\n", m_id);
+	LOG("starting task: [%s], m_id: [%d]\n", m_type.c_str(), m_id);
 
 	// analyze all task files
 	LOG("analyzing task files\n");
@@ -108,6 +108,10 @@ bool AnalyzeTask::performTask()
 			if(analyze(s) == false) {
 				LOG_ERROR("analyzing [%s] -> [%s]\n", currentFile.c_str(), SystemLogger::instance()->error().c_str());
 				++m_errors;
+				goto cleanup;
+			}
+			if(s->info()->isValuable() == false) {
+				LOG("broken sample, skipping due to skipNoSyscallAndLoopSamples: [true]\n");
 				goto cleanup;
 			}
 
@@ -257,7 +261,7 @@ int AnalyzeTask::load(string filename)
 				return -1;
 			}
 
-			/* process all returned samples */
+			// process all returned samples
 			while(q.empty() == false) {
 				s = q.front();
 				q.pop_front();

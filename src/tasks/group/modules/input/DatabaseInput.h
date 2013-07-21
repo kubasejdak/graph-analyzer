@@ -10,7 +10,7 @@
 #include <tasks/group/modules/input/IInput.h>
 #include <core/ExploitSample.h>
 
-class GroupTask;
+class ITask;
 
 namespace Group {
 
@@ -19,7 +19,7 @@ public:
 	DatabaseInput();
 	virtual ~DatabaseInput() {}
 
-	virtual bool loadInput(GroupTask *context, SampleList *samples);
+	virtual bool loadInput(ITask *context, SampleList *samples);
 };
 
 } // namespace Group

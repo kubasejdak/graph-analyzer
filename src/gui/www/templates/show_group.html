@@ -32,6 +32,7 @@
 	<div class="span6 offset2">
 		<br/>
 		<br/>
+		<h4>Comments:</h4>
 		<form method="post" action="">{% csrf_token %}
 			<textarea style="width:100%" rows="5" name="comment" lang="pl">{{ show_group.comment }}</textarea></br>
 			<button class="btn btn-primary" name="saveGroup" value={{ show_group.id }}>Save</button>

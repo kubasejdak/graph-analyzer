@@ -40,21 +40,6 @@ GroupTask::GroupTask()
 	m_traits["algorithm"] = m_algorithm;
 }
 
-QDate GroupTask::from()
-{
-	return m_from;
-}
-
-QDate GroupTask::until()
-{
-	return m_until;
-}
-
-list<string> GroupTask::taskFiles()
-{
-	return m_taskFiles;
-}
-
 void GroupTask::incrementGroupedsamples()
 {
 	++m_groupedSamples;
@@ -68,7 +53,7 @@ void GroupTask::incrementFoundGroups()
 bool GroupTask::performTask()
 {
 	SystemLogger::instance()->setStatus("group task");
-	LOG("starting task: [group], m_id: [%d]\n", m_id);
+	LOG("starting task: [%s], m_id: [%d]\n", m_type.c_str(), m_id);
 
 	// gather all samples that match user criteria to be grouped
 	if(load() == false) {

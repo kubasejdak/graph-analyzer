@@ -35,6 +35,7 @@ public:
 	unsigned long bigFileSize;
 	bool skipBrokenSamples;
 	int brokenSampleSize;
+	bool skipNoSyscallAndLoopSamples;
 
 private:
 	Options();

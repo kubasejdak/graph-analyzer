@@ -11,6 +11,7 @@ from tools.SystemStatus import SystemStatus
 from tools.TaskCollector import TaskCollector
 from tools.AnalyzeTask import AnalyzeTask
 from tools.GroupTask import GroupTask
+from tools.ExportTask import ExportTask
 from models import Task, TaskTrait
 
 def render_tasksManage(request):
@@ -96,8 +97,7 @@ def render_createAnalyzeTask(request):
 
             analyzeTask.save()
     
-    
-    return render_to_response("analyze.html", c)
+    return render_to_response("create_task_analyze.html", c)
 
 def render_listAnalyzeTasks(request):
     # get system status
@@ -196,3 +196,49 @@ def render_listGroupTasks(request):
     
     return render_to_response("list_tasks_group.html", c)
 
+def render_createExportTask(request):
+    # get system status
+    systemStatus = SystemStatus()
+    systemStatus.get()
+
+    # get date
+    today = date.today()
+    taskName = "export_" + str(today) + "_" + str(datetime.time(datetime.now()))
+
+    c = RequestContext(request, {"version": systemStatus.version, "tasks": True, "export": True, "taskName": taskName})
+    c.update(csrf(request))
+
+    # ===================================== GET ======================================
+    
+    # ===================================== POST =====================================
+    
+    # save export task
+    if "save" in request.POST:
+        c.update({"is_message": True})
+        exportTask = ExportTask()
+        
+        # name
+        exportTask.setName(request.POST["taskName"])
+
+        # export files
+        files = request.POST.getlist("exportFiles")
+        for f in files:
+            exportTask.setFile(f)
+
+        # from
+        exportTask.setFrom(request.POST["fromDate"])
+
+        # until
+        exportTask.setUntil(request.POST["untilDate"])
+        
+        # input
+        if("databaseInput" in request.POST):
+            exportTask.setInput("database")
+
+        # output
+        if("fileOutput" in request.POST):
+            exportTask.setOutput("file")
+
+        exportTask.save()
+    
+    return render_to_response("create_task_export.html", c)

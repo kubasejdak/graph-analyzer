@@ -19,11 +19,13 @@ Options::Options()
 	// initial configuration
 	graphsDir = "/var/www/jsejdak/graphs";
     tmpPcapDir = "/tmp/tmp_pcap";
+	tcpflowParams = "";
 	emulationSteps = 1000000;
 	skipBigFiles = true;
 	bigFileSize = 20971520;
 	skipBrokenSamples = true;
 	brokenSampleSize = 50;
+	skipNoSyscallAndLoopSamples = true;
 
 	if(!readConfigXML())
 		LOG_ERROR("failed to read XML configuration, using default options\n");
@@ -61,6 +63,8 @@ bool Options::readConfigXML()
 	skipBrokenSamples = m_xmlParser.child(options, "SkipBrokenSamples").attribute("val") == "true" ? true : false;
 	brokenSampleSize = m_xmlParser.child(options, "SkipBrokenSamples").attribute("size").toInt();
 
+	skipNoSyscallAndLoopSamples = m_xmlParser.child(options, "SkipNoSyscallNoLoopSamples").attribute("val") == "true" ? true : false;
+
 	m_xmlParser.close();
 	LOG("SUCCESS\n\n");
 	return true;
@@ -78,5 +82,6 @@ void Options::listOptions()
 	LOG("bigFileSize: [%lu]\n", bigFileSize);
 	LOG("skipBrokenSamples: [%s]\n", skipBrokenSamples ? "true" : "false");
 	LOG("brokenSampleSize: [%d]\n", brokenSampleSize);
+	LOG("skipNoSyscallAndLoopSamples: [%s]\n", skipNoSyscallAndLoopSamples ? "true" : "false");
 	LOG("SUCCESS\n\n");
 }

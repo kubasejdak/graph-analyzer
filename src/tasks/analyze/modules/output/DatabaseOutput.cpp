@@ -11,7 +11,6 @@
 #include <QSqlQuery>
 #include <QFile>
 
-#include <core/Options.h>
 #include <core/ExploitSample.h>
 #include <core/ExploitInfo.h>
 #include <utils/SystemLogger.h>

@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, include, url
-from tasks.views import render_tasksManage, render_listAnalyzeTasks, render_createAnalyzeTask, render_listGroupTasks, render_createGroupTask
+from tasks.views import render_tasksManage, render_listAnalyzeTasks, render_createAnalyzeTask, render_listGroupTasks, render_createGroupTask, render_createExportTask
 from analyze.views import render_listSamples, render_showSample, render_compareSamples, render_showAnalyzeTask
 from group.views import render_showGroup, render_showGroupTask
 from options.views import render_options
@@ -25,6 +25,7 @@ urlpatterns = patterns('',
     url(r'^jsejdak/home/$', render_home),
     url(r'^jsejdak/create/task/analyze/$', render_createAnalyzeTask),
     url(r'^jsejdak/create/task/group/$', render_createGroupTask),
+    url(r'^jsejdak/create/task/export/$', render_createExportTask),
     url(r'^jsejdak/manage/tasks/$', render_tasksManage),
     url(r'^jsejdak/list/samples/$', render_listSamples),
     url(r'^jsejdak/list/tasks/analyze/$', render_listAnalyzeTasks),

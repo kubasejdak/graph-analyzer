@@ -9,6 +9,7 @@
 #include <list>
 #include <string>
 #include <QTime> // TODO: change to some non-Qt
+#include <QDate> // TODO: change to some non-Qt
 #include <QDomElement>
 
 #include <utils/XMLParser.h>
@@ -28,6 +29,21 @@ ITask::ITask()
 
     m_name = "<no_name>";
     m_type = "<no_type>";
+}
+
+QDate ITask::from()
+{
+	return m_from;
+}
+
+QDate ITask::until()
+{
+	return m_until;
+}
+
+list<string> ITask::taskFiles()
+{
+	return m_taskFiles;
 }
 
 int ITask::id()

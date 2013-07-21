@@ -11,6 +11,7 @@
 #include <tasks/ITask.h>
 #include <tasks/analyze/AnalyzeTask.h>
 #include <tasks/group/GroupTask.h>
+#include <tasks/export/ExportTask.h>
 
 using namespace std;
 
@@ -21,6 +22,9 @@ ITask *TaskResolver::createTask(string taskName)
 
 	if(taskName == "group")
 		return new GroupTask();
+
+	if(taskName == "export")
+		return new ExportTask();
 
 	return NULL;
 }

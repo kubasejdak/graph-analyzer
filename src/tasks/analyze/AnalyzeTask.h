@@ -12,6 +12,7 @@
 #include <QDomElement>
 
 #include <tasks/ITask.h>
+#include <tasks/analyze/modules/ModulesManager.h>
 #include <tasks/analyze/AnalysisSystem.h>
 #include <tasks/analyze/EmulationSystem.h>
 
@@ -38,7 +39,6 @@ private:
 	AnalysisSystem m_analysisSystem;
 
 	// task specific info
-	std::list<std::string> m_taskFiles;
 	bool m_duplicate;
 	int m_scheduledFiles;
 	int m_loadedFiles;

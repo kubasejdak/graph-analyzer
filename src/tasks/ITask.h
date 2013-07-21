@@ -13,6 +13,7 @@
 #include <list>
 #include <string>
 #include <QTime> // TODO: change to some non-Qt
+#include <QDate> // TODO: change to some non-Qt
 
 #include <core/ExploitSample.h>
 #include <utils/XMLParser.h>
@@ -25,6 +26,10 @@ public:
 
 	ITask();
 	virtual ~ITask() {}
+
+	QDate from();
+	QDate until();
+	std::list<std::string> taskFiles();
 
     bool perform();
 	virtual void updateStatus() = 0;
@@ -53,6 +58,8 @@ protected:
 	SampleList m_samples;						// samples that are used in task
 	std::list<std::string> m_exportStrategies;  // strategies for exporting task results
 	QTime m_timer;								// provides time functions
+	QDate m_from;								// start time criteria
+	QDate m_until;								// end time criteria
 
     // task general info
 	int m_id;									// task id
@@ -67,6 +74,7 @@ protected:
 	std::string m_displayTraitValue;			// task specific trait value
 	bool m_finished;							// is task finished
 	TaskTraits m_traits;						// task traits
+	std::list<std::string> m_taskFiles;			// files that should be used when performing task
 
 };
 

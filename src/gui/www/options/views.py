@@ -54,6 +54,10 @@ def render_options(request):
             coreOptions.skip_empty_samples = True
         else:
             coreOptions.skip_empty_samples = False
+        if("skipNoSyscallAndLoopSamples" in request.POST):
+            coreOptions.skip_nosyscall_noloop_samples = True
+        else:
+            coreOptions.skip_nosyscall_noloop_samples = False
         
         # logging level
         levelDictStr = {"OFF": 0, "Low": 1, "Normal": 2, "High": 3}
@@ -93,7 +97,8 @@ def render_options(request):
               "skipBigFilesSize": coreOptions.skip_big_files_size,
               "skipBrokenSamples": coreOptions.skip_broken_samples,
               "skipBrokenSamplesSize": coreOptions.skip_broken_samples_size,
-              "skipEmptySamples": coreOptions.skip_empty_samples,})
+              "skipEmptySamples": coreOptions.skip_empty_samples,
+              "skipNoSyscallAndLoopSamples": coreOptions.skip_nosyscall_noloop_samples})
 
     # update logging options
     c.update({"logLevel": int(loggingOptions.level),

@@ -15,7 +15,7 @@
 #include <QVariant>
 
 #include <tasks/group/modules/input/IInput.h>
-#include <tasks/group/GroupTask.h>
+#include <tasks/ITask.h>
 #include <tasks/analyze/modules/ModulesManager.h>
 #include <tasks/analyze/modules/analyze/IAnalyze.h>
 #include <core/ExploitSample.h>
@@ -32,7 +32,7 @@ DatabaseInput::DatabaseInput()
 	m_description = "Loads already analyzed exploits from database.";
 }
 
-bool DatabaseInput::loadInput(GroupTask *context, SampleList *samples)
+bool DatabaseInput::loadInput(ITask *context, SampleList *samples)
 {
 	// select all samples
 	stringstream ss;
@@ -52,6 +52,7 @@ bool DatabaseInput::loadInput(GroupTask *context, SampleList *samples)
 	while(selectQuery.next()) {
 		int sampleId = selectQuery.record().value("id").toInt();
 		sample = ExploitSampleHandle(new ExploitSample());
+		sample->info()->setId(selectQuery.record().value("id").toInt());
 		sample->info()->setName(selectQuery.record().value("name").toString().toStdString());
 		sample->info()->setExtractedFrom(selectQuery.record().value("extracted_from").toString().toStdString());
 		sample->info()->setGraphName(selectQuery.record().value("graph_name").toString().toStdString());

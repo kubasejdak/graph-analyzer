@@ -41,3 +41,4 @@ src/gui/www/www/settings.pyc
 src/gui/www/www/urls.pyc
 src/gui/www/www/wsgi.pyc
 src/gui/www/group/admin.pyc
+src/gui/www/tools/ExportTask.pyc

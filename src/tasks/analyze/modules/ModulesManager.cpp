@@ -47,7 +47,7 @@ void ModulesManager::loadOutput()
 	DatabaseOutput *databaseOutput = new DatabaseOutput();
     m_outputModules[databaseOutput->name()] = databaseOutput;
 
-	// DatabaseOutput
+	// ConsoleOutput
 	ConsoleOutput *consoleOutput = new ConsoleOutput();
     m_outputModules[consoleOutput->name()] = consoleOutput;
 }

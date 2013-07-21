@@ -13,6 +13,7 @@ class CoreOptions(object):
     skip_broken_samples = True
     skip_broken_samples_size = 50
     skip_empty_samples = True
+    skip_nosyscall_noloop_samples = True
     
     def get(self):
         xmlParser = XMLParser()
@@ -43,6 +44,10 @@ class CoreOptions(object):
                 self.skip_empty_samples = False
             else:
                 self.skip_empty_samples = True
+            if(xmlParser.child(rootNode, "SkipNoSyscallNoLoopSamples").attribute("val") == "false"):
+                self.skip_nosyscall_noloop_samples = False
+            else:
+                self.skip_nosyscall_noloop_samples = True
         
             xmlParser.close()
     
@@ -75,5 +80,9 @@ class CoreOptions(object):
                 xmlParser.child(rootNode, "SkipEmptySamples").setAttribute("val", "true")
             else:
                 xmlParser.child(rootNode, "SkipEmptySamples").setAttribute("val", "false")
+            if(self.skip_nosyscall_noloop_samples == True):
+                xmlParser.child(rootNode, "SkipNoSyscallNoLoopSamples").setAttribute("val", "true")
+            else:
+                xmlParser.child(rootNode, "SkipNoSyscallNoLoopSamples").setAttribute("val", "false")
         
             xmlParser.close()

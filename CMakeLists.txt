@@ -31,7 +31,7 @@ else()
 endif()
 
 # Boost
-find_package(Boost COMPONENTS program_options REQUIRED)
+find_package(Boost COMPONENTS program_options filesystem system REQUIRED)
 
 # Libemu
 link_directories(/opt/libemu/lib)

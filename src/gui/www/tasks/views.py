@@ -46,7 +46,7 @@ def render_tasksManage(request):
 
     # ===================================== GET =====================================
     
-    workingTasksList = Task.objects.filter(finished = False).order_by("-progress", "name")
+    workingTasksList = Task.objects.filter(finished = False).order_by("id")
     scheduledTasksList = taskCollector.collectTasks()
     
     c.update({"workingTasksList": workingTasksList, "scheduledTasksList": scheduledTasksList})

@@ -27,6 +27,7 @@ ExportTask::ExportTask()
 {
 	m_exportedSamples = 0;
 	m_scheduledSamples = 0;
+	m_onlyIndexFile = false;
 
 	m_type = "export";
 	m_displayTraitName = "exported samples";
@@ -132,6 +133,10 @@ bool ExportTask::readConfigXML(QDomElement taskNode)
 	m_exportDir = m_xmlParser.child(taskNode, "ExportDir").attribute("path").toStdString();
 	LOG("export directory: [%s]\n", m_exportDir.c_str());
 
+	// only index file
+	m_onlyIndexFile = m_xmlParser.child(taskNode, "OnlyIndexFile").attribute("val") == "true" ? true : false;
+	LOG("only index file: [%s]\n", m_onlyIndexFile ? "true" : "false");
+
 	// dates
 	m_from = QDate::fromString(m_xmlParser.child(taskNode, "From").attribute("date"), "yyyy-MM-dd");
 	LOG("from: [%s]\n", m_from.toString("yyyy-MM-dd").toStdString().c_str());
@@ -180,6 +185,12 @@ int ExportTask::load()
 		LOG_ERROR("no appropriate input module\n");
 		LOG_ERROR("FAILURE\n\n");
 		return false;
+	}
+
+	// if only index file, then we don't need code
+	if(m_onlyIndexFile == true) {
+		LOG("SUCCESS\n\n");
+		return true;
 	}
 
 	// load code for each sample
@@ -265,7 +276,7 @@ bool ExportTask::exportResults(ExploitSampleHandle s)
 			continue;
 		}
 
-		bool status = (*m_outputMods)[exportStrategy]->exportOutput(s, m_exportDir);
+		bool status = (*m_outputMods)[exportStrategy]->exportOutput(s, m_exportDir, m_onlyIndexFile);
 		if(status == false) {
 			LOG_ERROR("failed to export sample [%s] with strategy: [%s]\n", s->info()->name().c_str(), exportStrategy.c_str());
 			++m_errors;

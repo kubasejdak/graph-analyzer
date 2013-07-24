@@ -238,6 +238,13 @@ def render_createExportTask(request):
         # output
         if("fileOutput" in request.POST):
             exportTask.setOutput("file")
+        
+        # export directory
+        exportTask.setExportDir(request.POST["exportDirectory"])
+        
+        # only index file
+        if("onlyIndexFile" in request.POST):
+            exportTask.setOnlyIndexFile(True)
 
         exportTask.save()
     

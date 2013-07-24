@@ -28,7 +28,7 @@ SampleExportOutput::SampleExportOutput()
 	m_description = "Exports samples as binary files and generates txt list about them.";
 }
 
-bool SampleExportOutput::exportOutput(ExploitSampleHandle sample, string exportDir)
+bool SampleExportOutput::exportOutput(ExploitSampleHandle sample, string exportDir, bool onlyIndexFile)
 {
 	// check if sample is from PCAP file, if not return
 	if(sample->info()->fileType() != "application/vnd.tcpdump.pcap") {
@@ -61,22 +61,25 @@ bool SampleExportOutput::exportOutput(ExploitSampleHandle sample, string exportD
 		file.open(outputFile, ios_base::out | ios_base::app);
 	}
 
-	// copy code into separate file
+	// prepare name for exported sample file
 	string exportedSampleFilename = outputDir + "/" + sample->info()->name();
 	UniqueNameResolver nameResolver;
 	exportedSampleFilename = nameResolver.resolve(exportedSampleFilename);
 
-	ofstream sampleFile;
-	sampleFile.open(exportedSampleFilename);
-	if(sampleFile.is_open() == false) {
-		LOG_ERROR("cannot create sample export file: [%s]\n", exportedSampleFilename.c_str());
-		LOG_ERROR("FAILURE\n\n");
-		return false;
-	}
-	LOG("created sample export file: [%s]\n", exportedSampleFilename.c_str());
+	// copy code into separate file
+	if(onlyIndexFile == false) {
+		ofstream sampleFile;
+		sampleFile.open(exportedSampleFilename);
+		if(sampleFile.is_open() == false) {
+			LOG_ERROR("cannot create sample export file: [%s]\n", exportedSampleFilename.c_str());
+			LOG_ERROR("FAILURE\n\n");
+			return false;
+		}
+		LOG("created sample export file: [%s]\n", exportedSampleFilename.c_str());
 
-	sampleFile.write(reinterpret_cast<const char *>(sample->code()), sample->info()->fileSize());
-	sampleFile.close();
+		sampleFile.write(reinterpret_cast<const char *>(sample->code()), sample->info()->fileSize());
+		sampleFile.close();
+	}
 
 	// prepare line that will be inserted to export file
 	stringstream exportLine;

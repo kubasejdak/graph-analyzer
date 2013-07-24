@@ -19,7 +19,7 @@ public:
 	SampleExportOutput();
 	virtual ~SampleExportOutput() {}
 
-	virtual bool exportOutput(ExploitSampleHandle sample, std::string exportDir);
+	virtual bool exportOutput(ExploitSampleHandle sample, std::string exportDir, bool onlyIndexFile);
 };
 
 } // namespace Export

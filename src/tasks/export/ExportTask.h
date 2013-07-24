@@ -40,6 +40,7 @@ private:
 	int m_exportedSamples;
 	int m_scheduledSamples;
 	std::string m_inputStrategy;
+	bool m_onlyIndexFile;
 
 	Group::InputMap *m_inputMods;
 	Analyze::InputMap *m_codeInputMods;

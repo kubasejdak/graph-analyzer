@@ -11,6 +11,7 @@ class ExportTask(object):
         self.__until = "dd.mm.rrrr"
         self.__input = ""
         self.__output = []
+        self.__onlyIndexFile = False
         self.__export_dir = "/var/www/jsejdak/export"
 
     def setName(self, name):
@@ -30,6 +31,9 @@ class ExportTask(object):
 
     def setOutput(self, outputMod):
         self.__output.append(outputMod)
+    
+    def setOnlyIndexFile(self, onlyIndexFile):
+        self.__onlyIndexFile = onlyIndexFile
         
     def setExportDir(self, exportDir):
         self.__export_dir = exportDir
@@ -64,6 +68,12 @@ class ExportTask(object):
             for o in self.__output:
                 xmlParser.createChild(rootNode, "Output").setAttribute("val", o)
             
+            # only index file
+            if(self.__onlyIndexFile == True):
+                xmlParser.createChild(rootNode, "OnlyIndexFile").setAttribute("val", "true")
+            else:
+                xmlParser.createChild(rootNode, "OnlyIndexFile").setAttribute("val", "false")
+
             # export directory
             xmlParser.createChild(rootNode, "ExportDir").setAttribute("path", self.__export_dir)
             

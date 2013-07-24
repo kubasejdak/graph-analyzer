@@ -162,6 +162,9 @@ bool GroupTask::readConfigXML(QDomElement taskNode)
 		LOG("algorithm context: name: [%s], value: [%s]\n", context.attribute("name").toStdString().c_str(), context.attribute("val").toStdString().c_str());
 		context = context.nextSiblingElement("Context");
 	}
+	TaskTraits::iterator it;
+	for(it = m_context.data().begin(); it != m_context.data().end(); ++it)
+		m_traits[it->first] = it->second;
 
 	// input strategy
 	QDomElement in = m_xmlParser.child(taskNode, "Input");

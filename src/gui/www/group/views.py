@@ -33,8 +33,9 @@ def render_showGroup(request):
     # ===================================== POST =====================================
 
     if request.method == "POST":
-        if "saveGroup" in request.POST:
-            group = Group.objects.get(id = request.POST["saveGroup"])
+        if "save" in request.POST:
+            group = Group.objects.get(id = request.POST["save"])
+            group.name = request.POST["name"]
             group.comment = request.POST["comment"]
             group.save()
             site = "%s&dataSaved" % request.get_full_path()

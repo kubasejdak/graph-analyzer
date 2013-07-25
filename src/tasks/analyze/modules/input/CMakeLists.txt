@@ -4,6 +4,7 @@ set(ANALYZE_TASK_INPUT_SUBMODULES_SRC
     IInput.h
     BinaryInput.cpp
     PcapInput.cpp
+    IndexFileInput.cpp
 )
 
 add_library(analyze-input-submodules ${ANALYZE_TASK_INPUT_SUBMODULES_SRC})

@@ -11,6 +11,7 @@
 
 #include <tasks/analyze/modules/input/BinaryInput.h>
 #include <tasks/analyze/modules/input/PcapInput.h>
+#include <tasks/analyze/modules/input/IndexFileInput.h>
 #include <tasks/analyze/modules/output/DatabaseOutput.h>
 #include <tasks/analyze/modules/output/ConsoleOutput.h>
 #include <tasks/analyze/modules/analyze/SyscallAnalyze.h>
@@ -39,6 +40,10 @@ void ModulesManager::loadInput()
 	// BinaryInput
 	PcapInput *pcapInput = new PcapInput();
     m_inputModules[pcapInput->name()] = pcapInput;
+
+	// IndexFileInput
+	IndexFileInput *indexFileInput = new IndexFileInput();
+	m_inputModules[indexFileInput->name()] = indexFileInput;
 }
 
 void ModulesManager::loadOutput()

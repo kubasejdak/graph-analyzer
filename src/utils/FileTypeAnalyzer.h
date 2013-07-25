@@ -15,6 +15,10 @@ public:
 	virtual ~FileTypeAnalyzer() {}
 
 	std::string analyze(std::string filename);
+
+private:
+	std::string recognizeInternalType(std::string filename);
+	std::string recognizeMIMEType(std::string filename);
 };
 
 #endif /* FILETYPEANALYZER_H_ */

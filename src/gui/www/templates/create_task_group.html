@@ -78,7 +78,7 @@
 					<br/>
 
 					<h2>Grouping options:</h2>
-					<label class="radio"><input type="radio" name="algorithm" id="SymetricProbability" value="SymetricProbability" checked>SymetricProbability</label>
+					<label class="radio"><input type="radio" name="algorithm" id="SymetricSimilarity" value="SymetricSimilarity" checked>SymetricSimilarity</label>
 				</div>
 				<div class="span3">
 					<h2>Output options:</h2>
@@ -93,8 +93,14 @@
 					<br/>
 					<div class="input-append">
 						<span class="add-on">Threshold</span>
-						<input class="span2" id="threshold_SymetricProbability" name="threshold_SymetricProbability" style="width: 100%" type="text" value="50">
-						<span class="add-on">%</span>
+						<input class="span2" id="threshold_SymetricSimilarity" name="threshold_SymetricSimilarity" type="text" style="width: 65%" value="50">
+						<span class="add-on">%</span><br/><br/>
+						
+						<span class="add-on">Group by</span>
+						<select name="trait_SymetricSimilarity">
+							<option value="loop">loop</option>
+							<option value="api">API</option>
+						</select>
 					</div>
 				</div>
 			</div>

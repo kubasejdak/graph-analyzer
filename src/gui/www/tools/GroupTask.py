@@ -9,7 +9,7 @@ class GroupTask(object):
 		self.__files = []
 		self.__from = "dd.mm.rrrr"
 		self.__until = "dd.mm.rrrr"
-		self.__algorithm = "SymetricProbability"
+		self.__algorithm = "SymetricSimilarity"
 		self.__context = {}
 		self.__input = ""
 		self.__output = []

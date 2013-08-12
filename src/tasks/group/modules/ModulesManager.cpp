@@ -12,7 +12,7 @@
 #include <tasks/group/modules/algorithms/IAlgorithm.h>
 #include <tasks/group/modules/output/IOutput.h>
 #include <tasks/group/modules/input/IInput.h>
-#include <tasks/group/modules/algorithms/SymetricProbability.h>
+#include <tasks/group/modules/algorithms/SymetricSymilarity.h>
 #include <tasks/group/modules/output/ConsoleOutput.h>
 #include <tasks/group/modules/output/DatabaseOutput.h>
 #include <tasks/group/modules/input/DatabaseInput.h>
@@ -48,7 +48,7 @@ void ModulesManager::loadOutput()
 void ModulesManager::loadAlgorithm()
 {
 	// SymetricProbability
-	SymetricProbability *symetricProbability = new SymetricProbability();
+	SymetricSimilarity *symetricProbability = new SymetricSimilarity();
     m_algorithmModules[symetricProbability->name()] = symetricProbability;
 }
 

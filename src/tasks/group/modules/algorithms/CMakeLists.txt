@@ -3,7 +3,7 @@
 set(GROUP_TASK_ALGORITHMS_SUBMODULES_SRC
     IAlgorithm.h
     AlgorithmContext.cpp
-    SymetricProbability.cpp
+    SymetricSymilarity.cpp
 )
 
 add_library(group-algorithms-submodules ${GROUP_TASK_ALGORITHMS_SUBMODULES_SRC})

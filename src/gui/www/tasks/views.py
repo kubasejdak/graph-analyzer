@@ -135,7 +135,7 @@ def render_createGroupTask(request):
     if "save" in request.POST:
         c.update({"is_message": True})
         groupTask = GroupTask()
-        
+
         # name
         groupTask.setName(request.POST["taskName"])
 
@@ -154,8 +154,16 @@ def render_createGroupTask(request):
         groupTask.setAlgorithm(request.POST["algorithm"])
 
         # algorithm context
-        if(request.POST["algorithm"] == "SymetricProbability"):
-            groupTask.setContext("threshold", request.POST["threshold_SymetricProbability"])
+        if(request.POST["algorithm"] == "SymetricSimilarity"):
+            groupTask.setContext("threshold", request.POST["threshold_SymetricSimilarity"])
+            groupTask.setContext("trait", request.POST["trait_SymetricSimilarity"])
+            traitKey = ""
+            if(request.POST["trait_SymetricSimilarity"] == "loop"):
+                traitKey = "hash"
+            elif(request.POST["trait_SymetricSimilarity"] == "api"):
+                traitKey = "syscall"
+                
+            groupTask.setContext("traitKey", traitKey)
 
         # input
         if("databaseInput" in request.POST):

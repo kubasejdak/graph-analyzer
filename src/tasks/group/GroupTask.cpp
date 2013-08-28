@@ -26,7 +26,7 @@ using namespace std;
 GroupTask::GroupTask()
 {
     m_duplicate = false;
-    m_algorithm = "SymetricProbability";
+	m_algorithm = "SymetricSimilarity";
 	m_inputStrategy = "database";
 
     m_type = "group";

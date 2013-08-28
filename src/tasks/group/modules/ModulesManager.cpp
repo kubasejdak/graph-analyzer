@@ -47,9 +47,9 @@ void ModulesManager::loadOutput()
 
 void ModulesManager::loadAlgorithm()
 {
-	// SymetricProbability
-	SymetricSimilarity *symetricProbability = new SymetricSimilarity();
-    m_algorithmModules[symetricProbability->name()] = symetricProbability;
+	// SymetricSimilarity
+	SymetricSimilarity *symetricSimilarity = new SymetricSimilarity();
+	m_algorithmModules[symetricSimilarity->name()] = symetricSimilarity;
 }
 
 InputMap *ModulesManager::input()
